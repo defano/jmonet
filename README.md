@@ -4,23 +4,23 @@ A rudimentary toolkit for incorporating [MacPaint](https://en.wikipedia.org/wiki
 
 ## Paint tools
 
-| Tool            | Description
-| ----------------| -------------
-![Airbrush](icons/spraypaint.png) | Airbrush       | Paints translucent color or texture onto the canvas.
-![Curve](icons/curve.png) | Curve                  | Draws quadratic (Bezier) curves by clicking to specify points on the curve.
-![Eraser](icons/eraser.png) | Eraser               | Removes paint from the canvas by restoring affected pixels to their fully-transparent state.
-![Fill](icons/fill.png) | Fill                     | Shades an enclosed area with paint using a [flood-fill](https://en.wikipedia.org/wiki/Flood_fill) algorithm.
-![Lasso](icons/lasso.png) | Lasso                  | Define a free-form selection boundary ([marching ants](https://en.wikipedia.org/wiki/Marching_ants)) for clearing or moving paint.
-![Line](icons/line.png) | Line                     | Draws straight lines; hold `shift` to restrict lines to 15-degree angles.
-![Oval](icons/oval.png) | Oval                     | Draws filled or outlined oval shapes; hold `shift` to constrain boundary to circle.
-![Paintbrush](icons/paintbrush.png) | Paintbrush   | Draws paint on the canvas (using configurable stroke and color/texture).
-![Pencil](icons/pencil.png) | Pencil               | Draws a free-form, narrow black path on the canvas.
-![Polygon](icons/polygon.png) | Polygon            | Draws filled or outlined irregular polygons by clicking to specify points. Double-click to complete the polygon; press `esc` to keep only the lines visible; hold `shift` to restrict line angles to 15 degree multiples.
-![Rectangle](icons/rectangle.png) | Rectangle      | Draws filled or outlined rectangles on the canvas; hold `shift` to constrain boundary to a square.
-![Round Rect](icons/roundrect.png) | Round Rect    | Draws filled or outlined round-rectangles on the canvas.
-![Selection](icons/selection.png) | Selection      | Define a selection rectangle ([marching ants](https://en.wikipedia.org/wiki/Marching_ants)) whose underlying graphic can be moved or cleared (press `delete`)
-![Shape](icons/shape.png) | Shape                  | Draws filled or outlined regular polygons (i.e., shapes--triangles, squares, polygons, hexagons, etc.)
-![Text](icons/text.png) | Text                     | Draws rasterized text (of a configurable font, size and style) on the canvas. Text remains editable until user clicks away.
+|Icon | Tool            | Description
+|-----|-----------------| -------------
+|![Airbrush](icons/spraypaint.png) | Airbrush | Paints translucent color or texture onto the canvas.
+|![Curve](icons/curve.png) | Curve | Draws quadratic (Bezier) curves by clicking to specify points on the curve.
+|![Eraser](icons/eraser.png) | Eraser | Removes paint from the canvas by restoring affected pixels to their fully-transparent state.
+|![Fill](icons/fill.png) | Fill | Shades an enclosed area with paint using a [flood-fill](https://en.wikipedia.org/wiki/Flood_fill) algorithm.
+|![Lasso](icons/lasso.png) | Lasso | Define a free-form selection boundary ([marching ants](https://en.wikipedia.org/wiki/Marching_ants)) for clearing or moving paint.
+|![Line](icons/line.png) | Line | Draws straight lines; hold `shift` to restrict lines to 15-degree angles.
+|![Oval](icons/oval.png) | Oval | Draws filled or outlined oval shapes; hold `shift` to constrain boundary to circle.
+|![Paintbrush](icons/paintbrush.png) | Paintbrush | Draws paint on the canvas (using configurable stroke and color/texture).
+|![Pencil](icons/pencil.png) | Pencil | Draws a free-form, narrow black path on the canvas.
+|![Polygon](icons/polygon.png) | Polygon | Draws filled or outlined irregular polygons by clicking to specify points. Double-click to complete the polygon; press `esc` to keep only the lines visible; hold `shift` to restrict line angles to 15 degree multiples.
+|![Rectangle](icons/rectangle.png) | Rectangle | Draws filled or outlined rectangles on the canvas; hold `shift` to constrain boundary to a square.
+|![Round Rect](icons/roundrect.png) | Round Rect | Draws filled or outlined round-rectangles on the canvas.
+|![Selection](icons/selection.png) | Selection | Define a selection rectangle ([marching ants](https://en.wikipedia.org/wiki/Marching_ants)) whose underlying graphic can be moved or cleared (press `delete`)
+|![Shape](icons/shape.png) | Shape | Draws filled or outlined regular polygons (i.e., shapes--triangles, squares, polygons, hexagons, etc.)
+|![Text](icons/text.png) | Text | Draws rasterized text (of a configurable font, size and style) on the canvas. Text remains editable until user clicks away.
 
 (There's also an "Arrow" tool that functions as a no-op that does not modify the canvas in any way.)
 
