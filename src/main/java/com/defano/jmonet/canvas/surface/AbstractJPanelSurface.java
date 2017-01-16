@@ -1,8 +1,8 @@
 package com.defano.jmonet.canvas.surface;
 
 
-import com.defano.jmonet.canvas.*;
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.canvas.CanvasCommitObserver;
+import com.defano.jmonet.canvas.CanvasInteractionObserver;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,12 +11,12 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractSurface extends JPanel implements PaintableSurface, KeyListener, MouseListener, MouseMotionListener {
+public abstract class AbstractJPanelSurface extends JPanel implements KeyListener, MouseListener, MouseMotionListener, SizableSurface, CompositeSurface, InteractiveSurface, ScalableGridSurface, ScratchDrawableSurface {
 
     private List<CanvasCommitObserver> observers = new ArrayList<>();
     private List<CanvasInteractionObserver> interactionListeners = new ArrayList<>();
 
-    public AbstractSurface() {
+    public AbstractJPanelSurface() {
         setOpaque(false);
         setEnabled(true);
         setFocusable(true);
@@ -71,52 +71,6 @@ public abstract class AbstractSurface extends JPanel implements PaintableSurface
         if (getParent() != null) {
             getParent().repaint();
         }
-    }
-
-
-
-    public void setSize(int width, int height) {
-        super.setSize(width, height);
-
-        // Don't truncate image if canvas shrinks, but do grow it
-        if (width < getCanvasImage().getWidth()) {
-            width = getCanvasImage().getWidth();
-        }
-
-        if (height < getCanvasImage().getHeight()) {
-            height = getCanvasImage().getHeight();
-        }
-
-        BufferedImage newScratch = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics newScratchGraphics = newScratch.getGraphics();
-        newScratchGraphics.drawImage(getScratchImage(), 0, 0, null);
-        setScratchImage(newScratch);
-
-        BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics newImageGraphics = newImage.getGraphics();
-        newImageGraphics.drawImage(getCanvasImage(), 0, 0, null);
-        setCanvasImage(newImage);
-
-        newScratchGraphics.dispose();
-        newImageGraphics.dispose();
-
-        invalidateCanvas();
-    }
-
-    private int translateX(int x) {
-        int gridSpacing = getGridSpacingProvider().get();
-        double scale = getScaleProvider().get();
-
-        x = Geometry.round(x, (int) (gridSpacing * scale));
-        return (int) (getImageLocation().x / scale + (x / scale));
-    }
-
-    private int translateY(int y) {
-        int gridSpacing = getGridSpacingProvider().get();
-        double scale = getScaleProvider().get();
-
-        y = Geometry.round(y, (int) (gridSpacing * scale));
-        return (int) (getImageLocation().y / scale + (y / scale));
     }
 
     /**

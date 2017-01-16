@@ -1,12 +1,13 @@
 package com.defano.jmonet.canvas;
 
-import com.defano.jmonet.canvas.surface.AbstractSurface;
+import com.defano.jmonet.canvas.surface.AbstractJPanelSurface;
 import com.defano.jmonet.model.Provider;
+import com.defano.jmonet.tools.util.Geometry;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class BasicCanvas extends AbstractSurface implements Canvas {
+public class BasicCanvas extends AbstractJPanelSurface implements Canvas {
 
     private Point imageLocation = new Point(0, 0);
     private Provider<Double> scale = new Provider<>(1.0);
@@ -30,6 +31,35 @@ public class BasicCanvas extends AbstractSurface implements Canvas {
         scratch = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
     }
 
+    @Override
+    public void setSize(int width, int height) {
+        super.setSize(width, height);
+
+        // Don't truncate image if canvas shrinks, but do grow it
+        if (width < getCanvasImage().getWidth()) {
+            width = getCanvasImage().getWidth();
+        }
+
+        if (height < getCanvasImage().getHeight()) {
+            height = getCanvasImage().getHeight();
+        }
+
+        BufferedImage newScratch = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics newScratchGraphics = newScratch.getGraphics();
+        newScratchGraphics.drawImage(getScratchImage(), 0, 0, null);
+        setScratchImage(newScratch);
+
+        BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics newImageGraphics = newImage.getGraphics();
+        newImageGraphics.drawImage(getCanvasImage(), 0, 0, null);
+        setCanvasImage(newImage);
+
+        newScratchGraphics.dispose();
+        newImageGraphics.dispose();
+
+        invalidateCanvas();
+    }
+
     public void clearCanvas() {
         Graphics2D g2 = (Graphics2D) getScratchImage().getGraphics();
         g2.setColor(Color.WHITE);
@@ -43,6 +73,22 @@ public class BasicCanvas extends AbstractSurface implements Canvas {
         g2d.setComposite(composite);
         g2d.drawImage(source, 0,0, null);
         g2d.dispose();
+    }
+
+    public int translateX(int x) {
+        int gridSpacing = getGridSpacingProvider().get();
+        double scale = getScaleProvider().get();
+
+        x = Geometry.round(x, (int) (gridSpacing * scale));
+        return (int) (getImageLocation().x / scale + (x / scale));
+    }
+
+    public int translateY(int y) {
+        int gridSpacing = getGridSpacingProvider().get();
+        double scale = getScaleProvider().get();
+
+        y = Geometry.round(y, (int) (gridSpacing * scale));
+        return (int) (getImageLocation().y / scale + (y / scale));
     }
 
     public BufferedImage getCanvasImage() {

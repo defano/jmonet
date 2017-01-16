@@ -1,10 +1,10 @@
 package com.defano.jmonet.canvas;
 
-import com.defano.jmonet.canvas.surface.PaintableSurface;
+import com.defano.jmonet.canvas.surface.*;
 
 import java.awt.*;
 
-public interface Canvas extends PaintableSurface {
+public interface Canvas extends SizableSurface, CompositeSurface, InteractiveSurface, ScalableGridSurface, ScratchDrawableSurface {
     boolean isVisible();
 
     void setCursor(Cursor cursor);
