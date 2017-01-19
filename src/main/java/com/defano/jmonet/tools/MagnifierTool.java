@@ -17,7 +17,10 @@ public class MagnifierTool extends PaintTool {
     }
 
     @Override
-    public void mousePressed(MouseEvent e, int scaleX, int scaleY) {
+    public void mousePressed(MouseEvent e, Point imageLocation) {
+
+        double pX = (double) imageLocation.x / (double) getCanvas().getCanvasImage().getWidth();
+        double pY = (double) imageLocation.y / (double) getCanvas().getCanvasImage().getHeight();
 
         if (e.isControlDown() || e.isAltDown() || e.isMetaDown()) {
             reset();
@@ -25,12 +28,12 @@ public class MagnifierTool extends PaintTool {
 
         else if (e.isShiftDown()) {
             zoomOut(e.getX(), e.getY());
-            recenter(e.getX(), e.getY(), scaleX, scaleY);
+            getCanvas().setScrollPosition(pX, pY);
         }
 
         else {
             zoomIn();
-            recenter(e.getX(), e.getY(), scaleX, scaleY);
+            getCanvas().setScrollPosition(pX, pY);
         }
     }
 
@@ -40,14 +43,10 @@ public class MagnifierTool extends PaintTool {
         this.scale = canvas.getScaleProvider().get();
     }
 
-    private void recenter(int canvasX, int canvasY, int imageX, int imageY) {
-        getCanvas().setImageLocation(new Point((int)(imageX * scale) - canvasX, (int)(imageY * scale) - canvasY));
-    }
-
     private void reset() {
         scale = 1.0;
         getCanvas().setScale(scale);
-        getCanvas().setImageLocation(new Point(0,0));
+        getCanvas().setScrollPosition(0, 0);
     }
 
     private void zoomIn() {

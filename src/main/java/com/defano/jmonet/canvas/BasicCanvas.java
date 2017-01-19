@@ -1,15 +1,21 @@
 package com.defano.jmonet.canvas;
 
-import com.defano.jmonet.canvas.surface.AbstractJPanelSurface;
+import com.defano.jmonet.canvas.surface.AbstractScrollableSurface;
+import com.defano.jmonet.canvas.surface.PaintSurface;
 import com.defano.jmonet.model.Provider;
 import com.defano.jmonet.tools.util.Geometry;
 
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
-public class BasicCanvas extends AbstractJPanelSurface implements Canvas {
+public class BasicCanvas extends AbstractScrollableSurface implements Canvas {
 
-    private Point imageLocation = new Point(0, 0);
+    private PaintSurface surface = new PaintSurface();
+
+    private java.util.List<CanvasCommitObserver> observers = new ArrayList<>();
     private Provider<Double> scale = new Provider<>(1.0);
     private Provider<Integer> gridSpacing = new Provider<>(1);
 
@@ -21,6 +27,8 @@ public class BasicCanvas extends AbstractJPanelSurface implements Canvas {
     }
 
     public BasicCanvas(BufferedImage initialImage) {
+        this.surface.setDrawable(this);
+        setSurface(surface);
 
         if (initialImage == null) {
             image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
@@ -34,6 +42,7 @@ public class BasicCanvas extends AbstractJPanelSurface implements Canvas {
     @Override
     public void setSize(int width, int height) {
         super.setSize(width, height);
+        surface.setPreferredSize(new Dimension((int) (width * scale.get()), (int) (height * scale.get())));
 
         // Don't truncate image if canvas shrinks, but do grow it
         if (width < getCanvasImage().getWidth()) {
@@ -57,6 +66,13 @@ public class BasicCanvas extends AbstractJPanelSurface implements Canvas {
         newScratchGraphics.dispose();
         newImageGraphics.dispose();
 
+        surface.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                updateScroll();
+            }
+        });
+
         invalidateCanvas();
     }
 
@@ -68,11 +84,15 @@ public class BasicCanvas extends AbstractJPanelSurface implements Canvas {
     }
 
     protected void overlayImage(BufferedImage source, BufferedImage destination, AlphaComposite composite) {
-
         Graphics2D g2d = (Graphics2D) destination.getGraphics();
         g2d.setComposite(composite);
-        g2d.drawImage(source, 0,0, null);
+        g2d.drawImage(source, 0, 0, null);
         g2d.dispose();
+    }
+
+    @Override
+    public Point convertPointToImage(Point p) {
+        return new Point(translateX(p.x), translateY(p.y));
     }
 
     public int translateX(int x) {
@@ -80,7 +100,7 @@ public class BasicCanvas extends AbstractJPanelSurface implements Canvas {
         double scale = getScaleProvider().get();
 
         x = Geometry.round(x, (int) (gridSpacing * scale));
-        return (int) (getImageLocation().x / scale + (x / scale));
+        return (int) (x / scale);
     }
 
     public int translateY(int y) {
@@ -88,7 +108,7 @@ public class BasicCanvas extends AbstractJPanelSurface implements Canvas {
         double scale = getScaleProvider().get();
 
         y = Geometry.round(y, (int) (gridSpacing * scale));
-        return (int) (getImageLocation().y / scale + (y / scale));
+        return (int) (y / scale);
     }
 
     public BufferedImage getCanvasImage() {
@@ -127,21 +147,37 @@ public class BasicCanvas extends AbstractJPanelSurface implements Canvas {
         invalidateCanvas();
     }
 
+    @Override
+    public void addComponent(Component component) {
+        surface.addComponent(component);
+    }
+
+    @Override
+    public void removeComponent(Component component) {
+        surface.removeComponent(component);
+    }
+
+    @Override
+    public void addCanvasInteractionListener(CanvasInteractionObserver listener) {
+        surface.addCanvasInteractionListener(listener);
+    }
+
+    @Override
+    public boolean removeCanvasInteractionListener(CanvasInteractionObserver listener) {
+        return surface.removeCanvasInteractionListener(listener);
+    }
+
     /**
      * Creates a clean scratch buffer (replacing all pixels in the graphics context with transparent pixels).
      */
     public void clearScratch() {
         scratch = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+        invalidateCanvas();
     }
 
     @Override
-    public void setImageLocation(Point location) {
-        imageLocation = location;
-    }
-
-    @Override
-    public Point getImageLocation() {
-        return imageLocation;
+    public double getScale() {
+        return scale.get();
     }
 
     @Override
@@ -162,7 +198,34 @@ public class BasicCanvas extends AbstractJPanelSurface implements Canvas {
     @Override
     public void setScale(double scale) {
         this.scale.set(scale);
+        surface.setPreferredSize(new Dimension((int) (getWidth() * scale), (int) (getHeight() * scale)));
+        surface.revalidate();
+
         invalidateCanvas();
     }
 
+    /**
+     * Adds an observer to be notified of scratch buffer commits.
+     *
+     * @param observer The observer to be registered.
+     */
+    public void addObserver(CanvasCommitObserver observer) {
+        observers.add(observer);
+    }
+
+    /**
+     * Removes an existing observer.
+     *
+     * @param observer The observer to be removed.
+     * @return True if the given observer was successfully unregistered; false otherwise.
+     */
+    public boolean removeObserver(CanvasCommitObserver observer) {
+        return observers.remove(observer);
+    }
+
+    protected void fireObservers(com.defano.jmonet.canvas.Canvas canvas, BufferedImage committedImage, BufferedImage canvasImage) {
+        for (CanvasCommitObserver thisObserver : observers) {
+            thisObserver.onCommit(canvas, committedImage, canvasImage);
+        }
+    }
 }

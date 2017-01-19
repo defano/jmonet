@@ -43,8 +43,8 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     }
 
     @Override
-    public void mouseMoved(MouseEvent e, int scaleX, int scaleY) {
-        if (hasSelectionBounds() && getSelectionOutline().contains(new Point(scaleX, scaleY))) {
+    public void mouseMoved(MouseEvent e, Point imageLocation) {
+        if (hasSelectionBounds() && getSelectionOutline().contains(imageLocation)) {
             setToolCursor(Cursor.getDefaultCursor());
         } else {
             setToolCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
@@ -52,12 +52,12 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     }
 
     @Override
-    public void mousePressed(MouseEvent e, int scaleX, int scaleY) {
-        isMovingSelection = getSelectionOutline() != null && getSelectionOutline().contains(new Point(scaleX, scaleY));
+    public void mousePressed(MouseEvent e, Point imageLocation) {
+        isMovingSelection = getSelectionOutline() != null && getSelectionOutline().contains(imageLocation);
 
         // User clicked inside selection bounds; start moving selection
         if (isMovingSelection) {
-            lastPoint = new Point(scaleX, scaleY);
+            lastPoint = imageLocation;
         }
 
         // User clicked outside current selection bounds
@@ -68,24 +68,24 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
                 clearSelection();
             }
 
-            initialPoint = new Point(scaleX, scaleY);
+            initialPoint = imageLocation;
         }
     }
 
     @Override
-    public void mouseDragged(MouseEvent e, int scaleX, int scaleY) {
+    public void mouseDragged(MouseEvent e, Point imageLocation) {
 
         // User is moving an existing selection
         if (isMovingSelection) {
             setDirty();
-            adjustSelectionBounds(scaleX - lastPoint.x, scaleY - lastPoint.y);
+            adjustSelectionBounds(imageLocation.x - lastPoint.x, imageLocation.y - lastPoint.y);
             drawSelection();
-            lastPoint = new Point(scaleX, scaleY);
+            lastPoint = imageLocation;
         }
 
         // User is defining a new selection rectangle
         else {
-            defineSelectionBounds(initialPoint, Geometry.pointWithinBounds(new Point(scaleX, scaleY), getCanvas().getBounds()), e.isShiftDown());
+            defineSelectionBounds(initialPoint, Geometry.pointWithinBounds(imageLocation, getCanvas().getBounds()), e.isShiftDown());
 
             getCanvas().clearScratch();
             drawSelectionOutline();
@@ -94,10 +94,10 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     }
 
     @Override
-    public void mouseReleased(MouseEvent e, int scaleX, int scaleY) {
+    public void mouseReleased(MouseEvent e, Point imageLocation) {
         // User released mouse after defining a selection
         if (!hasSelection() && hasSelectionBounds()) {
-            completeSelectionBounds(new Point(scaleX, scaleY));
+            completeSelectionBounds(imageLocation);
             getSelectionFromCanvas();
         }
     }

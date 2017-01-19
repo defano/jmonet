@@ -26,7 +26,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
     }
 
     @Override
-    public void mouseMoved(MouseEvent e, int scaleX, int scaleY) {
+    public void mouseMoved(MouseEvent e, Point imageLocation) {
 
         // Nothing to do if initial point is not yet established
         if (points.size() == 0) {
@@ -38,7 +38,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
             currentPoint = Geometry.snapLineToNearestAngle(lastPoint, e.getPoint(), snapToDegrees);
             points.add(currentPoint);
         } else {
-            currentPoint = new Point(scaleX, scaleY);
+            currentPoint = imageLocation;
             points.add(currentPoint);
         }
 
@@ -57,7 +57,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
     }
 
     @Override
-    public void mousePressed(MouseEvent e, int scaleX, int scaleY) {
+    public void mousePressed(MouseEvent e, Point imageLocation) {
 
         // User double-clicked; complete the polygon
         if (e.getClickCount() > 1 && points.size() > 1) {
@@ -67,7 +67,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
 
         // First click (creating initial point)
         else if (currentPoint == null) {
-            points.add(new Point(scaleX, scaleY));
+            points.add(imageLocation);
         }
 
         // Single click with initial point established

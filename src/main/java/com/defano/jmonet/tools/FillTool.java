@@ -15,7 +15,7 @@ public class FillTool extends PaintTool {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e, int scaleX, int scaleY) {
+    public void mouseClicked(MouseEvent e, Point imageLocation) {
 
         BufferedImage canvasImage = getCanvas().getCanvasImage();
         Rectangle canvasBounds = getCanvas().getBounds();
@@ -28,7 +28,7 @@ public class FillTool extends PaintTool {
 
         getCanvas().clearScratch();
 
-        FloodFill.floodFill(scaleX, scaleY, canvasBounds, p -> {
+        FloodFill.floodFill(imageLocation.x, imageLocation.y, canvasBounds, p -> {
             int rgb = getFillPixel(p.x, p.y, fillPaint);
             getCanvas().getScratchImage().setRGB(p.x, p.y, rgb);
         }, (Point point) -> {

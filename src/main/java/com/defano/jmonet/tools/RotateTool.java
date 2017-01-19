@@ -29,7 +29,7 @@ public class RotateTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void mousePressed(MouseEvent e, int scaleX, int scaleY) {
+    public void mousePressed(MouseEvent e, Point imageLocation) {
 
         // User clicked outside the selection after making a rotation change
         if (isDirty() && !selectionBounds.contains(e.getPoint())) {
@@ -38,7 +38,7 @@ public class RotateTool extends AbstractSelectionTool {
         }
 
         // User clicked inside drag handle
-        else if (hasSelection() && dragHandle.contains(new Point(scaleX, scaleY))) {
+        else if (hasSelection() && dragHandle.contains(imageLocation)) {
             rotating = true;
 
             if (centerpoint == null) {
@@ -53,18 +53,18 @@ public class RotateTool extends AbstractSelectionTool {
         // None of the above; delegate to superclass
         else {
             rotating = false;
-            super.mousePressed(e, scaleX, scaleY);
+            super.mousePressed(e, imageLocation);
         }
     }
 
     @Override
-    public void mouseDragged(MouseEvent e, int scaleX, int scaleY) {
+    public void mouseDragged(MouseEvent e, Point imageLocation) {
 
         if (rotating) {
             setDirty();     // Mutating the selected image
 
             // Calculate the rotation angle
-            dragLocation = new Point(scaleX, scaleY);
+            dragLocation = imageLocation;
             double angle = Math.toRadians(Geometry.getLineAngle(centerpoint.x, centerpoint.y, dragLocation.x, dragLocation.y));
 
             // Rotate the marching ants and drag handle
@@ -76,7 +76,7 @@ public class RotateTool extends AbstractSelectionTool {
         }
 
         else {
-            super.mouseDragged(e, scaleX, scaleY);
+            super.mouseDragged(e, imageLocation);
         }
     }
 

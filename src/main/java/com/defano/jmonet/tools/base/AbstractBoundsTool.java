@@ -32,13 +32,13 @@ public abstract class AbstractBoundsTool extends PaintTool {
     public abstract void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height);
 
     @Override
-    public void mousePressed(MouseEvent e, int scaleX, int scaleY) {
-        initialPoint = new Point(scaleX, scaleY);
+    public void mousePressed(MouseEvent e, Point imageLocation) {
+        initialPoint = imageLocation;
     }
 
     @Override
-    public void mouseDragged(MouseEvent e, int scaleX, int scaleY) {
-        currentPoint = new Point(scaleX, scaleY);
+    public void mouseDragged(MouseEvent e, Point imageLocation) {
+        currentPoint = imageLocation;
 
         if (!drawMultiple.get()) {
             getCanvas().clearScratch();
@@ -71,7 +71,7 @@ public abstract class AbstractBoundsTool extends PaintTool {
     }
 
     @Override
-    public void mouseReleased(MouseEvent e, int scaleX, int scaleY) {
+    public void mouseReleased(MouseEvent e, Point imageLocation) {
         getCanvas().commit();
     }
 

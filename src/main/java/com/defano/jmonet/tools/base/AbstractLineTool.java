@@ -18,15 +18,15 @@ public abstract class AbstractLineTool extends PaintTool {
     public abstract void drawLine(Graphics2D g, Stroke stroke, Paint paint, int x1, int y1, int x2, int y2);
 
     @Override
-    public void mousePressed(MouseEvent e, int scaleX, int scaleY) {
-        initialPoint = new Point(scaleX, scaleY);
+    public void mousePressed(MouseEvent e, Point imageLocation) {
+        initialPoint = imageLocation;
     }
 
     @Override
-    public void mouseDragged(MouseEvent e, int scaleX, int scaleY) {
+    public void mouseDragged(MouseEvent e, Point imageLocation) {
         getCanvas().clearScratch();
 
-        Point currentLoc = new Point(scaleX, scaleY);
+        Point currentLoc = imageLocation;
 
         if (e.isShiftDown()) {
             currentLoc = Geometry.snapLineToNearestAngle(initialPoint, currentLoc, snapToDegrees);
@@ -40,7 +40,7 @@ public abstract class AbstractLineTool extends PaintTool {
     }
 
     @Override
-    public void mouseReleased(MouseEvent e, int scaleX, int scaleY) {
+    public void mouseReleased(MouseEvent e, Point imageLocation) {
         getCanvas().commit();
     }
 

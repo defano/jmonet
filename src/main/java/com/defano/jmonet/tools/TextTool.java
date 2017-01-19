@@ -43,10 +43,10 @@ public class TextTool extends PaintTool implements Observer {
     }
 
     @Override
-    public void mousePressed(MouseEvent e, int scaleX, int scaleY) {
+    public void mousePressed(MouseEvent e, Point imageLocation) {
         if (!isEditing()) {
-            textLocation = new Point(scaleX, scaleY - getScaledFontAscent());
-            addTextArea(e.getX(), e.getY() - getFontAscent());
+            textLocation = new Point((int)(imageLocation.x * getCanvas().getScale()), (int)((imageLocation.y - getFontAscent()) * getCanvas().getScale()));
+            addTextArea(textLocation.x, textLocation.y);
         } else {
             commitTextImage();
             removeTextArea();
@@ -54,33 +54,32 @@ public class TextTool extends PaintTool implements Observer {
     }
 
     public boolean isEditing() {
-        return textArea.getParent() == getCanvas();
+        return textArea.getParent() != null;
     }
 
-    protected void removeTextArea() {
+    private void removeTextArea() {
         getCanvas().removeComponent(textArea);
     }
 
-    protected void addTextArea(int x, int y) {
+    private void addTextArea(int x, int y) {
         int left = getCanvas().getBounds().x + x;
         int top = getCanvas().getBounds().y + y;
 
         textArea.setText("");
-        textArea.setBounds(left, top, getCanvas().getWidth() - left, getCanvas().getHeight() - top);
+        textArea.setBounds(left, top, (int)(getCanvas().getWidth() * getCanvas().getScale()) - left, (int)(getCanvas().getHeight() * getCanvas().getScale()) - top);
         textArea.setFont(getScaledFont());
         textArea.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                TextTool.this.mousePressed(e, 0, 0);
+                TextTool.this.mousePressed(e, new Point(0, 0));
             }
         });
 
         getCanvas().addComponent(textArea);
-
         textArea.requestFocus();
     }
 
-    private BufferedImage renderTextImage() {
+    private BufferedImage rasterizeText() {
 
         // Clear selection before rasterizing
         textArea.setSelectionStart(0);
@@ -104,7 +103,7 @@ public class TextTool extends PaintTool implements Observer {
         // Don't commit if user hasn't entered any text
         if (textArea.getText().trim().length() > 0) {
             Graphics g = getCanvas().getScratchImage().getGraphics();
-            g.drawImage(renderTextImage(), textLocation.x, textLocation.y, null);
+            g.drawImage(rasterizeText(), (int)(textLocation.x / getCanvas().getScale()), (int)(textLocation.y / getCanvas().getScale()), null);
             g.dispose();
 
             getCanvas().commit();

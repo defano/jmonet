@@ -145,37 +145,37 @@ public abstract class PaintTool implements CanvasInteractionObserver, CanvasComm
     }
 
     @Override
-    public void mouseClicked(MouseEvent e, int scaleX, int scaleY) {
+    public void mouseClicked(MouseEvent e, Point imageLocation) {
         // Nothing to do
     }
 
     @Override
-    public void mousePressed(MouseEvent e, int scaleX, int scaleY) {
+    public void mousePressed(MouseEvent e, Point imageLocation) {
         // Nothing to do
     }
 
     @Override
-    public void mouseReleased(MouseEvent e, int scaleX, int scaleY) {
+    public void mouseReleased(MouseEvent e, Point imageLocation) {
         // Nothing to do
     }
 
     @Override
-    public void mouseEntered(MouseEvent e, int scaleX, int scaleY) {
+    public void mouseEntered(MouseEvent e, Point imageLocation) {
         // Nothing to do
     }
 
     @Override
-    public void mouseExited(MouseEvent e, int scaleX, int scaleY) {
+    public void mouseExited(MouseEvent e, Point imageLocation) {
         // Nothing to do
     }
 
     @Override
-    public void mouseDragged(MouseEvent e, int scaleX, int scaleY) {
+    public void mouseDragged(MouseEvent e, Point imageLocation) {
         // Nothing to do
     }
 
     @Override
-    public void mouseMoved(MouseEvent e, int scaleX, int scaleY) {
+    public void mouseMoved(MouseEvent e, Point imageLocation) {
         // Nothing to do
     }
 
