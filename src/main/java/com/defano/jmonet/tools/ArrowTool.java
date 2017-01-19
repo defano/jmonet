@@ -7,8 +7,19 @@ import java.awt.*;
 
 public class ArrowTool extends PaintTool {
 
+    private Cursor arrorCursor = new Cursor(Cursor.DEFAULT_CURSOR);
+
     public ArrowTool() {
         super(PaintToolType.ARROW);
-        setToolCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        setToolCursor(getArrorCursor());
     }
+
+    public Cursor getArrorCursor() {
+        return arrorCursor;
+    }
+
+    public void setArrorCursor(Cursor arrorCursor) {
+        this.arrorCursor = arrorCursor;
+    }
+
 }

@@ -5,15 +5,31 @@ import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PaintTool;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public class MagnifierTool extends PaintTool {
 
+    private Cursor zoomInCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
+    private Cursor zoomOutCursor = new Cursor(Cursor.DEFAULT_CURSOR);
     private double scale = 1.0;
     private double magnificationStep = 2;
 
     public MagnifierTool() {
         super(PaintToolType.MAGNIFIER);
+        setToolCursor(zoomInCursor);
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        super.keyPressed(e);
+        setToolCursor(e.isShiftDown() ? zoomOutCursor : zoomInCursor);
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        super.keyReleased(e);
+        setToolCursor(e.isShiftDown() ? zoomOutCursor : zoomInCursor);
     }
 
     @Override
@@ -63,5 +79,21 @@ public class MagnifierTool extends PaintTool {
         }
 
         getCanvas().setScale(scale);
+    }
+
+    public Cursor getZoomInCursor() {
+        return zoomInCursor;
+    }
+
+    public void setZoomInCursor(Cursor zoomInCursor) {
+        this.zoomInCursor = zoomInCursor;
+    }
+
+    public Cursor getZoomOutCursor() {
+        return zoomOutCursor;
+    }
+
+    public void setZoomOutCursor(Cursor zoomOutCursor) {
+        this.zoomOutCursor = zoomOutCursor;
     }
 }

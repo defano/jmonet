@@ -10,9 +10,11 @@ public abstract class AbstractLineTool extends PaintTool {
 
     private int snapToDegrees = 15;
     private Point initialPoint;
+    private Cursor lineCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
 
     public AbstractLineTool(PaintToolType type) {
         super(type);
+        setToolCursor(lineCursor);
     }
 
     public abstract void drawLine(Graphics2D g, Stroke stroke, Paint paint, int x1, int y1, int x2, int y2);
@@ -50,5 +52,14 @@ public abstract class AbstractLineTool extends PaintTool {
 
     public void setSnapToDegrees(int snapToDegrees) {
         this.snapToDegrees = snapToDegrees;
+    }
+
+    public Cursor getLineCursor() {
+        return lineCursor;
+    }
+
+    public void setLineCursor(Cursor lineCursor) {
+        this.lineCursor = lineCursor;
+        setToolCursor(lineCursor);
     }
 }

@@ -15,11 +15,13 @@ import java.util.Observer;
 public class TextTool extends PaintTool implements Observer {
 
     private final JTextArea textArea;
+
+    private Cursor textCursor = new Cursor(Cursor.TEXT_CURSOR);
     private Point textLocation;
 
     public TextTool() {
         super(PaintToolType.TEXT);
-        setToolCursor(new Cursor(Cursor.TEXT_CURSOR));
+        setToolCursor(getTextCursor());
 
         textArea = new JTextArea();
         textArea.setVisible(true);
@@ -121,15 +123,20 @@ public class TextTool extends PaintTool implements Observer {
         return new Font(getFont().getFamily(), getFont().getStyle(), (int) (getFont().getSize() * getCanvas().getScaleProvider().get()));
     }
 
-    private int getScaledFontAscent() {
-        return (int) (getFontAscent() / getCanvas().getScaleProvider().get());
-    }
-
     private int getFontAscent() {
         Graphics g = getCanvas().getScratchImage().getGraphics();
         FontMetrics metrics = g.getFontMetrics(getFont());
         g.dispose();
 
         return metrics.getAscent();
+    }
+
+    public Cursor getTextCursor() {
+        return textCursor;
+    }
+
+    public void setTextCursor(Cursor textCursor) {
+        this.textCursor = textCursor;
+        setToolCursor(textCursor);
     }
 }

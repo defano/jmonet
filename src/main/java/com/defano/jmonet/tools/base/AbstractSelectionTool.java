@@ -19,6 +19,9 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
     private Provider<BufferedImage> selectedImage = new Provider<>();
     private Point initialPoint, lastPoint;
+    private Cursor movementCursor = Cursor.getDefaultCursor();
+    private Cursor boundaryCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
+
     private boolean isMovingSelection = false;
     private boolean dirty = false;
 
@@ -45,9 +48,9 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     @Override
     public void mouseMoved(MouseEvent e, Point imageLocation) {
         if (hasSelectionBounds() && getSelectionOutline().contains(imageLocation)) {
-            setToolCursor(Cursor.getDefaultCursor());
+            setToolCursor(getMovementCursor());
         } else {
-            setToolCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+            setToolCursor(getBoundaryCursor());
         }
     }
 
@@ -416,5 +419,21 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         if (hasSelection()) {
             drawSelection();
         }
+    }
+
+    public Cursor getMovementCursor() {
+        return movementCursor;
+    }
+
+    public void setMovementCursor(Cursor movementCursor) {
+        this.movementCursor = movementCursor;
+    }
+
+    public Cursor getBoundaryCursor() {
+        return boundaryCursor;
+    }
+
+    public void setBoundaryCursor(Cursor boundaryCursor) {
+        this.boundaryCursor = boundaryCursor;
     }
 }

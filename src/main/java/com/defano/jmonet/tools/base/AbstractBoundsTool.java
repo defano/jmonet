@@ -24,8 +24,11 @@ public abstract class AbstractBoundsTool extends PaintTool {
     protected Point initialPoint;
     protected Point currentPoint;
 
+    private Cursor boundaryCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
+
     public AbstractBoundsTool(PaintToolType type) {
         super(type);
+        setToolCursor(boundaryCursor);
     }
 
     public abstract void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height);
@@ -89,5 +92,14 @@ public abstract class AbstractBoundsTool extends PaintTool {
 
     public void setDrawCentered(Provider<Boolean> drawCentered) {
         this.drawCentered = drawCentered;
+    }
+
+    public Cursor getBoundaryCursor() {
+        return boundaryCursor;
+    }
+
+    public void setBoundaryCursor(Cursor boundaryCursor) {
+        this.boundaryCursor = boundaryCursor;
+        setToolCursor(boundaryCursor);
     }
 }

@@ -11,6 +11,7 @@ import java.util.List;
 
 public abstract class AbstractPolylineTool extends PaintTool {
 
+    private Cursor polyLineCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
     private int snapToDegrees = 15;
     private List<Point> points = new ArrayList<>();
     private Point currentPoint = null;
@@ -23,6 +24,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
 
     public AbstractPolylineTool(PaintToolType type) {
         super(type);
+        setToolCursor(polyLineCursor);
     }
 
     @Override
@@ -129,5 +131,14 @@ public abstract class AbstractPolylineTool extends PaintTool {
 
     public void setSnapToDegrees(int snapToDegrees) {
         this.snapToDegrees = snapToDegrees;
+    }
+
+    public Cursor getPolyLineCursor() {
+        return polyLineCursor;
+    }
+
+    public void setPolyLineCursor(Cursor polyLineCursor) {
+        this.polyLineCursor = polyLineCursor;
+        setToolCursor(polyLineCursor);
     }
 }
