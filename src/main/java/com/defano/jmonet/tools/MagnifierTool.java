@@ -9,6 +9,10 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
+/**
+ * Tool that changes the scale factor of the canvas and adjusts the scroll position to re-center the scaled image
+ * in the scrollable viewport.
+ */
 public class MagnifierTool extends PaintTool {
 
     private Cursor zoomInCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);

@@ -11,6 +11,10 @@ import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+/**
+ * A scrollable, Swing component that can be painted upon using the paint tools in {@link com.defano.jmonet.tools}. See
+ * {@link UndoablePaintCanvas} for a canvas with an undo/redo buffer.
+ */
 public class BasicPaintCanvas extends AbstractScrollableSurface implements PaintCanvas {
 
     private final PaintSurface surface = new PaintSurface();
@@ -19,8 +23,8 @@ public class BasicPaintCanvas extends AbstractScrollableSurface implements Paint
     private final Provider<Double> scale = new Provider<>(1.0);
     private final Provider<Integer> gridSpacing = new Provider<>(1);
 
-    private BufferedImage image;
-    private BufferedImage scratch;
+    private BufferedImage image;        // The user's artwork
+    private BufferedImage scratch;      // Temporary buffer for changes not yet commited to the canvas
 
     public BasicPaintCanvas() {
         this(null);
@@ -72,7 +76,6 @@ public class BasicPaintCanvas extends AbstractScrollableSurface implements Paint
                 updateScroll();
             }
         });
-
         invalidateCanvas();
     }
 
@@ -90,7 +93,7 @@ public class BasicPaintCanvas extends AbstractScrollableSurface implements Paint
         g2d.dispose();
     }
 
-    protected void overlayChangset(ChangeSet changeSet, BufferedImage destination) {
+    protected void overlayChangeSet(ChangeSet changeSet, BufferedImage destination) {
         Graphics2D g2d = (Graphics2D) destination.getGraphics();
 
         for (int index = 0; index < changeSet.size(); index++) {
@@ -101,12 +104,25 @@ public class BasicPaintCanvas extends AbstractScrollableSurface implements Paint
         g2d.dispose();
     }
 
+    /**
+     * Converts a scaled, surface coordinate to a canvas coordinate and snaps the resulting coordinate to the nearest grid
+     * coordinate. When no scale and no grid has been applied (i.e., scale = 1.0, grid = 1) then the output of this
+     * function is the same as its input.
+     *
+     * When a scale factor has been applied, then the input coordinates are divided by the scale factor.
+     *
+     * When a grid factor has been applied, the result of de-scaling the input is then rounded to nearest grid spacing
+     * factor.
+     *
+     * @param p A point in scaled, surface space
+     * @return The equivalent point in terms of the canvas image.
+     */
     @Override
     public Point convertPointToImage(Point p) {
         return new Point(translateX(p.x), translateY(p.y));
     }
 
-    public int translateX(int x) {
+    private int translateX(int x) {
         int gridSpacing = getGridSpacingProvider().get();
         double scale = getScaleProvider().get();
 
@@ -114,7 +130,7 @@ public class BasicPaintCanvas extends AbstractScrollableSurface implements Paint
         return (int) (x / scale);
     }
 
-    public int translateY(int y) {
+    private int translateY(int y) {
         int gridSpacing = getGridSpacingProvider().get();
         double scale = getScaleProvider().get();
 
@@ -141,18 +157,19 @@ public class BasicPaintCanvas extends AbstractScrollableSurface implements Paint
     }
 
     public void commit() {
-        commit(new ChangeSet(getScratchImage(), AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f)));
+        commit(new ChangeSet(getScratchImage()));
     }
 
     /**
-     * Copies the image contents of the scratch buffer to the PaintCanvas' image.
+     * Commits a ChangeSet to the canvas. A ChangeSet is one or more images (plus a Porter-Duff composite mode) that
+     * should be applied to the current canvas image.
      */
     public void commit(ChangeSet changeSet) {
         BufferedImage canvasImage = getCanvasImage();
 
         for (int index = 0; index < changeSet.size(); index++) {
             overlayImage(changeSet.getImage(index), canvasImage, changeSet.getComposite(index));
-            fireObservers(this, changeSet.getImage(index), canvasImage);
+            fireCanvasCommitObservers(this, changeSet.getImage(index), canvasImage);
         }
 
         clearScratch();
@@ -221,7 +238,7 @@ public class BasicPaintCanvas extends AbstractScrollableSurface implements Paint
      *
      * @param observer The observer to be registered.
      */
-    public void addObserver(CanvasCommitObserver observer) {
+    public void addCanvasCommitObserver(CanvasCommitObserver observer) {
         observers.add(observer);
     }
 
@@ -231,11 +248,11 @@ public class BasicPaintCanvas extends AbstractScrollableSurface implements Paint
      * @param observer The observer to be removed.
      * @return True if the given observer was successfully unregistered; false otherwise.
      */
-    public boolean removeObserver(CanvasCommitObserver observer) {
+    public boolean removeCanvasCommitObserver(CanvasCommitObserver observer) {
         return observers.remove(observer);
     }
 
-    protected void fireObservers(PaintCanvas canvas, BufferedImage committedImage, BufferedImage canvasImage) {
+    protected void fireCanvasCommitObservers(PaintCanvas canvas, BufferedImage committedImage, BufferedImage canvasImage) {
         for (CanvasCommitObserver thisObserver : observers) {
             thisObserver.onCommit(canvas, committedImage, canvasImage);
         }

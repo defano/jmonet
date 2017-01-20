@@ -7,6 +7,10 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+/**
+ * Mouse and keyboard handler for tools that define a bounding box with flexible corners that can be dragged into
+ * a desired position and shape.
+ */
 public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     private final static int HANDLE_SIZE = 8;
@@ -99,14 +103,14 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void defineSelectionBounds(Point initialPoint, Point currentPoint, boolean constrain) {
+    public void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         selectionBounds = new Rectangle(initialPoint);
-        selectionBounds.add(currentPoint);
+        selectionBounds.add(newPoint);
 
         int width = selectionBounds.width;
         int height = selectionBounds.height;
 
-        if (constrain) {
+        if (isShiftKeyDown) {
             width = height = Math.max(width, height);
         }
 
@@ -114,7 +118,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void completeSelectionBounds(Point finalPoint) {
+    public void completeSelection(Point finalPoint) {
         transformBounds = new FlexQuadrilateral(selectionBounds);
     }
 

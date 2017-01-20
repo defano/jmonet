@@ -2,6 +2,9 @@ package com.defano.jmonet.tools.brushes;
 
 import java.awt.*;
 
+/**
+ * A utility enumeration representing common paintbrush shapes and sizes.
+ */
 public enum BasicBrush {
 
     SQUARE_16X16(16, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER),

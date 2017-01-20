@@ -10,6 +10,9 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+/**
+ * Tool for selecting a bounding box and free-rotating the selected image about its centerpoint.
+ */
 public class RotateTool extends AbstractSelectionTool {
 
     private Point centerpoint;
@@ -95,18 +98,18 @@ public class RotateTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void defineSelectionBounds(Point initialPoint, Point currentPoint, boolean constrain) {
+    public void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         int handleSize = 8;
 
         Rectangle selectionRectangle = new Rectangle(initialPoint);
-        selectionRectangle.add(currentPoint);
+        selectionRectangle.add(newPoint);
 
         selectionBounds = selectionRectangle;
         originalDragHandle = dragHandle = new Rectangle(selectionRectangle.x + selectionRectangle.width - handleSize, selectionRectangle.y + selectionRectangle.height / 2 - handleSize / 2, handleSize, handleSize);
     }
 
     @Override
-    public void completeSelectionBounds(Point finalPoint) {
+    public void completeSelection(Point finalPoint) {
         // Nothing to do
     }
 

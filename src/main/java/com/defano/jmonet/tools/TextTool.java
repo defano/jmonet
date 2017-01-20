@@ -13,6 +13,9 @@ import java.awt.image.BufferedImage;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * Tool for drawing rasterized text on the canvas.
+ */
 public class TextTool extends PaintTool implements Observer {
 
     private final JTextArea textArea;

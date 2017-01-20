@@ -6,6 +6,9 @@ import com.defano.jmonet.tools.base.AbstractPathTool;
 import java.awt.*;
 import java.awt.geom.Path2D;
 
+/**
+ * Tool that erases pixels from the canvas by turning them back to fully transparent.
+ */
 public class EraserTool extends AbstractPathTool {
 
     private Path2D path;

@@ -3,6 +3,9 @@ package com.defano.jmonet.canvas.surface;
 
 import javax.swing.*;
 
+/**
+ * A scrollable paint surface.
+ */
 public abstract class AbstractScrollableSurface extends JScrollPane implements Scrollable {
 
     private PaintSurface surface;

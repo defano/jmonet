@@ -9,6 +9,9 @@ import com.defano.jmonet.tools.base.PaintTool;
 
 import java.awt.*;
 
+/**
+ * A utility for building paint tools.
+ */
 public class PaintToolBuilder {
 
     private final PaintToolType type;

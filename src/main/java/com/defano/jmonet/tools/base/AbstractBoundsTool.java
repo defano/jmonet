@@ -14,7 +14,6 @@ import java.awt.event.MouseEvent;
  *
  * When the shift key is held down the bounding box is constrained to a square whose height and width is equal to the
  * larger of the two dimensions defined by the mouse location.
- *
  */
 public abstract class AbstractBoundsTool extends PaintTool {
 

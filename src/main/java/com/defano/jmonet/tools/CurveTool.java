@@ -6,6 +6,9 @@ import com.defano.jmonet.tools.base.AbstractPolylineTool;
 import java.awt.*;
 import java.awt.geom.Path2D;
 
+/**
+ * A tool for drawing quadratic (Bezier) curves on the canvas.
+ */
 public class CurveTool extends AbstractPolylineTool {
 
     public CurveTool() {

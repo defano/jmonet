@@ -2,6 +2,9 @@ package com.defano.jmonet.canvas;
 
 import java.awt.image.BufferedImage;
 
+/**
+ * An object which listens to changes being committed to a canvas.
+ */
 public interface CanvasCommitObserver {
     /**
      * Fires when an new shape or image is committed from scratch onto the canvas.

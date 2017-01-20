@@ -2,6 +2,9 @@ package com.defano.jmonet.tools.util;
 
 import java.awt.*;
 
+/**
+ * A utility class with geometric and trigonometric routines used by various tools.
+ */
 public class Geometry {
 
     /**

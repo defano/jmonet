@@ -5,6 +5,9 @@ import com.defano.jmonet.tools.base.AbstractBoundsTool;
 
 import java.awt.*;
 
+/**
+ * Draws outlined or filled rectangles/squares on the canvas.
+ */
 public class RectangleTool extends AbstractBoundsTool {
 
     public RectangleTool() {

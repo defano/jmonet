@@ -17,9 +17,13 @@ import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+/**
+ * Mouse and keyboard handler for drawing selections (free-form or bounded) on the canvas.
+ */
 public abstract class AbstractSelectionTool extends PaintTool implements MarchingAntsObserver, StaticTransformer {
 
     private final Provider<BufferedImage> selectedImage = new Provider<>();
+
     private Point initialPoint, lastPoint;
     private Cursor movementCursor = Cursor.getDefaultCursor();
     private Cursor boundaryCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
@@ -30,18 +34,42 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
     /**
      * Reset the selection boundary to its initial, no-selection state. {@link #getSelectionOutline()} should return
-     * null following a selection reset, but prior to defining a new selection via {@link #defineSelectionBounds(Point, Point, boolean)}
+     * null following a selection reset, but prior to defining a new selection via {@link #addSelectionPoint(Point, Point, boolean)}
      */
     public abstract void resetSelection();
 
-    public abstract void setSelectionBounds(Rectangle bounds);
-
-    public abstract void defineSelectionBounds(Point initialPoint, Point currentPoint, boolean constrain);
-
-    public abstract void completeSelectionBounds(Point finalPoint);
-
+    /**
+     * Gets the shape of the current selection outline.
+     * @return The selection outline
+     */
     public abstract Shape getSelectionOutline();
 
+    /**
+     * Invoked to indicate the bounds of the selection has changed as the result of a static transformation being applied.
+     * @param bounds The new selection bounds.
+     */
+    public abstract void setSelectionBounds(Rectangle bounds);
+
+    /**
+     * Invoked to indicate that the user has defined a new point on the selection path.
+     * @param initialPoint The first point defined by the user (i.e., where the mouse was initially pressed)
+     * @param newPoint A new point to append to the selection path (i.e., where the mouse is now)
+     * @param isShiftKeyDown When true, indicates user is holding the shift key down
+     */
+    public abstract void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown);
+
+    /**
+     * Invoked to indicate that the given point should be considered the last point in the selection path.
+     * @param finalPoint The final point on the selection path.
+     */
+    public abstract void completeSelection(Point finalPoint);
+
+    /**
+     * Invoked to indicate that the selection has moved on the canvas. The selection shape's coordinates should be
+     * translated by the given amount.
+     * @param xDelta Number of pixels to move horizontally.
+     * @param yDelta Number of pixels to move vertically.
+     */
     public abstract void adjustSelectionBounds(int xDelta, int yDelta);
 
     public AbstractSelectionTool(PaintToolType type) {
@@ -91,7 +119,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
         // User is defining a new selection rectangle
         else {
-            defineSelectionBounds(initialPoint, Geometry.pointWithinBounds(imageLocation, getCanvas().getBounds()), e.isShiftDown());
+            addSelectionPoint(initialPoint, Geometry.pointWithinBounds(imageLocation, getCanvas().getBounds()), e.isShiftDown());
 
             getCanvas().clearScratch();
             drawSelectionOutline();
@@ -103,7 +131,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     public void mouseReleased(MouseEvent e, Point imageLocation) {
         // User released mouse after defining a selection
         if (!hasSelection() && hasSelectionBounds()) {
-            completeSelectionBounds(imageLocation);
+            completeSelection(imageLocation);
             getSelectionFromCanvas();
         }
     }
@@ -112,7 +140,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     public void activate(PaintCanvas canvas) {
         super.activate(canvas);
 
-        getCanvas().addObserver(this);
+        getCanvas().addCanvasCommitObserver(this);
         MarchingAnts.getInstance().addObserver(this);
     }
 
@@ -123,7 +151,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         // Need to remove selection frame when tool is no longer active
         finishSelection();
 
-        getCanvas().removeObserver(this);
+        getCanvas().removeCanvasCommitObserver(this);
         MarchingAnts.getInstance().removeObserver(this);
     }
 
@@ -369,8 +397,16 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         return subimage;
     }
 
+    /**
+     * Called when a change has been committed to the canvas.
+     *
+     * @param canvas
+     * @param committedElement
+     * @param canvasImage
+     */
     @Override
     public void onCommit(PaintCanvas canvas, BufferedImage committedElement, BufferedImage canvasImage) {
+        // Clear selection if user invokes undo/redo
         if (hasSelection() && committedElement == null) {
             clearSelection();
         }

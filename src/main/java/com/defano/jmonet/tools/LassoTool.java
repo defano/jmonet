@@ -7,6 +7,9 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 
+/**
+ * Selection tool allowing the user to draw a free-form selection path on the canvas.
+ */
 public class LassoTool extends AbstractSelectionTool {
 
     private Path2D selectionBounds;
@@ -26,17 +29,17 @@ public class LassoTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void defineSelectionBounds(Point initialPoint, Point currentPoint, boolean constrain) {
+    public void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         if (selectionBounds == null) {
             selectionBounds = new Path2D.Double();
             selectionBounds.moveTo(initialPoint.getX(), initialPoint.getY());
         }
 
-        selectionBounds.lineTo(currentPoint.x, currentPoint.y);
+        selectionBounds.lineTo(newPoint.x, newPoint.y);
     }
 
     @Override
-    public void completeSelectionBounds(Point finalPoint) {
+    public void completeSelection(Point finalPoint) {
         selectionBounds.closePath();
     }
 

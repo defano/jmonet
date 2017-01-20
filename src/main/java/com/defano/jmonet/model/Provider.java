@@ -3,6 +3,12 @@ package com.defano.jmonet.model;
 import java.util.Observable;
 import java.util.Observer;
 
+/**
+ * An extension to Java's {@link Observable} and {@link Observer} with features for chaining and transforming observed
+ * values.
+ *
+ * @param <T> The type of object being "provided"
+ */
 public class Provider<T> extends ImmutableProvider<T> implements Observer {
 
     private ProviderTransform transform;

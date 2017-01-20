@@ -8,6 +8,9 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+/**
+ * Tool that performs a flood-fill of all transparent pixels.
+ */
 public class FillTool extends PaintTool {
 
     public FillTool() {

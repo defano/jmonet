@@ -6,6 +6,9 @@ import com.defano.jmonet.model.Provider;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * A canvas that can be painted upon by the paint tools.
+ */
 public interface PaintCanvas extends ScalableScratchDrawable, Surface {
     void setVisible(boolean visible);
     boolean isVisible();
@@ -13,8 +16,8 @@ public interface PaintCanvas extends ScalableScratchDrawable, Surface {
     void setCursor(Cursor cursor);
     Cursor getCursor();
 
-    void addObserver(CanvasCommitObserver observer);
-    boolean removeObserver(CanvasCommitObserver observer);
+    void addCanvasCommitObserver(CanvasCommitObserver observer);
+    boolean removeCanvasCommitObserver(CanvasCommitObserver observer);
 
     void invalidateCanvas();
 

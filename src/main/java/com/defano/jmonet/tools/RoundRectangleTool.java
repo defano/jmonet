@@ -5,6 +5,9 @@ import com.defano.jmonet.tools.base.AbstractBoundsTool;
 
 import java.awt.*;
 
+/**
+ * Tool for drawing outlined or filled rounded-rectangles on the canvas.
+ */
 public class RoundRectangleTool extends AbstractBoundsTool {
 
     private int cornerRadius = 10;

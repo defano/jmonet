@@ -5,6 +5,9 @@ import com.defano.jmonet.tools.base.AbstractBoundsTool;
 
 import java.awt.*;
 
+/**
+ * Tool for drawing outlined or filled ovals/circles on the canvas.
+ */
 public class OvalTool extends AbstractBoundsTool {
 
     public OvalTool() {

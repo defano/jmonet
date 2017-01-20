@@ -3,6 +3,10 @@ package com.defano.jmonet.model;
 import java.awt.*;
 import java.awt.geom.GeneralPath;
 
+/**
+ * Models a four-sided shape with no restrictions on the relationship between those sides (in terms of length or
+ * parallelness).
+ */
 public class FlexQuadrilateral {
 
     private Point topLeft;
@@ -53,7 +57,6 @@ public class FlexQuadrilateral {
     public Point[] getCorners() {
         return new Point[] {getTopLeft(), getTopRight(), getBottomRight(), getBottomLeft()};
     }
-
 
     public Point getCenter() {
         return new Point(getShape().getBounds().width / 2, getShape().getBounds().height / 2);

@@ -8,6 +8,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
+/**
+ * A utility class providing various affine transform routines supported by the paint tools.
+ */
 public class Transform {
 
     public static BufferedImage slant(BufferedImage image, FlexQuadrilateral quadrilateral, int xTranslation) {

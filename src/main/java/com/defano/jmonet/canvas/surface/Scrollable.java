@@ -1,5 +1,8 @@
 package com.defano.jmonet.canvas.surface;
 
+/**
+ * An object which can be scrolled.
+ */
 public interface Scrollable {
 
     /**

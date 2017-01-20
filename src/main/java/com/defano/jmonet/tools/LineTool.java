@@ -5,6 +5,9 @@ import com.defano.jmonet.tools.base.AbstractLineTool;
 
 import java.awt.*;
 
+/**
+ * Tool that draws straight lines on the canvas.
+ */
 public class LineTool extends AbstractLineTool {
 
     public LineTool() {

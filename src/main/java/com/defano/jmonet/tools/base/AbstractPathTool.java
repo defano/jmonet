@@ -6,6 +6,9 @@ import com.defano.jmonet.model.PaintToolType;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
+/**
+ * Mouse and keyboard handler for tools that define a free-form path on the canvas by clicking and dragging.
+ */
 public abstract class AbstractPathTool extends PaintTool {
 
     private Cursor pathCursor = new Cursor(Cursor.MOVE_CURSOR);

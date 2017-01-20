@@ -7,6 +7,9 @@ import com.defano.jmonet.tools.util.Transform;
 
 import java.awt.*;
 
+/**
+ * Tool for drawing a rectangular selection boundary with drag-handles to shear/slant the image from the top or bottom.
+ */
 public class SlantTool extends AbstractTransformTool {
 
     public SlantTool() {

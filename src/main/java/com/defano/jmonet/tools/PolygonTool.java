@@ -5,6 +5,9 @@ import com.defano.jmonet.tools.base.AbstractPolylineTool;
 
 import java.awt.*;
 
+/**
+ * Tool to draw outlined or filled irregular polygons on the canvas.
+ */
 public class PolygonTool extends AbstractPolylineTool {
 
     public PolygonTool() {

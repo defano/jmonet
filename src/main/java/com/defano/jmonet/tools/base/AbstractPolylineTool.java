@@ -9,6 +9,11 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Mouse and keyboard handler for tools that define multiple segments/points along a path. Click to define a point,
+ * double-click to close/complete the shape. When the shift key is held down, line segments will be constrained to
+ * the nearest 15-degree angle.
+ */
 public abstract class AbstractPolylineTool extends PaintTool {
 
     private Cursor polyLineCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);

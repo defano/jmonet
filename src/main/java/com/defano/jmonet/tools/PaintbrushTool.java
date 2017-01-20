@@ -6,6 +6,9 @@ import com.defano.jmonet.tools.base.AbstractPathTool;
 import java.awt.*;
 import java.awt.geom.Path2D;
 
+/**
+ * Tool for drawing free-form, textured paths on the canvas.
+ */
 public class PaintbrushTool extends AbstractPathTool {
 
     private Path2D path;

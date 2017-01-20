@@ -1,5 +1,8 @@
 package com.defano.jmonet.model;
 
+/**
+ * An enumeration of paint tools.
+ */
 public enum PaintToolType {
     ARROW,
     PENCIL,

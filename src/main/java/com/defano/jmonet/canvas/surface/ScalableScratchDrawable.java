@@ -3,6 +3,9 @@ package com.defano.jmonet.canvas.surface;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * Models a drawable surface with two layers; a canvas, and a temporary "scratch" buffer that can be scaled.
+ */
 public interface ScalableScratchDrawable {
 
     /**

@@ -9,6 +9,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * A utility class for animating a dashed border stroke ("marching ants") commonly found in selection tools.
+ */
 public class MarchingAnts {
 
     private static MarchingAnts instance;

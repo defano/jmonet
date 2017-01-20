@@ -6,6 +6,9 @@ import com.defano.jmonet.tools.util.Geometry;
 
 import java.awt.*;
 
+/**
+ * A tool for drawing a rectangular selection on the canvas.
+ */
 public class SelectionTool extends AbstractSelectionTool {
 
     private Rectangle selectionBounds;
@@ -15,17 +18,17 @@ public class SelectionTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void defineSelectionBounds(Point initialPoint, Point currentPoint, boolean constrain) {
+    public void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         selectionBounds = new Rectangle(initialPoint);
-        selectionBounds.add(currentPoint);
+        selectionBounds.add(newPoint);
 
-        selectionBounds = constrain ?
-                Geometry.squareAtAnchor(initialPoint, currentPoint) :
-                Geometry.rectangleFromPoints(initialPoint, currentPoint);
+        selectionBounds = isShiftKeyDown ?
+                Geometry.squareAtAnchor(initialPoint, newPoint) :
+                Geometry.rectangleFromPoints(initialPoint, newPoint);
     }
 
     @Override
-    public void completeSelectionBounds(Point finalPoint) {
+    public void completeSelection(Point finalPoint) {
         // Nothing to do
     }
 

@@ -4,6 +4,9 @@ import java.awt.*;
 import java.util.Stack;
 import java.util.function.Predicate;
 
+/**
+ * A queue implementation of the flood-fill (seed fill) algorithm as used by {@link com.defano.jmonet.tools.FillTool}.
+ */
 public class FloodFill {
 
     public static void floodFill(int x, int y, Rectangle bounds, FillFunction fill, Predicate<Point> boundaryFunction) {

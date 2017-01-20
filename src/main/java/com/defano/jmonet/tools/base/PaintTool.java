@@ -11,6 +11,10 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+/**
+ * A base tool class holding common attribute providers (like stroke, fill and font), plus empty, template methods for
+ * keyboard and mouse events.
+ */
 public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCommitObserver {
 
     private PaintCanvas canvas;

@@ -6,6 +6,10 @@ import com.defano.jmonet.tools.util.Geometry;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
+/**
+ * Mouse and keyboard handler for tools defining a line drawn between two points. When the shift key is held down, the
+ * defined line is constrained to the nearest 15 degree angle.
+ */
 public abstract class AbstractLineTool extends PaintTool {
 
     private int snapToDegrees = 15;
