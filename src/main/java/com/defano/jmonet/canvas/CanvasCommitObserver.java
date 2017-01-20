@@ -10,5 +10,5 @@ public interface CanvasCommitObserver {
      * @param committedElement An image representing just the change being committed.
      * @param canvasImage The resulting canvas image (including the committed change)
      */
-    void onCommit(Canvas canvas, BufferedImage committedElement, BufferedImage canvasImage);
+    void onCommit(PaintCanvas canvas, BufferedImage committedElement, BufferedImage canvasImage);
 }

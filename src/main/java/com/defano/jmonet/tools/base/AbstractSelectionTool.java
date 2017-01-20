@@ -1,5 +1,7 @@
 package com.defano.jmonet.tools.base;
 
+import com.defano.jmonet.canvas.ChangeSet;
+import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.model.Provider;
@@ -17,10 +19,11 @@ import java.awt.image.BufferedImage;
 
 public abstract class AbstractSelectionTool extends PaintTool implements MarchingAntsObserver, StaticTransformer {
 
-    private Provider<BufferedImage> selectedImage = new Provider<>();
+    private final Provider<BufferedImage> selectedImage = new Provider<>();
     private Point initialPoint, lastPoint;
     private Cursor movementCursor = Cursor.getDefaultCursor();
     private Cursor boundaryCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
+    private ChangeSet selectionChange;
 
     private boolean isMovingSelection = false;
     private boolean dirty = false;
@@ -106,7 +109,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     }
 
     @Override
-    public void activate(com.defano.jmonet.canvas.Canvas canvas) {
+    public void activate(PaintCanvas canvas) {
         super.activate(canvas);
 
         getCanvas().addObserver(this);
@@ -252,7 +255,8 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         scratch.fill(getSelectionOutline());
         scratch.dispose();
 
-        getCanvas().commit(AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
+        selectionChange = new ChangeSet(getCanvas().getScratchImage(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
+        getCanvas().commit(selectionChange);
         drawSelection();
     }
 
@@ -269,7 +273,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
             g2d.drawImage(selectedImage.get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
             g2d.dispose();
 
-            getCanvas().commit();
+            selectionChange.addChange(getCanvas().getScratchImage(), AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             clearSelection();
         }
     }
@@ -366,7 +370,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     }
 
     @Override
-    public void onCommit(com.defano.jmonet.canvas.Canvas canvas, BufferedImage committedElement, BufferedImage canvasImage) {
+    public void onCommit(PaintCanvas canvas, BufferedImage committedElement, BufferedImage canvasImage) {
         if (hasSelection() && committedElement == null) {
             clearSelection();
         }

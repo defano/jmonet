@@ -1,5 +1,6 @@
 package com.defano.jmonet.tools.base;
 
+import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.model.PaintToolType;
 
 import java.awt.*;
@@ -37,7 +38,7 @@ public abstract class AbstractPathTool extends PaintTool {
 
     @Override
     public void mouseReleased(MouseEvent e, Point imageLocation) {
-        getCanvas().commit(getComposite());
+        getCanvas().commit(new ChangeSet(getCanvas().getScratchImage(), getComposite()));
     }
 
     public Cursor getPathCursor() {

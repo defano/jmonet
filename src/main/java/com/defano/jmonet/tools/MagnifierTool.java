@@ -1,6 +1,7 @@
 package com.defano.jmonet.tools;
 
 
+import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PaintTool;
 
@@ -13,7 +14,7 @@ public class MagnifierTool extends PaintTool {
     private Cursor zoomInCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
     private Cursor zoomOutCursor = new Cursor(Cursor.DEFAULT_CURSOR);
     private double scale = 1.0;
-    private double magnificationStep = 2;
+    private final double magnificationStep = 2;
 
     public MagnifierTool() {
         super(PaintToolType.MAGNIFIER);
@@ -54,7 +55,7 @@ public class MagnifierTool extends PaintTool {
     }
 
     @Override
-    public void activate(com.defano.jmonet.canvas.Canvas canvas) {
+    public void activate(PaintCanvas canvas) {
         super.activate(canvas);
         this.scale = canvas.getScaleProvider().get();
     }

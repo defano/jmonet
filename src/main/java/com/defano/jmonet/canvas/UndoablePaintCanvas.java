@@ -8,29 +8,29 @@ import java.util.List;
 /**
  * A paint tools canvas with a built-in undo and redo buffer.
  */
-public class UndoableCanvas extends BasicCanvas {
+public class UndoablePaintCanvas extends BasicPaintCanvas {
 
     // TODO: Add constructor arg to set this value
     private final int maxUndoBufferDepth = 20;
 
     private int undoBufferPointer = -1;                     // An internal index into the list of changes; moves left and right to denote undo/redo
     private BufferedImage permanent;                        // Image elements that are no longer undoable; null until the undo depth has been exceeded.
-    private List<Commit> undoBuffer = new ArrayList<>();    // List of changes as they're committed from the scratch buffer; lower indices are older; higher indices are newer
+    private List<ChangeSet> undoBuffer = new ArrayList<>(); // List of changes as they're committed from the scratch buffer; lower indices are older; higher indices are newer
 
     /**
-     * Creates a new Canvas with a blank (transparent) initial image displayed in it.
+     * Creates a new PaintCanvas with a blank (transparent) initial image displayed in it.
      */
-    public UndoableCanvas() {
+    public UndoablePaintCanvas() {
         super();
     }
 
     /**
-     * Creates a new Canvas with a given image initially displayed in it.
+     * Creates a new PaintCanvas with a given image initially displayed in it.
      * @param initialImage The image to be displayed in the canvas.
      */
-    public UndoableCanvas(BufferedImage initialImage) {
+    public UndoablePaintCanvas(BufferedImage initialImage) {
         super();
-        makePermanent(new Commit(initialImage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f)));
+        makePermanent(new ChangeSet(initialImage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f)));
     }
 
     /**
@@ -87,7 +87,7 @@ public class UndoableCanvas extends BasicCanvas {
 
     /**
      * Gets the maximum depth of the undo buffer.
-     * @return The maximum number of undos that are supported by this Canvas.
+     * @return The maximum number of undos that are supported by this PaintCanvas.
      */
     public int getMaxUndoBufferDepth() {
         return maxUndoBufferDepth;
@@ -95,14 +95,14 @@ public class UndoableCanvas extends BasicCanvas {
 
     @Override
     public void commit() {
-        commit(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+        commit(new ChangeSet(getScratchImage(), AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f)));
     }
 
     /**
      * Commits the contents of the scratch buffer to the canvas.
      */
     @Override
-    public void commit(AlphaComposite composite) {
+    public void commit(ChangeSet changeSet) {
 
         // Get the change to be committed
         BufferedImage scratch = getScratchImage();
@@ -111,7 +111,7 @@ public class UndoableCanvas extends BasicCanvas {
         undoBuffer = undoBuffer.subList(0, undoBufferPointer + 1);
 
         // Add the change to the redo buffer
-        undoBuffer.add(new Commit(scratch, composite));
+        undoBuffer.add(changeSet);
 
         // If we've exceeded the max undo size, trim the buffer and write the evicted image element to the base canvas
         if (undoBuffer.size() > maxUndoBufferDepth) {
@@ -136,12 +136,12 @@ public class UndoableCanvas extends BasicCanvas {
      * drawn atop the permanent image.
      *
      */
-    private void makePermanent(Commit commit) {
+    private void makePermanent(ChangeSet changeSet) {
         if (permanent == null) {
-            permanent = commit.image;
-        } else {
-            overlayImage(commit.image, permanent, commit.composite);
+            permanent = new BufferedImage(changeSet.getImage(0).getWidth(), changeSet.getImage(0).getHeight(), BufferedImage.TYPE_INT_ARGB);
         }
+
+        overlayChangset(changeSet, permanent);
     }
 
     /**
@@ -159,19 +159,9 @@ public class UndoableCanvas extends BasicCanvas {
         }
 
         for (int index = 0; index <= undoBufferPointer; index++) {
-            overlayImage(undoBuffer.get(index).image, visibleImage, undoBuffer.get(index).composite);
+            overlayChangset(undoBuffer.get(index), visibleImage);
         }
 
         return visibleImage;
-    }
-
-    private static class Commit {
-        private final AlphaComposite composite;
-        private final BufferedImage image;
-
-        private Commit(BufferedImage image, AlphaComposite composite) {
-            this.composite = composite;
-            this.image =image;
-        }
     }
 }

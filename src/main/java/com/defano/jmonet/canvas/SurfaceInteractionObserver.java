@@ -3,7 +3,11 @@ package com.defano.jmonet.canvas;
 import java.awt.*;
 import java.awt.event.*;
 
-public interface CanvasInteractionObserver extends KeyListener {
+/**
+ * An observer of mouse and keyboard events taking place on a {@link com.defano.jmonet.canvas.surface.ScalableScratchDrawable}.
+ * Converts mouse events to the coordinate space of the image represented by the ScalableScratchDrawable.
+ */
+public interface SurfaceInteractionObserver extends KeyListener {
 
     /**
      * Invoked when the mouse button has been clicked (pressed

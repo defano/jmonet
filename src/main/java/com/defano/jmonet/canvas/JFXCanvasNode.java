@@ -5,14 +5,14 @@ import javafx.embed.swing.SwingNode;
 
 public class JFXCanvasNode extends SwingNode {
 
-    private final BasicCanvas canvas;
+    private final BasicPaintCanvas canvas;
 
-    public JFXCanvasNode(BasicCanvas canvas) {
+    public JFXCanvasNode(BasicPaintCanvas canvas) {
         this.canvas = canvas;
         Platform.runLater(() -> JFXCanvasNode.super.setContent(canvas));
     }
 
-    public Canvas getCanvas() {
+    public PaintCanvas getCanvas() {
         return canvas;
     }
 

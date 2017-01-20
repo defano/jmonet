@@ -14,9 +14,9 @@ public class MarchingAnts {
     private static MarchingAnts instance;
 
     private int antsPhase;
-    private ScheduledExecutorService antsAnimator = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService antsAnimator = Executors.newSingleThreadScheduledExecutor();
     private Future antsAnimation;
-    private Set<MarchingAntsObserver> observers = new HashSet<>();
+    private final Set<MarchingAntsObserver> observers = new HashSet<>();
 
     private MarchingAnts() {
         startMarching();

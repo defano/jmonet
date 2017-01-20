@@ -1,5 +1,6 @@
 package com.defano.jmonet.tools.builder;
 
+import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.*;
 import com.defano.jmonet.canvas.JFXCanvasNode;
@@ -12,7 +13,7 @@ public class PaintToolBuilder {
 
     private final PaintToolType type;
 
-    private com.defano.jmonet.canvas.Canvas canvas;
+    private PaintCanvas canvas;
     private Provider<Stroke> strokeProvider;
     private Provider<Paint> strokePaintProvider;
     private Provider<Paint> fillPaintProvider;
@@ -32,7 +33,7 @@ public class PaintToolBuilder {
         return this;
     }
 
-    public PaintToolBuilder makeActiveOnCanvas(com.defano.jmonet.canvas.Canvas canvas) {
+    public PaintToolBuilder makeActiveOnCanvas(PaintCanvas canvas) {
         this.canvas = canvas;
         return this;
     }

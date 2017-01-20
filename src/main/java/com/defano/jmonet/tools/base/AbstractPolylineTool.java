@@ -13,7 +13,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
 
     private Cursor polyLineCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
     private int snapToDegrees = 15;
-    private List<Point> points = new ArrayList<>();
+    private final List<Point> points = new ArrayList<>();
     private Point currentPoint = null;
 
     protected abstract void drawPolyline(Graphics2D g, Stroke stroke, Paint paint, int[] xPoints, int[] yPoints);

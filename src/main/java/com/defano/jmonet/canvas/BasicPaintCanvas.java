@@ -11,22 +11,22 @@ import java.awt.event.ComponentEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-public class BasicCanvas extends AbstractScrollableSurface implements Canvas {
+public class BasicPaintCanvas extends AbstractScrollableSurface implements PaintCanvas {
 
-    private PaintSurface surface = new PaintSurface();
+    private final PaintSurface surface = new PaintSurface();
 
-    private java.util.List<CanvasCommitObserver> observers = new ArrayList<>();
-    private Provider<Double> scale = new Provider<>(1.0);
-    private Provider<Integer> gridSpacing = new Provider<>(1);
+    private final java.util.List<CanvasCommitObserver> observers = new ArrayList<>();
+    private final Provider<Double> scale = new Provider<>(1.0);
+    private final Provider<Integer> gridSpacing = new Provider<>(1);
 
     private BufferedImage image;
     private BufferedImage scratch;
 
-    public BasicCanvas() {
+    public BasicPaintCanvas() {
         this(null);
     }
 
-    public BasicCanvas(BufferedImage initialImage) {
+    public BasicPaintCanvas(BufferedImage initialImage) {
         this.surface.setDrawable(this);
         setSurface(surface);
 
@@ -80,13 +80,24 @@ public class BasicCanvas extends AbstractScrollableSurface implements Canvas {
         Graphics2D g2 = (Graphics2D) getScratchImage().getGraphics();
         g2.setColor(Color.WHITE);
         g2.fillRect(0, 0, getWidth(), getHeight());
-        commit(AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
+        commit(new ChangeSet(getScratchImage(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f)));
     }
 
     protected void overlayImage(BufferedImage source, BufferedImage destination, AlphaComposite composite) {
         Graphics2D g2d = (Graphics2D) destination.getGraphics();
         g2d.setComposite(composite);
         g2d.drawImage(source, 0, 0, null);
+        g2d.dispose();
+    }
+
+    protected void overlayChangset(ChangeSet changeSet, BufferedImage destination) {
+        Graphics2D g2d = (Graphics2D) destination.getGraphics();
+
+        for (int index = 0; index < changeSet.size(); index++) {
+            g2d.setComposite(changeSet.getComposite(index));
+            g2d.drawImage(changeSet.getImage(index), 0, 0, null);
+        }
+
         g2d.dispose();
     }
 
@@ -130,18 +141,19 @@ public class BasicCanvas extends AbstractScrollableSurface implements Canvas {
     }
 
     public void commit() {
-        commit(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+        commit(new ChangeSet(getScratchImage(), AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f)));
     }
 
     /**
-     * Copies the image contents of the scratch buffer to the Canvas' image.
+     * Copies the image contents of the scratch buffer to the PaintCanvas' image.
      */
-    public void commit(AlphaComposite composite) {
-        BufferedImage scratchImage = getScratchImage();
+    public void commit(ChangeSet changeSet) {
         BufferedImage canvasImage = getCanvasImage();
 
-        overlayImage(scratchImage, canvasImage, composite);
-        fireObservers(this, scratchImage, canvasImage);
+        for (int index = 0; index < changeSet.size(); index++) {
+            overlayImage(changeSet.getImage(index), canvasImage, changeSet.getComposite(index));
+            fireObservers(this, changeSet.getImage(index), canvasImage);
+        }
 
         clearScratch();
         invalidateCanvas();
@@ -158,13 +170,13 @@ public class BasicCanvas extends AbstractScrollableSurface implements Canvas {
     }
 
     @Override
-    public void addCanvasInteractionListener(CanvasInteractionObserver listener) {
-        surface.addCanvasInteractionListener(listener);
+    public void addSurfaceInteractionObserver(SurfaceInteractionObserver listener) {
+        surface.addSurfaceInteractionObserver(listener);
     }
 
     @Override
-    public boolean removeCanvasInteractionListener(CanvasInteractionObserver listener) {
-        return surface.removeCanvasInteractionListener(listener);
+    public boolean removeSurfaceInteractionObserver(SurfaceInteractionObserver listener) {
+        return surface.removeSurfaceInteractionObserver(listener);
     }
 
     /**
@@ -223,7 +235,7 @@ public class BasicCanvas extends AbstractScrollableSurface implements Canvas {
         return observers.remove(observer);
     }
 
-    protected void fireObservers(com.defano.jmonet.canvas.Canvas canvas, BufferedImage committedImage, BufferedImage canvasImage) {
+    protected void fireObservers(PaintCanvas canvas, BufferedImage committedImage, BufferedImage canvasImage) {
         for (CanvasCommitObserver thisObserver : observers) {
             thisObserver.onCommit(canvas, committedImage, canvasImage);
         }

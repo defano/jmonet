@@ -1,6 +1,7 @@
 package com.defano.jmonet.tools;
 
 
+import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PaintTool;
 
@@ -39,7 +40,7 @@ public class TextTool extends PaintTool implements Observer {
     }
 
     @Override
-    public void activate(com.defano.jmonet.canvas.Canvas canvas) {
+    public void activate(PaintCanvas canvas) {
         super.activate(canvas);
         getFontProvider().addObserver(this);
     }
@@ -60,6 +61,7 @@ public class TextTool extends PaintTool implements Observer {
     }
 
     private void removeTextArea() {
+        textArea.setVisible(false);     // Weird. Seems required to prevent component from stealing key events (even when removed from the panel)
         getCanvas().removeComponent(textArea);
     }
 
@@ -67,8 +69,9 @@ public class TextTool extends PaintTool implements Observer {
         int left = getCanvas().getBounds().x + x;
         int top = getCanvas().getBounds().y + y;
 
+        textArea.setVisible(true);
         textArea.setText("");
-        textArea.setBounds(left, top, (int)(getCanvas().getWidth() * getCanvas().getScale()) - left, (int)(getCanvas().getHeight() * getCanvas().getScale()) - top);
+        textArea.setBounds(left, top, (int)(getCanvas().getBounds().getWidth() * getCanvas().getScale()) - left, (int)(getCanvas().getBounds().getHeight() * getCanvas().getScale()) - top);
         textArea.setFont(getScaledFont());
         textArea.addMouseListener(new MouseAdapter() {
             @Override

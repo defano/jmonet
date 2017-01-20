@@ -3,10 +3,15 @@ package com.defano.jmonet.canvas.surface;
 
 import javax.swing.*;
 
-public abstract class AbstractScrollableSurface extends JScrollPane implements ScrollableSurface {
+public abstract class AbstractScrollableSurface extends JScrollPane implements Scrollable {
 
     private PaintSurface surface;
     private double scrollPercentX, scrollPercentY = 0;
+
+    public AbstractScrollableSurface() {
+        setOpaque(false);
+        getViewport().setOpaque(false);
+    }
 
     protected void setSurface(PaintSurface surface) {
         this.surface = surface;
@@ -47,7 +52,7 @@ public abstract class AbstractScrollableSurface extends JScrollPane implements S
     }
 
     /**
-     * Causes the Swing framework to redraw/refresh the Canvas by calling repaint on the Canvas's parent component.
+     * Causes the Swing framework to redraw/refresh the PaintCanvas by calling repaint on the PaintCanvas's parent component.
      */
     public void invalidateCanvas() {
         if (getParent() != null) {

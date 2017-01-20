@@ -1,8 +1,9 @@
 package com.defano.jmonet.tools.base;
 
+import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.model.Provider;
-import com.defano.jmonet.canvas.CanvasInteractionObserver;
+import com.defano.jmonet.canvas.SurfaceInteractionObserver;
 import com.defano.jmonet.canvas.CanvasCommitObserver;
 
 import java.awt.*;
@@ -10,9 +11,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-public abstract class PaintTool implements CanvasInteractionObserver, CanvasCommitObserver {
+public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCommitObserver {
 
-    private com.defano.jmonet.canvas.Canvas canvas;
+    private PaintCanvas canvas;
     private final PaintToolType type;
     private AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
 
@@ -28,21 +29,21 @@ public abstract class PaintTool implements CanvasInteractionObserver, CanvasComm
         this.type = type;
     }
 
-    public void activate (com.defano.jmonet.canvas.Canvas canvas) {
+    public void activate (PaintCanvas canvas) {
         this.canvas = canvas;
-        this.canvas.addCanvasInteractionListener(this);
+        this.canvas.addSurfaceInteractionObserver(this);
         this.canvas.setCursor(toolCursor);
     }
 
     public void deactivate() {
         if (canvas != null) {
-            canvas.removeCanvasInteractionListener(this);
+            canvas.removeSurfaceInteractionObserver(this);
             canvas.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
     }
 
     @Override
-    public void onCommit(com.defano.jmonet.canvas.Canvas canvas, BufferedImage committedElement, BufferedImage canvasImage) {
+    public void onCommit(PaintCanvas canvas, BufferedImage committedElement, BufferedImage canvasImage) {
         // Nothing to do
     }
 
@@ -58,7 +59,7 @@ public abstract class PaintTool implements CanvasInteractionObserver, CanvasComm
         return this.type;
     }
 
-    protected com.defano.jmonet.canvas.Canvas getCanvas() {
+    protected PaintCanvas getCanvas() {
         return canvas;
     }
 

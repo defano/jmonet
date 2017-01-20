@@ -14,7 +14,7 @@ public class ImmutableProvider<T> extends Observable implements Observer {
     protected T value;
 
     private ImmutableProvider source;
-    private ProviderTransform transform;
+    private final ProviderTransform transform;
 
     public ImmutableProvider() {
         source = null;

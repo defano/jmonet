@@ -1,6 +1,6 @@
 package com.defano.jmonet.canvas.surface;
 
-public interface ScrollableSurface {
+public interface Scrollable {
 
     /**
      * Scrolls the canvas so that the center of the viewport is displayed at the specified, relative, offset.
