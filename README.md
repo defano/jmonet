@@ -2,9 +2,19 @@
 
 A rudimentary toolkit for incorporating [MacPaint](https://en.wikipedia.org/wiki/MacPaint) / [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint)-like tools into a Java Swing or JavaFX application.
 
-Javadocs [are published here](https://defano.github.io/jmonet/docs/).
+Javadocs [are available here](https://defano.github.io/jmonet/docs/).
 
 ## Features
+
+* Offers a standard suite of paint tools with common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
+* Canvas supports undo and redo
+* Affine transform tools including flip, quadrant rotate, free-rotate, and shear.
+* Images are scalable within a scrollable pane and tools can be snapped to a grid.
+* Lightweight library integrates easily into Swing and JavaFX applications requiring no additional transitive dependencies.
+
+## Paint Tools
+
+JMonet provides the following standard paint tools.
 
 Icon | Tool            | Description
 -----|-----------------|--------------
