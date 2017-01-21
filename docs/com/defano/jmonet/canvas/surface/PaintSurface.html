@@ -111,7 +111,7 @@ var activeTableTab = "activeTableTab";
 <li>javax.swing.JPanel</li>
 <li>
 <ul class="inheritance">
-<li>com.defano.jmonet.canvas.surface.PaintSurface</li>
+<li>com.defano.jmonet.canvas.surface.PaintableSurface</li>
 </ul>
 </li>
 </ul>
@@ -137,7 +137,7 @@ extends javax.swing.JPanel
 implements <a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html" title="interface in com.defano.jmonet.canvas.surface">Surface</a>, java.awt.event.KeyListener, java.awt.event.MouseListener, java.awt.event.MouseMotionListener</pre>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../../serialized-form.html#com.defano.jmonet.canvas.surface.PaintSurface">Serialized Form</a></dd>
+<dd><a href="../../../../../serialized-form.html#com.defano.jmonet.canvas.surface.PaintableSurface">Serialized Form</a></dd>
 </dl>
 </li>
 </ul>
@@ -247,7 +247,7 @@ implements <a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/defano/jmonet/canvas/surface/PaintSurface.html#addSurfaceInteractionObserver-com.defano.jmonet.canvas.SurfaceInteractionObserver-">addSurfaceInteractionObserver</a></span>(<a href="../../../../../com/defano/jmonet/canvas/SurfaceInteractionObserver.html" title="interface in com.defano.jmonet.canvas">SurfaceInteractionObserver</a>&nbsp;listener)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/defano/jmonet/canvas/surface/PaintSurface.html#addSurfaceInteractionObserver-com.defano.jmonet.canvas.observable.SurfaceInteractionObserver-">addSurfaceInteractionObserver</a></span>(<a href="../../../../../com/defano/jmonet/canvas/SurfaceInteractionObserver.html" title="interface in com.defano.jmonet.canvas">SurfaceInteractionObserver</a>&nbsp;listener)</code>
 <div class="block">Adds an observer to mouse and keyboard events taking place within this surface.</div>
 </td>
 </tr>
@@ -307,13 +307,13 @@ implements <a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html
 </tr>
 <tr id="i15" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/defano/jmonet/canvas/surface/PaintSurface.html#removeSurfaceInteractionObserver-com.defano.jmonet.canvas.SurfaceInteractionObserver-">removeSurfaceInteractionObserver</a></span>(<a href="../../../../../com/defano/jmonet/canvas/SurfaceInteractionObserver.html" title="interface in com.defano.jmonet.canvas">SurfaceInteractionObserver</a>&nbsp;listener)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/defano/jmonet/canvas/surface/PaintSurface.html#removeSurfaceInteractionObserver-com.defano.jmonet.canvas.observable.SurfaceInteractionObserver-">removeSurfaceInteractionObserver</a></span>(<a href="../../../../../com/defano/jmonet/canvas/SurfaceInteractionObserver.html" title="interface in com.defano.jmonet.canvas">SurfaceInteractionObserver</a>&nbsp;listener)</code>
 <div class="block">Removes an observer that was previously listening for UI events.</div>
 </td>
 </tr>
 <tr id="i16" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/defano/jmonet/canvas/surface/PaintSurface.html#setDrawable-com.defano.jmonet.canvas.surface.ScalableScratchDrawable-">setDrawable</a></span>(<a href="../../../../../com/defano/jmonet/canvas/surface/ScalableScratchDrawable.html" title="interface in com.defano.jmonet.canvas.surface">ScalableScratchDrawable</a>&nbsp;drawable)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/defano/jmonet/canvas/surface/PaintSurface.html#setDrawable-com.defano.jmonet.canvas.surface.ScalableLayeredPainting-">setDrawable</a></span>(<a href="../../../../../com/defano/jmonet/canvas/surface/ScalableScratchDrawable.html" title="interface in com.defano.jmonet.canvas.surface">ScalableScratchDrawable</a>&nbsp;painting)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -388,7 +388,7 @@ implements <a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html
 <ul class="blockList">
 <li class="blockList">
 <h4>setDrawable</h4>
-<pre>public&nbsp;void&nbsp;setDrawable(<a href="../../../../../com/defano/jmonet/canvas/surface/ScalableScratchDrawable.html" title="interface in com.defano.jmonet.canvas.surface">ScalableScratchDrawable</a>&nbsp;drawable)</pre>
+<pre>public&nbsp;void&nbsp;setDrawable(<a href="../../../../../com/defano/jmonet/canvas/surface/ScalableScratchDrawable.html" title="interface in com.defano.jmonet.canvas.surface">ScalableScratchDrawable</a>&nbsp;painting)</pre>
 </li>
 </ul>
 <a name="getDrawable--">
@@ -452,11 +452,11 @@ implements <a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html
 <li class="blockList">
 <h4>addSurfaceInteractionObserver</h4>
 <pre>public&nbsp;void&nbsp;addSurfaceInteractionObserver(<a href="../../../../../com/defano/jmonet/canvas/SurfaceInteractionObserver.html" title="interface in com.defano.jmonet.canvas">SurfaceInteractionObserver</a>&nbsp;listener)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html#addSurfaceInteractionObserver-com.defano.jmonet.canvas.SurfaceInteractionObserver-">Surface</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html#addSurfaceInteractionObserver-com.defano.jmonet.canvas.observable.SurfaceInteractionObserver-">Surface</a></code></span></div>
 <div class="block">Adds an observer to mouse and keyboard events taking place within this surface.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html#addSurfaceInteractionObserver-com.defano.jmonet.canvas.SurfaceInteractionObserver-">addSurfaceInteractionObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html" title="interface in com.defano.jmonet.canvas.surface">Surface</a></code></dd>
+<dd><code><a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html#addSurfaceInteractionObserver-com.defano.jmonet.canvas.observable.SurfaceInteractionObserver-">addSurfaceInteractionObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html" title="interface in com.defano.jmonet.canvas.surface">Surface</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>listener</code> - The observer to add</dd>
 </dl>
@@ -469,11 +469,11 @@ implements <a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html
 <li class="blockList">
 <h4>removeSurfaceInteractionObserver</h4>
 <pre>public&nbsp;boolean&nbsp;removeSurfaceInteractionObserver(<a href="../../../../../com/defano/jmonet/canvas/SurfaceInteractionObserver.html" title="interface in com.defano.jmonet.canvas">SurfaceInteractionObserver</a>&nbsp;listener)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html#removeSurfaceInteractionObserver-com.defano.jmonet.canvas.SurfaceInteractionObserver-">Surface</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html#removeSurfaceInteractionObserver-com.defano.jmonet.canvas.observable.SurfaceInteractionObserver-">Surface</a></code></span></div>
 <div class="block">Removes an observer that was previously listening for UI events.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html#removeSurfaceInteractionObserver-com.defano.jmonet.canvas.SurfaceInteractionObserver-">removeSurfaceInteractionObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html" title="interface in com.defano.jmonet.canvas.surface">Surface</a></code></dd>
+<dd><code><a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html#removeSurfaceInteractionObserver-com.defano.jmonet.canvas.observable.SurfaceInteractionObserver-">removeSurfaceInteractionObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../com/defano/jmonet/canvas/surface/Surface.html" title="interface in com.defano.jmonet.canvas.surface">Surface</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>listener</code> - The observer to be removed</dd>
 <dt><span class="returnLabel">Returns:</span></dt>

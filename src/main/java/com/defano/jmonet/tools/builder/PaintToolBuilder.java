@@ -1,9 +1,9 @@
 package com.defano.jmonet.tools.builder;
 
+import com.defano.jmonet.canvas.JFXPaintCanvasNode;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.*;
-import com.defano.jmonet.canvas.JFXCanvasNode;
 import com.defano.jmonet.model.Provider;
 import com.defano.jmonet.tools.base.PaintTool;
 
@@ -31,8 +31,8 @@ public class PaintToolBuilder {
         return new PaintToolBuilder(toolType);
     }
 
-    public PaintToolBuilder makeActiveOnCanvas(JFXCanvasNode jfxCanvasNode) {
-        this.canvas = jfxCanvasNode.getCanvas();
+    public PaintToolBuilder makeActiveOnCanvas(JFXPaintCanvasNode jfxPaintCanvasNode) {
+        this.canvas = jfxPaintCanvasNode.getCanvas();
         return this;
     }
 

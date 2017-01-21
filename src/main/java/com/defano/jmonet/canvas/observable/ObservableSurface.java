@@ -1,6 +1,4 @@
-package com.defano.jmonet.canvas.surface;
-
-import com.defano.jmonet.canvas.SurfaceInteractionObserver;
+package com.defano.jmonet.canvas.observable;
 
 import java.awt.*;
 
@@ -10,18 +8,7 @@ import java.awt.*;
  *
  * A surface has no layout manager, so elements added to are displayed in a fixed location based on their bounds.
  */
-public interface Surface {
-    /**
-     * Adds a component to the surface.
-     * @param component The component to be added.
-     */
-    void addComponent(Component component);
-
-    /**
-     * Removes a component from the surface; has no effect if the given component is not a child of this surface.
-     * @param component
-     */
-    void removeComponent(Component component);
+public interface ObservableSurface {
 
     /**
      * Adds an observer to mouse and keyboard events taking place within this surface.

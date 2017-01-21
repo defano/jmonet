@@ -18,7 +18,7 @@ public class FillTool extends PaintTool {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e, Point imageLocation) {
+    public void mousePressed(MouseEvent e, Point imageLocation) {
 
         BufferedImage canvasImage = getCanvas().getCanvasImage();
         Rectangle canvasBounds = getCanvas().getBounds();

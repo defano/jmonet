@@ -109,7 +109,7 @@ var activeTableTab = "activeTableTab";
 <hr>
 <br>
 <pre>public interface <span class="typeNameLabel">ScalableScratchDrawable</span></pre>
-<div class="block">Models a drawable surface with two layers; a canvas, and a temporary "scratch" buffer that can be scaled.</div>
+<div class="block">Models a painting surface with two layers; a canvas, and a temporary "scratch" buffer that can be scaled.</div>
 </li>
 </ul>
 </div>
@@ -135,7 +135,7 @@ var activeTableTab = "activeTableTab";
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>java.awt.image.BufferedImage</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/defano/jmonet/canvas/surface/ScalableScratchDrawable.html#getCanvasImage--">getCanvasImage</a></span>()</code>
-<div class="block">Gets the image represented by this drawable; not including any ephemeral changes made to the scratch image.</div>
+<div class="block">Gets the image represented by this painting; not including any ephemeral changes made to the scratch image.</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
@@ -147,7 +147,7 @@ var activeTableTab = "activeTableTab";
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>java.awt.image.BufferedImage</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/defano/jmonet/canvas/surface/ScalableScratchDrawable.html#getScratchImage--">getScratchImage</a></span>()</code>
-<div class="block">Gets the "scratch" image associated with this drawable.</div>
+<div class="block">Gets the "scratch" image associated with this painting.</div>
 </td>
 </tr>
 </table>
@@ -172,7 +172,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>getScratchImage</h4>
 <pre>java.awt.image.BufferedImage&nbsp;getScratchImage()</pre>
-<div class="block">Gets the "scratch" image associated with this drawable. The "scratch" image is a temporary buffer allowing
+<div class="block">Gets the "scratch" image associated with this painting. The "scratch" image is a temporary buffer allowing
  tools to draw on the canvas in a way that doesn't affect the underlying graphic.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -187,7 +187,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>getCanvasImage</h4>
 <pre>java.awt.image.BufferedImage&nbsp;getCanvasImage()</pre>
-<div class="block">Gets the image represented by this drawable; not including any ephemeral changes made to the scratch image.</div>
+<div class="block">Gets the image represented by this painting; not including any ephemeral changes made to the scratch image.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>The canvas image.</dd>

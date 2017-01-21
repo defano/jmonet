@@ -1,10 +1,11 @@
 package com.defano.jmonet.tools.base;
 
+import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.model.Provider;
-import com.defano.jmonet.canvas.SurfaceInteractionObserver;
-import com.defano.jmonet.canvas.CanvasCommitObserver;
+import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
+import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -47,7 +48,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     }
 
     @Override
-    public void onCommit(PaintCanvas canvas, BufferedImage committedElement, BufferedImage canvasImage) {
+    public void onCommit(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage) {
         // Nothing to do
     }
 

@@ -1,4 +1,7 @@
-package com.defano.jmonet.canvas;
+package com.defano.jmonet.canvas.observable;
+
+import com.defano.jmonet.canvas.ChangeSet;
+import com.defano.jmonet.canvas.PaintCanvas;
 
 import java.awt.image.BufferedImage;
 
@@ -10,8 +13,8 @@ public interface CanvasCommitObserver {
      * Fires when an new shape or image is committed from scratch onto the canvas.
      *
      * @param canvas The canvas on which the commit is occurring.
-     * @param committedElement An image representing just the change being committed.
+     * @param changeSet The set of changes being committed.
      * @param canvasImage The resulting canvas image (including the committed change)
      */
-    void onCommit(PaintCanvas canvas, BufferedImage committedElement, BufferedImage canvasImage);
+    void onCommit(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage);
 }

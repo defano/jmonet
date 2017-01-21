@@ -24,10 +24,14 @@ public class Geometry {
      * yields 20.
      *
      * @param value The value to round
-     * @param toNearest The nearest integer multiple.
+     * @param toNearest The nearest integer multiple; if 0, no rounding occurs
      * @return The nearest integer multiple
      */
     public static int round(int value, int toNearest) {
+        if (toNearest == 0) {
+            toNearest = 1;
+        }
+
         return toNearest * Math.round(value / toNearest);
     }
 

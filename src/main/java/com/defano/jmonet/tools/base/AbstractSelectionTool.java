@@ -40,26 +40,30 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
     /**
      * Gets the shape of the current selection outline.
+     *
      * @return The selection outline
      */
     public abstract Shape getSelectionOutline();
 
     /**
      * Invoked to indicate the bounds of the selection has changed as the result of a static transformation being applied.
+     *
      * @param bounds The new selection bounds.
      */
     public abstract void setSelectionBounds(Rectangle bounds);
 
     /**
      * Invoked to indicate that the user has defined a new point on the selection path.
-     * @param initialPoint The first point defined by the user (i.e., where the mouse was initially pressed)
-     * @param newPoint A new point to append to the selection path (i.e., where the mouse is now)
+     *
+     * @param initialPoint   The first point defined by the user (i.e., where the mouse was initially pressed)
+     * @param newPoint       A new point to append to the selection path (i.e., where the mouse is now)
      * @param isShiftKeyDown When true, indicates user is holding the shift key down
      */
     public abstract void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown);
 
     /**
      * Invoked to indicate that the given point should be considered the last point in the selection path.
+     *
      * @param finalPoint The final point on the selection path.
      */
     public abstract void completeSelection(Point finalPoint);
@@ -67,6 +71,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     /**
      * Invoked to indicate that the selection has moved on the canvas. The selection shape's coordinates should be
      * translated by the given amount.
+     *
      * @param xDelta Number of pixels to move horizontally.
      * @param yDelta Number of pixels to move vertically.
      */
@@ -260,6 +265,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
     /**
      * Determines the location (top-left x,y coordinate) of the selection outline.
+     *
      * @return
      */
     private Point getSelectionLocation() {
@@ -296,12 +302,13 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
         if (hasSelection()) {
             getCanvas().clearScratch();
+            BufferedImage scratch = getCanvas().getScratchImage();
 
-            Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
+            Graphics2D g2d = (Graphics2D) scratch.getGraphics();
             g2d.drawImage(selectedImage.get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
             g2d.dispose();
 
-            selectionChange.addChange(getCanvas().getScratchImage(), AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+            selectionChange.addChange(scratch, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             clearSelection();
         }
     }
@@ -324,7 +331,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     /**
      * Returns the location (top-left x,y coordinates) on the canvas where the selected image should be drawn.
      * Typically, this is the location of the selection shape.
-     *
+     * <p>
      * However, for tools that mutate the selection shape (i.e., {@link RotateTool}), this location may need to be
      * adjusted to account for changes to the selection shape's bounds.
      *
@@ -374,7 +381,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * Creates a new image in which every pixel not within the given shape has been changed to fully transparent.
      *
      * @param image The image to mask
-     * @param mask The shape bounding the subimage to keep
+     * @param mask  The shape bounding the subimage to keep
      * @return
      */
     private BufferedImage maskSelection(BufferedImage image, Shape mask) {
@@ -397,17 +404,10 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         return subimage;
     }
 
-    /**
-     * Called when a change has been committed to the canvas.
-     *
-     * @param canvas
-     * @param committedElement
-     * @param canvasImage
-     */
     @Override
-    public void onCommit(PaintCanvas canvas, BufferedImage committedElement, BufferedImage canvasImage) {
+    public void onCommit(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage) {
         // Clear selection if user invokes undo/redo
-        if (hasSelection() && committedElement == null) {
+        if (hasSelection() && changeSet == null) {
             clearSelection();
         }
     }

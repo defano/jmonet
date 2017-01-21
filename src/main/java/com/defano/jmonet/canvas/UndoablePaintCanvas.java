@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A paint tools canvas with a built-in undo and redo buffer. Extends the capabilities inherit to {@link BasicPaintCanvas}.
+ * A paint tools canvas with a built-in undo and redo buffer. Extends the capabilities inherent in {@link AbstractPaintCanvas}.
  */
-public class UndoablePaintCanvas extends BasicPaintCanvas {
+public class UndoablePaintCanvas extends AbstractPaintCanvas {
 
     // TODO: Add constructor arg to set this value
     private final int maxUndoBufferDepth = 20;
@@ -16,13 +16,6 @@ public class UndoablePaintCanvas extends BasicPaintCanvas {
     private int undoBufferPointer = -1;                     // An internal index into the list of changes; moves left and right to denote undo/redo
     private BufferedImage permanent;                        // Image elements that are no longer undoable; null until the undo depth has been exceeded.
     private List<ChangeSet> undoBuffer = new ArrayList<>(); // List of changes as they're committed from the scratch buffer; lower indices are older; higher indices are newer
-
-    /**
-     * Creates a new PaintCanvas with a blank (transparent) initial image displayed in it.
-     */
-    public UndoablePaintCanvas() {
-        super();
-    }
 
     /**
      * Creates a new PaintCanvas with a given image initially displayed in it.
@@ -99,8 +92,8 @@ public class UndoablePaintCanvas extends BasicPaintCanvas {
     @Override
     public void commit(ChangeSet changeSet) {
 
-        // Get the change to be committed
-        BufferedImage scratch = getScratchImage();
+        // Special case: ChangeSet may be modified after it has been committed; listen for this so that we can notify observers of our own
+        changeSet.addChangeSetObserver(() -> fireCanvasCommitObservers(UndoablePaintCanvas.this, null, getCanvasImage()));
 
         // Clear the redo elements from the buffer; can't perform redo after committing a new change
         undoBuffer = undoBuffer.subList(0, undoBufferPointer + 1);
@@ -116,7 +109,7 @@ public class UndoablePaintCanvas extends BasicPaintCanvas {
         // Finally, move our pointer to the tail of the buffer
         undoBufferPointer = undoBuffer.size() - 1;
 
-        fireCanvasCommitObservers(this, scratch, getCanvasImage());
+        fireCanvasCommitObservers(this, changeSet, getCanvasImage());
 
         clearScratch();
         invalidateCanvas();
@@ -136,7 +129,7 @@ public class UndoablePaintCanvas extends BasicPaintCanvas {
             permanent = new BufferedImage(changeSet.getImage(0).getWidth(), changeSet.getImage(0).getHeight(), BufferedImage.TYPE_INT_ARGB);
         }
 
-        overlayChangeSet(changeSet, permanent);
+        applyChangeSet(changeSet, permanent);
     }
 
     /**
@@ -150,11 +143,11 @@ public class UndoablePaintCanvas extends BasicPaintCanvas {
         BufferedImage visibleImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         if (permanent != null) {
-            overlayImage(permanent, visibleImage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+            applyImage(permanent, visibleImage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }
 
         for (int index = 0; index <= undoBufferPointer; index++) {
-            overlayChangeSet(undoBuffer.get(index), visibleImage);
+            applyChangeSet(undoBuffer.get(index), visibleImage);
         }
 
         return visibleImage;

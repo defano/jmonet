@@ -114,7 +114,7 @@ var activeTableTab = "activeTableTab";
 <li><a href="../../../../com/defano/jmonet/canvas/surface/AbstractScrollableSurface.html" title="class in com.defano.jmonet.canvas.surface">com.defano.jmonet.canvas.surface.AbstractScrollableSurface</a></li>
 <li>
 <ul class="inheritance">
-<li>com.defano.jmonet.canvas.BasicPaintCanvas</li>
+<li>com.defano.jmonet.canvas.AbstractPaintCanvas</li>
 </ul>
 </li>
 </ul>
@@ -148,7 +148,7 @@ implements <a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title
  <a href="../../../../com/defano/jmonet/canvas/UndoablePaintCanvas.html" title="class in com.defano.jmonet.canvas"><code>UndoablePaintCanvas</code></a> for a canvas with an undo/redo buffer.</div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../serialized-form.html#com.defano.jmonet.canvas.BasicPaintCanvas">Serialized Form</a></dd>
+<dd><a href="../../../../serialized-form.html#com.defano.jmonet.canvas.AbstractPaintCanvas">Serialized Form</a></dd>
 </dl>
 </li>
 </ul>
@@ -269,7 +269,7 @@ implements <a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/defano/jmonet/canvas/BasicPaintCanvas.html#addCanvasCommitObserver-com.defano.jmonet.canvas.CanvasCommitObserver-">addCanvasCommitObserver</a></span>(<a href="../../../../com/defano/jmonet/canvas/CanvasCommitObserver.html" title="interface in com.defano.jmonet.canvas">CanvasCommitObserver</a>&nbsp;observer)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/defano/jmonet/canvas/BasicPaintCanvas.html#addCanvasCommitObserver-com.defano.jmonet.canvas.observable.CanvasCommitObserver-">addCanvasCommitObserver</a></span>(<a href="../../../../com/defano/jmonet/canvas/CanvasCommitObserver.html" title="interface in com.defano.jmonet.canvas">CanvasCommitObserver</a>&nbsp;observer)</code>
 <div class="block">Adds an observer to be notified of scratch buffer commits.</div>
 </td>
 </tr>
@@ -281,7 +281,7 @@ implements <a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/defano/jmonet/canvas/BasicPaintCanvas.html#addSurfaceInteractionObserver-com.defano.jmonet.canvas.SurfaceInteractionObserver-">addSurfaceInteractionObserver</a></span>(<a href="../../../../com/defano/jmonet/canvas/SurfaceInteractionObserver.html" title="interface in com.defano.jmonet.canvas">SurfaceInteractionObserver</a>&nbsp;listener)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/defano/jmonet/canvas/BasicPaintCanvas.html#addSurfaceInteractionObserver-com.defano.jmonet.canvas.observable.SurfaceInteractionObserver-">addSurfaceInteractionObserver</a></span>(<a href="../../../../com/defano/jmonet/canvas/SurfaceInteractionObserver.html" title="interface in com.defano.jmonet.canvas">SurfaceInteractionObserver</a>&nbsp;listener)</code>
 <div class="block">Adds an observer to mouse and keyboard events taking place within this surface.</div>
 </td>
 </tr>
@@ -321,7 +321,7 @@ implements <a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title
 <tr id="i9" class="rowColor">
 <td class="colFirst"><code>java.awt.image.BufferedImage</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/defano/jmonet/canvas/BasicPaintCanvas.html#getCanvasImage--">getCanvasImage</a></span>()</code>
-<div class="block">Gets the image represented by this drawable; not including any ephemeral changes made to the scratch image.</div>
+<div class="block">Gets the image represented by this painting; not including any ephemeral changes made to the scratch image.</div>
 </td>
 </tr>
 <tr id="i10" class="altColor">
@@ -341,7 +341,7 @@ implements <a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title
 <tr id="i13" class="rowColor">
 <td class="colFirst"><code>java.awt.image.BufferedImage</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/defano/jmonet/canvas/BasicPaintCanvas.html#getScratchImage--">getScratchImage</a></span>()</code>
-<div class="block">Gets the "scratch" image associated with this drawable.</div>
+<div class="block">Gets the "scratch" image associated with this painting.</div>
 </td>
 </tr>
 <tr id="i14" class="altColor">
@@ -357,7 +357,7 @@ implements <a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title
 </tr>
 <tr id="i16" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/defano/jmonet/canvas/BasicPaintCanvas.html#removeCanvasCommitObserver-com.defano.jmonet.canvas.CanvasCommitObserver-">removeCanvasCommitObserver</a></span>(<a href="../../../../com/defano/jmonet/canvas/CanvasCommitObserver.html" title="interface in com.defano.jmonet.canvas">CanvasCommitObserver</a>&nbsp;observer)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/defano/jmonet/canvas/BasicPaintCanvas.html#removeCanvasCommitObserver-com.defano.jmonet.canvas.observable.CanvasCommitObserver-">removeCanvasCommitObserver</a></span>(<a href="../../../../com/defano/jmonet/canvas/CanvasCommitObserver.html" title="interface in com.defano.jmonet.canvas">CanvasCommitObserver</a>&nbsp;observer)</code>
 <div class="block">Removes an existing observer.</div>
 </td>
 </tr>
@@ -369,7 +369,7 @@ implements <a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title
 </tr>
 <tr id="i18" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/defano/jmonet/canvas/BasicPaintCanvas.html#removeSurfaceInteractionObserver-com.defano.jmonet.canvas.SurfaceInteractionObserver-">removeSurfaceInteractionObserver</a></span>(<a href="../../../../com/defano/jmonet/canvas/SurfaceInteractionObserver.html" title="interface in com.defano.jmonet.canvas">SurfaceInteractionObserver</a>&nbsp;listener)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/defano/jmonet/canvas/BasicPaintCanvas.html#removeSurfaceInteractionObserver-com.defano.jmonet.canvas.observable.SurfaceInteractionObserver-">removeSurfaceInteractionObserver</a></span>(<a href="../../../../com/defano/jmonet/canvas/SurfaceInteractionObserver.html" title="interface in com.defano.jmonet.canvas">SurfaceInteractionObserver</a>&nbsp;listener)</code>
 <div class="block">Removes an observer that was previously listening for UI events.</div>
 </td>
 </tr>
@@ -400,7 +400,7 @@ implements <a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;com.defano.jmonet.canvas.surface.<a href="../../../../com/defano/jmonet/canvas/surface/AbstractScrollableSurface.html" title="class in com.defano.jmonet.canvas.surface">AbstractScrollableSurface</a></h3>
-<code><a href="../../../../com/defano/jmonet/canvas/surface/AbstractScrollableSurface.html#getSurface--">getSurface</a>, <a href="../../../../com/defano/jmonet/canvas/surface/AbstractScrollableSurface.html#invalidateCanvas--">invalidateCanvas</a>, <a href="../../../../com/defano/jmonet/canvas/surface/AbstractScrollableSurface.html#setScrollPosition-double-double-">setScrollPosition</a>, <a href="../../../../com/defano/jmonet/canvas/surface/AbstractScrollableSurface.html#setSurface-com.defano.jmonet.canvas.surface.PaintSurface-">setSurface</a>, <a href="../../../../com/defano/jmonet/canvas/surface/AbstractScrollableSurface.html#updateScroll--">updateScroll</a></code></li>
+<code><a href="../../../../com/defano/jmonet/canvas/surface/AbstractScrollableSurface.html#getSurface--">getSurface</a>, <a href="../../../../com/defano/jmonet/canvas/surface/AbstractScrollableSurface.html#invalidateCanvas--">invalidateCanvas</a>, <a href="../../../../com/defano/jmonet/canvas/surface/AbstractScrollableSurface.html#setScrollPosition-double-double-">setScrollPosition</a>, <a href="../../../../com/defano/jmonet/canvas/surface/AbstractScrollableSurface.html#setSurface-com.defano.jmonet.canvas.surface.PaintableSurface-">setSurface</a>, <a href="../../../../com/defano/jmonet/canvas/surface/AbstractScrollableSurface.html#updateScroll--">updateScroll</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.javax.swing.JScrollPane">
@@ -563,7 +563,7 @@ implements <a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title
 <h4>getCanvasImage</h4>
 <pre>public&nbsp;java.awt.image.BufferedImage&nbsp;getCanvasImage()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../com/defano/jmonet/canvas/surface/ScalableScratchDrawable.html#getCanvasImage--">ScalableScratchDrawable</a></code></span></div>
-<div class="block">Gets the image represented by this drawable; not including any ephemeral changes made to the scratch image.</div>
+<div class="block">Gets the image represented by this painting; not including any ephemeral changes made to the scratch image.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code><a href="../../../../com/defano/jmonet/canvas/surface/ScalableScratchDrawable.html#getCanvasImage--">getCanvasImage</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/defano/jmonet/canvas/surface/ScalableScratchDrawable.html" title="interface in com.defano.jmonet.canvas.surface">ScalableScratchDrawable</a></code></dd>
@@ -580,7 +580,7 @@ implements <a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title
 <h4>getScratchImage</h4>
 <pre>public&nbsp;java.awt.image.BufferedImage&nbsp;getScratchImage()</pre>
 <div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../com/defano/jmonet/canvas/surface/ScalableScratchDrawable.html#getScratchImage--">ScalableScratchDrawable</a></code></span></div>
-<div class="block">Gets the "scratch" image associated with this drawable. The "scratch" image is a temporary buffer allowing
+<div class="block">Gets the "scratch" image associated with this painting. The "scratch" image is a temporary buffer allowing
  tools to draw on the canvas in a way that doesn't affect the underlying graphic.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
@@ -683,11 +683,11 @@ implements <a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title
 <li class="blockList">
 <h4>addSurfaceInteractionObserver</h4>
 <pre>public&nbsp;void&nbsp;addSurfaceInteractionObserver(<a href="../../../../com/defano/jmonet/canvas/SurfaceInteractionObserver.html" title="interface in com.defano.jmonet.canvas">SurfaceInteractionObserver</a>&nbsp;listener)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../com/defano/jmonet/canvas/surface/Surface.html#addSurfaceInteractionObserver-com.defano.jmonet.canvas.SurfaceInteractionObserver-">Surface</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../com/defano/jmonet/canvas/surface/Surface.html#addSurfaceInteractionObserver-com.defano.jmonet.canvas.observable.SurfaceInteractionObserver-">Surface</a></code></span></div>
 <div class="block">Adds an observer to mouse and keyboard events taking place within this surface.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../com/defano/jmonet/canvas/surface/Surface.html#addSurfaceInteractionObserver-com.defano.jmonet.canvas.SurfaceInteractionObserver-">addSurfaceInteractionObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/defano/jmonet/canvas/surface/Surface.html" title="interface in com.defano.jmonet.canvas.surface">Surface</a></code></dd>
+<dd><code><a href="../../../../com/defano/jmonet/canvas/surface/Surface.html#addSurfaceInteractionObserver-com.defano.jmonet.canvas.observable.SurfaceInteractionObserver-">addSurfaceInteractionObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/defano/jmonet/canvas/surface/Surface.html" title="interface in com.defano.jmonet.canvas.surface">Surface</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>listener</code> - The observer to add</dd>
 </dl>
@@ -700,11 +700,11 @@ implements <a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title
 <li class="blockList">
 <h4>removeSurfaceInteractionObserver</h4>
 <pre>public&nbsp;boolean&nbsp;removeSurfaceInteractionObserver(<a href="../../../../com/defano/jmonet/canvas/SurfaceInteractionObserver.html" title="interface in com.defano.jmonet.canvas">SurfaceInteractionObserver</a>&nbsp;listener)</pre>
-<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../com/defano/jmonet/canvas/surface/Surface.html#removeSurfaceInteractionObserver-com.defano.jmonet.canvas.SurfaceInteractionObserver-">Surface</a></code></span></div>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../com/defano/jmonet/canvas/surface/Surface.html#removeSurfaceInteractionObserver-com.defano.jmonet.canvas.observable.SurfaceInteractionObserver-">Surface</a></code></span></div>
 <div class="block">Removes an observer that was previously listening for UI events.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../com/defano/jmonet/canvas/surface/Surface.html#removeSurfaceInteractionObserver-com.defano.jmonet.canvas.SurfaceInteractionObserver-">removeSurfaceInteractionObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/defano/jmonet/canvas/surface/Surface.html" title="interface in com.defano.jmonet.canvas.surface">Surface</a></code></dd>
+<dd><code><a href="../../../../com/defano/jmonet/canvas/surface/Surface.html#removeSurfaceInteractionObserver-com.defano.jmonet.canvas.observable.SurfaceInteractionObserver-">removeSurfaceInteractionObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/defano/jmonet/canvas/surface/Surface.html" title="interface in com.defano.jmonet.canvas.surface">Surface</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>listener</code> - The observer to be removed</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -805,7 +805,7 @@ implements <a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title
 <div class="block">Adds an observer to be notified of scratch buffer commits.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html#addCanvasCommitObserver-com.defano.jmonet.canvas.CanvasCommitObserver-">addCanvasCommitObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title="interface in com.defano.jmonet.canvas">PaintCanvas</a></code></dd>
+<dd><code><a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html#addCanvasCommitObserver-com.defano.jmonet.canvas.observable.CanvasCommitObserver-">addCanvasCommitObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title="interface in com.defano.jmonet.canvas">PaintCanvas</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>observer</code> - The observer to be registered.</dd>
 </dl>
@@ -821,7 +821,7 @@ implements <a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title
 <div class="block">Removes an existing observer.</div>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code><a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html#removeCanvasCommitObserver-com.defano.jmonet.canvas.CanvasCommitObserver-">removeCanvasCommitObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title="interface in com.defano.jmonet.canvas">PaintCanvas</a></code></dd>
+<dd><code><a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html#removeCanvasCommitObserver-com.defano.jmonet.canvas.observable.CanvasCommitObserver-">removeCanvasCommitObserver</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../com/defano/jmonet/canvas/PaintCanvas.html" title="interface in com.defano.jmonet.canvas">PaintCanvas</a></code></dd>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>observer</code> - The observer to be removed.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>

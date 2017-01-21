@@ -5,15 +5,38 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <packaging>jar</packaging>
+    <groupId>com.defano.jmonet</groupId>
+    <artifactId>jmonet</artifactId>
+    <version>0.0.1</version>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
-    <packaging>jar</packaging>
-    <groupId>com.defano.jmonet</groupId>
-    <artifactId>jmonet</artifactId>
-    <version>0.0.1</version>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.10.4</version>
+                <configuration>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 
 </project>
