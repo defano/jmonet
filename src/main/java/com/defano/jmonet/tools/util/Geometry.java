@@ -122,7 +122,7 @@ public class Geometry {
      *
      * @param anchor Either top-left, top-right, bottom-left or bottom-right of the square
      * @param bound The bound used to determine the max dimension of the square
-     * @return
+     * @return A {@link Rectangle} with equal heights and widths
      */
     public static Rectangle squareAtAnchor(Point anchor, Point bound) {
         Rectangle rectangle = rectangleFromPoints(anchor, bound);

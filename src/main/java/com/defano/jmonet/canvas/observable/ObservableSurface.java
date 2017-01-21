@@ -1,7 +1,5 @@
 package com.defano.jmonet.canvas.observable;
 
-import java.awt.*;
-
 /**
  * Represents an AWT component that can contain other components and report on keyboard and mouse interactions taking
  * place inside of it.

@@ -145,8 +145,8 @@ public class RotateTool extends AbstractSelectionTool {
      * For example, if the provided image is 10x30, the resulting image will be 32x32 with the contents of the original
      * drawn at (16,1) inside of it.
      *
-     * @param image
-     * @return
+     * @param image The image whose bounds should be squared
+     * @return A square image whose height and width are equal to the diagonal of the original image.
      */
     private BufferedImage square(BufferedImage image) {
         int diagonal = (int) Math.ceil(Math.sqrt(image.getHeight() * image.getHeight() + image.getWidth() * image.getWidth()));

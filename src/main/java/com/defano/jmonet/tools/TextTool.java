@@ -64,7 +64,6 @@ public class TextTool extends PaintTool implements Observer {
     }
 
     private void removeTextArea() {
-        textArea.setVisible(false);     // Weird. Seems required to prevent component from stealing key events (even when removed from the panel)
         getCanvas().removeComponent(textArea);
     }
 

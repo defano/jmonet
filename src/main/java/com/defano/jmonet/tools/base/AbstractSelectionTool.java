@@ -240,7 +240,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     /**
      * Determines if the user has an active selection boundary (i.e., a rectangle of marching ants)
      * <p>
-     * Differs from {@link #hasSelectionBounds()} in that when a user is dragging the selection rectangle, a selection
+     * Differs from {@link #hasSelection()} in that when a user is dragging the selection rectangle, a selection
      * boundary will exist but a selection will not. The selection is not made until the user releases the mouse.
      *
      * @return True if a selection boundary exists, false otherwise.
@@ -266,7 +266,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     /**
      * Determines the location (top-left x,y coordinate) of the selection outline.
      *
-     * @return
+     * @return Get the top-left coordinate of the selection boundary
      */
     private Point getSelectionLocation() {
         if (!hasSelection()) {
@@ -382,7 +382,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      *
      * @param image The image to mask
      * @param mask  The shape bounding the subimage to keep
-     * @return
+     * @return A BufferedImage in which every pixel not within the selection has been made fully transparent
      */
     private BufferedImage maskSelection(BufferedImage image, Shape mask) {
         BufferedImage subimage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
