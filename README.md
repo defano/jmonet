@@ -11,7 +11,7 @@ Javadocs [are available here](https://defano.github.io/jmonet/docs/).
 * Includes affine transform tools including flip, quadrant rotate, free-rotate, and shear.
 * Painted images are scalable (displayed within a scrollable pane) and tools can be snapped to a grid.
 * Lightweight toolkit integrates easily into Swing and JavaFX applications and has no transitive dependencies.
-* Backed by a standard, Java `BufferedImage`; easy to import existing images or save changes. 
+* Backed by a standard, Java `BufferedImage`; easy to import existing images or save changes.
 
 ## Paint Tools
 
@@ -34,8 +34,7 @@ Icon | Tool            | Description
 ![Selection](icons/selection.png) | Selection | Define a selection rectangle ([marching ants](https://en.wikipedia.org/wiki/Marching_ants)) whose underlying graphic can be moved or cleared (press `delete`)
 ![Shape](icons/shape.png) | Shape | Draws filled or outlined regular polygons (i.e., shapes--triangles, squares, polygons, hexagons, etc.)
 ![Text](icons/text.png) | Text | Draws rasterized text (of a configurable font, size and style) on the canvas. Text remains editable until user clicks away.
-
-(There's also an "Arrow" tool that functions as a no-op that does not modify the canvas in any way.)
+| Arrow | A no-op tool that does not modify the canvas in any way.
 
 ## Transform tools
 
@@ -66,7 +65,7 @@ JMonet is published to Maven Central; include the library in your Maven project'
 
 ```
 <dependency>
-    <groupId>com.defano</groupId>
+    <groupId>com.defano.jmonet</groupId>
     <artifactId>jmonet</artifactId>
     <version>0.0.1</version>
 </dependency>
@@ -80,7 +79,7 @@ repositories {
 }
 
 dependencies {
-  compile 'com.defano:jmonet:0.0.1'
+  compile 'com.defano.jmonet:jmonet:0.0.1'
 }
 ```
 
