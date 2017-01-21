@@ -34,7 +34,7 @@ Icon | Tool            | Description
 ![Selection](icons/selection.png) | Selection | Define a selection rectangle ([marching ants](https://en.wikipedia.org/wiki/Marching_ants)) whose underlying graphic can be moved or cleared (press `delete`)
 ![Shape](icons/shape.png) | Shape | Draws filled or outlined regular polygons (i.e., shapes--triangles, squares, polygons, hexagons, etc.)
 ![Text](icons/text.png) | Text | Draws rasterized text (of a configurable font, size and style) on the canvas. Text remains editable until user clicks away.
-| Arrow | A no-op tool that does not modify the canvas in any way.
+| | Arrow | A no-op tool that does not modify the canvas in any way.
 
 ## Transform tools
 
