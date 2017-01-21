@@ -7,10 +7,11 @@ Javadocs [are available here](https://defano.github.io/jmonet/docs/).
 ## Features
 
 * Offers a standard suite of paint tools with common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
-* Canvas supports undo and redo
-* Affine transform tools including flip, quadrant rotate, free-rotate, and shear.
-* Images are scalable within a scrollable pane and tools can be snapped to a grid.
-* Lightweight library integrates easily into Swing and JavaFX applications requiring no additional transitive dependencies.
+* Painting canvas supports undo and redo operations on all paint tool changes.
+* Includes affine transform tools including flip, quadrant rotate, free-rotate, and shear.
+* Painted images are scalable (displayed within a scrollable pane) and tools can be snapped to a grid.
+* Lightweight toolkit integrates easily into Swing and JavaFX applications and has no transitive dependencies.
+* Backed by a standard, Java `BufferedImage`; easy to import existing images or save changes. 
 
 ## Paint Tools
 
@@ -90,20 +91,20 @@ JMonet integrates easily into Java Swing and JavaFX applications. Simply create 
 In Swing applications:
 
 ```
-javax.swing.SwingUtilities.invokeLater(() -> {
+public static void main(String[] args) {
+    javax.swing.SwingUtilities.invokeLater(() -> {
 
-    // Create and show Swing frame
-    JFrame frame = new JFrame("My Pretty Picture");
-    frame.setPreferredSize(new Dimension(640, 480));
-    frame.pack();
-    frame.setVisible(true);
+        // Create and show Swing frame
+        JFrame frame = new JFrame("My Pretty Picture");
+        frame.setPreferredSize(new Dimension(640, 480));
+        frame.pack();
+        frame.setVisible(true);
 
-    // Create a JMonet canvas and add it to the window
-    UndoableCanvas myCanvas = new UndoableCanvas();
-    frame.getContentPane().add(myCanvas);
-
-});
-
+        // Create a JMonet canvas and add it to the window
+        UndoablePaintCanvas myCanvas = new UndoablePaintCanvas();
+        frame.getContentPane().add(myCanvas);
+    });
+}
 ```
 
 In JavaFX applications:
@@ -113,11 +114,11 @@ In JavaFX applications:
 public void start(Stage stage) {
 
     // Create a JFX node for our paint canvas
-    JFXCanvasNode canvas = new JFXCanvasNode(new UndoableCanvas());
+    JFXPaintCanvasNode myCanvas = new JFXPaintCanvasNode(new UndoablePaintCanvas());
 
     // Create a pane for it
     StackPane pane = new StackPane();
-    pane.getChildren().add(canvas);
+    pane.getChildren().add(myCanvas);
 
     // And add it to our stage
     stage.setScene(new Scene(pane, 640, 480));
@@ -134,7 +135,7 @@ Start painting by making a tool active on the canvas with the `PaintToolBuilder`
 PaintTool activeTool = PaintToolBuilder.create(PaintToolType.PAINTBRUSH)
         .withStroke(BasicBrush.ROUND_8X8.stroke)
         .withFillPaint(Color.RED)
-        .makeActiveOnCanvas(canvas)
+        .makeActiveOnCanvas(myCanvas)
         .build();
 ```
 

@@ -18,11 +18,19 @@ public class UndoablePaintCanvas extends AbstractPaintCanvas {
     private List<ChangeSet> undoBuffer = new ArrayList<>(); // List of changes as they're committed from the scratch buffer; lower indices are older; higher indices are newer
 
     /**
+     * Creates a new PaintCanvas with a 1x1 empty image displayed inside it.
+     */
+    public UndoablePaintCanvas() {
+        this(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB));
+    }
+
+    /**
      * Creates a new PaintCanvas with a given image initially displayed in it.
      * @param initialImage The image to be displayed in the canvas.
      */
     public UndoablePaintCanvas(BufferedImage initialImage) {
         super();
+        setSize(initialImage.getWidth(), initialImage.getHeight());
         makePermanent(new ChangeSet(initialImage));
     }
 
