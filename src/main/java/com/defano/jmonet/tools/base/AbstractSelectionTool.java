@@ -308,7 +308,11 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
             g2d.drawImage(selectedImage.get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
             g2d.dispose();
 
-            selectionChange.addChange(scratch, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+            // Nothing to commit/change if user hasn't moved (dirtied) the selection
+            if (selectionChange != null) {
+                selectionChange.addChange(scratch, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+            }
+
             clearSelection();
         }
     }
