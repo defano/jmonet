@@ -36,7 +36,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * Reset the selection boundary to its initial, no-selection state. {@link #getSelectionOutline()} should return
      * null following a selection reset, but prior to defining a new selection via {@link #addSelectionPoint(Point, Point, boolean)}
      */
-    public abstract void resetSelection();
+    protected abstract void resetSelection();
 
     /**
      * Gets the shape of the current selection outline.
@@ -50,7 +50,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      *
      * @param bounds The new selection bounds.
      */
-    public abstract void setSelectionBounds(Rectangle bounds);
+    protected abstract void setSelectionBounds(Rectangle bounds);
 
     /**
      * Invoked to indicate that the user has defined a new point on the selection path.
@@ -59,14 +59,14 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * @param newPoint       A new point to append to the selection path (i.e., where the mouse is now)
      * @param isShiftKeyDown When true, indicates user is holding the shift key down
      */
-    public abstract void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown);
+    protected abstract void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown);
 
     /**
      * Invoked to indicate that the given point should be considered the last point in the selection path.
      *
      * @param finalPoint The final point on the selection path.
      */
-    public abstract void completeSelection(Point finalPoint);
+    protected abstract void completeSelection(Point finalPoint);
 
     /**
      * Invoked to indicate that the selection has moved on the canvas. The selection shape's coordinates should be
@@ -75,10 +75,26 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * @param xDelta Number of pixels to move horizontally.
      * @param yDelta Number of pixels to move vertically.
      */
-    public abstract void adjustSelectionBounds(int xDelta, int yDelta);
+    protected abstract void adjustSelectionBounds(int xDelta, int yDelta);
 
     public AbstractSelectionTool(PaintToolType type) {
         super(type);
+    }
+
+    /**
+     * Creates a selection bounded by the given rectangle. Equivalent to the user clicking and dragging from the top-
+     * left to the bottom-right of bounds.
+     *
+     * @param bounds The selection rectangle to create.
+     */
+    public void createSelection(Rectangle bounds) {
+        if (hasSelection()) {
+            finishSelection();
+        }
+
+        addSelectionPoint(bounds.getLocation(), new Point(bounds.x + bounds.width, bounds.y + bounds.height), false);
+        completeSelection(new Point(bounds.x + bounds.width, bounds.y + bounds.height));
+        getSelectionFromCanvas();
     }
 
     @Override
@@ -252,7 +268,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     /**
      * Make the canvas image bounded by the given selection rectangle the current selected image.
      */
-    private void getSelectionFromCanvas() {
+    protected void getSelectionFromCanvas() {
         getCanvas().clearScratch();
 
         Shape selectionBounds = getSelectionOutline();

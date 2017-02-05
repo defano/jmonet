@@ -19,17 +19,17 @@ public class LassoTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void resetSelection() {
+    protected void resetSelection() {
         selectionBounds = null;
     }
 
     @Override
-    public void setSelectionBounds(Rectangle bounds) {
+    protected void setSelectionBounds(Rectangle bounds) {
         selectionBounds = new Path2D.Double(bounds);
     }
 
     @Override
-    public void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
+    protected void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         if (selectionBounds == null) {
             selectionBounds = new Path2D.Double();
             selectionBounds.moveTo(initialPoint.getX(), initialPoint.getY());
@@ -39,7 +39,7 @@ public class LassoTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void completeSelection(Point finalPoint) {
+    protected void completeSelection(Point finalPoint) {
         selectionBounds.closePath();
     }
 
@@ -49,7 +49,7 @@ public class LassoTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void adjustSelectionBounds(int xDelta, int yDelta) {
+    protected void adjustSelectionBounds(int xDelta, int yDelta) {
         selectionBounds.transform(AffineTransform.getTranslateInstance(xDelta, yDelta));
     }
 }

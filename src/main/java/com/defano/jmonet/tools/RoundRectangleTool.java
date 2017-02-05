@@ -17,14 +17,14 @@ public class RoundRectangleTool extends AbstractBoundsTool {
     }
 
     @Override
-    public void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height) {
+    protected void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height) {
         g.setPaint(paint);
         g.setStroke(stroke);
         g.drawRoundRect(x, y, width, height, cornerRadius, cornerRadius);
     }
 
     @Override
-    public void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height) {
+    protected void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height) {
         g.setPaint(fill);
         g.fillRoundRect(x, y, width, height, cornerRadius, cornerRadius);
     }

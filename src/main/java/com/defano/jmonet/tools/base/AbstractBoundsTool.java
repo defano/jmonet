@@ -30,8 +30,8 @@ public abstract class AbstractBoundsTool extends PaintTool {
         setToolCursor(boundaryCursor);
     }
 
-    public abstract void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height);
-    public abstract void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height);
+    protected abstract void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height);
+    protected abstract void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height);
 
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {

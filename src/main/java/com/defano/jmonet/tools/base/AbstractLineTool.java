@@ -21,7 +21,7 @@ public abstract class AbstractLineTool extends PaintTool {
         setToolCursor(lineCursor);
     }
 
-    public abstract void drawLine(Graphics2D g, Stroke stroke, Paint paint, int x1, int y1, int x2, int y2);
+    protected abstract void drawLine(Graphics2D g, Stroke stroke, Paint paint, int x1, int y1, int x2, int y2);
 
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {

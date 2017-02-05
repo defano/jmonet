@@ -13,8 +13,8 @@ public abstract class AbstractPathTool extends PaintTool {
 
     private Cursor pathCursor = new Cursor(Cursor.MOVE_CURSOR);
 
-    public abstract void startPath(Graphics2D g, Stroke stroke, Paint paint, Point initialPoint);
-    public abstract void addPoint(Graphics2D g, Stroke stroke, Paint paint, Point point);
+    protected abstract void startPath(Graphics2D g, Stroke stroke, Paint paint, Point initialPoint);
+    protected abstract void addPoint(Graphics2D g, Stroke stroke, Paint paint, Point point);
 
     public AbstractPathTool(PaintToolType type) {
         super(type);

@@ -18,7 +18,12 @@ public class SelectionTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
+    public Shape getSelectionOutline() {
+        return selectionBounds;
+    }
+    
+    @Override
+    protected void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         selectionBounds = new Rectangle(initialPoint);
         selectionBounds.add(newPoint);
 
@@ -28,27 +33,22 @@ public class SelectionTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void completeSelection(Point finalPoint) {
+    protected void completeSelection(Point finalPoint) {
         // Nothing to do
     }
 
     @Override
-    public void resetSelection() {
+    protected void resetSelection() {
         selectionBounds = null;
     }
 
     @Override
-    public void setSelectionBounds(Rectangle bounds) {
+    protected void setSelectionBounds(Rectangle bounds) {
         selectionBounds = bounds;
     }
 
     @Override
-    public Shape getSelectionOutline() {
-        return selectionBounds;
-    }
-
-    @Override
-    public void adjustSelectionBounds(int xDelta, int yDelta) {
+    protected void adjustSelectionBounds(int xDelta, int yDelta) {
         selectionBounds.setLocation(selectionBounds.x + xDelta, selectionBounds.y + yDelta);
     }
 

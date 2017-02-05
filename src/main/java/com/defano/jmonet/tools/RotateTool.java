@@ -84,7 +84,7 @@ public class RotateTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void resetSelection() {
+    protected void resetSelection() {
         selectionBounds = null;
         originalSelectionBounds = null;
         centerpoint = null;
@@ -93,12 +93,12 @@ public class RotateTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void setSelectionBounds(Rectangle bounds) {
+    protected void setSelectionBounds(Rectangle bounds) {
         selectionBounds = bounds;
     }
 
     @Override
-    public void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
+    protected void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         int handleSize = 8;
 
         Rectangle selectionRectangle = new Rectangle(initialPoint);
@@ -119,7 +119,7 @@ public class RotateTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void adjustSelectionBounds(int xDelta, int yDelta) {
+    protected void adjustSelectionBounds(int xDelta, int yDelta) {
         // Nothing to do; user can't move selection
     }
 

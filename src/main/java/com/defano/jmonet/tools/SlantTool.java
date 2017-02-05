@@ -17,7 +17,7 @@ public class SlantTool extends AbstractTransformTool {
     }
 
     @Override
-    public void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
+    protected void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.getTopRight().x += newPosition.x - quadrilateral.getTopLeft().x;
         quadrilateral.getTopLeft().x = newPosition.x;
 
@@ -26,7 +26,7 @@ public class SlantTool extends AbstractTransformTool {
     }
 
     @Override
-    public void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition) {
+    protected void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.getTopLeft().x += newPosition.x - quadrilateral.getTopRight().x;
         quadrilateral.getTopRight().x = newPosition.x;
 
@@ -35,7 +35,7 @@ public class SlantTool extends AbstractTransformTool {
     }
 
     @Override
-    public void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
+    protected void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.getBottomRight().x += newPosition.x - quadrilateral.getBottomLeft().x;
         quadrilateral.getBottomLeft().x = newPosition.x;
 
@@ -44,7 +44,7 @@ public class SlantTool extends AbstractTransformTool {
     }
 
     @Override
-    public void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition) {
+    protected void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.getBottomLeft().x += newPosition.x - quadrilateral.getBottomRight().x;
         quadrilateral.getBottomRight().x = newPosition.x;
 

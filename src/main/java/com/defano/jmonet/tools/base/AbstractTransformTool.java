@@ -23,17 +23,22 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     private Rectangle topLeftHandle, topRightHandle, bottomRightHandle, bottomLeftHandle;
     private boolean dragTopLeft, dragTopRight, dragBottomRight, dragBottomLeft;
 
-    public abstract void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition);
+    protected abstract void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition);
 
-    public abstract void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition);
+    protected abstract void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition);
 
-    public abstract void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition);
+    protected abstract void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition);
 
-    public abstract void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition);
+    protected abstract void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition);
 
     public AbstractTransformTool(PaintToolType type) {
         super(type);
         setToolCursor(transformCursor);
+    }
+
+    public void createSelection(Rectangle bounds) {
+        super.createSelection(bounds);
+        originalImage = getSelectedImage();
     }
 
     @Override
@@ -103,7 +108,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
+    protected void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         selectionBounds = new Rectangle(initialPoint);
         selectionBounds.add(newPoint);
 
@@ -118,12 +123,12 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void completeSelection(Point finalPoint) {
+    protected void completeSelection(Point finalPoint) {
         transformBounds = new FlexQuadrilateral(selectionBounds);
     }
 
     @Override
-    public void resetSelection() {
+    protected void resetSelection() {
         selectionBounds = null;
         transformBounds = null;
 
@@ -131,7 +136,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void setSelectionBounds(Rectangle bounds) {
+    protected void setSelectionBounds(Rectangle bounds) {
         throw new IllegalStateException("No implemented");
     }
 
@@ -141,7 +146,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     }
 
     @Override
-    public void adjustSelectionBounds(int xDelta, int yDelta) {
+    protected void adjustSelectionBounds(int xDelta, int yDelta) {
         selectionBounds.setLocation(selectionBounds.x + xDelta, selectionBounds.y + yDelta);
     }
 
