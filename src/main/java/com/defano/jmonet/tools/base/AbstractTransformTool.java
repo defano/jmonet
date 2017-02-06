@@ -1,7 +1,7 @@
 package com.defano.jmonet.tools.base;
 
-import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.model.FlexQuadrilateral;
+import com.defano.jmonet.model.PaintToolType;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -39,6 +39,12 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     public void createSelection(Rectangle bounds) {
         super.createSelection(bounds);
         originalImage = getSelectedImage();
+    }
+
+    @Override
+    public void createSelection(BufferedImage image, Point location) {
+        super.createSelection(image, location);
+        originalImage = image;
     }
 
     @Override

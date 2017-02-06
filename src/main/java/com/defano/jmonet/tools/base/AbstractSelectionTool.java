@@ -97,6 +97,19 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         getSelectionFromCanvas();
     }
 
+    public void createSelection(BufferedImage image, Point location) {
+        if (hasSelection()) {
+            finishSelection();
+        }
+
+        Graphics2D g = getCanvas().getScratchImage().createGraphics();
+        g.drawImage(image, location.x, location.y, null);
+
+        addSelectionPoint(location.getLocation(), new Point(location.x + image.getWidth(), location.y + image.getHeight()), false);
+        completeSelection(new Point(location.x + image.getWidth(), location.y + image.getHeight()));
+        selectedImage.set(image);
+    }
+
     @Override
     public void mouseMoved(MouseEvent e, Point imageLocation) {
         if (hasSelectionBounds() && getSelectionOutline().contains(imageLocation)) {
