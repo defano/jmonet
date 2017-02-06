@@ -190,12 +190,13 @@ Get the image from the canvas via the `public BufferedImage getCanvasImage()` me
 
 You'll need your image in the form of a Java `BufferedImage` object. Use Java's ImageIO or Advanced ImageIO to [read/deserialize existing files or data](https://docs.oracle.com/javase/tutorial/2d/images/loadimage.html).
 
-Then, you have two options:
+Then, you have three options:
 
-1. Create a new canvas from an existing `BufferedImage` object like: `new UndoableCanvas(myImage)`, or
-2. Commit the image to an existing canvas by drawing it onto the scratch buffer and committing the change, like: `myCanvas.setScratchImage(myImage); myCanvas.commit()`
+1. Create a new canvas from an existing `BufferedImage` object like: `new UndoableCanvas(myImage)`. Best option when opening an existing file for editing.
+2. Create a new selection from an existing image using the selection tool: `selectionTool.createSelection(myImage, new Point(0,0))`. Best option when you want to add an image to an existing canvas while allowing the user to move it into place.
+3. Commit the image to an existing canvas by drawing it onto the scratch buffer and committing the change, like: `myCanvas.setScratchImage(myImage); myCanvas.commit()`. Best option when opening an image to be statically overlaid onto an existing canvas.
 
-Note that in both cases, if the imported image does not match the dimensions of the canvas, it will be drawn in the upper-left corner. Resize and translate the image you wish to import first if you'd like it to appear elsewhere.
+Note that in cases 1 and 3, if the imported image does not match the dimensions of the canvas, it will be drawn in the upper-left corner. Resize and translate the image you wish to import first if you'd like it to appear elsewhere.
 
 #### Can I create my own tools?
 
