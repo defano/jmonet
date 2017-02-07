@@ -15,6 +15,7 @@ public abstract class AbstractPathTool extends PaintTool {
 
     protected abstract void startPath(Graphics2D g, Stroke stroke, Paint paint, Point initialPoint);
     protected abstract void addPoint(Graphics2D g, Stroke stroke, Paint paint, Point point);
+    protected void completePath(Graphics2D g, Stroke stroke, Paint paint) {}
 
     public AbstractPathTool(PaintToolType type) {
         super(type);
@@ -41,6 +42,10 @@ public abstract class AbstractPathTool extends PaintTool {
 
     @Override
     public void mouseReleased(MouseEvent e, Point imageLocation) {
+        Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
+        completePath(g2d, getStroke(), getFillPaint());
+        g2d.dispose();
+
         getCanvas().commit(new ChangeSet(getCanvas().getScratchImage(), getComposite()));
     }
 
