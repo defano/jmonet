@@ -156,6 +156,9 @@ public class PaintToolBuilder {
             case FREEFORM:
                 selectedTool = new FreeformShapeTool();
                 break;
+            case SCALE:
+                selectedTool = new ScaleTool();
+                break;
 
             default:
                 throw new RuntimeException("Bug! Unimplemented builder for tool " + type);

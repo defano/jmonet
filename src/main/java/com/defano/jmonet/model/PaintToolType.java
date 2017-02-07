@@ -23,6 +23,7 @@ public enum PaintToolType {
     CURVE,
     SLANT,
     ROTATE,
+    SCALE,
     MAGNIFIER;
 
     /**
