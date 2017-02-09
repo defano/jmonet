@@ -104,10 +104,15 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
         Graphics2D g = getCanvas().getScratchImage().createGraphics();
         g.drawImage(image, location.x, location.y, null);
+        g.dispose();
 
         addSelectionPoint(location.getLocation(), new Point(location.x + image.getWidth(), location.y + image.getHeight()), false);
         completeSelection(new Point(location.x + image.getWidth(), location.y + image.getHeight()));
         selectedImage.set(image);
+
+        selectionChange = new ChangeSet(getCanvas().getScratchImage(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
+        getCanvas().commit(selectionChange);
+        dirty = true;
     }
 
     @Override
@@ -144,7 +149,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     public void mouseDragged(MouseEvent e, Point imageLocation) {
 
         // User is moving an existing selection
-        if (isMovingSelection) {
+        if (hasSelection() && isMovingSelection) {
             setDirty();
             adjustSelectionBounds(imageLocation.x - lastPoint.x, imageLocation.y - lastPoint.y);
             drawSelection();
@@ -310,17 +315,19 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * fully transparent pixels.
      */
     private void eraseSelectionFromCanvas() {
-        getCanvas().clearScratch();
+        if (hasSelectionBounds()) {
+            getCanvas().clearScratch();
 
-        // Clear image underneath selection
-        Graphics2D scratch = (Graphics2D) getCanvas().getScratchImage().getGraphics();
-        scratch.setColor(Color.WHITE);
-        scratch.fill(getSelectionOutline());
-        scratch.dispose();
+            // Clear image underneath selection
+            Graphics2D scratch = (Graphics2D) getCanvas().getScratchImage().getGraphics();
+            scratch.setColor(Color.WHITE);
+            scratch.fill(getSelectionOutline());
+            scratch.dispose();
 
-        selectionChange = new ChangeSet(getCanvas().getScratchImage(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
-        getCanvas().commit(selectionChange);
-        drawSelection();
+            selectionChange = new ChangeSet(getCanvas().getScratchImage(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
+            getCanvas().commit(selectionChange);
+            drawSelection();
+        }
     }
 
     /**

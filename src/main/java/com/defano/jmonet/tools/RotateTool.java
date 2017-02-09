@@ -37,7 +37,7 @@ public class RotateTool extends AbstractSelectionTool {
         // User clicked outside the selection after making a rotation change
         if (isDirty() && !selectionBounds.contains(e.getPoint())) {
             rotating = false;
-            finishSelection();
+            super.mousePressed(e, imageLocation);
         }
 
         // User clicked inside drag handle
@@ -63,7 +63,7 @@ public class RotateTool extends AbstractSelectionTool {
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
 
-        if (rotating) {
+        if (rotating && originalSelectionBounds != null) {
             setDirty();     // Mutating the selected image
 
             // Calculate the rotation angle
@@ -76,9 +76,7 @@ public class RotateTool extends AbstractSelectionTool {
 
             // Rotate the selected canvas image
             setSelectedImage(Transform.rotate(originalImage, angle, originalImage.getWidth() / 2, originalImage.getHeight() / 2));
-        }
-
-        else {
+        } else {
             super.mouseDragged(e, imageLocation);
         }
     }
@@ -121,16 +119,21 @@ public class RotateTool extends AbstractSelectionTool {
     @Override
     protected void adjustSelectionBounds(int xDelta, int yDelta) {
         // Nothing to do; user can't move selection
+        selectionBounds = AffineTransform.getTranslateInstance(xDelta, yDelta).createTransformedShape(selectionBounds);
+        originalSelectionBounds = AffineTransform.getTranslateInstance(xDelta, yDelta).createTransformedShape(originalSelectionBounds);
+        dragHandle = AffineTransform.getTranslateInstance(xDelta, yDelta).createTransformedShape(dragHandle);
+        originalDragHandle = AffineTransform.getTranslateInstance(xDelta, yDelta).createTransformedShape(originalDragHandle);
+
+        Rectangle selectionBounds = getSelectionOutline().getBounds();
+        centerpoint = new Point(selectionBounds.x + selectionBounds.width / 2, selectionBounds.y + selectionBounds.height / 2);
     }
 
     @Override
     protected Point getSelectedImageLocation() {
 
-        if (dragLocation == null) {
+        if (dragLocation == null || originalImage == null) {
             return getSelectionOutline().getBounds().getLocation();
-        }
-
-        else {
+        } else {
             Rectangle enlargedBounds = originalImage.getRaster().getBounds();
             Geometry.center(enlargedBounds, originalSelectionBounds.getBounds());
             return enlargedBounds.getLocation();

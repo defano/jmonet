@@ -49,7 +49,6 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
-
         // User has already made selection; we'll handle the mouse press
         if (hasSelection()) {
 
@@ -58,18 +57,9 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
             dragTopRight = topRightHandle.contains(imageLocation);
             dragBottomLeft = bottomLeftHandle.contains(imageLocation);
             dragBottomRight = bottomRightHandle.contains(imageLocation);
-
-            // User is clicking outside the selection bounds; clear selection
-            if (!getSelectionOutline().contains(imageLocation)) {
-                finishSelection();
-                clearSelection();
-            }
         }
 
-        // No selection; delegate to selection tool to create a selection
-        else {
-            super.mousePressed(e, imageLocation);
-        }
+        super.mousePressed(e, imageLocation);
     }
 
     @Override
@@ -84,15 +74,20 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
             if (dragTopLeft) {
                 moveTopLeft(transformBounds, imageLocation);
+                drawSelection();
             } else if (dragTopRight) {
                 moveTopRight(transformBounds, imageLocation);
+                drawSelection();
             } else if (dragBottomLeft) {
                 moveBottomLeft(transformBounds, imageLocation);
+                drawSelection();
             } else if (dragBottomRight) {
                 moveBottomRight(transformBounds, imageLocation);
+                drawSelection();
+            } else {
+                super.mouseDragged(e, imageLocation);
             }
 
-            drawSelection();
         }
 
         // No selection, delegate to selection tool to define selection
@@ -110,6 +105,8 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
             // Grab a copy of the selected image before we begin transforming it
             originalImage = getSelectedImage();
+        } else {
+            super.mouseReleased(e, imageLocation);
         }
     }
 
@@ -154,6 +151,14 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     @Override
     protected void adjustSelectionBounds(int xDelta, int yDelta) {
         selectionBounds.setLocation(selectionBounds.x + xDelta, selectionBounds.y + yDelta);
+        transformBounds.getBottomLeft().x += xDelta;
+        transformBounds.getBottomLeft().y += yDelta;
+        transformBounds.getBottomRight().x += xDelta;
+        transformBounds.getBottomRight().y += yDelta;
+        transformBounds.getTopLeft().x += xDelta;
+        transformBounds.getTopLeft().y += yDelta;
+        transformBounds.getTopRight().x += xDelta;
+        transformBounds.getTopRight().y += yDelta;
     }
 
     protected BufferedImage getOriginalImage() {

@@ -29,6 +29,7 @@ Icon | Tool            | Description
 ![Paintbrush](icons/paintbrush.png) | Paintbrush | Draws paint on the canvas (using configurable stroke and color/texture).
 ![Pencil](icons/pencil.png) | Pencil | Draws a free-form, narrow black path on the canvas.
 ![Polygon](icons/polygon.png) | Polygon | Draws filled or outlined irregular polygons by clicking to specify points. Double-click to complete the polygon; press `esc` to keep only the lines visible; hold `shift` to restrict line angles to 15 degree multiples.
+![Freeform](icons/freeform.png) | Freeform | Draws a closed, free-form shape on the canvas. Click and drag to draw a path; release the mouse to draw a straight line connecting the final point on the path to the initial point.
 ![Rectangle](icons/rectangle.png) | Rectangle | Draws filled or outlined rectangles on the canvas; hold `shift` to constrain boundary to a square.
 ![Round Rect](icons/roundrect.png) | Round Rect | Draws filled or outlined round-rectangles on the canvas.
 ![Selection](icons/selection.png) | Selection | Define a selection rectangle ([marching ants](https://en.wikipedia.org/wiki/Marching_ants)) whose underlying graphic can be moved or cleared (press `delete`)
@@ -43,6 +44,7 @@ Tool            | Description
 Magnifier       | Zoom in (scale the canvas) at the location clicked; hold `shift` to zoom out or `ctrl` to restore normal zoom.
 Rotate          | Define a selection outline, then use the drag handle to free-rotate the selected graphic around its center.
 Slant           | Define a selection rectangle, then use the drag handles to apply an affine shear transform to the selected graphic.
+Scale           | Define a selection rectangle, then stretch or shrink the selected image by dragging a handle.
 
 #### Static transforms
 
@@ -67,7 +69,7 @@ JMonet is published to Maven Central; include the library in your Maven project'
 <dependency>
     <groupId>com.defano.jmonet</groupId>
     <artifactId>jmonet</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.4</version>
 </dependency>
 ```
 
@@ -79,7 +81,7 @@ repositories {
 }
 
 dependencies {
-  compile 'com.defano.jmonet:jmonet:0.0.2'
+  compile 'com.defano.jmonet:jmonet:0.0.4'
 }
 ```
 
