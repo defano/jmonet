@@ -93,8 +93,8 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
 
         addSelectionPoint(bounds.getLocation(), new Point(bounds.x + bounds.width, bounds.y + bounds.height), false);
-        completeSelection(new Point(bounds.x + bounds.width, bounds.y + bounds.height));
         getSelectionFromCanvas();
+        completeSelection(new Point(bounds.x + bounds.width, bounds.y + bounds.height));
     }
 
     public void createSelection(BufferedImage image, Point location) {
@@ -107,12 +107,13 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         g.dispose();
 
         addSelectionPoint(location.getLocation(), new Point(location.x + image.getWidth(), location.y + image.getHeight()), false);
-        completeSelection(new Point(location.x + image.getWidth(), location.y + image.getHeight()));
         selectedImage.set(image);
 
         selectionChange = new ChangeSet(getCanvas().getScratchImage(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
         getCanvas().commit(selectionChange);
         dirty = true;
+
+        completeSelection(new Point(location.x + image.getWidth(), location.y + image.getHeight()));
     }
 
     @Override
@@ -170,8 +171,8 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     public void mouseReleased(MouseEvent e, Point imageLocation) {
         // User released mouse after defining a selection
         if (!hasSelection() && hasSelectionBounds()) {
-            completeSelection(imageLocation);
             getSelectionFromCanvas();
+            completeSelection(imageLocation);
         }
     }
 

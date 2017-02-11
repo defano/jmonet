@@ -34,14 +34,8 @@ public class RotateTool extends AbstractSelectionTool {
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
 
-        // User clicked outside the selection after making a rotation change
-        if (isDirty() && !selectionBounds.contains(e.getPoint())) {
-            rotating = false;
-            super.mousePressed(e, imageLocation);
-        }
-
         // User clicked inside drag handle
-        else if (hasSelection() && dragHandle.contains(imageLocation)) {
+        if (hasSelection() && dragHandle.contains(imageLocation)) {
             rotating = true;
 
             if (centerpoint == null) {
@@ -53,7 +47,7 @@ public class RotateTool extends AbstractSelectionTool {
             }
         }
 
-        // None of the above; delegate to superclass
+        // User did not click inside a drag handle; delegate to superclass
         else {
             rotating = false;
             super.mousePressed(e, imageLocation);
@@ -63,7 +57,7 @@ public class RotateTool extends AbstractSelectionTool {
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
 
-        if (rotating && originalSelectionBounds != null) {
+        if (rotating) {
             setDirty();     // Mutating the selected image
 
             // Calculate the rotation angle
@@ -108,7 +102,8 @@ public class RotateTool extends AbstractSelectionTool {
 
     @Override
     public void completeSelection(Point finalPoint) {
-        // Nothing to do
+        originalImage = square(getSelectedImage());
+        originalSelectionBounds = getSelectionOutline();
     }
 
     @Override

@@ -168,7 +168,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     protected void drawSelectionOutline() {
         super.drawSelectionOutline();
 
-        if (hasSelection()) {
+        if (hasSelection() && transformBounds != null) {
 
             // Render drag handles on selection bounds
             Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
