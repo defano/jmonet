@@ -2,7 +2,7 @@ package com.defano.jmonet.tools;
 
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PaintTool;
-import com.defano.jmonet.tools.util.FloodFill;
+import com.defano.jmonet.algo.FloodFill;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

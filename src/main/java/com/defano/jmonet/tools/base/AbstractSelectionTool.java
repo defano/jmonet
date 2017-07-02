@@ -9,7 +9,7 @@ import com.defano.jmonet.tools.RotateTool;
 import com.defano.jmonet.tools.util.Geometry;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
-import com.defano.jmonet.tools.util.Transform;
+import com.defano.jmonet.algo.Transform;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -517,4 +517,5 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     public void setBoundaryCursor(Cursor boundaryCursor) {
         this.boundaryCursor = boundaryCursor;
     }
+
 }

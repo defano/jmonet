@@ -3,9 +3,9 @@ package com.defano.jmonet.tools;
 import com.defano.jmonet.model.FlexQuadrilateral;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractTransformTool;
+import com.defano.jmonet.algo.Transform;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class ScaleTool extends AbstractTransformTool {
 
@@ -28,7 +28,7 @@ public class ScaleTool extends AbstractTransformTool {
         quadrilateral.getTopRight().y = quadrilateral.getTopLeft().y;
         quadrilateral.getBottomLeft().x = quadrilateral.getTopLeft().x;
 
-        setSelectedImage(resize(quadrilateral));
+        setSelectedImage(Transform.resize(getOriginalImage(), quadrilateral));
     }
 
     @Override
@@ -46,7 +46,7 @@ public class ScaleTool extends AbstractTransformTool {
         quadrilateral.getTopLeft().y = quadrilateral.getTopRight().y;
         quadrilateral.getBottomRight().x = quadrilateral.getTopRight().x;
 
-        setSelectedImage(resize(quadrilateral));
+        setSelectedImage(Transform.resize(getOriginalImage(), quadrilateral));
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ScaleTool extends AbstractTransformTool {
         quadrilateral.getTopLeft().x = quadrilateral.getBottomLeft().x;
         quadrilateral.getBottomRight().y = quadrilateral.getBottomLeft().y;
 
-        setSelectedImage(resize(quadrilateral));
+        setSelectedImage(Transform.resize(getOriginalImage(), quadrilateral));
     }
 
     @Override
@@ -82,16 +82,7 @@ public class ScaleTool extends AbstractTransformTool {
         quadrilateral.getBottomLeft().y = quadrilateral.getBottomRight().y;
         quadrilateral.getTopRight().x = quadrilateral.getBottomRight().x;
 
-        setSelectedImage(resize(quadrilateral));
+        setSelectedImage(Transform.resize(getOriginalImage(), quadrilateral));
     }
 
-    private BufferedImage resize(FlexQuadrilateral quadrilateral) {
-        Rectangle resizedBounds = quadrilateral.getShape().getBounds();
-        BufferedImage resized = new BufferedImage(resizedBounds.width, resizedBounds.height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = (Graphics2D) resized.getGraphics();
-        g.drawImage(getOriginalImage(), 0,0, resizedBounds.width, resizedBounds.height, null);
-        g.dispose();
-
-        return resized;
-    }
 }
