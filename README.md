@@ -72,7 +72,7 @@ JMonet is published to Maven Central; include the library in your Maven project'
 <dependency>
     <groupId>com.defano.jmonet</groupId>
     <artifactId>jmonet</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
 </dependency>
 ```
 
@@ -84,7 +84,7 @@ repositories {
 }
 
 dependencies {
-  compile 'com.defano.jmonet:jmonet:0.0.4'
+  compile 'com.defano.jmonet:jmonet:0.0.5'
 }
 ```
 
