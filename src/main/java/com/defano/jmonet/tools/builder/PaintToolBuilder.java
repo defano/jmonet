@@ -93,76 +93,7 @@ public class PaintToolBuilder {
 
     public PaintTool build() {
 
-        PaintTool selectedTool;
-
-        switch (type) {
-            case PENCIL:
-                selectedTool = new PencilTool();
-                break;
-            case ARROW:
-                selectedTool = new ArrowTool();
-                break;
-            case RECTANGLE:
-                selectedTool = new RectangleTool();
-                break;
-            case ROUND_RECTANGLE:
-                selectedTool = new RoundRectangleTool();
-                break;
-            case OVAL:
-                selectedTool = new OvalTool();
-                break;
-            case PAINTBRUSH:
-                selectedTool = new PaintbrushTool();
-                break;
-            case ERASER:
-                selectedTool = new EraserTool();
-                break;
-            case LINE:
-                selectedTool = new LineTool();
-                break;
-            case POLYGON:
-                selectedTool = new PolygonTool();
-                break;
-            case SHAPE:
-                selectedTool = new ShapeTool();
-                break;
-            case SELECTION:
-                selectedTool = new SelectionTool();
-                break;
-            case TEXT:
-                selectedTool = new TextTool();
-                break;
-            case FILL:
-                selectedTool = new FillTool();
-                break;
-            case AIRBRUSH:
-                selectedTool = new AirbrushTool();
-                break;
-            case CURVE:
-                selectedTool = new CurveTool();
-                break;
-            case LASSO:
-                selectedTool = new LassoTool();
-                break;
-            case SLANT:
-                selectedTool = new SlantTool();
-                break;
-            case ROTATE:
-                selectedTool = new RotateTool();
-                break;
-            case MAGNIFIER:
-                selectedTool = new MagnifierTool();
-                break;
-            case FREEFORM:
-                selectedTool = new FreeformShapeTool();
-                break;
-            case SCALE:
-                selectedTool = new ScaleTool();
-                break;
-
-            default:
-                throw new RuntimeException("Bug! Unimplemented builder for tool " + type);
-        }
+        PaintTool selectedTool = type.getToolInstance();
 
         if (strokeProvider != null) {
             selectedTool.setStrokeProvider(strokeProvider);

@@ -1,4 +1,4 @@
-package com.defano.jmonet.tools.util;
+package com.defano.jmonet.algo;
 
 import com.defano.jmonet.model.FlexQuadrilateral;
 import com.defano.jmonet.tools.util.Geometry;
@@ -31,6 +31,26 @@ public class Transform {
 
     public static BufferedImage transform(BufferedImage image, AffineTransform transform) {
         return new AffineTransformOp(transform, AffineTransformOp.TYPE_NEAREST_NEIGHBOR).filter(image, null);
+    }
+
+    public static BufferedImage resize(BufferedImage image, FlexQuadrilateral quadrilateral) {
+        Rectangle resizedBounds = quadrilateral.getShape().getBounds();
+        BufferedImage resized = new BufferedImage(resizedBounds.width, resizedBounds.height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = (Graphics2D) resized.getGraphics();
+        g.drawImage(image, 0,0, resizedBounds.width, resizedBounds.height, null);
+        g.dispose();
+
+        return resized;
+    }
+
+    public static BufferedImage rubberSheet(BufferedImage image, FlexQuadrilateral quadrilateral) {
+        BufferedImage scaled = Transform.resize(image, quadrilateral);
+        return Projection.rubberSheet(scaled, quadrilateral);
+    }
+
+    public static BufferedImage project(BufferedImage image, FlexQuadrilateral quadrilateral) {
+        BufferedImage scaled = Transform.resize(image, quadrilateral);
+        return Projection.project(scaled, quadrilateral);
     }
 
     public static AffineTransform rotateLeft(int width, int height) {

@@ -1,7 +1,7 @@
 package com.defano.jmonet.tools;
 
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.util.Transform;
+import com.defano.jmonet.algo.Transform;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.util.Geometry;
 

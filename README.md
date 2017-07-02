@@ -8,10 +8,10 @@ Javadocs [are available here](https://defano.github.io/jmonet/docs/).
 
 * Offers a standard suite of paint tools with common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
 * Painting canvas supports undo and redo operations on all paint tool changes.
-* Includes affine transform tools including flip, quadrant rotate, free-rotate, and shear.
+* Includes affine and non-affine transform tools including flip, rotate, shear, perspective and projection.
 * Painted images are scalable (displayed within a scrollable pane) and tools can be snapped to a grid.
-* Lightweight toolkit integrates easily into Swing and JavaFX applications and has no transitive dependencies.
-* Backed by a standard, Java `BufferedImage`; easy to import existing images or save changes.
+* Lightweight toolkit integrates easily into Swing and JavaFX applications.
+* All operations are backed by a standard Java `BufferedImage`; easy to import existing images and save changes.
 
 ## Paint Tools
 
@@ -42,15 +42,18 @@ Icon | Tool            | Description
 Tool            | Description
 ----------------| -------------
 Magnifier       | Zoom in (scale the canvas) at the location clicked; hold `shift` to zoom out or `ctrl` to restore normal zoom.
-Rotate          | Define a selection outline, then use the drag handle to free-rotate the selected graphic around its center.
-Slant           | Define a selection rectangle, then use the drag handles to apply an affine shear transform to the selected graphic.
-Scale           | Define a selection rectangle, then stretch or shrink the selected image by dragging a handle.
+Rotate          | Define a selection, then use the drag handle to free-rotate the selected graphic around its center.
+Slant           | Define a selection, then use the drag handles to apply an affine shear transform to the selected graphic.
+Scale           | Define a selection, then expand or shrink the selected image by dragging a handle.
+Perspective     | Define a selection, then use the drag handles to warp the image onto an isosceles trapezoid, providing the effect of the left or right side of the image appearing nearer or farther from the viewer.
+Projection      | Define a selection, then use the drag handles to project the image onto the geometry of an arbitrary quadrilateral.
+Rubber Sheet    | Similar to the projection transform, but utilizes a "rubber sheet" algorithm that preserves relative position over linearity.
 
 #### Static transforms
 
 Selected images can be flipped horizontally, vertically or rotated 90 degrees clockwise or counterclockwise via the Selection or Lasso tools.
 
-Once a selection has been made, invoke one of the following methods on the SelectionTool object:
+Once a selection has been made, invoke one of the following methods on the `SelectionTool` object:
 
 ```
 void rotateLeft();
@@ -221,9 +224,3 @@ Place the canvas(es) and/or other UI components in a `LayeredPane`. Use the `Lay
 #### What about vector graphic tools (i.e., "draw" apps)?
 
 Sorry, not the intent of this library. That said, many pieces of this library could be leveraged for such a tool...
-
-#### Do you have tools for perspective, distort or other non-affine transforms?
-
-Not yet. The Java Advanced Imaging libraries that provide the underlying algorithms for more complex transformations are licensed separately from the Java JDK and cannot automatically be "pulled in" to a project via build tools like Maven or Gradle (at least not legally). Thus, including such tools would make distributing and using this library a real PITA.
-
-I might someday offer an "extension pack" JAR that has these tools but requires users to download and install Oracle's JAI library in order to compile them.

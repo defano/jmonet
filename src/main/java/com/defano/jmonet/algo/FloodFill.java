@@ -1,4 +1,4 @@
-package com.defano.jmonet.tools.util;
+package com.defano.jmonet.algo;
 
 import java.awt.*;
 import java.util.Stack;

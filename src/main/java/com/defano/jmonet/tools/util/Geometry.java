@@ -1,6 +1,7 @@
 package com.defano.jmonet.tools.util;
 
 import java.awt.*;
+import java.awt.geom.Line2D;
 
 /**
  * A utility class with geometric and trigonometric routines used by various tools.
@@ -234,6 +235,14 @@ public class Geometry {
         }
 
         return polygon;
+    }
+
+    public static boolean isBelow(Line2D line, Point c) {
+        return (line.getX2() - line.getX1()) * (c.y - line.getY1()) - (line.getY2() - line.getY1()) * (c.x - line.getX1()) > 0;
+    }
+
+    public static boolean isAbove(Line2D line, Point c) {
+        return (line.getX2() - line.getX1()) * (c.y - line.getY1()) - (line.getY2() - line.getY1()) * (c.x - line.getX1()) < 0;
     }
 
 }
