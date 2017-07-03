@@ -2,8 +2,6 @@
 
 A rudimentary toolkit for incorporating [MacPaint](https://en.wikipedia.org/wiki/MacPaint) / [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint)-like tools into a Java Swing or JavaFX application.
 
-Javadocs [are available here](https://defano.github.io/jmonet/docs/).
-
 ## Features
 
 * Offers a standard suite of paint tools with common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
@@ -35,19 +33,19 @@ Icon | Tool            | Description
 ![Selection](icons/selection.png) | Selection | Define a selection rectangle ([marching ants](https://en.wikipedia.org/wiki/Marching_ants)) whose underlying graphic can be moved or cleared (press `delete`)
 ![Shape](icons/shape.png) | Shape | Draws filled or outlined regular polygons (i.e., shapes--triangles, squares, polygons, hexagons, etc.)
 ![Text](icons/text.png) | Text | Draws rasterized text (of a configurable font, size and style) on the canvas. Text remains editable until user clicks away.
-| | Arrow | A no-op tool that does not modify the canvas in any way.
+![Arrow](icons/arrow.png) | Arrow | A no-op tool that does not modify the canvas in any way.
 
 ## Transform tools
 
-Tool            | Description
-----------------| -------------
-Magnifier       | Zoom in (scale the canvas) at the location clicked; hold `shift` to zoom out or `ctrl` to restore normal zoom.
-Rotate          | Define a selection, then use the drag handle to free-rotate the selected graphic around its center.
-Slant           | Define a selection, then use the drag handles to apply an affine shear transform to the selected graphic.
-Scale           | Define a selection, then expand or shrink the selected image by dragging a handle.
-Perspective     | Define a selection, then use the drag handles to warp the image onto an isosceles trapezoid, providing the effect of the left or right side of the image appearing nearer or farther from the viewer.
-Projection      | Define a selection, then use the drag handles to project the image onto the geometry of an arbitrary quadrilateral.
-Rubber Sheet    | Similar to the projection transform, but utilizes a "rubber sheet" algorithm that preserves relative position over linearity.
+Icon | Tool            | Description
+-----|----------| -------------
+![Magnifier](icons/magnifier.png) | Magnifier       | Zoom in (scale the canvas) at the location clicked; hold `shift` to zoom out or `ctrl` to restore normal zoom.
+![Rotate](icons/rotate.png) | Rotate          | Define a selection, then use the drag handle to free-rotate the selected graphic around its center.
+![Rotate](icons/slant.png) | Slant           | Define a selection, then use the drag handles to apply an affine shear transform to the selected graphic.
+![Rotate](icons/scale.png) | Scale           | Define a selection, then expand or shrink the selected image by dragging a handle.
+![Rotate](icons/perspective.png) | Perspective     | Define a selection, then use the drag handles to warp the image onto an isosceles trapezoid, providing the effect of the left or right side of the image appearing nearer or farther from the viewer.
+![Rotate](icons/distort.png) | Projection      | Define a selection, then use the drag handles to project the image onto the geometry of an arbitrary quadrilateral.
+![Rotate](icons/distort.png) | Rubber Sheet    | Similar to the projection transform, but utilizes a "rubber sheet" algorithm that preserves relative position over linearity.
 
 #### Static transforms
 
