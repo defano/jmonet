@@ -285,7 +285,34 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     }
 
     /**
-     * Make the canvas image bounded by the given selection rectangle the current selected image.
+     * Add the graphics underneath the selection to the current selected image.
+     *
+     * That is, this method "picks up" the paint underneath the selection (that wasn't part of the paint initially
+     * picked up when the selection bounds were defined).
+     */
+    public void pickupSelection() {
+
+        if (hasSelection()) {
+            Shape selectionBounds = getSelectionOutline();
+            BufferedImage maskedSelection = maskSelection(getCanvas().getCanvasImage(), selectionBounds);
+            BufferedImage trimmedSelection = maskedSelection.getSubimage(
+                    Math.max(0, selectionBounds.getBounds().x),
+                    Math.max(0, selectionBounds.getBounds().y),
+                    Math.min(selectionBounds.getBounds().width, maskedSelection.getWidth() - selectionBounds.getBounds().x),
+                    Math.min(selectionBounds.getBounds().height, maskedSelection.getHeight() - selectionBounds.getBounds().y)
+            );
+
+            Graphics2D g2d = (Graphics2D) getSelectedImage().getGraphics();
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+            g2d.drawImage(trimmedSelection, 0, 0, null);
+            g2d.dispose();
+
+            eraseSelectionFromCanvas();
+        }
+    }
+
+    /**
+     * Make the canvas image bounded by the given selection shape the current selected image.
      */
     protected void getSelectionFromCanvas() {
         getCanvas().clearScratch();
