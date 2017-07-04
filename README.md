@@ -17,6 +17,8 @@ JMonet provides the following standard paint tools.
 
 Icon | Tool            | Description
 -----|-----------------|--------------
+![Arrow](icons/arrow.png) | Arrow | A no-op tool that does not modify the canvas in any way.
+![Magnifier](icons/magnifier.png) | Magnifier | Zoom in (scale the canvas) at the location clicked; hold `shift` to zoom out or `ctrl` to restore normal zoom.
 ![Airbrush](icons/spraypaint.png) | Airbrush | Paints translucent color or texture onto the canvas.
 ![Curve](icons/curve.png) | Curve | Draws quadratic (Bezier) curves by clicking to specify points on the curve.
 ![Eraser](icons/eraser.png) | Eraser | Removes paint from the canvas by restoring affected pixels to their fully-transparent state.
@@ -33,13 +35,11 @@ Icon | Tool            | Description
 ![Selection](icons/selection.png) | Selection | Define a selection rectangle ([marching ants](https://en.wikipedia.org/wiki/Marching_ants)) whose underlying graphic can be moved or cleared (press `delete`)
 ![Shape](icons/shape.png) | Shape | Draws filled or outlined regular polygons (i.e., shapes--triangles, squares, polygons, hexagons, etc.)
 ![Text](icons/text.png) | Text | Draws rasterized text (of a configurable font, size and style) on the canvas. Text remains editable until user clicks away.
-![Arrow](icons/arrow.png) | Arrow | A no-op tool that does not modify the canvas in any way.
 
 ## Transform tools
 
 Icon | Tool            | Description
 -----|----------| -------------
-![Magnifier](icons/magnifier.png) | Magnifier       | Zoom in (scale the canvas) at the location clicked; hold `shift` to zoom out or `ctrl` to restore normal zoom.
 ![Rotate](icons/rotate.png) | Rotate          | Define a selection, then use the drag handle to free-rotate the selected graphic around its center.
 ![Rotate](icons/slant.png) | Slant           | Define a selection, then use the drag handles to apply an affine shear transform to the selected graphic.
 ![Rotate](icons/scale.png) | Scale           | Define a selection, then expand or shrink the selected image by dragging a handle.
@@ -49,7 +49,7 @@ Icon | Tool            | Description
 
 #### Static transforms
 
-Selected images can be flipped horizontally, vertically or rotated 90 degrees clockwise or counterclockwise via the Selection or Lasso tools.
+Selected images can be flipped horizontally, vertically or rotated 90 degrees clockwise or counterclockwise via the Selection or Lasso tools. Adjustments to brightness, transparency and color are also available.
 
 Once a selection has been made, invoke one of the following methods on the `SelectionTool` object:
 
@@ -58,6 +58,10 @@ void rotateLeft();
 void rotateRight();
 void flipHorizontal();
 void flipVertical();
+
+void adjustBrightness(int delta);
+void adjustTransparency(int delta);
+void invert();
 ```
 
 ## Getting started
@@ -70,7 +74,7 @@ JMonet is published to Maven Central; include the library in your Maven project'
 <dependency>
     <groupId>com.defano.jmonet</groupId>
     <artifactId>jmonet</artifactId>
-    <version>0.0.5</version>
+    <version>0.0.6</version>
 </dependency>
 ```
 
@@ -82,7 +86,7 @@ repositories {
 }
 
 dependencies {
-  compile 'com.defano.jmonet:jmonet:0.0.5'
+  compile 'com.defano.jmonet:jmonet:0.0.6'
 }
 ```
 
