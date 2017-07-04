@@ -7,6 +7,9 @@ import com.defano.jmonet.algo.Transform;
 
 import java.awt.*;
 
+/**
+ * Tool for making either the left or right side appear closer/further away than the other.
+ */
 public class PerspectiveTool extends AbstractTransformTool {
 
     public PerspectiveTool() {

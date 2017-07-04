@@ -97,6 +97,13 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         completeSelection(new Point(bounds.x + bounds.width, bounds.y + bounds.height));
     }
 
+    /**
+     * Creates a selection containing the given image at the requested location on the canvas.
+     *
+     * @param image The image contained by the selection. Note that the selection bounds will equal the bounds of this
+     *              image.
+     * @param location The location on the canvas where the selection (and image) will initially appear.
+     */
     public void createSelection(BufferedImage image, Point location) {
         if (hasSelection()) {
             finishSelection();
@@ -195,27 +202,136 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         MarchingAnts.getInstance().removeObserver(this);
     }
 
+    /**
+     * Add the graphics underneath the selection to the currently selected image. Has no effect if a selection is not
+     * active or has not been dirtied.
+     *
+     * This method "picks up" the paint underneath the selection (that wasn't part of the paint initially
+     * picked up when the selection bounds were defined).
+     */
+    public void pickupSelection() {
+
+        if (hasSelection()) {
+            Shape selectionBounds = getSelectionOutline();
+            BufferedImage maskedSelection = maskSelection(getCanvas().getCanvasImage(), selectionBounds);
+            BufferedImage trimmedSelection = maskedSelection.getSubimage(
+                    Math.max(0, selectionBounds.getBounds().x),
+                    Math.max(0, selectionBounds.getBounds().y),
+                    Math.min(selectionBounds.getBounds().width, maskedSelection.getWidth() - selectionBounds.getBounds().x),
+                    Math.min(selectionBounds.getBounds().height, maskedSelection.getHeight() - selectionBounds.getBounds().y)
+            );
+
+            Graphics2D g2d = (Graphics2D) getSelectedImage().getGraphics();
+            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+            g2d.drawImage(trimmedSelection, 0, 0, null);
+            g2d.dispose();
+
+            eraseSelectionFromCanvas();
+        }
+    }
+
+    /**
+     * Inverts the color of the selection while preserving the alpha transparency.
+     */
+    @Override
+    public void invert() {
+        if (hasSelection()) {
+            BufferedImage selectedImage = getSelectedImage();
+            for (int x = 0; x < selectedImage.getWidth(); x++) {
+                for (int y = 0; y < selectedImage.getHeight(); y++) {
+
+                    int argb = selectedImage.getRGB(x, y);
+                    int alpha = 0xff000000 & argb;
+                    int rgb = 0x00ffffff & argb;
+
+                    // Invert preserving alpha channel
+                    selectedImage.setRGB(x, y, alpha | (~rgb & 0x00ffffff));
+                }
+            }
+
+            setDirty();
+        }
+    }
+
+    /**
+     * Adjusts the brightness of the selected image by a given amount preserving the alpha transparency.
+     *
+     * @param delta An amount by which brightness should be adjusted, -256 to +256. Negative numbers darken an image,
+     */
+    @Override
+    public void adjustBrightness(int delta) {
+        if (hasSelection()) {
+            BufferedImage selectedImage = getSelectedImage();
+            for (int x = 0; x < selectedImage.getWidth(); x++) {
+                for (int y = 0; y < selectedImage.getHeight(); y++) {
+
+                    int argb = selectedImage.getRGB(x, y);
+                    int alpha = 0xff000000 & argb;
+                    int r = ((0xff0000 & argb) >> 16) + delta;
+                    int g = ((0xff00 & argb) >> 8) + delta;
+                    int b = (0xff & argb) + delta;
+
+                    // Saturate at 0 and 256
+                    r = r > 0xff ? 0xff : r < 0 ? 0 : r;
+                    g = g > 0xff ? 0xff : g < 0 ? 0 : g;
+                    b = b > 0xff ? 0xff : b < 0 ? 0 : b;
+
+                    // Adjust preserving alpha channel
+                    selectedImage.setRGB(x, y, alpha | (r << 16) | (g << 8) | b);
+                }
+            }
+
+            setDirty();
+        }
+    }
+
+    /**
+     * Adjusts the alpha transparency of each pixel in the selection while otherwise preserving the hue, saturation
+     * and brightness of the pixel.
+     *
+     * @param delta An amount by which transparency should be adjusted -256 to +256; Negative numbers make the image
+     */
+    public void adjustTransparency(int delta) {
+        if (hasSelection()) {
+            BufferedImage selectedImage = getSelectedImage();
+            for (int x = 0; x < selectedImage.getWidth(); x++) {
+                for (int y = 0; y < selectedImage.getHeight(); y++) {
+
+                    Color c = new Color(selectedImage.getRGB(x, y), true);
+                    int alpha = c.getAlpha() + delta;
+                    alpha = alpha > 255 ? 255 : alpha < 0 ? 0 : alpha;
+
+                    // Adjust preserving alpha channel
+                    selectedImage.setRGB(x, y, new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha).getRGB());
+                }
+            }
+
+            setDirty();
+        }
+    }
+
     @Override
     public void rotateLeft() {
-        transformSelection(Transform.rotateLeft(selectedImage.get().getWidth(), selectedImage.get().getHeight()));
+        applyTransform(Transform.rotateLeft(selectedImage.get().getWidth(), selectedImage.get().getHeight()));
     }
 
     @Override
     public void rotateRight() {
-        transformSelection(Transform.rotateRight(selectedImage.get().getWidth(), selectedImage.get().getHeight()));
+        applyTransform(Transform.rotateRight(selectedImage.get().getWidth(), selectedImage.get().getHeight()));
     }
 
     @Override
     public void flipHorizontal() {
-        transformSelection(Transform.flipHorizontalTransform(selectedImage.get().getWidth()));
+        applyTransform(Transform.flipHorizontalTransform(selectedImage.get().getWidth()));
     }
 
     @Override
     public void flipVertical() {
-        transformSelection(Transform.flipVerticalTransform(selectedImage.get().getHeight()));
+        applyTransform(Transform.flipVerticalTransform(selectedImage.get().getHeight()));
     }
 
-    public void transformSelection(AffineTransform transform) {
+    @Override
+    public void applyTransform(AffineTransform transform) {
         if (hasSelection()) {
             setDirty();
 
@@ -234,10 +350,20 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
     }
 
+    /**
+     * Gets an ImmuatableProvider containing the selected image, useful for observing changes made to the selected
+     * image.
+     *
+     * @return The provider.
+     */
     public ImmutableProvider<BufferedImage> getSelectedImageProvider() {
         return ImmutableProvider.from(selectedImage);
     }
 
+    /**
+     * Gets the image represented by the selection.
+     * @return The selected image
+     */
     public BufferedImage getSelectedImage() {
         return selectedImage.get();
     }
@@ -285,33 +411,6 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     }
 
     /**
-     * Add the graphics underneath the selection to the current selected image.
-     *
-     * That is, this method "picks up" the paint underneath the selection (that wasn't part of the paint initially
-     * picked up when the selection bounds were defined).
-     */
-    public void pickupSelection() {
-
-        if (hasSelection()) {
-            Shape selectionBounds = getSelectionOutline();
-            BufferedImage maskedSelection = maskSelection(getCanvas().getCanvasImage(), selectionBounds);
-            BufferedImage trimmedSelection = maskedSelection.getSubimage(
-                    Math.max(0, selectionBounds.getBounds().x),
-                    Math.max(0, selectionBounds.getBounds().y),
-                    Math.min(selectionBounds.getBounds().width, maskedSelection.getWidth() - selectionBounds.getBounds().x),
-                    Math.min(selectionBounds.getBounds().height, maskedSelection.getHeight() - selectionBounds.getBounds().y)
-            );
-
-            Graphics2D g2d = (Graphics2D) getSelectedImage().getGraphics();
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-            g2d.drawImage(trimmedSelection, 0, 0, null);
-            g2d.dispose();
-
-            eraseSelectionFromCanvas();
-        }
-    }
-
-    /**
      * Make the canvas image bounded by the given selection shape the current selected image.
      */
     protected void getSelectionFromCanvas() {
@@ -339,7 +438,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     }
 
     /**
-     * Removes the image bounded by the selection outline from the canvas by filling bounded pixels with
+     * Removes the image bounded by the selection outline from the canvas by replacing bounded pixels with
      * fully transparent pixels.
      */
     private void eraseSelectionFromCanvas() {
@@ -529,18 +628,34 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
     }
 
+    /**
+     * Gets the cursor used to drag or move the selection on the canvas.
+     * @return The movement cursor
+     */
     public Cursor getMovementCursor() {
         return movementCursor;
     }
 
+    /**
+     * Sets the cursor used when dragging or moving the selection on the canvas.
+     * @param movementCursor The movement cursor
+     */
     public void setMovementCursor(Cursor movementCursor) {
         this.movementCursor = movementCursor;
     }
 
+    /**
+     * Gets the cursor used to define or adjust selection boundary.
+     * @return The boundary cursor
+     */
     public Cursor getBoundaryCursor() {
         return boundaryCursor;
     }
 
+    /**
+     * Sets the cursor used to define a selection boundary.
+     * @param boundaryCursor The boundary cursor
+     */
     public void setBoundaryCursor(Cursor boundaryCursor) {
         this.boundaryCursor = boundaryCursor;
     }
