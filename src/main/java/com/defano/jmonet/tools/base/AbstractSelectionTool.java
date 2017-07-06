@@ -114,13 +114,11 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         g.dispose();
 
         addSelectionPoint(location.getLocation(), new Point(location.x + image.getWidth(), location.y + image.getHeight()), false);
+        completeSelection(new Point(location.x + image.getWidth(), location.y + image.getHeight()));
         selectedImage.set(image);
 
-        selectionChange = new ChangeSet(getCanvas().getScratchImage(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
-        getCanvas().commit(selectionChange);
+        // Don't call setDirty(), doing so will remove underlying pixels from the canvas
         dirty = true;
-
-        completeSelection(new Point(location.x + image.getWidth(), location.y + image.getHeight()));
     }
 
     @Override
@@ -387,6 +385,15 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     }
 
     /**
+     * Deletes the selection image from the canvas and clears the selection (removes marching ants)
+     */
+    public void deleteSelection() {
+        setDirty();
+        clearSelection();
+        getCanvas().commit();
+    }
+
+    /**
      * Determines if the user has an active selection.
      * <p>
      * Differs from {@link #hasSelectionBounds()} in that when a user is dragging the selection rectangle, a selection
@@ -462,7 +469,6 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * effect of completing a select-and-move operation.
      */
     protected void finishSelection() {
-
         if (hasSelection()) {
             getCanvas().clearScratch();
             BufferedImage scratch = getCanvas().getScratchImage();
@@ -474,6 +480,8 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
             // Nothing to commit/change if user hasn't moved (dirtied) the selection
             if (selectionChange != null) {
                 selectionChange.addChange(scratch, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+            } else {
+                getCanvas().commit();
             }
 
             clearSelection();
@@ -586,8 +594,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_DELETE:
                 case KeyEvent.VK_BACK_SPACE:
-                    setDirty();
-                    clearSelection();
+                    deleteSelection();
                     break;
 
                 case KeyEvent.VK_ESCAPE:
