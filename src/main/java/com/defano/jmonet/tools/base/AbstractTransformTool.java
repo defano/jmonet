@@ -140,7 +140,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     @Override
     protected void setSelectionBounds(Rectangle bounds) {
-        throw new IllegalStateException("No implemented");
+        transformBounds = new FlexQuadrilateral(bounds);
     }
 
     @Override

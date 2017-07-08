@@ -8,6 +8,9 @@ import com.defano.jmonet.algo.Transform;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * Tool for performing a rubber sheet projection of the image.
+ */
 public class RubberSheetTool extends AbstractTransformTool {
 
     public RubberSheetTool() {

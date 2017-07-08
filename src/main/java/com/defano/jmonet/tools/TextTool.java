@@ -4,6 +4,7 @@ package com.defano.jmonet.tools;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PaintTool;
+import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +19,7 @@ import java.util.Observer;
  */
 public class TextTool extends PaintTool implements Observer {
 
-    private final JTextArea textArea;
+    private JTextArea textArea;
 
     private Cursor textCursor = new Cursor(Cursor.TEXT_CURSOR);
     private Point textLocation;
@@ -26,25 +27,29 @@ public class TextTool extends PaintTool implements Observer {
     public TextTool() {
         super(PaintToolType.TEXT);
         setToolCursor(getTextCursor());
-
-        textArea = new JTextArea();
-        textArea.setVisible(true);
-        textArea.setOpaque(false);
-        textArea.setBackground(new Color(0, 0, 0, 0));
     }
 
     @Override
     public void deactivate() {
-        super.deactivate();
-
-        commitTextImage();
-        removeTextArea();
         getFontProvider().deleteObserver(this);
+
+        if (isEditing()) {
+            commitTextImage();
+            removeTextArea();
+        }
+
+        super.deactivate();
     }
 
     @Override
     public void activate(PaintCanvas canvas) {
         super.activate(canvas);
+
+        textArea = new JTextArea();
+        textArea.setVisible(true);
+        textArea.setOpaque(false);
+        textArea.setBackground(new Color(0, 0, 0, 0));
+
         getFontProvider().addObserver(this);
     }
 

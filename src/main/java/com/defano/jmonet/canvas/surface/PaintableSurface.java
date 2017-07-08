@@ -19,6 +19,7 @@ public class PaintableSurface extends JPanel implements CompositeSurface, Observ
     public PaintableSurface() {
         setOpaque(false);
         setLayout(null);
+        setFocusable(true);
 
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -91,6 +92,8 @@ public class PaintableSurface extends JPanel implements CompositeSurface, Observ
 
     @Override
     public final void mouseClicked(MouseEvent e) {
+        requestFocus();
+
         for (SurfaceInteractionObserver thisListener : interactionListeners) {
             thisListener.mouseClicked(e, painting.convertPointToImage(e.getPoint()));
         }

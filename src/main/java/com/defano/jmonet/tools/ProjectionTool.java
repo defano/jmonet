@@ -7,6 +7,9 @@ import com.defano.jmonet.tools.base.AbstractTransformTool;
 
 import java.awt.*;
 
+/**
+ * Tools for performing a homography projective of the image.
+ */
 public class ProjectionTool extends AbstractTransformTool {
 
     public ProjectionTool() {
