@@ -5,7 +5,7 @@ A rudimentary toolkit for incorporating [MacPaint](https://en.wikipedia.org/wiki
 ## Features
 
 * Offers a standard suite of paint tools with common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
-* Painting canvas supports undo and redo operations on all paint tool changes.
+* Painting canvas supports undo and redo operations on all paint tool changes, plus cut, copy and paste integration with the system clipboard.
 * Includes affine and non-affine transform tools including flip, rotate, shear, perspective and projection.
 * Painted images are scalable (displayed within a scrollable pane) and tools can be snapped to a grid.
 * Lightweight toolkit integrates easily into Swing and JavaFX applications.
@@ -40,12 +40,12 @@ Icon | Tool            | Description
 
 Icon | Tool            | Description
 -----|----------| -------------
-![Rotate](icons/rotate.png) | Rotate          | Define a selection, then use the drag handle to free-rotate the selected graphic around its center.
-![Rotate](icons/slant.png) | Slant           | Define a selection, then use the drag handles to apply an affine shear transform to the selected graphic.
-![Rotate](icons/scale.png) | Scale           | Define a selection, then expand or shrink the selected image by dragging a handle.
-![Rotate](icons/perspective.png) | Perspective     | Define a selection, then use the drag handles to warp the image onto an isosceles trapezoid, providing the effect of the left or right side of the image appearing nearer or farther from the viewer.
-![Rotate](icons/distort.png) | Projection      | Define a selection, then use the drag handles to project the image onto the geometry of an arbitrary quadrilateral.
-![Rotate](icons/distort.png) | Rubber Sheet    | Similar to the projection transform, but utilizes a "rubber sheet" algorithm that preserves relative position over linearity.
+![Rotate](icons/rotate.png) | Rotate | Define a selection, then use the drag handle to free-rotate the selected graphic around its center.
+![Slant](icons/slant.png) | Slant | Define a selection, then use the drag handles to apply an affine shear transform to the selected graphic.
+![Scale](icons/scale.png) | Scale | Define a selection, then expand or shrink the selected image by dragging a handle.
+![Projection](icons/distort.png) | Projection | Define a selection, then use the drag handles to project the image onto the geometry of an arbitrary quadrilateral.
+![perspective](icons/perspective.png) | Perspective | Define a selection, then use the drag handles to warp the image onto an isosceles trapezoid, providing the effect of the left or right side of the image appearing nearer or farther from the viewer.
+![Rubber Sheet](icons/distort.png) | Rubber Sheet | Similar to the projection transform, but utilizes a "rubber sheet" algorithm that preserves relative position over linearity.
 
 #### Static transforms
 
@@ -152,7 +152,89 @@ Voila! You're ready to start painting a round, 8-pixel, bright red brushstroke o
 activeTool.deactivate();
 ```
 
-(There's no technical limitation that prevents multiple tools from being active on the same canvas at the same time, but that's not typically a desired behavior.)
+There's no technical limitation that prevents multiple tools from being active on the same canvas at the same time, but that's not usually desired behavior in a paint program.
+
+## Implement cut, copy and paste
+
+JMonet makes it easy to integrate cut, copy and paste functions into your app that utilize the operating system's clipboard so that you can copy and paste graphics from within your own application or between other applications on your system.
+
+A bit of integration is required to connect these functions to the UI elements in your app (like menu items or toolbar buttons) that a user will interact with.
+
+#### 1. Route actions to the canvas
+
+The JMonet canvas will not receive cut, copy or paste actions until we register an `ActionListener` that routes those actions to it. Typically, only the user interface element that has focus receives such events, but because a canvas has no clear concept of focus, its up to you to decide when the canvas should respond to cut, copy and paste actions.
+
+Create an `ActionListener` to send actions to the canvas:
+
+```
+CanvasClipboardActionListener myActionListener = new CanvasClipboardActionListener(new CanvasFocusDelegate() {
+    @Override
+    public AbstractPaintCanvas getCanvasInFocus() {
+
+        // Should our canvas handle cut, copy and paste commands right now?
+        if (isMyCanvasInFocus()) {
+            return myCanvas;
+        }
+
+        // If not, return null
+        return null;
+    }
+});
+```
+
+Then, add this `ActionListener` to whichever user interface elements will generate cut, copy and paste events. Most commonly this would be added to menu items but could also be used with buttons on a toolbar, for example:
+
+```
+JMenuItem myCopyMenuItem = new JMenuItem(new DefaultEditorKit.CopyAction());
+copyMenuItem.setName("Copy");
+copyMenuItem.setActionCommand((String) TransferHandler.getCopyAction().getValue(Action.NAME))
+copyMenuItem.addActionListener(myActionListener);
+
+myEditMenu.add(myCopyMenuItem);
+```
+
+#### 2. Add the transfer handler
+
+Your application needs to tell JMonet what to do when the user has invoked the cut, copy or paste action. Typically, this simply involves getting or setting the selection defined by a selection tool (i.e., any tool which subclasses `AbstractSelectionTool`). Of course, you're free to provide alternate behavior (like copying the entire canvas, instead of just the selection).
+
+The code below provides an implementation that cuts, copies and pastes the active selection.
+
+```
+  UndoablePaintCanvas myCanvas = new UndoablePaintCanvas();
+
+  myCanvas.setTransferHandler(new CanvasTransferHandler(myCanvas, new CanvasTransferDelegate() {
+    @Override
+    public BufferedImage copySelection() {
+      if (myActiveTool instanceof AbstractSelectionTool) {
+        return ((AbstractSelectionTool) myActiveTool).getSelectedImage();
+      }
+
+      // Nothing available to copy if active tool isn't a selection tool
+      return null;
+    }
+
+    @Override
+    public void deleteSelection() {
+      // Nothing to do if active tool isn't a selection tool
+      if (activeTool instanceof AbstractSelectionTool) {
+        ((AbstractSelectionTool) activeTool).deleteSelection();
+      }
+    }
+
+    @Override
+    public void pasteSelection(BufferedImage image) {
+      // Make selection tool active...
+      SelectionTool tool = (SelectionTool) PaintToolBuilder
+        .create(SelectionTool)
+        .makeActiveOnCanvas(myCanvas)
+        .build();
+
+      // ... then create a new selection from the pasted image
+      tool.createSelection(image, new Point(0, 0));
+    }
+})
+
+```
 
 ## Tool and canvas attribute providers
 
@@ -193,17 +275,29 @@ Java's Graphics context does indeed provide routines for drawing shapes, but the
 
 Get the image from the canvas via the `public BufferedImage getCanvasImage()` method. Then, use Java's `ImageIO` class to save as `gif`, `png` or `jpg`. For more advanced file type support (such as `wbmp`, `bmp`, `pcx`, `pnm`, `raw` or `tiff`), consider the [Java Advanced ImageIO](http://docs.oracle.com/javase/6/docs/technotes/guides/imageio/index.html) library.
 
-#### How do I import existing images for editing?
+#### How do I import images from files or elsewhere?
 
 You'll need your image in the form of a Java `BufferedImage` object. Use Java's ImageIO or Advanced ImageIO to [read/deserialize existing files or data](https://docs.oracle.com/javase/tutorial/2d/images/loadimage.html).
 
 Then, you have three options:
 
-1. Create a new canvas from an existing `BufferedImage` object like: `new UndoableCanvas(myImage)`. Best option when opening an existing file for editing.
-2. Create a new selection from an existing image using the selection tool: `selectionTool.createSelection(myImage, new Point(0,0))`. Best option when you want to add an image to an existing canvas while allowing the user to move it into place.
-3. Commit the image to an existing canvas by drawing it onto the scratch buffer and committing the change, like: `myCanvas.setScratchImage(myImage); myCanvas.commit()`. Best option when opening an image to be statically overlaid onto an existing canvas.
+1. Create a new canvas from an existing `BufferedImage` object like: `new UndoableCanvas(myImage)`. Best option when opening a file for editing.
+2. Use the selection tool to create a new selection containing your image: `selectionTool.createSelection(myImage, new Point(0,0))`. Best option when pasting an image into to an existing canvas (and you'd like to allow the user to move it into place).
+3. Commit the image to an existing canvas by drawing it onto the scratch buffer and committing the change, like: `myCanvas.setScratchImage(myImage); myCanvas.commit()`. Best option when you want to programmatically overlay an image onto an existing canvas.
 
 Note that in cases 1 and 3, if the imported image does not match the dimensions of the canvas, it will be drawn in the upper-left corner. Resize and translate the image you wish to import first if you'd like it to appear elsewhere.
+
+#### If I create a selection using `SelectionTool`, can I modify it with a transform tool (like `ProjectionTool`) or do I have to create a new selection from scratch with the transform tool?
+
+You can transfer a selection from one selection tool to another using a bit of code like this:
+
+```
+public void transferSelection(AbstractSelectionTool from, AbstractSelectionTool to) {
+    to.createSelection(from.getSelectionOutline().getBounds());
+}
+```
+
+Note that you cannot programmatically create a selection from an abstract shape, thus, when transferring selection from a tool providing a non-rectangular selection boundary the new selection will be expanded to a rectangle bounding the original selection. 
 
 #### Can I create my own tools?
 
@@ -217,7 +311,7 @@ Tool Base                | Description
 `AbstractPathTool`       | Click-and-drag to define a free-form path on the canvas. Examples: Paintbrush, pencil, eraser tools.
 `AbstractPolylineTool`   | Click-click-click-double-click to define segments in a polygon or curve. Examples: Curve, Polygon tools.
 `AbstractSelectionTool`  | Most complex of the tool bases; click-and-drag to define a shape to be drawn with marching ants allowing the user to move or modify the underlying graphic. Examples: Selection, Lasso, Rotate tools.
-`AbstractTransformTool`  | Click-and-drag to select a rectangular boundary drawn with drag handles at each corner which can moved by the user. Example: Slant tool.
+`AbstractTransformTool`  | Click-and-drag to select a rectangular boundary drawn with drag handles at each corner which can moved by the user. Example: Slant, projection, perspective and rubber sheet tools.
 
 #### How can I layer canvases atop one another, or place other UI elements (like buttons and fields) on top of the painted graphics?
 
@@ -225,4 +319,4 @@ Place the canvas(es) and/or other UI components in a `LayeredPane`. Use the `Lay
 
 #### What about vector graphic tools (i.e., "draw" apps)?
 
-Sorry, not the intent of this library. That said, many pieces of this library could be leveraged for such a tool...
+Sorry, that's not the intent of this library. That said, many pieces of this library could be leveraged for such a tool...
