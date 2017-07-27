@@ -10,6 +10,7 @@ import com.defano.jmonet.tools.util.Geometry;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -17,7 +18,7 @@ import java.util.ArrayList;
  * A scrollable, Swing component that can be painted upon using the paint tools in {@link com.defano.jmonet.tools}. See
  * {@link UndoablePaintCanvas} for a canvas with an undo/redo buffer.
  */
-public abstract class AbstractPaintCanvas extends AbstractScrollableSurface implements PaintCanvas {
+public abstract class AbstractPaintCanvas extends AbstractScrollableSurface implements PaintCanvas, ComponentListener {
 
     private final PaintableSurface surface = new PaintableSurface();
 
@@ -35,6 +36,18 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
         setSurface(surface);
     }
 
+    /**
+     * Invoke to mark this component safe for garbage collection; removes registered listeners and components.
+     */
+    public void dispose() {
+        scale.deleteObservers();
+        gridSpacing.deleteObservers();
+        observers.clear();
+        surface.dispose();
+        surface.removeComponentListener(this);
+        setTransferHandler(null);
+    }
+
     @Override
     public void setSize(int width, int height) {
         super.setSize(width, height);
@@ -47,12 +60,7 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
 
         newScratchGraphics.dispose();
 
-        surface.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                updateScroll();
-            }
-        });
+        surface.addComponentListener(this);
         invalidateCanvas();
     }
 
@@ -198,5 +206,25 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
     @Override
     public void invalidateCanvas() {
         repaint();
+    }
+
+    @Override
+    public void componentResized(ComponentEvent e) {
+        updateScroll();
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent e) {
+        // Nothing to do
+    }
+
+    @Override
+    public void componentShown(ComponentEvent e) {
+        // Nothing to do
+    }
+
+    @Override
+    public void componentHidden(ComponentEvent e) {
+        // Nothing to do
     }
 }

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class PaintableSurface extends JPanel implements CompositeSurface, ObservableSurface, KeyListener, MouseListener, MouseMotionListener {
+public class PaintableSurface extends JComponent implements CompositeSurface, ObservableSurface, KeyListener, MouseListener, MouseMotionListener, KeyEventDispatcher {
 
     private ScalableLayeredPainting painting;
     private final List<SurfaceInteractionObserver> interactionListeners = new ArrayList<>();
@@ -26,21 +26,13 @@ public class PaintableSurface extends JPanel implements CompositeSurface, Observ
 
         // Adding a KeyListener to this component won't always work the way the user expects; this is cheating, but
         // it assures paint tools get all key events, regardless of the component hierarchy we may be embedded in.
-        KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                .addKeyEventDispatcher(e -> {
-                    switch (e.getID()) {
-                        case KeyEvent.KEY_TYPED:
-                            PaintableSurface.this.keyTyped(e);
-                            break;
-                        case KeyEvent.KEY_PRESSED:
-                            PaintableSurface.this.keyPressed(e);
-                            break;
-                        case KeyEvent.KEY_RELEASED:
-                            PaintableSurface.this.keyReleased(e);
-                            break;
-                    }
-                    return false;
-                });
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
+    }
+
+    public void dispose() {
+        
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(this);
+        removeAll();
     }
 
     @Override
@@ -163,5 +155,22 @@ public class PaintableSurface extends JPanel implements CompositeSurface, Observ
 
         revalidate();
         repaint();
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent e) {
+        switch (e.getID()) {
+            case KeyEvent.KEY_TYPED:
+                PaintableSurface.this.keyTyped(e);
+                break;
+            case KeyEvent.KEY_PRESSED:
+                PaintableSurface.this.keyPressed(e);
+                break;
+            case KeyEvent.KEY_RELEASED:
+                PaintableSurface.this.keyReleased(e);
+                break;
+        }
+
+        return false;
     }
 }

@@ -297,7 +297,7 @@ public void transferSelection(AbstractSelectionTool from, AbstractSelectionTool 
 }
 ```
 
-Note that you cannot programmatically create a selection from an abstract shape, thus, when transferring selection from a tool providing a non-rectangular selection boundary the new selection will be expanded to a rectangle bounding the original selection. 
+Note that you cannot programmatically create a selection from an abstract shape, thus, when transferring selection from a tool providing a non-rectangular selection boundary the new selection will be expanded to a rectangle bounding the original selection.
 
 #### Can I create my own tools?
 
