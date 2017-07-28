@@ -14,6 +14,7 @@ public class LineTool extends AbstractLineTool {
         super(PaintToolType.LINE);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void drawLine(Graphics2D g, Stroke stroke, Paint paint, int x1, int y1, int x2, int y2) {
         g.setPaint(paint);

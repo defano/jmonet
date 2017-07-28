@@ -14,6 +14,8 @@ public class CanvasClipboardActionListener implements ActionListener {
         this.delegate = delegate;
     }
 
+    /** {@inheritDoc} */
+    @Override
     public void actionPerformed(ActionEvent e) {
         AbstractPaintCanvas focusedCanvas = delegate == null ? null : delegate.getCanvasInFocus();
 

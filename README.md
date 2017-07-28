@@ -107,7 +107,7 @@ public static void main(String[] args) {
         frame.setVisible(true);
 
         // Create a JMonet canvas and add it to the window
-        UndoablePaintCanvas myCanvas = new UndoablePaintCanvas();
+        JMonetCanvas myCanvas = new JMonetCanvas();
         frame.getContentPane().add(myCanvas);
     });
 }
@@ -120,7 +120,7 @@ In JavaFX applications:
 public void start(Stage stage) {
 
     // Create a JFX node for our paint canvas
-    JFXPaintCanvasNode myCanvas = new JFXPaintCanvasNode(new UndoablePaintCanvas());
+    JFXPaintCanvasNode myCanvas = new JFXPaintCanvasNode(new JMonetCanvas());
 
     // Create a pane for it
     StackPane pane = new StackPane();
@@ -200,7 +200,7 @@ Your application needs to tell JMonet what to do when the user has invoked the c
 The code below provides an implementation that cuts, copies and pastes the active selection.
 
 ```
-  UndoablePaintCanvas myCanvas = new UndoablePaintCanvas();
+  JMonetCanvas myCanvas = new JMonetCanvas();
 
   myCanvas.setTransferHandler(new CanvasTransferHandler(myCanvas, new CanvasTransferDelegate() {
     @Override
@@ -267,7 +267,7 @@ An `ImmutableProvider` is one whose underlying value cannot be changed. In this 
 
 #### Why do I need this? Doesn't Java's `Graphics2D` already let me draw stuff?
 
-Maybe you don't need this. If you're not building an app that lets users paint lines and shapes with the mouse, this probably isn't for you.
+If you're not building an app that lets users paint lines and shapes with the mouse, this probably isn't for you.
 
 Java's Graphics context does indeed provide routines for drawing shapes, but there's a bit of work involved to map mouse and keyboard events into these calls the way a "paint" app expects. Getting scale, grids, and transforms to work correctly are a bit more complex than merely delegating to `AffineTransform`, too.
 
@@ -275,26 +275,30 @@ Java's Graphics context does indeed provide routines for drawing shapes, but the
 
 Get the image from the canvas via the `public BufferedImage getCanvasImage()` method. Then, use Java's `ImageIO` class to save as `gif`, `png` or `jpg`. For more advanced file type support (such as `wbmp`, `bmp`, `pcx`, `pnm`, `raw` or `tiff`), consider the [Java Advanced ImageIO](http://docs.oracle.com/javase/6/docs/technotes/guides/imageio/index.html) library.
 
+You could also save just the selection defined by a selection tool using `selectionTool.getSelectedImage()`.
+
 #### How do I import images from files or elsewhere?
 
 You'll need your image in the form of a Java `BufferedImage` object. Use Java's ImageIO or Advanced ImageIO to [read/deserialize existing files or data](https://docs.oracle.com/javase/tutorial/2d/images/loadimage.html).
 
 Then, you have three options:
 
-1. Create a new canvas from an existing `BufferedImage` object like: `new UndoableCanvas(myImage)`. Best option when opening a file for editing.
+1. Create a new canvas from an existing `BufferedImage` object like: `new JMonetCanvas(myImage)`. Best option when opening a file for editing.
 2. Use the selection tool to create a new selection containing your image: `selectionTool.createSelection(myImage, new Point(0,0))`. Best option when pasting an image into to an existing canvas (and you'd like to allow the user to move it into place).
 3. Commit the image to an existing canvas by drawing it onto the scratch buffer and committing the change, like: `myCanvas.setScratchImage(myImage); myCanvas.commit()`. Best option when you want to programmatically overlay an image onto an existing canvas.
 
 Note that in cases 1 and 3, if the imported image does not match the dimensions of the canvas, it will be drawn in the upper-left corner. Resize and translate the image you wish to import first if you'd like it to appear elsewhere.
 
-#### If I create a selection using `SelectionTool`, can I modify it with a transform tool (like `ProjectionTool`) or do I have to create a new selection from scratch with the transform tool?
+#### If I create a selection using `LassoTool`, can I modify it with a transform tool (like `ProjectionTool`) or do I have to create a new selection from scratch with the transform tool (which would limit me to rectangular selections)?
 
-You can transfer a selection from one selection tool to another using a bit of code like this:
+You can transfer a selection from one selection tool to another (including transform tools) using the `morphSelection()` method:
 
 ```
-public void transferSelection(AbstractSelectionTool from, AbstractSelectionTool to) {
-    to.createSelection(from.getSelectionOutline().getBounds());
-}
+LassoTool currentTool;
+ProjectionTool newTool = PaintToolBuilder.create(...);
+
+currentTool.morphSelection(newTool);  // newTool now has currentTool's selection  
+currentTool.deactivate();             // ... but currentTool is still active.
 ```
 
 Note that you cannot programmatically create a selection from an abstract shape, thus, when transferring selection from a tool providing a non-rectangular selection boundary the new selection will be expanded to a rectangle bounding the original selection.
@@ -316,6 +320,12 @@ Tool Base                | Description
 #### How can I layer canvases atop one another, or place other UI elements (like buttons and fields) on top of the painted graphics?
 
 Place the canvas(es) and/or other UI components in a `LayeredPane`. Use the `LayeredPane` to control z-order.
+
+#### My canvas isn't getting garbage collected. This library has a memory leak.
+
+The canvas registers itself as a listener to global event dispatchers so that you don't have to. Unfortunately, that means it'll never get cleaned up.
+
+When you're done with a canvas, call `.dispose()` on the canvas object to allow the JVM to garbage collect it.
 
 #### What about vector graphic tools (i.e., "draw" apps)?
 

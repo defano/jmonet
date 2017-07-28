@@ -23,11 +23,13 @@ public abstract class AbstractLineTool extends PaintTool {
 
     protected abstract void drawLine(Graphics2D g, Stroke stroke, Paint paint, int x1, int y1, int x2, int y2);
 
+    /** {@inheritDoc} */
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
         initialPoint = imageLocation;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
         getCanvas().clearScratch();
@@ -45,6 +47,7 @@ public abstract class AbstractLineTool extends PaintTool {
         getCanvas().invalidateCanvas();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseReleased(MouseEvent e, Point imageLocation) {
         getCanvas().commit();

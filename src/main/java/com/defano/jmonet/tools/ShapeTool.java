@@ -16,6 +16,7 @@ public class ShapeTool extends AbstractBoundsTool {
         super(PaintToolType.SHAPE);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height) {
         g.setStroke(stroke);
@@ -23,6 +24,7 @@ public class ShapeTool extends AbstractBoundsTool {
         g.drawPolygon(Geometry.getRegularPolygon(initialPoint, getShapeSides(), getRadius(), getRotationAngle()));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height) {
         g.setPaint(fill);

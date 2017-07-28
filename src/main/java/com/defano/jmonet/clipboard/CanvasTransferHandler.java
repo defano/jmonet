@@ -24,16 +24,19 @@ public class CanvasTransferHandler extends TransferHandler {
         map.put(TransferHandler.getPasteAction().getValue(Action.NAME), TransferHandler.getPasteAction());
     }
 
+    /** {@inheritDoc} */
     @Override
     protected Transferable createTransferable(JComponent c) {
         return TransferableImage.from(delegate.copySelection());
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getSourceActions(JComponent c) {
         return COPY_OR_MOVE;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void exportDone(JComponent c, Transferable data, int action) {
         if (action == MOVE) {
@@ -41,6 +44,7 @@ public class CanvasTransferHandler extends TransferHandler {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean importData(TransferHandler.TransferSupport info) {
         try {
@@ -81,16 +85,19 @@ public class CanvasTransferHandler extends TransferHandler {
             return image == null ? null : new TransferableImage(image);
         }
 
+        /** {@inheritDoc} */
         @Override
         public DataFlavor[] getTransferDataFlavors() {
             return new DataFlavor[]{DataFlavor.imageFlavor};
         }
 
+        /** {@inheritDoc} */
         @Override
         public boolean isDataFlavorSupported(DataFlavor flavor) {
             return flavor == DataFlavor.imageFlavor;
         }
 
+        /** {@inheritDoc} */
         @Override
         public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
             if (flavor == DataFlavor.imageFlavor) {

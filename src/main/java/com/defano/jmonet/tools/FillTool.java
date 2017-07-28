@@ -17,6 +17,7 @@ public class FillTool extends PaintTool {
         super(PaintToolType.FILL);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
 

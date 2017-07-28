@@ -31,6 +31,7 @@ public class RotateTool extends AbstractSelectionTool {
         super(PaintToolType.ROTATE);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
 
@@ -54,6 +55,7 @@ public class RotateTool extends AbstractSelectionTool {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
 
@@ -75,6 +77,7 @@ public class RotateTool extends AbstractSelectionTool {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void resetSelection() {
         selectionBounds = null;
@@ -84,11 +87,13 @@ public class RotateTool extends AbstractSelectionTool {
         originalImage = null;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void setSelectionBounds(Rectangle bounds) {
         selectionBounds = bounds;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         int handleSize = 8;
@@ -100,17 +105,20 @@ public class RotateTool extends AbstractSelectionTool {
         originalDragHandle = dragHandle = new Rectangle(selectionRectangle.x + selectionRectangle.width - handleSize, selectionRectangle.y + selectionRectangle.height / 2 - handleSize / 2, handleSize, handleSize);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void completeSelection(Point finalPoint) {
         originalImage = square(getSelectedImage());
         originalSelectionBounds = getSelectionOutline();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Shape getSelectionOutline() {
         return selectionBounds;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void adjustSelectionBounds(int xDelta, int yDelta) {
         // Nothing to do; user can't move selection
@@ -123,6 +131,7 @@ public class RotateTool extends AbstractSelectionTool {
         centerpoint = new Point(selectionBounds.x + selectionBounds.width / 2, selectionBounds.y + selectionBounds.height / 2);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected Point getSelectedImageLocation() {
 
@@ -147,6 +156,10 @@ public class RotateTool extends AbstractSelectionTool {
      * @return A square image whose height and width are equal to the diagonal of the original image.
      */
     private BufferedImage square(BufferedImage image) {
+        if (image == null) {
+            return null;
+        }
+
         int diagonal = (int) Math.ceil(Math.sqrt(image.getHeight() * image.getHeight() + image.getWidth() * image.getWidth()));
 
         int deltaX = diagonal - image.getWidth();
@@ -161,6 +174,7 @@ public class RotateTool extends AbstractSelectionTool {
         return enlarged;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void drawSelection() {
         super.drawSelection();

@@ -25,18 +25,21 @@ public class MagnifierTool extends PaintTool {
         setToolCursor(zoomInCursor);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void keyPressed(KeyEvent e) {
         super.keyPressed(e);
         setToolCursor(e.isShiftDown() ? zoomOutCursor : zoomInCursor);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void keyReleased(KeyEvent e) {
         super.keyReleased(e);
         setToolCursor(e.isShiftDown() ? zoomOutCursor : zoomInCursor);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
 
@@ -58,6 +61,7 @@ public class MagnifierTool extends PaintTool {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void activate(PaintCanvas canvas) {
         super.activate(canvas);

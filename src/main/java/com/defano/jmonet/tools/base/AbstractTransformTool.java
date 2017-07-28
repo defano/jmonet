@@ -36,17 +36,29 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
         setToolCursor(transformCursor);
     }
 
+    /**
+     * Not supported on transform tools. Has no effect when invoked.
+     */
+    @Override
+    public void pickupSelection() {
+        // Not supported; can't pickup paint while transforming an image
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void createSelection(Rectangle bounds) {
         super.createSelection(bounds);
         originalImage = getSelectedImage();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void createSelection(BufferedImage image, Point location) {
         super.createSelection(image, location);
         originalImage = image;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
         // User has already made selection; we'll handle the mouse press
@@ -62,6 +74,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
         super.mousePressed(e, imageLocation);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
 
@@ -96,6 +109,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseReleased(MouseEvent e, Point imageLocation) {
 
@@ -110,6 +124,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         selectionBounds = new Rectangle(initialPoint);
@@ -125,11 +140,13 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
         selectionBounds = new Rectangle(selectionBounds.x, selectionBounds.y, width, height);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void completeSelection(Point finalPoint) {
         transformBounds = new FlexQuadrilateral(selectionBounds);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void resetSelection() {
         selectionBounds = null;
@@ -138,16 +155,19 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
         topLeftHandle = topRightHandle = bottomLeftHandle = bottomRightHandle = null;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void setSelectionBounds(Rectangle bounds) {
         transformBounds = new FlexQuadrilateral(bounds);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Shape getSelectionOutline() {
         return transformBounds != null ? transformBounds.getShape() : selectionBounds;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void adjustSelectionBounds(int xDelta, int yDelta) {
         selectionBounds.setLocation(selectionBounds.x + xDelta, selectionBounds.y + yDelta);
@@ -165,6 +185,8 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
         return originalImage;
     }
 
+    /** {@inheritDoc} */
+    @Override
     protected void drawSelectionOutline() {
         super.drawSelectionOutline();
 

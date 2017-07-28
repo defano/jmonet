@@ -1,7 +1,6 @@
 package com.defano.jmonet.canvas;
 
 import java.awt.*;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +8,7 @@ import java.util.List;
 /**
  * A paint tools canvas with a built-in undo and redo buffer. Extends the capabilities inherent in {@link AbstractPaintCanvas}.
  */
-public class UndoablePaintCanvas extends AbstractPaintCanvas {
+public class JMonetCanvas extends AbstractPaintCanvas {
 
     // TODO: Add constructor arg to set this value
     private final int maxUndoBufferDepth = 20;
@@ -21,7 +20,7 @@ public class UndoablePaintCanvas extends AbstractPaintCanvas {
     /**
      * Creates a new PaintCanvas with a 1x1 empty image displayed inside it.
      */
-    public UndoablePaintCanvas() {
+    public JMonetCanvas() {
         this(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB));
     }
 
@@ -29,7 +28,7 @@ public class UndoablePaintCanvas extends AbstractPaintCanvas {
      * Creates a new PaintCanvas with a given image initially displayed in it.
      * @param initialImage The image to be displayed in the canvas.
      */
-    public UndoablePaintCanvas(BufferedImage initialImage) {
+    public JMonetCanvas(BufferedImage initialImage) {
         super();
         setSize(initialImage.getWidth(), initialImage.getHeight());
         makePermanent(new ChangeSet(initialImage));
@@ -95,14 +94,12 @@ public class UndoablePaintCanvas extends AbstractPaintCanvas {
         return maxUndoBufferDepth;
     }
 
-    /**
-     * Commits the contents of the scratch buffer to the canvas.
-     */
+    /** {@inheritDoc} */
     @Override
     public void commit(ChangeSet changeSet) {
 
         // Special case: ChangeSet may be modified after it has been committed; listen for this so that we can notify observers of our own
-        changeSet.addChangeSetObserver(() -> fireCanvasCommitObservers(UndoablePaintCanvas.this, null, getCanvasImage()));
+        changeSet.addChangeSetObserver(() -> fireCanvasCommitObservers(JMonetCanvas.this, null, getCanvasImage()));
 
         // Clear the redo elements from the buffer; can't perform redo after committing a new change
         undoBuffer = undoBuffer.subList(0, undoBufferPointer + 1);
@@ -141,12 +138,7 @@ public class UndoablePaintCanvas extends AbstractPaintCanvas {
         applyChangeSet(changeSet, permanent);
     }
 
-    /**
-     * Renders the canvas image by successively applying each visible change in the buffer to the base, permanent
-     * image.
-     *
-     * @return An image representing the current state of the canvas.
-     */
+    /** {@inheritDoc} */
     @Override
     public BufferedImage getCanvasImage() {
         BufferedImage visibleImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);

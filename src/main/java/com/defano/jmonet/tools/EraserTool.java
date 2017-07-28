@@ -20,12 +20,14 @@ public class EraserTool extends AbstractPathTool {
         setComposite(AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void startPath(Graphics2D g, Stroke stroke, Paint paint, Point initialPoint) {
         path = new Path2D.Double();
         path.moveTo(initialPoint.getX(), initialPoint.getY());
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void addPoint(Graphics2D g, Stroke stroke, Paint paint, Point point) {
         path.lineTo(point.getX(), point.getY());

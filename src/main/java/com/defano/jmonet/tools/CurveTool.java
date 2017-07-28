@@ -15,6 +15,7 @@ public class CurveTool extends AbstractPolylineTool {
         super(PaintToolType.CURVE);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void drawPolyline(Graphics2D g, Stroke stroke, Paint paint, int[] xPoints, int[] yPoints) {
         g.setPaint(paint);
@@ -22,6 +23,7 @@ public class CurveTool extends AbstractPolylineTool {
         g.draw(renderCurvePath(xPoints, yPoints));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void drawPolygon(Graphics2D g, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints) {
         g.setPaint(strokePaint);
@@ -29,6 +31,7 @@ public class CurveTool extends AbstractPolylineTool {
         g.draw(renderCurvePath(xPoints, yPoints));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void fillPolygon(Graphics2D g, Paint fillPaint, int[] xPoints, int[] yPoints) {
         // Not fillable

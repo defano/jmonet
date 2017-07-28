@@ -7,12 +7,16 @@ import com.defano.jmonet.algo.Transform;
 
 import java.awt.*;
 
+/**
+ * A tool for scaling and resizing the rectangular bounds of an image.
+ */
 public class ScaleTool extends AbstractTransformTool {
 
     public ScaleTool() {
         super(PaintToolType.SCALE);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.getTopLeft().setLocation(newPosition);
@@ -31,6 +35,7 @@ public class ScaleTool extends AbstractTransformTool {
         setSelectedImage(Transform.resize(getOriginalImage(), quadrilateral));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.getTopRight().setLocation(newPosition);
@@ -49,6 +54,7 @@ public class ScaleTool extends AbstractTransformTool {
         setSelectedImage(Transform.resize(getOriginalImage(), quadrilateral));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.getBottomLeft().setLocation(newPosition);
@@ -67,6 +73,7 @@ public class ScaleTool extends AbstractTransformTool {
         setSelectedImage(Transform.resize(getOriginalImage(), quadrilateral));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.getBottomRight().setLocation(newPosition);

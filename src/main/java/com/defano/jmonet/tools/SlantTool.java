@@ -16,6 +16,7 @@ public class SlantTool extends AbstractTransformTool {
         super(PaintToolType.SLANT);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.getTopRight().x += newPosition.x - quadrilateral.getTopLeft().x;
@@ -25,6 +26,7 @@ public class SlantTool extends AbstractTransformTool {
         setSelectedImage(Transform.slant(getOriginalImage(), quadrilateral, xTranslation));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.getTopLeft().x += newPosition.x - quadrilateral.getTopRight().x;
@@ -34,6 +36,7 @@ public class SlantTool extends AbstractTransformTool {
         setSelectedImage(Transform.slant(getOriginalImage(), quadrilateral, xTranslation));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.getBottomRight().x += newPosition.x - quadrilateral.getBottomLeft().x;
@@ -43,6 +46,7 @@ public class SlantTool extends AbstractTransformTool {
         setSelectedImage(Transform.slant(getOriginalImage(), quadrilateral, xTranslation));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.getBottomLeft().x += newPosition.x - quadrilateral.getBottomRight().x;

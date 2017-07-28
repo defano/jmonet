@@ -33,11 +33,13 @@ public abstract class AbstractBoundsTool extends PaintTool {
     protected abstract void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height);
     protected abstract void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height);
 
+    /** {@inheritDoc} */
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
         initialPoint = imageLocation;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
         currentPoint = imageLocation;
@@ -72,6 +74,7 @@ public abstract class AbstractBoundsTool extends PaintTool {
         getCanvas().invalidateCanvas();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseReleased(MouseEvent e, Point imageLocation) {
         getCanvas().commit();

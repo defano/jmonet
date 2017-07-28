@@ -47,6 +47,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onCommit(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage) {
         // Nothing to do
@@ -150,51 +151,61 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseClicked(MouseEvent e, Point imageLocation) {
         // Nothing to do
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
         // Nothing to do
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseReleased(MouseEvent e, Point imageLocation) {
         // Nothing to do
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseEntered(MouseEvent e, Point imageLocation) {
         // Nothing to do
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseExited(MouseEvent e, Point imageLocation) {
         // Nothing to do
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
         // Nothing to do
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseMoved(MouseEvent e, Point imageLocation) {
         // Nothing to do
     }
 
+    /** {@inheritDoc} */
     @Override
     public void keyTyped(KeyEvent e) {
         // Nothing to do
     }
 
+    /** {@inheritDoc} */
     @Override
     public void keyPressed(KeyEvent e) {
         // Nothing to do
     }
 
+    /** {@inheritDoc} */
     @Override
     public void keyReleased(KeyEvent e) {
         // Nothing to do

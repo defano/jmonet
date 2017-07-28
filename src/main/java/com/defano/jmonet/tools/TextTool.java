@@ -29,6 +29,7 @@ public class TextTool extends PaintTool implements Observer {
         setToolCursor(getTextCursor());
     }
 
+    /** {@inheritDoc} */
     @Override
     public void deactivate() {
         getFontProvider().deleteObserver(this);
@@ -41,6 +42,7 @@ public class TextTool extends PaintTool implements Observer {
         super.deactivate();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void activate(PaintCanvas canvas) {
         super.activate(canvas);
@@ -53,6 +55,7 @@ public class TextTool extends PaintTool implements Observer {
         getFontProvider().addObserver(this);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
         if (!isEditing()) {
@@ -122,6 +125,7 @@ public class TextTool extends PaintTool implements Observer {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void update(Observable o, Object newValue) {
         if (newValue instanceof Font) {

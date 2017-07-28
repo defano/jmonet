@@ -57,6 +57,7 @@ public class ImmutableProvider<T> extends Observable implements Observer {
         update(this, source.get());
     }
 
+    /** {@inheritDoc} */
     @Override
     public void update(Observable o, Object arg) {
         value = (transform == null) ? (T) arg : (T) transform.transform(arg);

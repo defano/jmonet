@@ -17,11 +17,13 @@ public class AirbrushTool extends AbstractPathTool {
         super(PaintToolType.AIRBRUSH);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void startPath(Graphics2D g, Stroke stroke, Paint paint, Point initialPoint) {
         lastPoint = initialPoint;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void addPoint(Graphics2D g, Stroke stroke, Paint paint, Point point) {
         g.setStroke(stroke);

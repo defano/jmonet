@@ -17,6 +17,7 @@ public class RubberSheetTool extends AbstractTransformTool {
         super(PaintToolType.RUBBERSHEET);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.setTopLeft(newPosition);
@@ -24,6 +25,7 @@ public class RubberSheetTool extends AbstractTransformTool {
         setSelectedImage(Transform.rubberSheet(scaled, quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.setTopRight(newPosition);
@@ -31,6 +33,7 @@ public class RubberSheetTool extends AbstractTransformTool {
         setSelectedImage(Transform.rubberSheet(scaled, quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.setBottomLeft(newPosition);
@@ -38,6 +41,7 @@ public class RubberSheetTool extends AbstractTransformTool {
         setSelectedImage(Transform.rubberSheet(scaled, quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.setBottomRight(newPosition);

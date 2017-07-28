@@ -30,11 +30,12 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
     }
 
     public void dispose() {
-        
+
         KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(this);
         removeAll();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -51,16 +52,19 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
         // DO NOT dispose the graphics context in this method.
     }
 
+    /** {@inheritDoc} */
     @Override
     public void addSurfaceInteractionObserver(SurfaceInteractionObserver listener) {
         interactionListeners.add(listener);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean removeSurfaceInteractionObserver(SurfaceInteractionObserver listener) {
         return interactionListeners.remove(listener);
     }
 
+    /** {@inheritDoc} */
     @Override
     public final void keyTyped(KeyEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners) {
@@ -68,6 +72,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public final void keyPressed(KeyEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners) {
@@ -75,6 +80,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public final void keyReleased(KeyEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners) {
@@ -82,6 +88,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public final void mouseClicked(MouseEvent e) {
         requestFocus();
@@ -91,6 +98,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public final void mousePressed(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners) {
@@ -98,6 +106,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public final void mouseReleased(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners) {
@@ -105,6 +114,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public final void mouseEntered(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners) {
@@ -112,6 +122,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public final void mouseExited(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners) {
@@ -119,6 +130,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public final void mouseDragged(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners) {
@@ -126,6 +138,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public final void mouseMoved(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners) {
@@ -141,6 +154,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
         return painting;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void addComponent(Component component) {
         add(component);
@@ -149,6 +163,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
         repaint();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void removeComponent(Component component) {
         remove(component);
@@ -157,6 +172,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
         repaint();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean dispatchKeyEvent(KeyEvent e) {
         switch (e.getID()) {

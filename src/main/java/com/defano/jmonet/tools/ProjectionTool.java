@@ -16,24 +16,28 @@ public class ProjectionTool extends AbstractTransformTool {
         super(PaintToolType.PROJECTION);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.setTopLeft(newPosition);
         setSelectedImage(Transform.project(getOriginalImage(), quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.setTopRight(newPosition);
         setSelectedImage(Transform.project(getOriginalImage(), quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.setBottomLeft(newPosition);
         setSelectedImage(Transform.project(getOriginalImage(), quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)));
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition) {
         quadrilateral.setBottomRight(newPosition);

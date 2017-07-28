@@ -121,6 +121,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         dirty = true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseMoved(MouseEvent e, Point imageLocation) {
         if (hasSelectionBounds() && getSelectionOutline().contains(imageLocation)) {
@@ -130,6 +131,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
         isMovingSelection = getSelectionOutline() != null && getSelectionOutline().contains(imageLocation);
@@ -151,6 +153,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
 
@@ -172,6 +175,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseReleased(MouseEvent e, Point imageLocation) {
         // User released mouse after defining a selection
@@ -181,6 +185,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void activate(PaintCanvas canvas) {
         super.activate(canvas);
@@ -189,6 +194,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         MarchingAnts.getInstance().addObserver(this);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void deactivate() {
         super.deactivate();
@@ -198,6 +204,26 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
         getCanvas().removeCanvasCommitObserver(this);
         MarchingAnts.getInstance().removeObserver(this);
+    }
+
+    /**
+     * Takes the current selection represented by this tool and transfers it over to the given tool. Note that invoking
+     * this method clears the selection from this tool, but does not deactivate the tool from the canvass. In most uses,
+     * the caller will want to deactivate this tool immediately after calling this method.
+     *
+     * This is useful, for example, when allowing the user to draw a selection with the lasso tool, then giving them
+     * the ability to transform it with a transform tool without having to redraw the selection bounds.
+     *
+     * @param to The tool that the current selection should be transferred to.
+     */
+    public void morphSelection(AbstractSelectionTool to) {
+        if (hasSelection()) {
+            setDirty();
+            to.createSelection(getSelectedImage(), getSelectedImageLocation());
+            clearSelection();
+        }
+
+        // Nothing to do if not holding a selection
     }
 
     /**
@@ -228,22 +254,24 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
     }
 
-    /**
-     * Inverts the color of the selection while preserving the alpha transparency.
-     */
+    /** {@inheritDoc} */
     @Override
     public void invert() {
         if (hasSelection()) {
             BufferedImage selectedImage = getSelectedImage();
+            Shape selectionOutline = getSelectionOutline();
+
             for (int x = 0; x < selectedImage.getWidth(); x++) {
                 for (int y = 0; y < selectedImage.getHeight(); y++) {
 
-                    int argb = selectedImage.getRGB(x, y);
-                    int alpha = 0xff000000 & argb;
-                    int rgb = 0x00ffffff & argb;
+                    if (selectionOutline.contains(new Point(x + getSelectedImageLocation().x, y + getSelectedImageLocation().y))) {
+                        int argb = selectedImage.getRGB(x, y);
+                        int alpha = 0xff000000 & argb;
+                        int rgb = 0x00ffffff & argb;
 
-                    // Invert preserving alpha channel
-                    selectedImage.setRGB(x, y, alpha | (~rgb & 0x00ffffff));
+                        // Invert preserving alpha channel
+                        selectedImage.setRGB(x, y, alpha | (~rgb & 0x00ffffff));
+                    }
                 }
             }
 
@@ -251,31 +279,32 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
     }
 
-    /**
-     * Adjusts the brightness of the selected image by a given amount preserving the alpha transparency.
-     *
-     * @param delta An amount by which brightness should be adjusted, -256 to +256. Negative numbers darken an image,
-     */
+    /** {@inheritDoc} */
     @Override
     public void adjustBrightness(int delta) {
         if (hasSelection()) {
             BufferedImage selectedImage = getSelectedImage();
+            Shape selectionOutline = getSelectionOutline();
+
             for (int x = 0; x < selectedImage.getWidth(); x++) {
                 for (int y = 0; y < selectedImage.getHeight(); y++) {
 
-                    int argb = selectedImage.getRGB(x, y);
-                    int alpha = 0xff000000 & argb;
-                    int r = ((0xff0000 & argb) >> 16) + delta;
-                    int g = ((0xff00 & argb) >> 8) + delta;
-                    int b = (0xff & argb) + delta;
+                    if (selectionOutline.contains(new Point(x + getSelectedImageLocation().x, y + getSelectedImageLocation().y))) {
 
-                    // Saturate at 0 and 256
-                    r = r > 0xff ? 0xff : r < 0 ? 0 : r;
-                    g = g > 0xff ? 0xff : g < 0 ? 0 : g;
-                    b = b > 0xff ? 0xff : b < 0 ? 0 : b;
+                        int argb = selectedImage.getRGB(x, y);
+                        int alpha = 0xff000000 & argb;
+                        int r = ((0xff0000 & argb) >> 16) + delta;
+                        int g = ((0xff00 & argb) >> 8) + delta;
+                        int b = (0xff & argb) + delta;
 
-                    // Adjust preserving alpha channel
-                    selectedImage.setRGB(x, y, alpha | (r << 16) | (g << 8) | b);
+                        // Saturate at 0 and 256
+                        r = r > 0xff ? 0xff : r < 0 ? 0 : r;
+                        g = g > 0xff ? 0xff : g < 0 ? 0 : g;
+                        b = b > 0xff ? 0xff : b < 0 ? 0 : b;
+
+                        // Adjust preserving alpha channel
+                        selectedImage.setRGB(x, y, alpha | (r << 16) | (g << 8) | b);
+                    }
                 }
             }
 
@@ -283,24 +312,25 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
     }
 
-    /**
-     * Adjusts the alpha transparency of each pixel in the selection while otherwise preserving the hue, saturation
-     * and brightness of the pixel.
-     *
-     * @param delta An amount by which transparency should be adjusted -256 to +256; Negative numbers make the image
-     */
+    /** {@inheritDoc} */
+    @Override
     public void adjustTransparency(int delta) {
         if (hasSelection()) {
             BufferedImage selectedImage = getSelectedImage();
+            Shape selectionOutline = getSelectionOutline();
+
             for (int x = 0; x < selectedImage.getWidth(); x++) {
                 for (int y = 0; y < selectedImage.getHeight(); y++) {
 
-                    Color c = new Color(selectedImage.getRGB(x, y), true);
-                    int alpha = c.getAlpha() + delta;
-                    alpha = alpha > 255 ? 255 : alpha < 0 ? 0 : alpha;
+                    if (selectionOutline.contains(new Point(x + getSelectedImageLocation().x, y + getSelectedImageLocation().y))) {
 
-                    // Adjust preserving alpha channel
-                    selectedImage.setRGB(x, y, new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha).getRGB());
+                        Color c = new Color(selectedImage.getRGB(x, y), true);
+                        int alpha = c.getAlpha() + delta;
+                        alpha = alpha > 255 ? 255 : alpha < 0 ? 0 : alpha;
+
+                        // Adjust preserving alpha channel
+                        selectedImage.setRGB(x, y, new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha).getRGB());
+                    }
                 }
             }
 
@@ -308,26 +338,31 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void rotateLeft() {
         applyTransform(Transform.rotateLeft(selectedImage.get().getWidth(), selectedImage.get().getHeight()));
     }
 
+    /** {@inheritDoc} */
     @Override
     public void rotateRight() {
         applyTransform(Transform.rotateRight(selectedImage.get().getWidth(), selectedImage.get().getHeight()));
     }
 
+    /** {@inheritDoc} */
     @Override
     public void flipHorizontal() {
         applyTransform(Transform.flipHorizontalTransform(selectedImage.get().getWidth()));
     }
 
+    /** {@inheritDoc} */
     @Override
     public void flipVertical() {
         applyTransform(Transform.flipVerticalTransform(selectedImage.get().getHeight()));
     }
 
+    /** {@inheritDoc} */
     @Override
     public void applyTransform(AffineTransform transform) {
         if (hasSelection()) {
@@ -360,6 +395,12 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
     /**
      * Gets the image represented by the selection.
+     *
+     * Note that a user can select and modify a non-rectangular selection, but the selected image returned by this
+     * method will always be a rectangle whose bounds are the smallest rectangle that can fit in the selected shape
+     * (i.e., {@link #getSelectionOutline()}). Any pixels outside the user's selection shape will be fully transparent
+     * pixels in the returned image.
+     *
      * @return The selected image
      */
     public BufferedImage getSelectedImage() {
@@ -579,6 +620,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         return subimage;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onCommit(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage) {
         // Clear selection if user invokes undo/redo
@@ -587,6 +629,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void keyPressed(KeyEvent e) {
 
@@ -628,6 +671,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onAntsMoved() {
         if (hasSelection()) {

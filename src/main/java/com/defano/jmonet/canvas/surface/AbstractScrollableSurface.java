@@ -30,6 +30,7 @@ public abstract class AbstractScrollableSurface extends JScrollPane implements S
         return surface;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setScrollPosition(double percentX, double percentY) {
         this.scrollPercentX = percentX;
@@ -38,6 +39,7 @@ public abstract class AbstractScrollableSurface extends JScrollPane implements S
         updateScroll();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void updateScroll() {
         double x = getHorizontalScrollBar().getMaximum() * scrollPercentX - getBounds().width / 2;

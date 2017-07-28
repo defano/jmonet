@@ -8,7 +8,6 @@ import com.defano.jmonet.model.Provider;
 import com.defano.jmonet.tools.util.Geometry;
 
 import java.awt.*;
-import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 
 /**
  * A scrollable, Swing component that can be painted upon using the paint tools in {@link com.defano.jmonet.tools}. See
- * {@link UndoablePaintCanvas} for a canvas with an undo/redo buffer.
+ * {@link JMonetCanvas} for a canvas with an undo/redo buffer.
  */
 public abstract class AbstractPaintCanvas extends AbstractScrollableSurface implements PaintCanvas, ComponentListener {
 
@@ -48,6 +47,7 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
         setTransferHandler(null);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setSize(int width, int height) {
         super.setSize(width, height);
@@ -64,11 +64,13 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
         invalidateCanvas();
     }
 
+    /** {@inheritDoc} */
     @Override
     public BufferedImage[] getPaintLayers() {
         return new BufferedImage[]{getCanvasImage(), getScratchImage()};
     }
 
+    /** {@inheritDoc} */
     @Override
     public void clearCanvas() {
         Graphics2D g2 = (Graphics2D) getScratchImage().getGraphics();
@@ -79,6 +81,7 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
         commit(new ChangeSet(getScratchImage(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f)));
     }
 
+    /** {@inheritDoc} */
     @Override
     public void clearScratch() {
         scratch = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -103,6 +106,7 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
         g2d.dispose();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Point convertPointToImage(Point p) {
         return new Point(translateX(p.x), translateY(p.y));
@@ -124,60 +128,73 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
         return (int) (y / scale);
     }
 
+    /** {@inheritDoc} */
     @Override
     public BufferedImage getScratchImage() {
         return scratch;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setScratchImage(BufferedImage image) {
         this.scratch = image;
     }
 
+    /** {@inheritDoc} */
+    @Override
     public void commit() {
         commit(new ChangeSet(getScratchImage()));
     }
 
+    /** {@inheritDoc} */
     @Override
     public void addComponent(Component component) {
         surface.addComponent(component);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void removeComponent(Component component) {
         surface.removeComponent(component);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void addSurfaceInteractionObserver(SurfaceInteractionObserver listener) {
         surface.addSurfaceInteractionObserver(listener);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean removeSurfaceInteractionObserver(SurfaceInteractionObserver listener) {
         return surface.removeSurfaceInteractionObserver(listener);
     }
 
+    /** {@inheritDoc} */
     @Override
     public double getScale() {
         return scale.get();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Provider<Double> getScaleProvider() {
         return scale;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setGridSpacing(int grid) {
         this.gridSpacing.set(grid);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Provider<Integer> getGridSpacingProvider() {
         return gridSpacing;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setScale(double scale) {
         this.scale.set(scale);
@@ -187,11 +204,13 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
         invalidateCanvas();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void addCanvasCommitObserver(CanvasCommitObserver observer) {
         observers.add(observer);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean removeCanvasCommitObserver(CanvasCommitObserver observer) {
         return observers.remove(observer);
@@ -203,26 +222,31 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void invalidateCanvas() {
         repaint();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void componentResized(ComponentEvent e) {
         updateScroll();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void componentMoved(ComponentEvent e) {
         // Nothing to do
     }
 
+    /** {@inheritDoc} */
     @Override
     public void componentShown(ComponentEvent e) {
         // Nothing to do
     }
 
+    /** {@inheritDoc} */
     @Override
     public void componentHidden(ComponentEvent e) {
         // Nothing to do

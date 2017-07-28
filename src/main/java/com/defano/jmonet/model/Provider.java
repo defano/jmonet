@@ -39,6 +39,7 @@ public class Provider<T> extends ImmutableProvider<T> implements Observer {
         notifyObservers(this.value);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void update(Observable o, Object arg) {
         if (transform != null) {

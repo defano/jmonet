@@ -14,6 +14,7 @@ public class PolygonTool extends AbstractPolylineTool {
         super(PaintToolType.POLYGON);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void drawPolyline(Graphics2D g, Stroke stroke, Paint paint, int[] xPoints, int[] yPoints) {
         g.setPaint(paint);
@@ -21,6 +22,7 @@ public class PolygonTool extends AbstractPolylineTool {
         g.drawPolyline(xPoints, yPoints, xPoints.length);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void drawPolygon(Graphics2D g, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints) {
         g.setStroke(stroke);
@@ -28,6 +30,7 @@ public class PolygonTool extends AbstractPolylineTool {
         g.drawPolygon(xPoints, yPoints, xPoints.length);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void fillPolygon(Graphics2D g, Paint fillPaint, int[] xPoints, int[] yPoints) {
         g.setPaint(getFillPaint());

@@ -22,6 +22,7 @@ public abstract class AbstractPathTool extends PaintTool {
         setToolCursor(pathCursor);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
@@ -31,6 +32,7 @@ public abstract class AbstractPathTool extends PaintTool {
         getCanvas().invalidateCanvas();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
@@ -40,6 +42,7 @@ public abstract class AbstractPathTool extends PaintTool {
         getCanvas().invalidateCanvas();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseReleased(MouseEvent e, Point imageLocation) {
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();

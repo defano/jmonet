@@ -14,6 +14,7 @@ public class OvalTool extends AbstractBoundsTool {
         super(PaintToolType.OVAL);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height) {
         g.setStroke(stroke);
@@ -21,6 +22,7 @@ public class OvalTool extends AbstractBoundsTool {
         g.drawOval(x, y, width, height);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height) {
         g.setPaint(getFillPaint());

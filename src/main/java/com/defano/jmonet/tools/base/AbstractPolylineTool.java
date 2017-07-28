@@ -32,6 +32,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
         setToolCursor(polyLineCursor);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mouseMoved(MouseEvent e, Point imageLocation) {
 
@@ -63,6 +64,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
         points.remove(points.size() - 1);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
 
@@ -120,6 +122,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
         getCanvas().commit();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void keyPressed(KeyEvent e) {
 

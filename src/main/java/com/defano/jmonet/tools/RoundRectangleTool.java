@@ -16,6 +16,7 @@ public class RoundRectangleTool extends AbstractBoundsTool {
         super(PaintToolType.ROUND_RECTANGLE);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height) {
         g.setPaint(paint);
@@ -23,6 +24,7 @@ public class RoundRectangleTool extends AbstractBoundsTool {
         g.drawRoundRect(x, y, width, height, cornerRadius, cornerRadius);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height) {
         g.setPaint(fill);

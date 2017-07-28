@@ -18,16 +18,19 @@ public class LassoTool extends AbstractSelectionTool {
         super(PaintToolType.LASSO);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void resetSelection() {
         selectionBounds = null;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void setSelectionBounds(Rectangle bounds) {
         selectionBounds = new Path2D.Double(bounds);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         if (selectionBounds == null) {
@@ -38,16 +41,19 @@ public class LassoTool extends AbstractSelectionTool {
         selectionBounds.lineTo(newPoint.x, newPoint.y);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void completeSelection(Point finalPoint) {
         selectionBounds.closePath();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Shape getSelectionOutline() {
         return selectionBounds;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void adjustSelectionBounds(int xDelta, int yDelta) {
         selectionBounds.transform(AffineTransform.getTranslateInstance(xDelta, yDelta));

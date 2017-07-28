@@ -18,12 +18,14 @@ public class FreeformShapeTool extends AbstractPathTool {
         super(PaintToolType.FREEFORM);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void startPath(Graphics2D g, Stroke stroke, Paint paint, Point initialPoint) {
         path = new Path2D.Double();
         path.moveTo(initialPoint.getX(), initialPoint.getY());
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void addPoint(Graphics2D g, Stroke stroke, Paint paint, Point point) {
         path.lineTo(point.getX(), point.getY());
@@ -33,6 +35,7 @@ public class FreeformShapeTool extends AbstractPathTool {
         g.draw(path);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void completePath(Graphics2D g, Stroke stroke, Paint paint) {
         path.closePath();
