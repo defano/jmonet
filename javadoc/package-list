@@ -1,6 +1,8 @@
+com.defano.jmonet.algo
 com.defano.jmonet.canvas
 com.defano.jmonet.canvas.observable
 com.defano.jmonet.canvas.surface
+com.defano.jmonet.clipboard
 com.defano.jmonet.model
 com.defano.jmonet.tools
 com.defano.jmonet.tools.base

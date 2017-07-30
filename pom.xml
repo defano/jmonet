@@ -89,7 +89,7 @@
                             <goal>jar</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.baseUri}/javadoc</outputDirectory>
+                            <outputDirectory>${project.basedir}/javadoc</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
