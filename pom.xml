@@ -88,6 +88,9 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
+                        <configuration>
+                            <outputDirectory>${project.baseUri}/javadoc</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
