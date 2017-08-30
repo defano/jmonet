@@ -1,15 +1,65 @@
 package com.defano.jmonet.tools.base;
 
-import com.defano.jmonet.algo.Transform;
+import com.defano.jmonet.algo.*;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 
 /**
  * Defines a series of "static" transforms that can be applied to a selection. A static transform is one that can
  * be applied directly, without user/mouse engagement (e.g., scale, slant, or projection).
  */
 public interface TransformableSelection extends MutableSelection {
+
+    /**
+     * Converts the current selection to a reduced palette containing no more than the specified number of colors.
+     *
+     * This method uses a naive color quantization algorithm that does not optimize the reduced color palette for the
+     * given image; it simply produces a new palette with colors evenly distributed in the color space and maps colors
+     * in the selection image to the nearest color in the reduced palette.
+     *
+     * The number of unique colors in the reduced-color selection will not, necessarily, equal the provided color
+     * depth.
+     *
+     * Note that this method merely adjusts the look of the selection and does not affect the canvas' image storage
+     * in any way (all images are always stored in 24-bit "true color" irrespective of whether they have been reduced
+     * via this method. Thus, reducing colors will not reduce memory usage or affect how the image is exported or saved.
+     *
+     * @param colorDepth The maximum number of unique colors that should appear in the resultant selection image; zero
+     *                   produces a black and white (monochrome) image. Note that color depth should be cubic; if
+     *                   the cubed root of colorDepth is not an integer, the cube of the the floor of the cubed root
+     *                   will be assumed.
+     */
+    default void reduceColor(int colorDepth) {
+        BufferedImage source = getSelectedImage();
+        int channelDepth = (int) Math.floor(Math.cbrt(colorDepth));
+
+        BufferedImage reduced = colorDepth == 0 ?
+                FloydSteinberg.dither(source, new MonochromaticQuantizer()) :
+                FloydSteinberg.dither(source, new ColorReductionQuantizer(channelDepth));
+
+        setSelectedImage(reduced);
+        setDirty();
+    }
+
+    /**
+     * Converts the current selection to a gray-scale image containing no more than the specified number of gray shades.
+     * See {@link #reduceColor(int)} for details about palette selection and dithering.
+     *
+     * @param grayDepth The maximum number of unique shades of gray in which to render the given image; zero produces
+     *                  a black and white (monochrome) image.
+     */
+    default void reduceGreyscale(int grayDepth) {
+        BufferedImage source = getSelectedImage();
+
+        BufferedImage reduced = grayDepth == 0 ?
+                FloydSteinberg.dither(source, new MonochromaticQuantizer()) :
+                FloydSteinberg.dither(source, new GrayscaleQuantizer(grayDepth));
+
+        setSelectedImage(reduced);
+        setDirty();
+    }
 
     /**
      * Rotates the image 90 degrees counter-clockwise.
