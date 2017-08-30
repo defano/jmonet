@@ -42,13 +42,13 @@ public class SelectionTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void resetSelection() {
+    public void resetSelection() {
         selectionBounds = null;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void setSelectionBounds(Rectangle bounds) {
+    public void setSelectionOutline(Rectangle bounds) {
         selectionBounds = bounds;
     }
 

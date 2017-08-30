@@ -9,18 +9,16 @@ import com.defano.jmonet.tools.RotateTool;
 import com.defano.jmonet.tools.util.Geometry;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
-import com.defano.jmonet.algo.Transform;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 /**
  * Mouse and keyboard handler for drawing selections (free-form or bounded) on the canvas.
  */
-public abstract class AbstractSelectionTool extends PaintTool implements MarchingAntsObserver, StaticTransformer {
+public abstract class AbstractSelectionTool extends PaintTool implements MarchingAntsObserver, TransformableSelection {
 
     private final Provider<BufferedImage> selectedImage = new Provider<>();
 
@@ -33,24 +31,13 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     private boolean dirty = false;
 
     /**
-     * Reset the selection boundary to its initial, no-selection state. {@link #getSelectionOutline()} should return
-     * null following a selection reset, but prior to defining a new selection via {@link #addSelectionPoint(Point, Point, boolean)}
-     */
-    protected abstract void resetSelection();
-
-    /**
-     * Gets the shape of the current selection outline.
+     * Invoked to indicate that the selection has moved on the canvas. The selection shape's coordinates should be
+     * translated by the given amount.
      *
-     * @return The selection outline
+     * @param xDelta Number of pixels to move horizontally.
+     * @param yDelta Number of pixels to move vertically.
      */
-    public abstract Shape getSelectionOutline();
-
-    /**
-     * Invoked to indicate the bounds of the selection has changed as the result of a static transformation being applied.
-     *
-     * @param bounds The new selection bounds.
-     */
-    protected abstract void setSelectionBounds(Rectangle bounds);
+    protected abstract void adjustSelectionBounds(int xDelta, int yDelta);
 
     /**
      * Invoked to indicate that the user has defined a new point on the selection path.
@@ -67,15 +54,6 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * @param finalPoint The final point on the selection path.
      */
     protected abstract void completeSelection(Point finalPoint);
-
-    /**
-     * Invoked to indicate that the selection has moved on the canvas. The selection shape's coordinates should be
-     * translated by the given amount.
-     *
-     * @param xDelta Number of pixels to move horizontally.
-     * @param yDelta Number of pixels to move vertically.
-     */
-    protected abstract void adjustSelectionBounds(int xDelta, int yDelta);
 
     public AbstractSelectionTool(PaintToolType type) {
         super(type);
@@ -161,7 +139,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         if (hasSelection() && isMovingSelection) {
             setDirty();
             adjustSelectionBounds(imageLocation.x - lastPoint.x, imageLocation.y - lastPoint.y);
-            drawSelection();
+            redrawSelection();
             lastPoint = imageLocation;
         }
 
@@ -254,135 +232,6 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void invert() {
-        if (hasSelection()) {
-            BufferedImage selectedImage = getSelectedImage();
-            Shape selectionOutline = getSelectionOutline();
-
-            for (int x = 0; x < selectedImage.getWidth(); x++) {
-                for (int y = 0; y < selectedImage.getHeight(); y++) {
-
-                    if (selectionOutline.contains(new Point(x + getSelectedImageLocation().x, y + getSelectedImageLocation().y))) {
-                        int argb = selectedImage.getRGB(x, y);
-                        int alpha = 0xff000000 & argb;
-                        int rgb = 0x00ffffff & argb;
-
-                        // Invert preserving alpha channel
-                        selectedImage.setRGB(x, y, alpha | (~rgb & 0x00ffffff));
-                    }
-                }
-            }
-
-            setDirty();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void adjustBrightness(int delta) {
-        if (hasSelection()) {
-            BufferedImage selectedImage = getSelectedImage();
-            Shape selectionOutline = getSelectionOutline();
-
-            for (int x = 0; x < selectedImage.getWidth(); x++) {
-                for (int y = 0; y < selectedImage.getHeight(); y++) {
-
-                    if (selectionOutline.contains(new Point(x + getSelectedImageLocation().x, y + getSelectedImageLocation().y))) {
-
-                        int argb = selectedImage.getRGB(x, y);
-                        int alpha = 0xff000000 & argb;
-                        int r = ((0xff0000 & argb) >> 16) + delta;
-                        int g = ((0xff00 & argb) >> 8) + delta;
-                        int b = (0xff & argb) + delta;
-
-                        // Saturate at 0 and 256
-                        r = r > 0xff ? 0xff : r < 0 ? 0 : r;
-                        g = g > 0xff ? 0xff : g < 0 ? 0 : g;
-                        b = b > 0xff ? 0xff : b < 0 ? 0 : b;
-
-                        // Adjust preserving alpha channel
-                        selectedImage.setRGB(x, y, alpha | (r << 16) | (g << 8) | b);
-                    }
-                }
-            }
-
-            setDirty();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void adjustTransparency(int delta) {
-        if (hasSelection()) {
-            BufferedImage selectedImage = getSelectedImage();
-            Shape selectionOutline = getSelectionOutline();
-
-            for (int x = 0; x < selectedImage.getWidth(); x++) {
-                for (int y = 0; y < selectedImage.getHeight(); y++) {
-
-                    if (selectionOutline.contains(new Point(x + getSelectedImageLocation().x, y + getSelectedImageLocation().y))) {
-
-                        Color c = new Color(selectedImage.getRGB(x, y), true);
-                        int alpha = c.getAlpha() + delta;
-                        alpha = alpha > 255 ? 255 : alpha < 0 ? 0 : alpha;
-
-                        // Adjust preserving alpha channel
-                        selectedImage.setRGB(x, y, new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha).getRGB());
-                    }
-                }
-            }
-
-            setDirty();
-        }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void rotateLeft() {
-        applyTransform(Transform.rotateLeft(selectedImage.get().getWidth(), selectedImage.get().getHeight()));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void rotateRight() {
-        applyTransform(Transform.rotateRight(selectedImage.get().getWidth(), selectedImage.get().getHeight()));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void flipHorizontal() {
-        applyTransform(Transform.flipHorizontalTransform(selectedImage.get().getWidth()));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void flipVertical() {
-        applyTransform(Transform.flipVerticalTransform(selectedImage.get().getHeight()));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void applyTransform(AffineTransform transform) {
-        if (hasSelection()) {
-            setDirty();
-
-            // Get the original location of the selection
-            Point originalLocation = getSelectionLocation();
-
-            // Transform the selected image
-            selectedImage.set(Transform.transform(selectedImage.get(), transform));
-
-            // Relocate the image to its original location
-            Rectangle newBounds = selectedImage.get().getRaster().getBounds();
-            newBounds.setLocation(originalLocation);
-            setSelectionBounds(newBounds);
-
-            drawSelection();
-        }
-    }
-
     /**
      * Gets an ImmuatableProvider containing the selected image, useful for observing changes made to the selected
      * image.
@@ -393,23 +242,17 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         return ImmutableProvider.from(selectedImage);
     }
 
-    /**
-     * Gets the image represented by the selection.
-     *
-     * Note that a user can select and modify a non-rectangular selection, but the selected image returned by this
-     * method will always be a rectangle whose bounds are the smallest rectangle that can fit in the selected shape
-     * (i.e., {@link #getSelectionOutline()}). Any pixels outside the user's selection shape will be fully transparent
-     * pixels in the returned image.
-     *
-     * @return The selected image
-     */
+    /** {@inheritDoc} */
+    @Override
     public BufferedImage getSelectedImage() {
         return selectedImage.get();
     }
 
-    protected void setSelectedImage(BufferedImage selectedImage) {
+    /** {@inheritDoc} */
+    @Override
+    public void setSelectedImage(BufferedImage selectedImage) {
         this.selectedImage.set(selectedImage);
-        drawSelection();
+        redrawSelection();
     }
 
     /**
@@ -434,14 +277,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         getCanvas().commit();
     }
 
-    /**
-     * Determines if the user has an active selection.
-     * <p>
-     * Differs from {@link #hasSelectionBounds()} in that when a user is dragging the selection rectangle, a selection
-     * boundary will exist but a selection will not. The selection is not made until the user releases the mouse.
-     *
-     * @return True is a selection exists, false otherwise.
-     */
+    /** {@inheritDoc} */
     public boolean hasSelection() {
         return hasSelectionBounds() && selectedImage.get() != null;
     }
@@ -469,15 +305,12 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         BufferedImage trimmedSelection = maskedSelection.getSubimage(selectionBounds.getBounds().x, selectionBounds.getBounds().y, selectionBounds.getBounds().width, selectionBounds.getBounds().height);
 
         selectedImage.set(trimmedSelection);
-        drawSelection();
+        redrawSelection();
     }
 
-    /**
-     * Determines the location (top-left x,y coordinate) of the selection outline.
-     *
-     * @return Get the top-left coordinate of the selection boundary
-     */
-    private Point getSelectionLocation() {
+    /** {@inheritDoc} */
+    @Override
+    public Point getSelectionLocation() {
         if (!hasSelection()) {
             return null;
         }
@@ -501,7 +334,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
             selectionChange = new ChangeSet(getCanvas().getScratchImage(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
             getCanvas().commit(selectionChange);
-            drawSelection();
+            redrawSelection();
         }
     }
 
@@ -529,10 +362,9 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
     }
 
-    /**
-     * Draws the provided image and selection frame ("marching ants") onto the scratch buffer at the given location.
-     */
-    protected void drawSelection() {
+    /** {@inheritDoc} */
+    @Override
+    public void redrawSelection() {
         getCanvas().clearScratch();
 
         Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
@@ -570,10 +402,9 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         g.dispose();
     }
 
-    /**
-     * Marks the selection as having been mutated (either by transformation or movement).
-     */
-    protected void setDirty() {
+    /** {@inheritDoc} */
+    @Override
+    public void setDirty() {
 
         // First time we attempt to modify the selection, clear it from the canvas (so that we don't duplicate it)
         if (!dirty) {
@@ -647,25 +478,25 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
                 case KeyEvent.VK_LEFT:
                     setDirty();
                     adjustSelectionBounds(-1, 0);
-                    drawSelection();
+                    redrawSelection();
                     break;
 
                 case KeyEvent.VK_RIGHT:
                     setDirty();
                     adjustSelectionBounds(1, 0);
-                    drawSelection();
+                    redrawSelection();
                     break;
 
                 case KeyEvent.VK_UP:
                     setDirty();
                     adjustSelectionBounds(0, -1);
-                    drawSelection();
+                    redrawSelection();
                     break;
 
                 case KeyEvent.VK_DOWN:
                     setDirty();
                     adjustSelectionBounds(0, 1);
-                    drawSelection();
+                    redrawSelection();
                     break;
             }
         }
@@ -675,7 +506,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     @Override
     public void onAntsMoved() {
         if (hasSelection()) {
-            drawSelection();
+            redrawSelection();
         }
     }
 
@@ -710,5 +541,4 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     public void setBoundaryCursor(Cursor boundaryCursor) {
         this.boundaryCursor = boundaryCursor;
     }
-
 }

@@ -79,7 +79,7 @@ public class RotateTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void resetSelection() {
+    public void resetSelection() {
         selectionBounds = null;
         originalSelectionBounds = null;
         centerpoint = null;
@@ -89,7 +89,7 @@ public class RotateTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void setSelectionBounds(Rectangle bounds) {
+    public void setSelectionOutline(Rectangle bounds) {
         selectionBounds = bounds;
     }
 
@@ -176,8 +176,8 @@ public class RotateTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void drawSelection() {
-        super.drawSelection();
+    public void redrawSelection() {
+        super.redrawSelection();
 
         // Draw the drag handle on the selection
         Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
