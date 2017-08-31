@@ -69,6 +69,7 @@ public interface TransformableSelection extends MutableSelection {
         int height = getSelectedImage().getHeight();
 
         applyTransform(Transform.rotateLeft(width, height));
+        adjustSelectionBounds((width - height) / 2, -(width - height) / 2);
     }
 
     /**
@@ -79,6 +80,7 @@ public interface TransformableSelection extends MutableSelection {
         int height = getSelectedImage().getHeight();
 
         applyTransform(Transform.rotateRight(width, height));
+        adjustSelectionBounds((width - height) / 2, -(width - height) / 2);
     }
 
     /**
@@ -110,6 +112,7 @@ public interface TransformableSelection extends MutableSelection {
      */
     default void adjustBrightness(int delta) {
         Transform.adjustBrightness(getSelectedImage(), delta);
+        setDirty();
     }
 
     /**
@@ -120,6 +123,7 @@ public interface TransformableSelection extends MutableSelection {
      */
     default void adjustTransparency(int delta) {
         Transform.adjustTransparency(getSelectedImage(), delta);
+        setDirty();
     }
 
     /**
@@ -127,6 +131,7 @@ public interface TransformableSelection extends MutableSelection {
      */
     default void invert() {
         Transform.invert(getSelectedImage());
+        setDirty();
     }
 
     /**

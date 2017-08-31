@@ -67,6 +67,15 @@ public interface MutableSelection {
     BufferedImage getSelectedImage();
 
     /**
+     * Invoked to indicate that the selection has moved on the canvas. The selection shape's coordinates should be
+     * translated by the given amount.
+     *
+     * @param xDelta Number of pixels to move horizontally.
+     * @param yDelta Number of pixels to move vertically.
+     */
+    void adjustSelectionBounds(int xDelta, int yDelta);
+
+    /**
      * Clears the scratch buffer then draws the selected image and selection outline ("marching ants") onto it.
      */
     void redrawSelection();

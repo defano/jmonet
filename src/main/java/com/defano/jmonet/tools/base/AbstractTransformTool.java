@@ -169,7 +169,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void adjustSelectionBounds(int xDelta, int yDelta) {
+    public void adjustSelectionBounds(int xDelta, int yDelta) {
         selectionBounds.setLocation(selectionBounds.x + xDelta, selectionBounds.y + yDelta);
         transformBounds.getBottomLeft().x += xDelta;
         transformBounds.getBottomLeft().y += yDelta;

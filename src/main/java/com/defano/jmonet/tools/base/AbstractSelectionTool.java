@@ -31,15 +31,6 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     private boolean dirty = false;
 
     /**
-     * Invoked to indicate that the selection has moved on the canvas. The selection shape's coordinates should be
-     * translated by the given amount.
-     *
-     * @param xDelta Number of pixels to move horizontally.
-     * @param yDelta Number of pixels to move vertically.
-     */
-    protected abstract void adjustSelectionBounds(int xDelta, int yDelta);
-
-    /**
      * Invoked to indicate that the user has defined a new point on the selection path.
      *
      * @param initialPoint   The first point defined by the user (i.e., where the mouse was initially pressed)

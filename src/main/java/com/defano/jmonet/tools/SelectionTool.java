@@ -54,7 +54,7 @@ public class SelectionTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void adjustSelectionBounds(int xDelta, int yDelta) {
+    public void adjustSelectionBounds(int xDelta, int yDelta) {
         selectionBounds.setLocation(selectionBounds.x + xDelta, selectionBounds.y + yDelta);
     }
 
