@@ -87,16 +87,16 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
             if (dragTopLeft) {
                 moveTopLeft(transformBounds, imageLocation);
-                drawSelection();
+                redrawSelection();
             } else if (dragTopRight) {
                 moveTopRight(transformBounds, imageLocation);
-                drawSelection();
+                redrawSelection();
             } else if (dragBottomLeft) {
                 moveBottomLeft(transformBounds, imageLocation);
-                drawSelection();
+                redrawSelection();
             } else if (dragBottomRight) {
                 moveBottomRight(transformBounds, imageLocation);
-                drawSelection();
+                redrawSelection();
             } else {
                 super.mouseDragged(e, imageLocation);
             }
@@ -148,7 +148,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void resetSelection() {
+    public void resetSelection() {
         selectionBounds = null;
         transformBounds = null;
 
@@ -157,7 +157,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void setSelectionBounds(Rectangle bounds) {
+    public void setSelectionOutline(Rectangle bounds) {
         transformBounds = new FlexQuadrilateral(bounds);
     }
 
@@ -169,7 +169,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void adjustSelectionBounds(int xDelta, int yDelta) {
+    public void adjustSelectionBounds(int xDelta, int yDelta) {
         selectionBounds.setLocation(selectionBounds.x + xDelta, selectionBounds.y + yDelta);
         transformBounds.getBottomLeft().x += xDelta;
         transformBounds.getBottomLeft().y += yDelta;
@@ -218,4 +218,5 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
         this.transformCursor = transformCursor;
         setToolCursor(transformCursor);
     }
+
 }

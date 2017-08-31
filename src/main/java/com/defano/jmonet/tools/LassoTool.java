@@ -20,13 +20,13 @@ public class LassoTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void resetSelection() {
+    public void resetSelection() {
         selectionBounds = null;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void setSelectionBounds(Rectangle bounds) {
+    public void setSelectionOutline(Rectangle bounds) {
         selectionBounds = new Path2D.Double(bounds);
     }
 
@@ -55,7 +55,7 @@ public class LassoTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void adjustSelectionBounds(int xDelta, int yDelta) {
+    public void adjustSelectionBounds(int xDelta, int yDelta) {
         selectionBounds.transform(AffineTransform.getTranslateInstance(xDelta, yDelta));
     }
 }
