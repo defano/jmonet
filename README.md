@@ -1,19 +1,19 @@
 # JMonet
 
-A rudimentary toolkit for incorporating [MacPaint](https://en.wikipedia.org/wiki/MacPaint) / [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint)-like tools into a Java Swing or JavaFX application.
+A rudimentary toolkit for incorporating Paint tools (similar to [MacPaint](https://en.wikipedia.org/wiki/MacPaint) / [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint)) into a Java Swing or JavaFX application.
 
 ## Features
 
 * Offers a standard suite of paint tools with common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
 * Painting canvas supports undo and redo operations on all paint tool changes, plus cut, copy and paste integration with the system clipboard.
-* Includes affine and non-affine transform tools including flip, rotate, shear, perspective and projection.
+* Includes affine and non-affine transform tools including flip, rotate, shear, perspective and projection; ability to adjust selection color depth, transparency and brightness.
 * Painted images are scalable (displayed within a scrollable pane) and tools can be snapped to a grid.
 * Lightweight toolkit integrates easily into Swing and JavaFX applications.
 * All operations are backed by a standard Java `BufferedImage`; easy to import existing images and save changes.
 
 ## Paint Tools
 
-JMonet provides the following standard paint tools.
+JMonet provides the following standard paint tools:
 
 Icon | Tool            | Description
 -----|-----------------|--------------
@@ -49,9 +49,9 @@ Icon | Tool            | Description
 
 #### Static transforms
 
-Selected images can be flipped horizontally, vertically or rotated 90 degrees clockwise or counterclockwise via the Selection or Lasso tools. Adjustments to brightness, transparency and color are also available.
+Selected images can be flipped horizontally, vertically or rotated 90 degrees via the Selection, Lasso or transform tools. Adjustments to brightness, transparency and color are also available.
 
-Once a selection has been made, invoke one of the following methods on the `SelectionTool` object:
+Once a selection has been made, invoke one of the following methods on the `SelectionTool` object to transform it:
 
 ```
 void rotateLeft();
@@ -62,6 +62,8 @@ void flipVertical();
 void adjustBrightness(int delta);
 void adjustTransparency(int delta);
 void invert();
+void reduceColor(int colorDepth);
+void reduceGreyscale(int grayDepth);
 ```
 
 ## Getting started
@@ -74,7 +76,7 @@ JMonet is published to Maven Central; include the library in your Maven project'
 <dependency>
     <groupId>com.defano.jmonet</groupId>
     <artifactId>jmonet</artifactId>
-    <version>0.0.7</version>
+    <version>0.0.8</version>
 </dependency>
 ```
 
@@ -86,7 +88,7 @@ repositories {
 }
 
 dependencies {
-  compile 'com.defano.jmonet:jmonet:0.0.7'
+  compile 'com.defano.jmonet:jmonet:0.0.8'
 }
 ```
 
