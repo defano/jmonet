@@ -61,8 +61,8 @@ public class MarchingAnts {
     }
 
     private void fireMarchingAntsObservers() {
-        for (MarchingAntsObserver thisObserver : observers) {
-            thisObserver.onAntsMoved();
+        for (Object thisObserver : observers.toArray()) {
+            ((MarchingAntsObserver)thisObserver).onAntsMoved();
         }
     }
 }
