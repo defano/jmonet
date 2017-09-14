@@ -7,6 +7,7 @@ import com.defano.jmonet.tools.base.PaintTool;
 import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -80,6 +81,7 @@ public class TextTool extends PaintTool implements Observer {
         int top = getCanvas().getBounds().y + y;
 
         textArea.setVisible(true);
+        textArea.setBorder(new EmptyBorder(0, 0, 0, 0));
         textArea.setText("");
         textArea.setBounds(left, top, (int)(getCanvas().getBounds().getWidth() * getCanvas().getScale()) - left, (int)(getCanvas().getBounds().getHeight() * getCanvas().getScale()) - top);
         textArea.setFont(getScaledFont());
