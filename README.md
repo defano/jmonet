@@ -1,6 +1,6 @@
 # JMonet
 
-An easy-to-use toolkit for incorporating paint tools (similar to [MacPaint](https://en.wikipedia.org/wiki/MacPaint) or [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint)) into a Java Swing or JavaFX application.
+An easy-to-use toolkit for incorporating paint tools similar to [MacPaint](https://en.wikipedia.org/wiki/MacPaint) or [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint) into a Java Swing or JavaFX application.
 
 ## Features
 
@@ -76,7 +76,7 @@ JMonet is published to Maven Central; include the library in your Maven project'
 <dependency>
     <groupId>com.defano.jmonet</groupId>
     <artifactId>jmonet</artifactId>
-    <version>0.0.8</version>
+    <version>0.0.9</version>
 </dependency>
 ```
 
@@ -88,7 +88,7 @@ repositories {
 }
 
 dependencies {
-  compile 'com.defano.jmonet:jmonet:0.0.8'
+  compile 'com.defano.jmonet:jmonet:0.0.9'
 }
 ```
 
