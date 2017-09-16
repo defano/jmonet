@@ -35,6 +35,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
     /** {@inheritDoc} */
     @Override
     public void mouseMoved(MouseEvent e, Point imageLocation) {
+        setToolCursor(getPolyLineCursor());
 
         // Nothing to do if initial point is not yet established
         if (points.size() == 0) {

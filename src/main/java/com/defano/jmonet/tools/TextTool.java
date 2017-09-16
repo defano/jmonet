@@ -71,6 +71,12 @@ public class TextTool extends PaintTool implements Observer {
         }
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void mouseMoved(MouseEvent e, Point imageLocation) {
+        setToolCursor(getTextCursor());
+    }
+
     public boolean isEditing() {
         return textArea.getParent() != null;
     }

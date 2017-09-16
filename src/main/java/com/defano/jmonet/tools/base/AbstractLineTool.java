@@ -25,6 +25,12 @@ public abstract class AbstractLineTool extends PaintTool {
 
     /** {@inheritDoc} */
     @Override
+    public void mouseMoved(MouseEvent e, Point imageLocation) {
+        setToolCursor(getLineCursor());
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
         initialPoint = imageLocation;
     }

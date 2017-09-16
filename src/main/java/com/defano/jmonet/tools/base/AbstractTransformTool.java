@@ -15,7 +15,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     private final static int HANDLE_SIZE = 8;
 
-    private Cursor transformCursor = new Cursor(Cursor.MOVE_CURSOR);
+    private Cursor transformCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
     private BufferedImage originalImage;
     private Rectangle selectionBounds;
     private FlexQuadrilateral transformBounds;
@@ -123,6 +123,12 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
             super.mouseReleased(e, imageLocation);
         }
     }
+
+//    /** {@inheritDoc} */
+//    @Override
+//    public void mouseMoved(MouseEvent e, Point imageLocation) {
+//        setToolCursor(getTransformCursor());
+//    }
 
     /** {@inheritDoc} */
     @Override

@@ -11,7 +11,7 @@ import java.awt.event.MouseEvent;
  */
 public abstract class AbstractPathTool extends PaintTool {
 
-    private Cursor pathCursor = new Cursor(Cursor.MOVE_CURSOR);
+    private Cursor pathCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
 
     protected abstract void startPath(Graphics2D g, Stroke stroke, Paint paint, Point initialPoint);
     protected abstract void addPoint(Graphics2D g, Stroke stroke, Paint paint, Point point);
@@ -20,6 +20,12 @@ public abstract class AbstractPathTool extends PaintTool {
     public AbstractPathTool(PaintToolType type) {
         super(type);
         setToolCursor(pathCursor);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void mouseMoved(MouseEvent e, Point imageLocation) {
+        setToolCursor(getPathCursor());
     }
 
     /** {@inheritDoc} */

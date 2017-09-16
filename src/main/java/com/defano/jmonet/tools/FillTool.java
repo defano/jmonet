@@ -13,6 +13,8 @@ import java.awt.image.BufferedImage;
  */
 public class FillTool extends PaintTool {
 
+    private Cursor fillCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
+
     public FillTool() {
         super(PaintToolType.FILL);
     }
@@ -45,6 +47,12 @@ public class FillTool extends PaintTool {
         getCanvas().invalidateCanvas();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void mouseMoved(MouseEvent e, Point imageLocation) {
+        setToolCursor(getFillCursor());
+    }
+
     private int getFillPixel(int x, int y, Paint paint) {
 
         if (paint instanceof Color) {
@@ -55,5 +63,14 @@ public class FillTool extends PaintTool {
         }
 
         throw new IllegalArgumentException("Don't know how to fill with paint " + paint);
+    }
+
+    public Cursor getFillCursor() {
+        return fillCursor;
+    }
+
+    public void setFillCursor(Cursor fillCursor) {
+        this.fillCursor = fillCursor;
+        setToolCursor(fillCursor);
     }
 }

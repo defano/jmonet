@@ -80,6 +80,12 @@ public abstract class AbstractBoundsTool extends PaintTool {
         getCanvas().commit();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void mouseMoved(MouseEvent e, Point imageLocation) {
+        setToolCursor(getBoundaryCursor());
+    }
+
     public ImmutableProvider<Boolean> getDrawMultiple() {
         return drawMultiple;
     }
