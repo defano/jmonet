@@ -29,6 +29,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     private Provider<Paint> fillPaintProvider = new Provider<>(null);
     private Provider<Integer> shapeSidesProvider = new Provider<>(5);
     private Provider<Font> fontProvider = new Provider<>(new Font("Courier", Font.PLAIN, 14));
+    private Provider<Color> fontColorProvider = new Provider<>(Color.BLACK);
 
     public PaintTool(PaintToolType type) {
         this.type = type;
@@ -67,6 +68,10 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
 
     protected PaintCanvas getCanvas() {
         return canvas;
+    }
+
+    public void setFontColorProvider(Provider<Color> fontColorProvider) {
+        this.fontColorProvider = fontColorProvider;
     }
 
     public void setStrokePaintProvider(Provider<Paint> strokePaintProvider) {
@@ -119,6 +124,10 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         return strokePaintProvider.get();
     }
 
+    public Color getFontColor() {
+        return fontColorProvider.get();
+    }
+
     public Provider<Paint> getFillPaintProvider() {
         return fillPaintProvider;
     }
@@ -137,6 +146,10 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
 
     public Provider<Font> getFontProvider() {
         return fontProvider;
+    }
+
+    public Provider<Color> getFontColorProvider() {
+        return fontColorProvider;
     }
 
     public Cursor getToolCursor() {

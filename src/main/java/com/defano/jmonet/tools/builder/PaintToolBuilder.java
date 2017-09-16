@@ -22,6 +22,7 @@ public class PaintToolBuilder {
     private Provider<Paint> fillPaintProvider;
     private Provider<Integer> shapeSidesProvider;
     private Provider<Font> fontProvider;
+    private Provider<Color> fontColorProvider;
 
     private PaintToolBuilder(PaintToolType toolType) {
         this.type = toolType;
@@ -91,6 +92,16 @@ public class PaintToolBuilder {
         return this;
     }
 
+    public PaintToolBuilder withFontColor(Color color) {
+        this.fontColorProvider = new Provider<>(color);
+        return this;
+    }
+
+    public PaintToolBuilder withFontColorProvider(Provider<Color> colorProvider) {
+        this.fontColorProvider = colorProvider;
+        return this;
+    }
+
     public PaintTool build() {
 
         PaintTool selectedTool = type.getToolInstance();
@@ -113,6 +124,10 @@ public class PaintToolBuilder {
 
         if (fillPaintProvider != null) {
             selectedTool.setFillPaintProvider(fillPaintProvider);
+        }
+
+        if (fontColorProvider != null) {
+            selectedTool.setFontColorProvider(fontColorProvider);
         }
 
         if (canvas != null) {

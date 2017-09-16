@@ -34,6 +34,7 @@ public class TextTool extends PaintTool implements Observer {
     @Override
     public void deactivate() {
         getFontProvider().deleteObserver(this);
+        getFontColorProvider().deleteObserver(this);
 
         if (isEditing()) {
             commitTextImage();
@@ -52,8 +53,10 @@ public class TextTool extends PaintTool implements Observer {
         textArea.setVisible(true);
         textArea.setOpaque(false);
         textArea.setBackground(new Color(0, 0, 0, 0));
+        textArea.setForeground(getFontColor());
 
         getFontProvider().addObserver(this);
+        getFontColorProvider().addObserver(this);
     }
 
     /** {@inheritDoc} */
@@ -132,6 +135,10 @@ public class TextTool extends PaintTool implements Observer {
     public void update(Observable o, Object newValue) {
         if (newValue instanceof Font) {
             textArea.setFont((Font) newValue);
+        }
+
+        if (newValue instanceof Color) {
+            textArea.setForeground((Color) newValue);
         }
     }
 
