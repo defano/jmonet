@@ -12,7 +12,6 @@ import java.awt.event.MouseEvent;
  */
 public abstract class AbstractLineTool extends PaintTool {
 
-    private int snapToDegrees = 15;
     private Point initialPoint;
     private Cursor lineCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
 
@@ -43,7 +42,7 @@ public abstract class AbstractLineTool extends PaintTool {
         Point currentLoc = imageLocation;
 
         if (e.isShiftDown()) {
-            currentLoc = Geometry.line(initialPoint, currentLoc, snapToDegrees);
+            currentLoc = Geometry.line(initialPoint, currentLoc, getConstrainedAngle());
         }
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
@@ -57,14 +56,6 @@ public abstract class AbstractLineTool extends PaintTool {
     @Override
     public void mouseReleased(MouseEvent e, Point imageLocation) {
         getCanvas().commit();
-    }
-
-    public int getSnapToDegrees() {
-        return snapToDegrees;
-    }
-
-    public void setSnapToDegrees(int snapToDegrees) {
-        this.snapToDegrees = snapToDegrees;
     }
 
     public Cursor getLineCursor() {

@@ -30,8 +30,8 @@ public abstract class AbstractBoundsTool extends PaintTool {
         setToolCursor(boundaryCursor);
     }
 
-    protected abstract void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height);
-    protected abstract void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height);
+    protected abstract void drawBounds(Graphics2D g, Stroke stroke, Paint paint, Rectangle rectangle, boolean isShiftDown);
+    protected abstract void drawFill(Graphics2D g, Paint fill, Rectangle rectangle, boolean isShiftDown);
 
     /** {@inheritDoc} */
     @Override
@@ -65,10 +65,10 @@ public abstract class AbstractBoundsTool extends PaintTool {
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
 
         if (getFillPaint() != null) {
-            drawFill(g2d, getFillPaint(), bounds.x, bounds.y, bounds.width, bounds.height);
+            drawFill(g2d, getFillPaint(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
         }
 
-        drawBounds(g2d, getStroke(), getStrokePaint(), bounds.x, bounds.y, bounds.width, bounds.height);
+        drawBounds(g2d, getStroke(), getStrokePaint(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
 
         g2d.dispose();
         getCanvas().invalidateCanvas();

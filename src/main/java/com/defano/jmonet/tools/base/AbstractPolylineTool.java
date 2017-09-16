@@ -17,7 +17,6 @@ import java.util.List;
 public abstract class AbstractPolylineTool extends PaintTool {
 
     private Cursor polyLineCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
-    private int snapToDegrees = 15;
     private final List<Point> points = new ArrayList<>();
     private Point currentPoint = null;
 
@@ -44,7 +43,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
 
         if (e.isShiftDown()) {
             Point lastPoint = points.get(points.size() - 1);
-            currentPoint = Geometry.line(lastPoint, e.getPoint(), snapToDegrees);
+            currentPoint = Geometry.line(lastPoint, e.getPoint(), getConstrainedAngle());
             points.add(currentPoint);
         } else {
             currentPoint = imageLocation;
@@ -132,14 +131,6 @@ public abstract class AbstractPolylineTool extends PaintTool {
             points.add(currentPoint);
             commitPolyline();
         }
-    }
-
-    public int getSnapToDegrees() {
-        return snapToDegrees;
-    }
-
-    public void setSnapToDegrees(int snapToDegrees) {
-        this.snapToDegrees = snapToDegrees;
     }
 
     public Cursor getPolyLineCursor() {

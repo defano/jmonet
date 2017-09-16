@@ -16,16 +16,16 @@ public class RectangleTool extends AbstractBoundsTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height) {
+    protected void drawBounds(Graphics2D g, Stroke stroke, Paint paint, Rectangle bounds, boolean isShiftDown) {
         g.setStroke(stroke);
         g.setPaint(paint);
-        g.drawRect(x, y, width, height);
+        g.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height) {
+    protected void drawFill(Graphics2D g, Paint fill, Rectangle bounds, boolean isShiftDown) {
         g.setPaint(getFillPaint());
-        g.fillRect(x, y, width, height);
+        g.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
     }
 }

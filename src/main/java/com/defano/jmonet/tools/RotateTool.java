@@ -67,7 +67,7 @@ public class RotateTool extends AbstractSelectionTool {
             double degrees = Geometry.angle(centerpoint.x, centerpoint.y, dragLocation.x, dragLocation.y);
 
             if (e.isShiftDown()) {
-                degrees = Geometry.round(degrees, 15);
+                degrees = Geometry.round(degrees, getConstrainedAngle());
             }
 
             double angle = Math.toRadians(degrees);

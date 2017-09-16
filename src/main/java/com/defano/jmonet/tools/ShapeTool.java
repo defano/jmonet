@@ -18,24 +18,30 @@ public class ShapeTool extends AbstractBoundsTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void drawBounds(Graphics2D g, Stroke stroke, Paint paint, int x, int y, int width, int height) {
+    protected void drawBounds(Graphics2D g, Stroke stroke, Paint paint, Rectangle rectangle, boolean isShiftDown) {
         g.setStroke(stroke);
         g.setPaint(paint);
-        g.drawPolygon(Geometry.polygon(initialPoint, getShapeSides(), getRadius(), getRotationAngle()));
+        g.drawPolygon(Geometry.polygon(initialPoint, getShapeSides(), getRadius(), getRotationAngle(isShiftDown)));
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void drawFill(Graphics2D g, Paint fill, int x, int y, int width, int height) {
+    protected void drawFill(Graphics2D g, Paint fill, Rectangle rectangle, boolean isShiftDown) {
         g.setPaint(fill);
-        g.fill(Geometry.polygon(initialPoint, getShapeSides(), getRadius(), getRotationAngle()));
+        g.fill(Geometry.polygon(initialPoint, getShapeSides(), getRadius(), getRotationAngle(isShiftDown)));
     }
 
     private double getRadius() {
         return Geometry.distance(initialPoint, currentPoint);
     }
 
-    private double getRotationAngle() {
-        return Math.toRadians(Geometry.angle(initialPoint.x, initialPoint.y, currentPoint.x, currentPoint.y));
+    private double getRotationAngle(boolean isShiftDown) {
+        double degrees = Geometry.angle(initialPoint.x, initialPoint.y, currentPoint.x, currentPoint.y);
+
+        if (isShiftDown) {
+            degrees = Geometry.round(degrees, getConstrainedAngle());
+        }
+
+        return Math.toRadians(degrees);
     }
 }

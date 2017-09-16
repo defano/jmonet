@@ -23,6 +23,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     private AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
 
     private Cursor toolCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
+    private int constrainedAngle = 15;
 
     private Provider<Stroke> strokeProvider = new Provider<>(new BasicStroke(2));
     private Provider<Paint> strokePaintProvider = new Provider<>(Color.BLACK);
@@ -162,6 +163,14 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         if (this.canvas != null) {
             this.canvas.setCursor(toolCursor);
         }
+    }
+
+    public int getConstrainedAngle() {
+        return constrainedAngle;
+    }
+
+    public void setConstrainedAngle(int constrainedAngle) {
+        this.constrainedAngle = constrainedAngle;
     }
 
     /** {@inheritDoc} */
