@@ -4,7 +4,6 @@ package com.defano.jmonet.tools;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PaintTool;
-import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

@@ -3,6 +3,9 @@ package com.defano.jmonet.tools.base;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * Represents an image selection that can be changed programmatically.
+ */
 public interface MutableSelection {
 
     /**

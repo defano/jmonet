@@ -250,6 +250,20 @@ public class Geometry {
     }
 
     /**
+     * Extrapolates a point on a line parallel to a given line. Calculates the distance between reference and anchor
+     * and returns a new point that is equidistant from anchor but produces an imaginary line parallel to angle.
+     *
+     * @param angle The reference line representing an angle to constrain the result to
+     * @param anchor The anchor point from which the new point will be relative to
+     * @param reference The reference point, used to determine distance from anchor
+     * @return A point that appears on a line parallel to angle and which is the same distance from anchor as reference.
+     */
+    public static Point extrapolate(Line2D angle, Point anchor, Point reference) {
+        double degrees = Geometry.angle(angle);
+        return Geometry.asPoint(Geometry.line(anchor, Geometry.distance(anchor, reference), degrees));
+    }
+
+    /**
      * Determines if the given point is below the given line. If the line is perfectly vertical, below is defined as
      * being to the right of.
      *

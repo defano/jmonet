@@ -1,7 +1,6 @@
 package com.defano.jmonet.model;
 
 import com.defano.jmonet.tools.*;
-import com.defano.jmonet.tools.base.AbstractPathTool;
 import com.defano.jmonet.tools.base.PaintTool;
 
 /**

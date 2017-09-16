@@ -1,6 +1,5 @@
 package com.defano.jmonet.algo;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.HashSet;
@@ -82,7 +81,7 @@ public class FloydSteinberg {
     private static double[][][] toColorCubeMatrix(BufferedImage image) {
 
         // Source needs to be ARGB type; make a copy to assure constraint is met
-        image = argbColorModelCopy(image);
+        image = Transform.argbCopy(image);
 
         double[][][] matrix = new double[image.getHeight()][image.getWidth()][4];
         WritableRaster raster = image.getRaster();
@@ -139,19 +138,4 @@ public class FloydSteinberg {
             matrix[y][x][2] += qeb * fraction;
         }
     }
-
-    /**
-     * Makes a "deep" copy of the given image, returning a copy whose type is TYPE_INT_ARGB.
-     *
-     * @param src The image to copy.
-     * @return A copy of the source, in ARGB mode.
-     */
-    private static BufferedImage argbColorModelCopy(BufferedImage src) {
-        BufferedImage copy = new BufferedImage(src.getWidth(), src.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Graphics g = copy.getGraphics();
-        g.drawImage(src, 0, 0, null);
-        g.dispose();
-        return copy;
-    }
-
 }

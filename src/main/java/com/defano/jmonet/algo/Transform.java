@@ -148,4 +148,19 @@ public class Transform {
     public static BufferedImage flipVertical(BufferedImage image) {
         return transform(image, Transform.flipVerticalTransform(image.getHeight()));
     }
+
+    /**
+     * Makes a "deep" copy of the given image, returning a copy whose type is TYPE_INT_ARGB.
+     *
+     * @param src The image to copy.
+     * @return A copy of the source, in ARGB mode.
+     */
+    public static BufferedImage argbCopy(BufferedImage src) {
+        BufferedImage copy = new BufferedImage(src.getWidth(), src.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics g = copy.getGraphics();
+        g.drawImage(src, 0, 0, null);
+        g.dispose();
+        return copy;
+    }
+
 }

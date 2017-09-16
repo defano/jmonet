@@ -3,7 +3,6 @@ package com.defano.jmonet.tools.builder;
 import com.defano.jmonet.canvas.JFXPaintCanvasNode;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.*;
 import com.defano.jmonet.model.Provider;
 import com.defano.jmonet.tools.base.PaintTool;
 

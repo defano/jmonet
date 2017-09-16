@@ -1,13 +1,12 @@
 package com.defano.jmonet.tools;
 
+import com.defano.jmonet.algo.Transform;
 import com.defano.jmonet.model.FlexQuadrilateral;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractTransformTool;
-import com.defano.jmonet.algo.Transform;
 import com.defano.jmonet.tools.util.Geometry;
 
 import java.awt.*;
-import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -23,7 +22,7 @@ public class ScaleTool extends AbstractTransformTool {
     @Override
     protected void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         if (isShiftDown) {
-            newPosition = constrainAspectRatio(originalQuad().getBottomRightTopLeftLine(), quadrilateral.getBottomRight(), newPosition);
+            newPosition = Geometry.extrapolate(originalQuad().getBottomRightTopLeftLine(), quadrilateral.getBottomRight(), newPosition);
         }
 
         quadrilateral.getTopLeft().setLocation(newPosition);
@@ -46,7 +45,7 @@ public class ScaleTool extends AbstractTransformTool {
     @Override
     protected void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         if (isShiftDown) {
-            newPosition = constrainAspectRatio(originalQuad().getBottomLeftTopRightLine(), quadrilateral.getBottomLeft(), newPosition);
+            newPosition = Geometry.extrapolate(originalQuad().getBottomLeftTopRightLine(), quadrilateral.getBottomLeft(), newPosition);
         }
 
         quadrilateral.getTopRight().setLocation(newPosition);
@@ -69,7 +68,7 @@ public class ScaleTool extends AbstractTransformTool {
     @Override
     protected void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         if (isShiftDown) {
-            newPosition = constrainAspectRatio(originalQuad().getTopRightBottomLeftLine(), quadrilateral.getTopRight(), newPosition);
+            newPosition = Geometry.extrapolate(originalQuad().getTopRightBottomLeftLine(), quadrilateral.getTopRight(), newPosition);
         }
 
         quadrilateral.getBottomLeft().setLocation(newPosition);
@@ -92,7 +91,7 @@ public class ScaleTool extends AbstractTransformTool {
     @Override
     protected void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         if (isShiftDown) {
-            newPosition = constrainAspectRatio(originalQuad().getTopLeftBottomRightLine(), quadrilateral.getTopLeft(), newPosition);
+            newPosition = Geometry.extrapolate(originalQuad().getTopLeftBottomRightLine(), quadrilateral.getTopLeft(), newPosition);
         }
 
         quadrilateral.getBottomRight().setLocation(newPosition);
@@ -113,11 +112,6 @@ public class ScaleTool extends AbstractTransformTool {
 
     private FlexQuadrilateral originalQuad() {
         return new FlexQuadrilateral(new Rectangle2D.Double(0, 0, getOriginalImage().getWidth(), getOriginalImage().getHeight()));
-    }
-
-    private Point constrainAspectRatio(Line2D diagonal, Point anchor, Point to) {
-        double angle = Geometry.angle(diagonal);
-        return Geometry.asPoint(Geometry.line(anchor, Geometry.distance(anchor, to), angle));
     }
 
 }

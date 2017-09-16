@@ -1,5 +1,6 @@
 package com.defano.jmonet.tools.base;
 
+import com.defano.jmonet.algo.Transform;
 import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.ImmutableProvider;
@@ -78,13 +79,16 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
             finishSelection();
         }
 
+        // Make an ARGB copy of the image (input may not have alpha channel)
+        BufferedImage argbImage = Transform.argbCopy(image);
+
         Graphics2D g = getCanvas().getScratchImage().createGraphics();
-        g.drawImage(image, location.x, location.y, null);
+        g.drawImage(argbImage, location.x, location.y, null);
         g.dispose();
 
-        addSelectionPoint(location.getLocation(), new Point(location.x + image.getWidth(), location.y + image.getHeight()), false);
-        completeSelection(new Point(location.x + image.getWidth(), location.y + image.getHeight()));
-        selectedImage.set(image);
+        addSelectionPoint(location.getLocation(), new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()), false);
+        completeSelection(new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()));
+        selectedImage.set(argbImage);
 
         // Don't call setDirty(), doing so will remove underlying pixels from the canvas
         dirty = true;
