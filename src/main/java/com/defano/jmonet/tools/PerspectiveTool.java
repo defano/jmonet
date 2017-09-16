@@ -18,7 +18,7 @@ public class PerspectiveTool extends AbstractTransformTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
+    protected void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         int bottomLeft = quadrilateral.getBottomLeft().y - (newPosition.y - quadrilateral.getTopLeft().y);
 
         quadrilateral.setBottomLeft(new Point(quadrilateral.getBottomLeft().x, bottomLeft));
@@ -29,7 +29,7 @@ public class PerspectiveTool extends AbstractTransformTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition) {
+    protected void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         int bottomRight = quadrilateral.getBottomRight().y - (newPosition.y - quadrilateral.getTopRight().y);
 
         quadrilateral.setBottomRight(new Point(quadrilateral.getBottomRight().x, bottomRight));
@@ -40,7 +40,7 @@ public class PerspectiveTool extends AbstractTransformTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
+    protected void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         int topLeft = quadrilateral.getTopLeft().y - (newPosition.y - quadrilateral.getBottomLeft().y);
 
         quadrilateral.setTopLeft(new Point(quadrilateral.getTopLeft().x, topLeft));
@@ -51,7 +51,7 @@ public class PerspectiveTool extends AbstractTransformTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition) {
+    protected void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         int topRight = quadrilateral.getTopRight().y - (newPosition.y - quadrilateral.getBottomRight().y);
 
         quadrilateral.setTopRight(new Point(quadrilateral.getTopRight().x, topRight));

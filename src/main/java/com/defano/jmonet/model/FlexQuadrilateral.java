@@ -38,7 +38,7 @@ public class FlexQuadrilateral {
 
     public void setTopLeft(Point topLeft) {
         if (topLeft.x < right() &&
-                Geometry.isAbove(getBottomLeftTopRightDiaganol(), topLeft) &&
+                Geometry.isAbove(getBottomLeftTopRightLine(), topLeft) &&
                 Geometry.isAbove(getBottomLine(), topLeft) &&
                 Geometry.isBelow(getRightLine(), topLeft))
         {
@@ -80,7 +80,7 @@ public class FlexQuadrilateral {
 
     public void setBottomRight(Point bottomRight) {
         if (bottomRight.x > left() && bottomRight.y > top() &&
-                Geometry.isBelow(getBottomLeftTopRightDiaganol(), bottomRight) &&
+                Geometry.isBelow(getBottomLeftTopRightLine(), bottomRight) &&
                 Geometry.isAbove(getLeftLine(), bottomRight) &&
                 Geometry.isBelow(getTopLine(), bottomRight))
         {
@@ -108,8 +108,16 @@ public class FlexQuadrilateral {
         return new Line2D.Double(getTopLeft(), getBottomRight());
     }
 
-    public Line2D getBottomLeftTopRightDiaganol() {
+    public Line2D getBottomRightTopLeftLine() {
+        return new Line2D.Double(getBottomRight(), getTopLeft());
+    }
+
+    public Line2D getBottomLeftTopRightLine() {
         return new Line2D.Double(getBottomLeft(), getTopRight());
+    }
+
+    public Line2D getTopRightBottomLeftLine() {
+        return new Line2D.Double(getTopRight(), getBottomLeft());
     }
 
     public Point[] getCorners() {

@@ -37,7 +37,7 @@ public abstract class AbstractLineTool extends PaintTool {
         Point currentLoc = imageLocation;
 
         if (e.isShiftDown()) {
-            currentLoc = Geometry.snapLineToNearestAngle(initialPoint, currentLoc, snapToDegrees);
+            currentLoc = Geometry.line(initialPoint, currentLoc, snapToDegrees);
         }
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();

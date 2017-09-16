@@ -64,7 +64,13 @@ public class RotateTool extends AbstractSelectionTool {
 
             // Calculate the rotation angle
             dragLocation = imageLocation;
-            double angle = Math.toRadians(Geometry.getLineAngle(centerpoint.x, centerpoint.y, dragLocation.x, dragLocation.y));
+            double degrees = Geometry.angle(centerpoint.x, centerpoint.y, dragLocation.x, dragLocation.y);
+
+            if (e.isShiftDown()) {
+                degrees = Geometry.round(degrees, 15);
+            }
+
+            double angle = Math.toRadians(degrees);
 
             // Rotate the marching ants and drag handle
             selectionBounds = Transform.rotateTransform(angle, originalSelectionBounds.getBounds().x + originalSelectionBounds.getBounds().width / 2, originalSelectionBounds.getBounds().y + originalSelectionBounds.getBounds().height / 2).createTransformedShape(originalSelectionBounds);

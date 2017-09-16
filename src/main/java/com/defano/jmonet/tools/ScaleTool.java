@@ -4,8 +4,11 @@ import com.defano.jmonet.model.FlexQuadrilateral;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractTransformTool;
 import com.defano.jmonet.algo.Transform;
+import com.defano.jmonet.tools.util.Geometry;
 
 import java.awt.*;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 
 /**
  * A tool for scaling and resizing the rectangular bounds of an image.
@@ -18,7 +21,11 @@ public class ScaleTool extends AbstractTransformTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
+    protected void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
+        if (isShiftDown) {
+            newPosition = constrainAspectRatio(originalQuad().getBottomRightTopLeftLine(), quadrilateral.getBottomRight(), newPosition);
+        }
+
         quadrilateral.getTopLeft().setLocation(newPosition);
 
         if (quadrilateral.getTopLeft().x >= quadrilateral.getTopRight().x) {
@@ -37,7 +44,11 @@ public class ScaleTool extends AbstractTransformTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition) {
+    protected void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
+        if (isShiftDown) {
+            newPosition = constrainAspectRatio(originalQuad().getBottomLeftTopRightLine(), quadrilateral.getBottomLeft(), newPosition);
+        }
+
         quadrilateral.getTopRight().setLocation(newPosition);
 
         if (quadrilateral.getTopRight().x <= quadrilateral.getTopLeft().x) {
@@ -56,7 +67,11 @@ public class ScaleTool extends AbstractTransformTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
+    protected void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
+        if (isShiftDown) {
+            newPosition = constrainAspectRatio(originalQuad().getTopRightBottomLeftLine(), quadrilateral.getTopRight(), newPosition);
+        }
+
         quadrilateral.getBottomLeft().setLocation(newPosition);
 
         if (quadrilateral.getBottomLeft().x >= quadrilateral.getBottomRight().x) {
@@ -75,7 +90,11 @@ public class ScaleTool extends AbstractTransformTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition) {
+    protected void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
+        if (isShiftDown) {
+            newPosition = constrainAspectRatio(originalQuad().getTopLeftBottomRightLine(), quadrilateral.getTopLeft(), newPosition);
+        }
+
         quadrilateral.getBottomRight().setLocation(newPosition);
 
         if (quadrilateral.getBottomRight().x <= quadrilateral.getBottomLeft().x) {
@@ -90,6 +109,15 @@ public class ScaleTool extends AbstractTransformTool {
         quadrilateral.getTopRight().x = quadrilateral.getBottomRight().x;
 
         setSelectedImage(Transform.resize(getOriginalImage(), quadrilateral));
+    }
+
+    private FlexQuadrilateral originalQuad() {
+        return new FlexQuadrilateral(new Rectangle2D.Double(0, 0, getOriginalImage().getWidth(), getOriginalImage().getHeight()));
+    }
+
+    private Point constrainAspectRatio(Line2D diagonal, Point anchor, Point to) {
+        double angle = Geometry.angle(diagonal);
+        return Geometry.asPoint(Geometry.line(anchor, Geometry.distance(anchor, to), angle));
     }
 
 }

@@ -19,7 +19,7 @@ public class RubberSheetTool extends AbstractTransformTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
+    protected void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         quadrilateral.setTopLeft(newPosition);
         BufferedImage scaled = Transform.resize(getOriginalImage(), quadrilateral);
         setSelectedImage(Transform.rubberSheet(scaled, quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)));
@@ -27,7 +27,7 @@ public class RubberSheetTool extends AbstractTransformTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition) {
+    protected void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         quadrilateral.setTopRight(newPosition);
         BufferedImage scaled = Transform.resize(getOriginalImage(), quadrilateral);
         setSelectedImage(Transform.rubberSheet(scaled, quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)));
@@ -35,7 +35,7 @@ public class RubberSheetTool extends AbstractTransformTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition) {
+    protected void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         quadrilateral.setBottomLeft(newPosition);
         BufferedImage scaled = Transform.resize(getOriginalImage(), quadrilateral);
         setSelectedImage(Transform.rubberSheet(scaled, quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)));
@@ -43,7 +43,7 @@ public class RubberSheetTool extends AbstractTransformTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition) {
+    protected void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         quadrilateral.setBottomRight(newPosition);
         BufferedImage scaled = Transform.resize(getOriginalImage(), quadrilateral);
         setSelectedImage(Transform.rubberSheet(scaled, quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)));

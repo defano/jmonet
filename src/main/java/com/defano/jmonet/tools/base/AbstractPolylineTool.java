@@ -43,7 +43,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
 
         if (e.isShiftDown()) {
             Point lastPoint = points.get(points.size() - 1);
-            currentPoint = Geometry.snapLineToNearestAngle(lastPoint, e.getPoint(), snapToDegrees);
+            currentPoint = Geometry.line(lastPoint, e.getPoint(), snapToDegrees);
             points.add(currentPoint);
         } else {
             currentPoint = imageLocation;

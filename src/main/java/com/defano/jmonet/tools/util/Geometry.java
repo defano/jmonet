@@ -2,6 +2,7 @@ package com.defano.jmonet.tools.util;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 
 /**
  * A utility class with geometric and trigonometric routines used by various tools.
@@ -45,8 +46,18 @@ public class Geometry {
      * @param y2 Second y coordinate
      * @return The angle (in degrees) of the line formed by these two points
      */
-    public static double getLineAngle(int x1, int y1, int x2, int y2) {
+    public static double angle(double x1, double y1, double x2, double y2) {
         return Math.toDegrees(Math.atan2(y2 - y1, x2 - x1));
+    }
+
+    /**
+     * Returns the angle (in degrees) of the given line.
+     *
+     * @param line The line whose angle should be calculated
+     * @return The angle of the line, in degrees.
+     */
+    public static double angle(Line2D line) {
+        return angle(line.getX1(), line.getY1(), line.getX2(), line.getY2());
     }
 
     /**
@@ -57,19 +68,9 @@ public class Geometry {
      * @param angle Desired angle (in degrees) of the resulting line
      * @return The second point on the line
      */
-    public static Point lineAtAngle(Point origin, int length, double angle) {
+    public static Point2D line(Point2D origin, double length, double angle) {
         double radians = Math.toRadians(angle);
-        return new Point((int)(origin.x + length * Math.cos(radians)), (int)(origin.y + length * Math.sin(radians)));
-    }
-
-    /**
-     * Returns the length of the line formed by points p1 and p2
-     * @param p1 First point on line
-     * @param p2 Second point on line
-     * @return Length of resulting line
-     */
-    public static double getLineLength(Point p1, Point p2) {
-        return Math.sqrt( ((p1.x - p2.x) * (p1.x - p2.x)) + ((p1.y - p2.y) * (p1.y - p2.y)));
+        return new Point2D.Double((origin.getX() + length * Math.cos(radians)), (origin.getY() + length * Math.sin(radians)));
     }
 
     /**
@@ -81,10 +82,21 @@ public class Geometry {
      * @param toNearestAngle Closest multiple of degrees for which result should be produced
      * @return A third point such that the line formed by p1 and this value is a multiple of toNearestAngle
      */
-    public static Point snapLineToNearestAngle(Point p1, Point p2, int toNearestAngle) {
-        double length = getLineLength(p1, p2);
-        double nearestAngle = round(Geometry.getLineAngle(p1.x, p1.y, p2.x, p2.y), toNearestAngle);
-        return lineAtAngle(p1, (int) length, nearestAngle);
+    public static Point line(Point p1, Point p2, int toNearestAngle) {
+        double length = distance(p1, p2);
+        double nearestAngle = round(Geometry.angle(p1.x, p1.y, p2.x, p2.y), toNearestAngle);
+        return asPoint(line(p1, length, nearestAngle));
+    }
+
+    /**
+     * Returns the distance between points p1 and p2
+     *
+     * @param p1 First point on line
+     * @param p2 Second point on line
+     * @return Length of resulting line (or the distance between points)
+     */
+    public static double distance(Point2D p1, Point2D p2) {
+        return Math.sqrt(Math.pow(p2.getX() - p1.getX(), 2) + Math.pow(p2.getY() - p1.getY(), 2));
     }
 
     /**
@@ -95,7 +107,7 @@ public class Geometry {
      * @param p2 The second point in line (origin, p2)
      * @return The theta angle (in radians) between (origin, p1) and (origin, p2)
      */
-    public static double angleBetweenTwoPoints(Point origin, Point p1, Point p2) {
+    public static double theta(Point origin, Point p1, Point p2) {
 
         double angle1 = Math.atan2(p1.y - origin.y, p1.x - origin.x);
         double angle2 = Math.atan2(p2.y - origin.y, p2.x - origin.x);
@@ -125,8 +137,8 @@ public class Geometry {
      * @param bound The bound used to determine the max dimension of the square
      * @return A {@link Rectangle} with equal heights and widths
      */
-    public static Rectangle squareAtAnchor(Point anchor, Point bound) {
-        Rectangle rectangle = rectangleFromPoints(anchor, bound);
+    public static Rectangle square(Point anchor, Point bound) {
+        Rectangle rectangle = rectangle(anchor, bound);
 
         int xDelta = 0;
         int yDelta = 0;
@@ -168,7 +180,7 @@ public class Geometry {
      * @param p2 The corner opposite p1
      * @return A rectangle interesting p1 and p2
      */
-    public static Rectangle rectangleFromPoints(Point p1, Point p2) {
+    public static Rectangle rectangle(Point p1, Point p2) {
         int left = Math.min(p1.x, p2.x);
         int top = Math.min(p1.y, p2.y);
         int right = Math.max(p1.x, p2.x);
@@ -184,7 +196,7 @@ public class Geometry {
      * @param bounds The boundary in which to limit the resultant point
      * @return The value of p if p is within bounds, or the closest point to p that remains inside bounds
      */
-    public static Point pointWithinBounds(Point p, Rectangle bounds) {
+    public static Point constrainToBounds(Point p, Rectangle bounds) {
 
         if (bounds.contains(p)) {
             return p;
@@ -218,7 +230,7 @@ public class Geometry {
      * @param rotation The angle of the polygon (in radians)
      * @return The specified polygon
      */
-    public static Polygon getRegularPolygon(Point location, int sides, double length, double rotation) {
+    public static Polygon polygon(Point location, int sides, double length, double rotation) {
         double angle = (2 * Math.PI) / sides;
         double radius = (length / 2) / Math.sin(angle / 2);
 
@@ -226,23 +238,47 @@ public class Geometry {
         double yPoint = (Math.sin(rotation) * radius) + location.y;
 
         Polygon polygon = new Polygon();
-        polygon.addPoint((int)xPoint, (int)yPoint);
+        polygon.addPoint((int) Math.round(xPoint), (int) Math.round(yPoint));
 
         for (int i = 1; i <= sides; i++) {
             xPoint = (Math.cos((angle * i) + rotation) * radius) + location.x;
             yPoint = (Math.sin((angle * i) + rotation) * radius) + location.y;
-            polygon.addPoint((int) xPoint, (int) yPoint);
+            polygon.addPoint((int) Math.round(xPoint), (int) Math.round(yPoint));
         }
 
         return polygon;
     }
 
-    public static boolean isBelow(Line2D line, Point c) {
-        return (line.getX2() - line.getX1()) * (c.y - line.getY1()) - (line.getY2() - line.getY1()) * (c.x - line.getX1()) > 0;
+    /**
+     * Determines if the given point is below the given line. If the line is perfectly vertical, below is defined as
+     * being to the right of.
+     *
+     * @param line The line
+     * @param p The point to compare
+     * @return True if the point is below the line.
+     */
+    public static boolean isBelow(Line2D line, Point p) {
+        return (line.getX2() - line.getX1()) * (p.y - line.getY1()) - (line.getY2() - line.getY1()) * (p.x - line.getX1()) > 0;
     }
 
-    public static boolean isAbove(Line2D line, Point c) {
-        return (line.getX2() - line.getX1()) * (c.y - line.getY1()) - (line.getY2() - line.getY1()) * (c.x - line.getX1()) < 0;
+    /**
+     * Determines if the given point is above the given line. If the line is perfectly vertical, above is defined as
+     * being to the left of.
+     *
+     * @param line The line
+     * @param p The point to compare
+     * @return True if the point is above the line.
+     */
+    public static boolean isAbove(Line2D line, Point p) {
+        return (line.getX2() - line.getX1()) * (p.y - line.getY1()) - (line.getY2() - line.getY1()) * (p.x - line.getX1()) < 0;
     }
 
+    /**
+     * Rounds a Point2D (with floating-point precision) to an integer-precision Point.
+     * @param p2d The Point2D to truncate
+     * @return The nearest integer-precision point to p2d
+     */
+    public static Point asPoint(Point2D p2d) {
+        return new Point((int) Math.round(p2d.getX()), (int) Math.round(p2d.getY()));
+    }
 }

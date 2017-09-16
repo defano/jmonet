@@ -23,13 +23,13 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     private Rectangle topLeftHandle, topRightHandle, bottomRightHandle, bottomLeftHandle;
     private boolean dragTopLeft, dragTopRight, dragBottomRight, dragBottomLeft;
 
-    protected abstract void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition);
+    protected abstract void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown);
 
-    protected abstract void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition);
+    protected abstract void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown);
 
-    protected abstract void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition);
+    protected abstract void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown);
 
-    protected abstract void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition);
+    protected abstract void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown);
 
     public AbstractTransformTool(PaintToolType type) {
         super(type);
@@ -86,16 +86,16 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
             }
 
             if (dragTopLeft) {
-                moveTopLeft(transformBounds, imageLocation);
+                moveTopLeft(transformBounds, imageLocation, e.isShiftDown());
                 redrawSelection();
             } else if (dragTopRight) {
-                moveTopRight(transformBounds, imageLocation);
+                moveTopRight(transformBounds, imageLocation, e.isShiftDown());
                 redrawSelection();
             } else if (dragBottomLeft) {
-                moveBottomLeft(transformBounds, imageLocation);
+                moveBottomLeft(transformBounds, imageLocation, e.isShiftDown());
                 redrawSelection();
             } else if (dragBottomRight) {
-                moveBottomRight(transformBounds, imageLocation);
+                moveBottomRight(transformBounds, imageLocation, e.isShiftDown());
                 redrawSelection();
             } else {
                 super.mouseDragged(e, imageLocation);

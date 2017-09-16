@@ -15,7 +15,7 @@ public class Transform {
 
     public static BufferedImage slant(BufferedImage image, FlexQuadrilateral quadrilateral, int xTranslation) {
         Point p = new Point(quadrilateral.getBottomLeft().x, quadrilateral.getTopLeft().y);
-        double theta = Geometry.angleBetweenTwoPoints(quadrilateral.getBottomLeft(), p, quadrilateral.getTopLeft());
+        double theta = Geometry.theta(quadrilateral.getBottomLeft(), p, quadrilateral.getTopLeft());
 
         AffineTransform transform = AffineTransform.getTranslateInstance(xTranslation, 0);
         transform.shear(Math.tan(theta), 0);

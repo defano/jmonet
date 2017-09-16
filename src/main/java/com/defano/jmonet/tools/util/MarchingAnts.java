@@ -15,9 +15,9 @@ import java.util.concurrent.TimeUnit;
 public class MarchingAnts {
 
     private static MarchingAnts instance;
+    private static final ScheduledExecutorService antsAnimator = Executors.newSingleThreadScheduledExecutor();
 
     private int antsPhase;
-    private final ScheduledExecutorService antsAnimator = Executors.newSingleThreadScheduledExecutor();
     private Future antsAnimation;
     private final Set<MarchingAntsObserver> observers = new HashSet<>();
 

@@ -1,19 +1,19 @@
 # JMonet
 
-A rudimentary toolkit for incorporating Paint tools (similar to [MacPaint](https://en.wikipedia.org/wiki/MacPaint) / [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint)) into a Java Swing or JavaFX application.
+An easy-to-use toolkit for incorporating paint tools (similar to [MacPaint](https://en.wikipedia.org/wiki/MacPaint) or [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint)) into a Java Swing or JavaFX application.
 
 ## Features
 
 * Offers a standard suite of paint tools with common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
 * Painting canvas supports undo and redo operations on all paint tool changes, plus cut, copy and paste integration with the system clipboard.
-* Includes affine and non-affine transform tools including flip, rotate, shear, perspective and projection; ability to adjust selection color depth, transparency and brightness.
-* Painted images are scalable (displayed within a scrollable pane) and tools can be snapped to a grid.
+* Includes a variety of image transform tools like scale, rotate, shear, perspective and projection, plus the ability to adjust  color depth, transparency and brightness.
+* Painted images are zoomable via the Magnifier tool (displayed within a scrollable pane), and tools can be snapped to a grid.
 * Lightweight toolkit integrates easily into Swing and JavaFX applications.
 * All operations are backed by a standard Java `BufferedImage`; easy to import existing images and save changes.
 
 ## Paint Tools
 
-JMonet provides the following standard paint tools:
+JMonet provides the following suite of paint tools:
 
 Icon | Tool            | Description
 -----|-----------------|--------------
@@ -40,18 +40,18 @@ Icon | Tool            | Description
 
 Icon | Tool            | Description
 -----|----------| -------------
-![Rotate](icons/rotate.png) | Rotate | Define a selection, then use the drag handle to free-rotate the selected graphic around its center.
+![Rotate](icons/rotate.png) | Rotate | Define a selection, then use the drag handle to free-rotate the selected graphic around its center. Hold shift to restrict rotation angle to 15-degree increments.
 ![Slant](icons/slant.png) | Slant | Define a selection, then use the drag handles to apply an affine shear transform to the selected graphic.
-![Scale](icons/scale.png) | Scale | Define a selection, then expand or shrink the selected image by dragging a handle.
+![Scale](icons/scale.png) | Scale | Define a selection, then expand or shrink the selected image by dragging a handle. Hold shift to maintain selection's original aspect ratio.
 ![Projection](icons/distort.png) | Projection | Define a selection, then use the drag handles to project the image onto the geometry of an arbitrary quadrilateral.
 ![perspective](icons/perspective.png) | Perspective | Define a selection, then use the drag handles to warp the image onto an isosceles trapezoid, providing the effect of the left or right side of the image appearing nearer or farther from the viewer.
 ![Rubber Sheet](icons/distort.png) | Rubber Sheet | Similar to the projection transform, but utilizes a "rubber sheet" algorithm that preserves relative position over linearity.
 
 #### Static transforms
 
-Selected images can be flipped horizontally, vertically or rotated 90 degrees via the Selection, Lasso or transform tools. Adjustments to brightness, transparency and color are also available.
+Selections can be flipped horizontally, vertically or rotated 90 degrees via any of the selection or transform tools. Adjustments to brightness, transparency and color are also available.
 
-Once a selection has been made, invoke one of the following methods on the `SelectionTool` object to transform it:
+Once a selection has been made, invoke one of the following methods on the selection tool object to transform it:
 
 ```
 void rotateLeft();
@@ -267,11 +267,11 @@ An `ImmutableProvider` is one whose underlying value cannot be changed. In this 
 
 ## Frequently asked questions
 
-#### Why do I need this? Doesn't Java's `Graphics2D` already let me draw stuff?
+#### I don't get it. Doesn't Java's `Graphics` already let me draw stuff?
 
 If you're not building an app that lets users paint lines and shapes with the mouse, this probably isn't for you.
 
-Java's Graphics context does indeed provide routines for drawing shapes, but there's a bit of work involved to map mouse and keyboard events into these calls the way a "paint" app expects. Getting scale, grids, and transforms to work correctly are a bit more complex than merely delegating to `AffineTransform`, too.
+Java's `Graphics` context does indeed provide routines for stroking and filling primitive shapes, but there's a quite a bit of work involved to map mouse and keyboard events into these calls the way a "paint" app expects. Getting scale, grids, and transforms to work correctly is a bit more complex than merely delegating to `AffineTransform`, too.
 
 #### How do I save my artwork?
 
@@ -291,7 +291,7 @@ Then, you have three options:
 
 Note that in cases 1 and 3, if the imported image does not match the dimensions of the canvas, it will be drawn in the upper-left corner. Resize and translate the image you wish to import first if you'd like it to appear elsewhere.
 
-#### If I create a selection using `LassoTool`, can I modify it with a transform tool (like `ProjectionTool`) or do I have to create a new selection from scratch with the transform tool (which would limit me to rectangular selections)?
+#### If I create a selection using `LassoTool`, can I modify it with a transform tool (like `ProjectionTool`) or do I have to create a new selection from scratch with the transform tool?
 
 You can transfer a selection from one selection tool to another (including transform tools) using the `morphSelection()` method:
 
@@ -303,7 +303,7 @@ currentTool.morphSelection(newTool);  // newTool now has currentTool's selection
 currentTool.deactivate();             // ... but currentTool is still active.
 ```
 
-Note that you cannot programmatically create a selection from an abstract shape, thus, when transferring selection from a tool providing a non-rectangular selection boundary the new selection will be expanded to a rectangle bounding the original selection.
+When morphing a Lasso selection to a transform tool, the selection bounds will become rectangular, but only the pixels originally encircled by the Lasso will be affected by the transform.
 
 #### Can I create my own tools?
 
@@ -318,10 +318,6 @@ Tool Base                | Description
 `AbstractPolylineTool`   | Click-click-click-double-click to define segments in a polygon or curve. Examples: Curve, Polygon tools.
 `AbstractSelectionTool`  | Most complex of the tool bases; click-and-drag to define a shape to be drawn with marching ants allowing the user to move or modify the underlying graphic. Examples: Selection, Lasso, Rotate tools.
 `AbstractTransformTool`  | Click-and-drag to select a rectangular boundary drawn with drag handles at each corner which can moved by the user. Example: Slant, projection, perspective and rubber sheet tools.
-
-#### How can I layer canvases atop one another, or place other UI elements (like buttons and fields) on top of the painted graphics?
-
-Place the canvas(es) and/or other UI components in a `LayeredPane`. Use the `LayeredPane` to control z-order.
 
 #### My canvas isn't getting garbage collected. This library has a memory leak.
 

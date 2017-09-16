@@ -30,8 +30,8 @@ public class SelectionTool extends AbstractSelectionTool {
         selectionBounds.add(newPoint);
 
         selectionBounds = isShiftKeyDown ?
-                Geometry.squareAtAnchor(initialPoint, newPoint) :
-                Geometry.rectangleFromPoints(initialPoint, newPoint);
+                Geometry.square(initialPoint, newPoint) :
+                Geometry.rectangle(initialPoint, newPoint);
     }
 
     /** {@inheritDoc} */

@@ -59,8 +59,8 @@ public abstract class AbstractBoundsTool extends PaintTool {
         }
 
         Rectangle bounds = e.isShiftDown() ?
-                Geometry.squareAtAnchor(originPoint, currentPoint) :
-                Geometry.rectangleFromPoints(originPoint, currentPoint);
+                Geometry.square(originPoint, currentPoint) :
+                Geometry.rectangle(originPoint, currentPoint);
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
 
