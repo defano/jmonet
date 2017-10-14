@@ -16,7 +16,6 @@ import java.util.List;
  */
 public abstract class AbstractPolylineTool extends PaintTool {
 
-    private Cursor polyLineCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
     private final List<Point> points = new ArrayList<>();
     private Point currentPoint = null;
 
@@ -28,13 +27,13 @@ public abstract class AbstractPolylineTool extends PaintTool {
 
     public AbstractPolylineTool(PaintToolType type) {
         super(type);
-        setToolCursor(polyLineCursor);
+        setToolCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
     }
 
     /** {@inheritDoc} */
     @Override
     public void mouseMoved(MouseEvent e, Point imageLocation) {
-        setToolCursor(getPolyLineCursor());
+        setToolCursor(getToolCursor());
 
         // Nothing to do if initial point is not yet established
         if (points.size() == 0) {
@@ -131,14 +130,5 @@ public abstract class AbstractPolylineTool extends PaintTool {
             points.add(currentPoint);
             commitPolyline();
         }
-    }
-
-    public Cursor getPolyLineCursor() {
-        return polyLineCursor;
-    }
-
-    public void setPolyLineCursor(Cursor polyLineCursor) {
-        this.polyLineCursor = polyLineCursor;
-        setToolCursor(polyLineCursor);
     }
 }

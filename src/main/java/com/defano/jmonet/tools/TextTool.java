@@ -20,13 +20,11 @@ import java.util.Observer;
 public class TextTool extends PaintTool implements Observer {
 
     private JTextArea textArea;
-
-    private Cursor textCursor = new Cursor(Cursor.TEXT_CURSOR);
     private Point textLocation;
 
     public TextTool() {
         super(PaintToolType.TEXT);
-        setToolCursor(getTextCursor());
+        setToolCursor(new Cursor(Cursor.TEXT_CURSOR));
     }
 
     /** {@inheritDoc} */
@@ -73,7 +71,7 @@ public class TextTool extends PaintTool implements Observer {
     /** {@inheritDoc} */
     @Override
     public void mouseMoved(MouseEvent e, Point imageLocation) {
-        setToolCursor(getTextCursor());
+        setToolCursor(getToolCursor());
     }
 
     public boolean isEditing() {
@@ -157,14 +155,5 @@ public class TextTool extends PaintTool implements Observer {
         g.dispose();
 
         return metrics.getAscent();
-    }
-
-    public Cursor getTextCursor() {
-        return textCursor;
-    }
-
-    public void setTextCursor(Cursor textCursor) {
-        this.textCursor = textCursor;
-        setToolCursor(textCursor);
     }
 }
