@@ -117,7 +117,9 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     }
 
     public int getShapeSides() {
-        return shapeSidesProvider.get();
+        return shapeSidesProvider.get() < 3 ? 3 :
+                shapeSidesProvider.get() > 20 ? 20 :
+                shapeSidesProvider.get();
     }
 
     public Paint getStrokePaint() {
