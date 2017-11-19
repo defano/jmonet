@@ -164,7 +164,7 @@ A bit of integration is required to connect these functions to the UI elements i
 
 #### 1. Route actions to the canvas
 
-The JMonet canvas will not receive cut, copy or paste actions until we register an `ActionListener` that routes those actions to it. Typically, only the user interface element that has focus receives such events, but because a canvas has no clear concept of focus, its up to you to decide when the canvas should respond to cut, copy and paste actions.
+The JMonet canvas will not receive cut, copy or paste actions until we register an `ActionListener` that routes those actions to it. Typically, only the user interface element that has focus receives such events, but because a canvas has no clear concept of focus, it's up to you to decide when the canvas should respond to cut, copy and paste actions.
 
 Create an `ActionListener` to send actions to the canvas:
 
