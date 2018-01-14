@@ -181,11 +181,11 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
     /**
      * Takes the current selection represented by this tool and transfers it over to the given tool. Note that invoking
-     * this method clears the selection from this tool, but does not deactivate the tool from the canvass. In most uses,
+     * this method clears the selection from this tool, but does not deactivate the tool from the canvas. In most uses,
      * the caller will want to deactivate this tool immediately after calling this method.
      *
-     * This is useful, for example, when allowing the user to draw a selection with the lasso tool, then giving them
-     * the ability to transform it with a transform tool without having to redraw the selection bounds.
+     * For example, this allows the user to draw a selection with the lasso tool and then transform it with a transform
+     * tool (i.e., {@link com.defano.jmonet.tools.PerspectiveTool} without having to redraw the selection bounds.
      *
      * @param to The tool that the current selection should be transferred to.
      */
@@ -362,10 +362,12 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     public void redrawSelection() {
         getCanvas().clearScratch();
 
-        Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
-        g.drawImage(selectedImage.get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
-        g.dispose();
-
+        if (isDirty()) {
+            Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
+            g.drawImage(selectedImage.get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
+            g.dispose();
+        }
+        
         drawSelectionOutline();
 
         getCanvas().invalidateCanvas();

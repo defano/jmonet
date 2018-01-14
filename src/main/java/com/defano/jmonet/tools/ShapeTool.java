@@ -18,7 +18,7 @@ public class ShapeTool extends AbstractBoundsTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void drawBounds(Graphics2D g, Stroke stroke, Paint paint, Rectangle rectangle, boolean isShiftDown) {
+    protected void strokeBounds(Graphics2D g, Stroke stroke, Paint paint, Rectangle bounds, boolean isShiftDown) {
         g.setStroke(stroke);
         g.setPaint(paint);
         g.drawPolygon(Geometry.polygon(initialPoint, getShapeSides(), getRadius(), getRotationAngle(isShiftDown)));
@@ -26,7 +26,7 @@ public class ShapeTool extends AbstractBoundsTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void drawFill(Graphics2D g, Paint fill, Rectangle rectangle, boolean isShiftDown) {
+    protected void fillBounds(Graphics2D g, Paint fill, Rectangle bounds, boolean isShiftDown) {
         g.setPaint(fill);
         g.fill(Geometry.polygon(initialPoint, getShapeSides(), getRadius(), getRotationAngle(isShiftDown)));
     }

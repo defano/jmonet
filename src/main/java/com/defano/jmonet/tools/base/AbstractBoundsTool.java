@@ -27,8 +27,28 @@ public abstract class AbstractBoundsTool extends PaintTool {
         super(type);
     }
 
-    protected abstract void drawBounds(Graphics2D g, Stroke stroke, Paint paint, Rectangle rectangle, boolean isShiftDown);
-    protected abstract void drawFill(Graphics2D g, Paint fill, Rectangle rectangle, boolean isShiftDown);
+    /**
+     * Draws the stroke (outline) of a shape described by a rectangular boundary.
+     *
+     * @param g The graphics context on which to draw
+     * @param stroke The stroke with which to draw
+     * @param paint The paint with which to draw
+     * @param bounds The bounds of the shape to draw
+     * @param isShiftDown True to indicate that the user is holding the shift key; implementers may use this flag to
+     *                    constrain the bounds or otherwise modify the tool behavior.
+     */
+    protected abstract void strokeBounds(Graphics2D g, Stroke stroke, Paint paint, Rectangle bounds, boolean isShiftDown);
+
+    /**
+     * Fills a shape described by a rectangular boundary.
+     *
+     * @param g The graphics context on which to draw
+     * @param fill The paint with which to fill the shape
+     * @param bounds The bounds of the shape to draw
+     * @param isShiftDown True to indicate that the user is holding the shift key; implementers may use this flag to
+     *                    constrain the bounds or otherwise modify the tool behavior.
+     */
+    protected abstract void fillBounds(Graphics2D g, Paint fill, Rectangle bounds, boolean isShiftDown);
 
     /** {@inheritDoc} */
     @Override
@@ -62,10 +82,10 @@ public abstract class AbstractBoundsTool extends PaintTool {
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
 
         if (getFillPaint() != null) {
-            drawFill(g2d, getFillPaint(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
+            fillBounds(g2d, getFillPaint(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
         }
 
-        drawBounds(g2d, getStroke(), getStrokePaint(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
+        strokeBounds(g2d, getStroke(), getStrokePaint(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
 
         g2d.dispose();
         getCanvas().invalidateCanvas();

@@ -70,11 +70,11 @@ public interface MutableSelection {
     BufferedImage getSelectedImage();
 
     /**
-     * Invoked to indicate that the selection has moved on the canvas. The selection shape's coordinates should be
-     * translated by the given amount.
+     * Invoked to indicate that the selection should be moved on the canvas and therefore the selection shape's
+     * coordinates should be translated accordingly.
      *
-     * @param xDelta Number of pixels to move horizontally.
-     * @param yDelta Number of pixels to move vertically.
+     * @param xDelta Number of pixels to move selection bounds horizontally.
+     * @param yDelta Number of pixels to move selection bounds vertically.
      */
     void adjustSelectionBounds(int xDelta, int yDelta);
 

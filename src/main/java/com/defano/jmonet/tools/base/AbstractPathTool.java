@@ -11,8 +11,33 @@ import java.awt.event.MouseEvent;
  */
 public abstract class AbstractPathTool extends PaintTool {
 
+    /**
+     * Begins drawing a path on the given graphics context.
+     *
+     * @param g The graphics context on which to draw.
+     * @param stroke The stroke with which to draw
+     * @param paint The paint with which to draw
+     * @param initialPoint The first point defined on the path
+     */
     protected abstract void startPath(Graphics2D g, Stroke stroke, Paint paint, Point initialPoint);
+
+    /**
+     * Adds a point to the path begun via a call to {@link #startPath(Graphics2D, Stroke, Paint, Point)}.
+     *
+     * @param g The graphics context on which to draw.
+     * @param stroke The stroke with which to draw
+     * @param paint The paint with which to draw
+     * @param point The new point to add to the current path
+     */
     protected abstract void addPoint(Graphics2D g, Stroke stroke, Paint paint, Point point);
+
+    /**
+     * Completes the path begun via a call to {@link #startPath(Graphics2D, Stroke, Paint, Point)}.
+     *
+     * @param g The graphics context on which to draw.
+     * @param stroke The stroke with which to draw
+     * @param paint The paint with which to draw
+     */
     protected void completePath(Graphics2D g, Stroke stroke, Paint paint) {}
 
     public AbstractPathTool(PaintToolType type) {

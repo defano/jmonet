@@ -19,6 +19,17 @@ public abstract class AbstractLineTool extends PaintTool {
         setToolCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
     }
 
+    /**
+     * Draws a line from (x1, y1) to (x2, y2) on the given graphics context.
+     *
+     * @param g The graphics context on which to draw
+     * @param stroke The stroke with which to draw
+     * @param paint The paint with which to draw
+     * @param x1 First x coordinate of the line
+     * @param y1 First y coordinate of the line
+     * @param x2 Second x coordinate of the line
+     * @param y2 Second y coordinate of the line
+     */
     protected abstract void drawLine(Graphics2D g, Stroke stroke, Paint paint, int x1, int y1, int x2, int y2);
 
     /** {@inheritDoc} */

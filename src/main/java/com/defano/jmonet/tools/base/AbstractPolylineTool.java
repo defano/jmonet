@@ -19,10 +19,36 @@ public abstract class AbstractPolylineTool extends PaintTool {
     private final List<Point> points = new ArrayList<>();
     private Point currentPoint = null;
 
-    protected abstract void drawPolyline(Graphics2D g, Stroke stroke, Paint paint, int[] xPoints, int[] yPoints);
+    /**
+     * Draws one or more sides (edges) of a polygon which is not filled and may not be closed.
+     *
+     * @param g The graphics context on which to draw.
+     * @param stroke The current stroke context.
+     * @param strokePaint The current paint context.
+     * @param xPoints An array of x points, see {@link Graphics2D#drawPolyline(int[], int[], int)}
+     * @param yPoints An array of y points, see {@link Graphics2D#drawPolyline(int[], int[], int)}
+     */
+    protected abstract void strokePolyline(Graphics2D g, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints);
 
-    protected abstract void drawPolygon(Graphics2D g, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints);
+    /**
+     * Draws one or more sides (edges) of a polygon, closing the shape as needed.
+     *
+     * @param g The graphics context on which to draw.
+     * @param stroke The current stroke context.
+     * @param strokePaint The current paint context.
+     * @param xPoints An array of x points, see {@link Graphics2D#drawPolygon(int[], int[], int)} (int[], int[], int)}
+     * @param yPoints An array of y points, see {@link Graphics2D#drawPolygon(int[], int[], int)} (int[], int[], int)}
+     */
+    protected abstract void strokePolygon(Graphics2D g, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints);
 
+    /**
+     * Draws a filled polygon.
+     *
+     * @param g The graphics context on which to draw.
+     * @param fillPaint The paint with which to fill the polyfon
+     * @param xPoints An array of x points, see {@link Graphics2D#fillPolygon(int[], int[], int)} (int[], int[], int)}
+     * @param yPoints An array of y points, see {@link Graphics2D#fillPolygon(int[], int[], int)} (int[], int[], int)}
+     */
     protected abstract void fillPolygon(Graphics2D g, Paint fillPaint, int[] xPoints, int[] yPoints);
 
     public AbstractPolylineTool(PaintToolType type) {
@@ -55,7 +81,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
         getCanvas().clearScratch();
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
-        drawPolyline(g2d, getStroke(), getStrokePaint(), xs, ys);
+        strokePolyline(g2d, getStroke(), getStrokePaint(), xs, ys);
         g2d.dispose();
 
         getCanvas().invalidateCanvas();
@@ -99,7 +125,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
             fillPolygon(g2d, getFillPaint(), xs, ys);
         }
 
-        drawPolygon(g2d, getStroke(), getStrokePaint(), xs, ys);
+        strokePolygon(g2d, getStroke(), getStrokePaint(), xs, ys);
         g2d.dispose();
 
         getCanvas().commit();
@@ -115,7 +141,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
         currentPoint = null;
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
-        drawPolyline(g2d, getStroke(), getStrokePaint(), xs, ys);
+        strokePolyline(g2d, getStroke(), getStrokePaint(), xs, ys);
         g2d.dispose();
 
         getCanvas().commit();
