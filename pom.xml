@@ -35,7 +35,7 @@
     <packaging>jar</packaging>
     <groupId>com.defano.jmonet</groupId>
     <artifactId>jmonet</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -49,6 +49,13 @@
             <artifactId>jama</artifactId>
             <version>1.0.3</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.reactivex.rxjava2</groupId>
+            <artifactId>rxjava</artifactId>
+            <version>2.1.8</version>
+        </dependency>
+
     </dependencies>
 
     <distributionManagement>

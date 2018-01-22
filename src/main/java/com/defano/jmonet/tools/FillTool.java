@@ -25,17 +25,16 @@ public class FillTool extends PaintTool {
 
         BufferedImage canvasImage = getCanvas().getCanvasImage();
         Rectangle canvasBounds = getCanvas().getBounds();
-        Paint fillPaint = getFillPaint();
 
         // Nothing to do if no fill is specified
-        if (fillPaint == null) {
+        if (!getFillPaint().isPresent()) {
             return;
         }
 
         getCanvas().clearScratch();
 
         FloodFill.floodFill(imageLocation.x, imageLocation.y, canvasBounds, p -> {
-            int rgb = getFillPixel(p.x, p.y, fillPaint);
+            int rgb = getFillPixel(p.x, p.y, getFillPaint().get());
             getCanvas().getScratchImage().setRGB(p.x, p.y, rgb);
         }, (Point point) -> {
             Color canvasPixel = new Color(canvasImage.getRGB(point.x, point.y), true);

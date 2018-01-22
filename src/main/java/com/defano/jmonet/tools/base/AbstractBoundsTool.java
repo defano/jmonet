@@ -1,9 +1,9 @@
 package com.defano.jmonet.tools.base;
 
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.model.ImmutableProvider;
-import com.defano.jmonet.model.Provider;
 import com.defano.jmonet.tools.util.Geometry;
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -17,8 +17,8 @@ import java.awt.event.MouseEvent;
  */
 public abstract class AbstractBoundsTool extends PaintTool {
 
-    private Provider<Boolean> drawMultiple = new Provider<>(false);
-    private Provider<Boolean> drawCentered = new Provider<>(false);
+    private Observable<Boolean> drawMultiple = BehaviorSubject.createDefault(false);
+    private Observable<Boolean> drawCentered = BehaviorSubject.createDefault(false);
 
     protected Point initialPoint;
     protected Point currentPoint;
@@ -61,13 +61,13 @@ public abstract class AbstractBoundsTool extends PaintTool {
     public void mouseDragged(MouseEvent e, Point imageLocation) {
         currentPoint = imageLocation;
 
-        if (!drawMultiple.get()) {
+        if (!drawMultiple.blockingFirst()) {
             getCanvas().clearScratch();
         }
 
         Point originPoint = new Point(initialPoint);
 
-        if (drawCentered.get()) {
+        if (drawCentered.blockingFirst()) {
             int height = currentPoint.y - initialPoint.y;
             int width = currentPoint.x - initialPoint.x;
 
@@ -81,8 +81,8 @@ public abstract class AbstractBoundsTool extends PaintTool {
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
 
-        if (getFillPaint() != null) {
-            fillBounds(g2d, getFillPaint(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
+        if (getFillPaint().isPresent()) {
+            fillBounds(g2d, getFillPaint().get(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
         }
 
         strokeBounds(g2d, getStroke(), getStrokePaint(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
@@ -103,19 +103,19 @@ public abstract class AbstractBoundsTool extends PaintTool {
         setToolCursor(getToolCursor());
     }
 
-    public ImmutableProvider<Boolean> getDrawMultiple() {
+    public Observable<Boolean> getDrawMultiple() {
         return drawMultiple;
     }
 
-    public void setDrawMultiple(Provider<Boolean> drawMultiple) {
+    public void setDrawMultiple(Observable<Boolean> drawMultiple) {
         this.drawMultiple = drawMultiple;
     }
 
-    public Provider<Boolean> getDrawCentered() {
+    public Observable<Boolean> getDrawCentered() {
         return drawCentered;
     }
 
-    public void setDrawCentered(Provider<Boolean> drawCentered) {
+    public void setDrawCentered(Observable<Boolean> drawCentered) {
         this.drawCentered = drawCentered;
     }
 }

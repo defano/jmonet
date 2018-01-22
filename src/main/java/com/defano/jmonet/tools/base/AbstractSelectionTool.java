@@ -3,25 +3,26 @@ package com.defano.jmonet.tools.base;
 import com.defano.jmonet.algo.Transform;
 import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
-import com.defano.jmonet.model.ImmutableProvider;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.model.Provider;
 import com.defano.jmonet.tools.RotateTool;
 import com.defano.jmonet.tools.util.Geometry;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 /**
  * Mouse and keyboard handler for drawing selections (free-form or bounded) on the canvas.
  */
 public abstract class AbstractSelectionTool extends PaintTool implements MarchingAntsObserver, TransformableSelection {
 
-    private final Provider<BufferedImage> selectedImage = new Provider<>();
+    private final BehaviorSubject<Optional<BufferedImage>> selectedImage = BehaviorSubject.createDefault(Optional.empty());
 
     private Point initialPoint, lastPoint;
     private Cursor movementCursor = Cursor.getDefaultCursor();
@@ -88,7 +89,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
         addSelectionPoint(location.getLocation(), new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()), false);
         completeSelection(new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()));
-        selectedImage.set(argbImage);
+        selectedImage.onNext(Optional.of(argbImage));
 
         // Don't call setDirty(), doing so will remove underlying pixels from the canvas
         dirty = true;
@@ -233,20 +234,20 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      *
      * @return The provider.
      */
-    public ImmutableProvider<BufferedImage> getSelectedImageProvider() {
-        return ImmutableProvider.from(selectedImage);
+    public Observable<Optional<BufferedImage>> getSelectedImageSubject() {
+        return selectedImage;
     }
 
     /** {@inheritDoc} */
     @Override
     public BufferedImage getSelectedImage() {
-        return selectedImage.get();
+        return selectedImage.getValue().orElse(null);
     }
 
     /** {@inheritDoc} */
     @Override
     public void setSelectedImage(BufferedImage selectedImage) {
-        this.selectedImage.set(selectedImage);
+        this.selectedImage.onNext(Optional.of(selectedImage));
         redrawSelection();
     }
 
@@ -255,7 +256,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * selected image, nor does it commit the selected image.
      */
     public void clearSelection() {
-        selectedImage.set(null);
+        selectedImage.onNext(Optional.empty());
         dirty = false;
         resetSelection();
 
@@ -274,7 +275,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
     /** {@inheritDoc} */
     public boolean hasSelection() {
-        return hasSelectionBounds() && selectedImage.get() != null;
+        return hasSelectionBounds() && selectedImage.getValue().isPresent();
     }
 
     /**
@@ -299,7 +300,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         BufferedImage maskedSelection = maskSelection(getCanvas().getCanvasImage(), selectionBounds);
         BufferedImage trimmedSelection = maskedSelection.getSubimage(selectionBounds.getBounds().x, selectionBounds.getBounds().y, selectionBounds.getBounds().width, selectionBounds.getBounds().height);
 
-        selectedImage.set(trimmedSelection);
+        selectedImage.onNext(Optional.of(trimmedSelection));
         redrawSelection();
     }
 
@@ -343,7 +344,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
             BufferedImage scratch = getCanvas().getScratchImage();
 
             Graphics2D g2d = (Graphics2D) scratch.getGraphics();
-            g2d.drawImage(selectedImage.get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
+            g2d.drawImage(selectedImage.getValue().get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
             g2d.dispose();
 
             // Nothing to commit/change if user hasn't moved (dirtied) the selection
@@ -364,7 +365,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
         if (isDirty()) {
             Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
-            g.drawImage(selectedImage.get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
+            g.drawImage(selectedImage.getValue().get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
             g.dispose();
         }
         

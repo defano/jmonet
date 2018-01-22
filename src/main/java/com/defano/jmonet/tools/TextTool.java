@@ -4,6 +4,9 @@ package com.defano.jmonet.tools;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PaintTool;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -11,16 +14,16 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.util.Observable;
-import java.util.Observer;
 
 /**
  * Tool for drawing rasterized text on the canvas.
  */
-public class TextTool extends PaintTool implements Observer {
+public class TextTool extends PaintTool implements Consumer {
 
     private JTextArea textArea;
     private Point textLocation;
+    private Disposable fontSubscription;
+    private Disposable fontColorSubscription;
 
     public TextTool() {
         super(PaintToolType.TEXT);
@@ -30,8 +33,8 @@ public class TextTool extends PaintTool implements Observer {
     /** {@inheritDoc} */
     @Override
     public void deactivate() {
-        getFontProvider().deleteObserver(this);
-        getFontColorProvider().deleteObserver(this);
+        fontSubscription.dispose();
+        fontColorSubscription.dispose();
 
         if (isEditing()) {
             commitTextImage();
@@ -52,14 +55,20 @@ public class TextTool extends PaintTool implements Observer {
         textArea.setBackground(new Color(0, 0, 0, 0));
         textArea.setForeground(getFontColor());
 
-        getFontProvider().addObserver(this);
-        getFontColorProvider().addObserver(this);
+        fontSubscription = getFontProvider()
+                .subscribeOn(Schedulers.computation())
+                .subscribe(font -> textArea.setFont(font));
+
+        fontColorSubscription = getFontColorProvider()
+                .subscribeOn(Schedulers.computation())
+                .subscribe(color -> textArea.setForeground(color));
     }
 
     /** {@inheritDoc} */
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
         if (!isEditing()) {
+            getCanvas().clearScratch();
             textLocation = new Point((int)(imageLocation.x * getCanvas().getScale()), (int)((imageLocation.y - getFontAscent()) * getCanvas().getScale()));
             addTextArea(textLocation.x, textLocation.y);
         } else {
@@ -133,20 +142,8 @@ public class TextTool extends PaintTool implements Observer {
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void update(Observable o, Object newValue) {
-        if (newValue instanceof Font) {
-            textArea.setFont((Font) newValue);
-        }
-
-        if (newValue instanceof Color) {
-            textArea.setForeground((Color) newValue);
-        }
-    }
-
     private Font getScaledFont() {
-        return new Font(getFont().getFamily(), getFont().getStyle(), (int) (getFont().getSize() * getCanvas().getScaleProvider().get()));
+        return new Font(getFont().getFamily(), getFont().getStyle(), (int) (getFont().getSize() * getCanvas().getScaleProvider().getValue()));
     }
 
     private int getFontAscent() {
@@ -156,4 +153,23 @@ public class TextTool extends PaintTool implements Observer {
 
         return metrics.getAscent();
     }
+
+    @Override
+    public void accept(Object o) {
+        if (o instanceof Font) {
+            textArea.setFont((Font) o);
+        }
+
+        if (o instanceof Color) {
+            textArea.setForeground((Color) o);
+        }
+    }
+
+    private class FontObserver implements Consumer<Font> {
+        @Override
+        public void accept(Font font) {
+            textArea.setFont(font);
+        }
+    }
+
 }

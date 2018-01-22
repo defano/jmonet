@@ -121,8 +121,8 @@ public abstract class AbstractPolylineTool extends PaintTool {
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
 
-        if (getFillPaint() != null) {
-            fillPolygon(g2d, getFillPaint(), xs, ys);
+        if (getFillPaint().isPresent()) {
+            fillPolygon(g2d, getFillPaint().get(), xs, ys);
         }
 
         strokePolygon(g2d, getStroke(), getStrokePaint(), xs, ys);

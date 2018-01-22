@@ -3,7 +3,7 @@ package com.defano.jmonet.canvas;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.observable.ObservableSurface;
 import com.defano.jmonet.canvas.surface.*;
-import com.defano.jmonet.model.Provider;
+import io.reactivex.subjects.BehaviorSubject;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -79,10 +79,10 @@ public interface PaintCanvas extends ScalableLayeredPainting, Scrollable, Observ
     void setScale(double scale);
 
     /**
-     * A {@link Provider} of the scale factor.
-     * @return The scale factor {@link Provider}
+     * A {@link BehaviorSubject} of the scale factor.
+     * @return The scale factor {@link BehaviorSubject}
      */
-    Provider<Double> getScaleProvider();
+    BehaviorSubject<Double> getScaleProvider();
 
     /**
      * Sets a grid spacing on which the mouse coordinates provided to the paint tools will be "snapped to".
@@ -91,10 +91,10 @@ public interface PaintCanvas extends ScalableLayeredPainting, Scrollable, Observ
     void setGridSpacing(int grid);
 
     /**
-     * A {@link Provider} of the grid spacing.
-     * @return The grid spacing {@link Provider}
+     * A {@link BehaviorSubject} of the grid spacing.
+     * @return The grid spacing {@link BehaviorSubject}
      */
-    Provider<Integer> getGridSpacingProvider();
+    BehaviorSubject<Integer> getGridSpacingProvider();
 
     /**
      * Sets the contents of the scratch buffer to the provided image.

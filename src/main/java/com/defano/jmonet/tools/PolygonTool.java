@@ -33,7 +33,7 @@ public class PolygonTool extends AbstractPolylineTool {
     /** {@inheritDoc} */
     @Override
     protected void fillPolygon(Graphics2D g, Paint fillPaint, int[] xPoints, int[] yPoints) {
-        g.setPaint(getFillPaint());
+        g.setPaint(fillPaint);
         g.fillPolygon(xPoints, yPoints, xPoints.length);
     }
 }
