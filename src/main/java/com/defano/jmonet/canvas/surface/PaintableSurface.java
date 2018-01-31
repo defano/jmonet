@@ -67,7 +67,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
     /** {@inheritDoc} */
     @Override
     public final void keyTyped(KeyEvent e) {
-        for (SurfaceInteractionObserver thisListener : interactionListeners) {
+        for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
             thisListener.keyTyped(e);
         }
     }
@@ -75,7 +75,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
     /** {@inheritDoc} */
     @Override
     public final void keyPressed(KeyEvent e) {
-        for (SurfaceInteractionObserver thisListener : interactionListeners) {
+        for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
             thisListener.keyPressed(e);
         }
     }
@@ -83,7 +83,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
     /** {@inheritDoc} */
     @Override
     public final void keyReleased(KeyEvent e) {
-        for (SurfaceInteractionObserver thisListener : interactionListeners) {
+        for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
             thisListener.keyReleased(e);
         }
     }
@@ -93,7 +93,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
     public final void mouseClicked(MouseEvent e) {
         requestFocus();
 
-        for (SurfaceInteractionObserver thisListener : interactionListeners) {
+        for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
             thisListener.mouseClicked(e, painting.convertPointToImage(e.getPoint()));
         }
     }
@@ -101,7 +101,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
     /** {@inheritDoc} */
     @Override
     public final void mousePressed(MouseEvent e) {
-        for (SurfaceInteractionObserver thisListener : interactionListeners) {
+        for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
             thisListener.mousePressed(e, painting.convertPointToImage(e.getPoint()));
         }
     }
@@ -109,7 +109,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
     /** {@inheritDoc} */
     @Override
     public final void mouseReleased(MouseEvent e) {
-        for (SurfaceInteractionObserver thisListener : interactionListeners) {
+        for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
             thisListener.mouseReleased(e, painting.convertPointToImage(e.getPoint()));
         }
     }
@@ -117,7 +117,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
     /** {@inheritDoc} */
     @Override
     public final void mouseEntered(MouseEvent e) {
-        for (SurfaceInteractionObserver thisListener : interactionListeners) {
+        for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
             thisListener.mouseEntered(e, painting.convertPointToImage(e.getPoint()));
         }
     }
@@ -125,7 +125,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
     /** {@inheritDoc} */
     @Override
     public final void mouseExited(MouseEvent e) {
-        for (SurfaceInteractionObserver thisListener : interactionListeners) {
+        for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
             thisListener.mouseExited(e, painting.convertPointToImage(e.getPoint()));
         }
     }
@@ -133,7 +133,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
     /** {@inheritDoc} */
     @Override
     public final void mouseDragged(MouseEvent e) {
-        for (SurfaceInteractionObserver thisListener : interactionListeners) {
+        for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
             thisListener.mouseDragged(e, painting.convertPointToImage(e.getPoint()));
         }
     }
@@ -141,7 +141,7 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
     /** {@inheritDoc} */
     @Override
     public final void mouseMoved(MouseEvent e) {
-        for (SurfaceInteractionObserver thisListener : interactionListeners) {
+        for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
             thisListener.mouseMoved(e, painting.convertPointToImage(e.getPoint()));
         }
     }

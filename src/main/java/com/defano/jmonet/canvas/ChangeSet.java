@@ -62,6 +62,23 @@ public class ChangeSet {
         return observers.remove(observer);
     }
 
+    public Dimension getImageSize() {
+        int width = 0;
+        int height = 0;
+
+        for (BufferedImage thisImage : images) {
+            if (thisImage.getWidth() > width) {
+                width = thisImage.getWidth();
+            }
+
+            if (thisImage.getHeight() > height) {
+                height = thisImage.getHeight();
+            }
+        }
+
+        return new Dimension(width, height);
+    }
+
     private void fireChangeSetObservers() {
         for (ChangeSetObserver observer : observers) {
             observer.onChangeSetModified();

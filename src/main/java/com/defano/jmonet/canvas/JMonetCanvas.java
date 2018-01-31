@@ -1,5 +1,8 @@
 package com.defano.jmonet.canvas;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -10,28 +13,37 @@ import java.util.List;
  */
 public class JMonetCanvas extends AbstractPaintCanvas {
 
-    // TODO: Add constructor arg to set this value
-    private final int maxUndoBufferDepth = 20;
+    private final int maxUndoBufferDepth;
 
     private int undoBufferPointer = -1;                     // An internal index into the list of changes; moves left and right to denote undo/redo
     private BufferedImage permanent;                        // Image elements that are no longer undoable; null until the undo depth has been exceeded.
     private List<ChangeSet> undoBuffer = new ArrayList<>(); // List of changes as they're committed from the scratch buffer; lower indices are older; higher indices are newer
 
+    private BehaviorSubject<Boolean> isUndoableSubject = BehaviorSubject.createDefault(false);
+    private BehaviorSubject<Boolean> isRedoableSubject = BehaviorSubject.createDefault(false);
+
     /**
-     * Creates a new PaintCanvas with a 1x1 empty image displayed inside it.
+     * Creates a new canvas with a given image initially displayed in it with
+     * a specified undo buffer depth.
+     *
+     * @param initialImage The image to be displayed in the canvas.
+     * @param undoBufferDepth The depth of the undo buffer (number of undo operations)
      */
-    public JMonetCanvas() {
-        this(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB));
+    public JMonetCanvas(BufferedImage initialImage, int undoBufferDepth) {
+        super();
+        this.maxUndoBufferDepth = undoBufferDepth;
+        setSize(initialImage.getWidth(), initialImage.getHeight());
+        makePermanent(new ChangeSet(initialImage));
     }
 
     /**
-     * Creates a new PaintCanvas with a given image initially displayed in it.
-     * @param initialImage The image to be displayed in the canvas.
+     * Creates a new canvas with a 1x1 transparent image displayed inside it
+     * and a specified undo buffer depth.
+     *
+     * @param undoBufferDepth The depth of the undo buffer (number of undo operations)
      */
-    public JMonetCanvas(BufferedImage initialImage) {
-        super();
-        setSize(initialImage.getWidth(), initialImage.getHeight());
-        makePermanent(new ChangeSet(initialImage));
+    public JMonetCanvas(int undoBufferDepth) {
+        this(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB), undoBufferDepth);
     }
 
     /**
@@ -46,6 +58,10 @@ public class JMonetCanvas extends AbstractPaintCanvas {
             undoBufferPointer--;
             fireCanvasCommitObservers(this,null, getCanvasImage());
             invalidateCanvas();
+
+            isUndoableSubject.onNext(hasUndoableChanges());
+            isRedoableSubject.onNext(hasRedoableChanges());
+
             return true;
         }
 
@@ -62,6 +78,10 @@ public class JMonetCanvas extends AbstractPaintCanvas {
             undoBufferPointer++;
             fireCanvasCommitObservers(this,null, getCanvasImage());
             invalidateCanvas();
+
+            isUndoableSubject.onNext(hasUndoableChanges());
+            isRedoableSubject.onNext(hasRedoableChanges());
+
             return true;
         }
 
@@ -94,6 +114,22 @@ public class JMonetCanvas extends AbstractPaintCanvas {
         return maxUndoBufferDepth;
     }
 
+    /**
+     * Gets an observable of the {@link #hasUndoableChanges()} property.
+     * @return An observable of when the undo operation is supported.
+     */
+    public Observable<Boolean> isUndoableObservable() {
+        return isUndoableSubject;
+    }
+
+    /**
+     * Gets an observable of the {@link #hasRedoableChanges()} property.
+     * @return An observable of when the redo operation is supported.
+     */
+    public Observable<Boolean> isRedoableObservable() {
+        return isRedoableSubject;
+    }
+
     /** {@inheritDoc} */
     @Override
     public void commit(ChangeSet changeSet) {
@@ -119,20 +155,27 @@ public class JMonetCanvas extends AbstractPaintCanvas {
 
         clearScratch();
         invalidateCanvas();
+
+        isUndoableSubject.onNext(hasUndoableChanges());
+        isRedoableSubject.onNext(hasRedoableChanges());
     }
 
     /**
-     * Applies a {@link ChangeSet} to the permanent (not-undoable) layer of the canvas. Invoked when a committed change has been
-     * evicted from the undo buffer as a result of exceeding its depth, or when applying an initial, base image at
-     * construction.
+     * Applies a {@link ChangeSet} to the permanent (not-undoable) layer of the canvas. Invoked when a committed change
+     * has been evicted from the undo buffer as a result of exceeding its depth, or when applying an initial, base image
+     * at construction.
      *
      * If there is no permanent image in place, the given image is made permanent. Otherwise, the given image is
      * drawn atop the permanent image.
      *
      */
     private void makePermanent(ChangeSet changeSet) {
+        Dimension changeSetDim = changeSet.getImageSize();
+
         if (permanent == null) {
-            permanent = new BufferedImage(changeSet.getImage(0).getWidth(), changeSet.getImage(0).getHeight(), BufferedImage.TYPE_INT_ARGB);
+            permanent = new BufferedImage(changeSetDim.width, changeSetDim.height, BufferedImage.TYPE_INT_ARGB);
+        } else if (changeSetDim.width > permanent.getWidth() || changeSetDim.height > permanent.getHeight()) {
+            resizePermanent(changeSetDim);
         }
 
         applyChangeSet(changeSet, permanent);
@@ -152,5 +195,15 @@ public class JMonetCanvas extends AbstractPaintCanvas {
         }
 
         return visibleImage;
+    }
+
+    private void resizePermanent(Dimension dim) {
+        BufferedImage newPerm = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
+        if (permanent != null) {
+            Graphics2D g = newPerm.createGraphics();
+            g.drawImage(permanent, 0, 0, null);
+            g.dispose();
+        }
+        permanent = newPerm;
     }
 }

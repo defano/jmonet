@@ -36,7 +36,7 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
     }
 
     /**
-     * Invoke to mark this component safe for garbage collection; removes registered listeners and components.
+     * Marks this component safe for garbage collection; removes registered listeners and components.
      */
     public void dispose() {
         scaleSubject.onComplete();
@@ -44,6 +44,8 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
         observers.clear();
         surface.dispose();
         surface.removeComponentListener(this);
+        scaleSubject.onComplete();
+        gridSpacingSubject.onComplete();
         setTransferHandler(null);
     }
 
