@@ -26,23 +26,38 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     private Cursor toolCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
     private int constrainedAngle = 15;
 
-    private Observable<Stroke> strokeProvider = BehaviorSubject.createDefault(new BasicStroke(2));
-    private Observable<Paint> strokePaintProvider = BehaviorSubject.createDefault(Color.BLACK);
-    private Observable<Optional<Paint>> fillPaintProvider = BehaviorSubject.createDefault(Optional.empty());
-    private Observable<Integer> shapeSidesProvider = BehaviorSubject.createDefault(5);
-    private Observable<Font> fontProvider = BehaviorSubject.createDefault(new Font("Courier", Font.PLAIN, 14));
-    private Observable<Color> fontColorProvider = BehaviorSubject.createDefault(Color.BLACK);
+    private Observable<Stroke> strokeObservable = BehaviorSubject.createDefault(new BasicStroke(2));
+    private Observable<Paint> strokePaintObservable = BehaviorSubject.createDefault(Color.BLACK);
+    private Observable<Optional<Paint>> fillPaintObservable = BehaviorSubject.createDefault(Optional.empty());
+    private Observable<Integer> shapeSidesObservable = BehaviorSubject.createDefault(5);
+    private Observable<Font> fontObservable = BehaviorSubject.createDefault(new Font("Courier", Font.PLAIN, 14));
+    private Observable<Color> fontColorObservable = BehaviorSubject.createDefault(Color.BLACK);
 
     public PaintTool(PaintToolType type) {
         this.type = type;
     }
 
+    /**
+     * Activates the tool on a given canvas.
+     *
+     * A paint tool does not "paint" on the canvas until it is activated. Typically, only one tool is active on
+     * a canvas at any given time, but there is no technical limitation preventing multiple tools from being active
+     * at once.
+     *
+     * Use {@link #deactivate()} to stop this tool from painting on the canvas.
+     *
+     * @param canvas The paint canvas on which to activate the tool.
+     */
     public void activate (PaintCanvas canvas) {
         this.canvas = canvas;
         this.canvas.addSurfaceInteractionObserver(this);
         this.canvas.setCursor(toolCursor);
     }
 
+    /**
+     * Deactivates the tool on the canvas. A deactivated tool no longer affects the canvas and all listeners / observers
+     * are un-subscribed making the tool available for garbage collection.
+     */
     public void deactivate() {
         if (canvas != null) {
             canvas.removeSurfaceInteractionObserver(this);
@@ -72,86 +87,86 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         return canvas;
     }
 
-    public void setFontColorProvider(Observable<Color> fontColorProvider) {
-        this.fontColorProvider = fontColorProvider;
+    public void setFontColorObservable(Observable<Color> fontColorObservable) {
+        this.fontColorObservable = fontColorObservable;
     }
 
-    public void setStrokePaintProvider(Observable<Paint> strokePaintProvider) {
-        if (strokePaintProvider != null) {
-            this.strokePaintProvider = strokePaintProvider;
+    public void setStrokePaintObservable(Observable<Paint> strokePaintObservable) {
+        if (strokePaintObservable != null) {
+            this.strokePaintObservable = strokePaintObservable;
         }
     }
 
-    public void setStrokeProvider(Observable<Stroke> strokeProvider) {
-        if (strokeProvider != null) {
-            this.strokeProvider = strokeProvider;
+    public void setStrokeObservable(Observable<Stroke> strokeObservable) {
+        if (strokeObservable != null) {
+            this.strokeObservable = strokeObservable;
         }
     }
 
-    public void setShapeSidesProvider(Observable<Integer> shapeSidesProvider) {
-        if (shapeSidesProvider != null) {
-            this.shapeSidesProvider = shapeSidesProvider;
+    public void setShapeSidesObservable(Observable<Integer> shapeSidesObservable) {
+        if (shapeSidesObservable != null) {
+            this.shapeSidesObservable = shapeSidesObservable;
         }
     }
 
-    public void setFontProvider(Observable<Font> fontProvider) {
-        if (fontProvider != null) {
-            this.fontProvider = fontProvider;
+    public void setFontObservable(Observable<Font> fontObservable) {
+        if (fontObservable != null) {
+            this.fontObservable = fontObservable;
         }
     }
 
-    public void setFillPaintProvider(Observable<Optional<Paint>> fillPaintProvider) {
-        this.fillPaintProvider = fillPaintProvider;
+    public void setFillPaintObservable(Observable<Optional<Paint>> fillPaintObservable) {
+        this.fillPaintObservable = fillPaintObservable;
     }
 
     public Stroke getStroke() {
-        return strokeProvider.blockingFirst();
+        return strokeObservable.blockingFirst();
     }
 
     public Optional<Paint> getFillPaint() {
-        return fillPaintProvider.blockingFirst();
+        return fillPaintObservable.blockingFirst();
     }
 
     public Font getFont() {
-        return fontProvider.blockingFirst();
+        return fontObservable.blockingFirst();
     }
 
     public int getShapeSides() {
-        return shapeSidesProvider.blockingFirst() < 3 ? 3 :
-                shapeSidesProvider.blockingFirst() > 20 ? 20 :
-                shapeSidesProvider.blockingFirst();
+        return shapeSidesObservable.blockingFirst() < 3 ? 3 :
+                shapeSidesObservable.blockingFirst() > 20 ? 20 :
+                shapeSidesObservable.blockingFirst();
     }
 
     public Paint getStrokePaint() {
-        return strokePaintProvider.blockingFirst();
+        return strokePaintObservable.blockingFirst();
     }
 
     public Color getFontColor() {
-        return fontColorProvider.blockingFirst();
+        return fontColorObservable.blockingFirst();
     }
 
-    public Observable<Optional<Paint>> getFillPaintProvider() {
-        return fillPaintProvider;
+    public Observable<Optional<Paint>> getFillPaintObservable() {
+        return fillPaintObservable;
     }
 
-    public Observable<Stroke> getStrokeProvider() {
-        return strokeProvider;
+    public Observable<Stroke> getStrokeObservable() {
+        return strokeObservable;
     }
 
-    public Observable<Paint> getStrokePaintProvider() {
-        return strokePaintProvider;
+    public Observable<Paint> getStrokePaintObservable() {
+        return strokePaintObservable;
     }
 
-    public Observable<Integer> getShapeSidesProvider() {
-        return shapeSidesProvider;
+    public Observable<Integer> getShapeSidesObservable() {
+        return shapeSidesObservable;
     }
 
-    public Observable<Font> getFontProvider() {
-        return fontProvider;
+    public Observable<Font> getFontObservable() {
+        return fontObservable;
     }
 
-    public Observable<Color> getFontColorProvider() {
-        return fontColorProvider;
+    public Observable<Color> getFontColorObservable() {
+        return fontColorObservable;
     }
 
     public Cursor getToolCursor() {

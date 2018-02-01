@@ -46,6 +46,14 @@ public class JMonetCanvas extends AbstractPaintCanvas {
         this(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB), undoBufferDepth);
     }
 
+    public JMonetCanvas(BufferedImage initialImage) {
+        this(initialImage, 12);
+    }
+
+    public JMonetCanvas() {
+        this(12);
+    }
+
     /**
      * Undoes the previous committed change. Maybe called successively to revert committed changes one-by-one until
      * the undo buffer is exhausted.

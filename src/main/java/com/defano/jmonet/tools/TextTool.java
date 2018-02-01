@@ -55,11 +55,11 @@ public class TextTool extends PaintTool implements Consumer {
         textArea.setBackground(new Color(0, 0, 0, 0));
         textArea.setForeground(getFontColor());
 
-        fontSubscription = getFontProvider()
+        fontSubscription = getFontObservable()
                 .subscribeOn(Schedulers.computation())
                 .subscribe(font -> textArea.setFont(font));
 
-        fontColorSubscription = getFontColorProvider()
+        fontColorSubscription = getFontColorObservable()
                 .subscribeOn(Schedulers.computation())
                 .subscribe(color -> textArea.setForeground(color));
     }
@@ -143,7 +143,7 @@ public class TextTool extends PaintTool implements Consumer {
     }
 
     private Font getScaledFont() {
-        return new Font(getFont().getFamily(), getFont().getStyle(), (int) (getFont().getSize() * getCanvas().getScaleProvider().getValue()));
+        return new Font(getFont().getFamily(), getFont().getStyle(), (int) (getFont().getSize() * getCanvas().getScaleObservable().blockingFirst()));
     }
 
     private int getFontAscent() {
@@ -164,12 +164,4 @@ public class TextTool extends PaintTool implements Consumer {
             textArea.setForeground((Color) o);
         }
     }
-
-    private class FontObserver implements Consumer<Font> {
-        @Override
-        public void accept(Font font) {
-            textArea.setFont(font);
-        }
-    }
-
 }

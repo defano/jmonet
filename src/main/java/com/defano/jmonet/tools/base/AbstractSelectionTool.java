@@ -234,7 +234,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      *
      * @return The provider.
      */
-    public Observable<Optional<BufferedImage>> getSelectedImageSubject() {
+    public Observable<Optional<BufferedImage>> getSelectedImageObservable() {
         return selectedImage;
     }
 

@@ -5,6 +5,7 @@ import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.canvas.surface.AbstractScrollableSurface;
 import com.defano.jmonet.canvas.surface.PaintableSurface;
 import com.defano.jmonet.tools.util.Geometry;
+import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
 import java.awt.*;
@@ -44,8 +45,6 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
         observers.clear();
         surface.dispose();
         surface.removeComponentListener(this);
-        scaleSubject.onComplete();
-        gridSpacingSubject.onComplete();
         setTransferHandler(null);
     }
 
@@ -115,16 +114,16 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
     }
 
     private int translateX(int x) {
-        int gridSpacing = getGridSpacingProvider().getValue();
-        double scale = getScaleProvider().getValue();
+        int gridSpacing = getGridSpacingObservable().blockingFirst();
+        double scale = getScaleObservable().blockingFirst();
 
         x = Geometry.round(x, (int) (gridSpacing * scale));
         return (int) (x / scale);
     }
 
     private int translateY(int y) {
-        int gridSpacing = getGridSpacingProvider().getValue();
-        double scale = getScaleProvider().getValue();
+        int gridSpacing = getGridSpacingObservable().blockingFirst();
+        double scale = getScaleObservable().blockingFirst();
 
         y = Geometry.round(y, (int) (gridSpacing * scale));
         return (int) (y / scale);
@@ -180,7 +179,7 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
 
     /** {@inheritDoc} */
     @Override
-    public BehaviorSubject<Double> getScaleProvider() {
+    public Observable<Double> getScaleObservable() {
         return scaleSubject;
     }
 
@@ -192,7 +191,7 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
 
     /** {@inheritDoc} */
     @Override
-    public BehaviorSubject<Integer> getGridSpacingProvider() {
+    public Observable<Integer> getGridSpacingObservable() {
         return gridSpacingSubject;
     }
 
