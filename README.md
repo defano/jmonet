@@ -158,27 +158,36 @@ There's no technical limitation that prevents multiple tools from being active o
 
 ### Migrating from older versions
 
-JMonet versions 0.2.0 and later utilize ReactiveX for observables instead of the `Provider` classes that were present in earlier versions. Here's the TL;DR on migrating to RxJava:
+JMonet versions 0.2.0 and later utilize [ReactiveX](https://github.com/ReactiveX/RxJava) for observables instead of the `Provider` classes that were present in earlier versions. Here's the TL;DR on migrating to RxJava:
 
-1. JMonet APIs ending with `Provider` now end with `Observable`. For example, `JMonetCanvas#getGridSpacingProvider()` is now `JMonetCanvas#getGridSpacingObservable()`.
-2. The JMonet `Provider` class is roughly equivalent to RxJava's `BehaviorSubject`:
+1. **Change API signatures:** JMonet APIs ending with `Provider` now end with `Observable`. For example, `JMonetCanvas#getGridSpacingProvider()` is now `JMonetCanvas#getGridSpacingObservable()`.
+3. **Use `BehvaiorSubject` in lieu of `Provider`:** RxJava's `BehaviorSubject` is roughly equivalent to JMonet's former `Provider` class:
+
+To create an observable property (that is, one that a paint tool or canvas will respond to dynamically):
 ```
-// Creating a BehaviorSubject:
 BehaviorSubject<BasicStroke> lineStrokeSubject = BehaviorSubject<>.createDefault(new BasicStroke(1));
+```
 
-// Making the paint tool observe changes to it:
+To make the paint tool observe changes to it:
+```
 PaintToolBuilder.create(PaintToolType.LINE)
     .withStrokePaintObservable(lineStrokeSubject)
     ...
     .build();
+```
 
-// Changing the line stroke (paint tool will observe changes):
+To change an `BehaviorSubject` that's providing an attribute to a tool or canvas:
+```
 lineStrokeSubject.onNext(new BasicStroke(2))
+```
 
-// Listening to changes (println will fire each time line width changes):
-lineStrokeSubject.subscribe(stroke -> System.out.println("Line width " + stroke.getLineWidth()));
+To listen to changes of a provided attribute:
+```
+lineStrokeSubject.subscribe(stroke -> System.out.println("Line width changed: " + stroke.getLineWidth()));
+```
 
-// Deriving observables:
+To derive an observable attribute for another attribute:
+```
 Observable<Boolean> isSinglePxStroke = lineStrokeSubject.map(stroke -> stroke.getLineWidth() == 1);
 ```
 
