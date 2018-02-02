@@ -2,15 +2,17 @@ package com.defano.jmonet.tools.base;
 
 import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
-import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.model.Provider;
-import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
+import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
+import com.defano.jmonet.model.PaintToolType;
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.Optional;
 
 /**
  * A base tool class holding common attribute providers (like stroke, fill and font), plus empty, template methods for
@@ -24,23 +26,38 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     private Cursor toolCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
     private int constrainedAngle = 15;
 
-    private Provider<Stroke> strokeProvider = new Provider<>(new BasicStroke(2));
-    private Provider<Paint> strokePaintProvider = new Provider<>(Color.BLACK);
-    private Provider<Paint> fillPaintProvider = new Provider<>(null);
-    private Provider<Integer> shapeSidesProvider = new Provider<>(5);
-    private Provider<Font> fontProvider = new Provider<>(new Font("Courier", Font.PLAIN, 14));
-    private Provider<Color> fontColorProvider = new Provider<>(Color.BLACK);
+    private Observable<Stroke> strokeObservable = BehaviorSubject.createDefault(new BasicStroke(2));
+    private Observable<Paint> strokePaintObservable = BehaviorSubject.createDefault(Color.BLACK);
+    private Observable<Optional<Paint>> fillPaintObservable = BehaviorSubject.createDefault(Optional.empty());
+    private Observable<Integer> shapeSidesObservable = BehaviorSubject.createDefault(5);
+    private Observable<Font> fontObservable = BehaviorSubject.createDefault(new Font("Courier", Font.PLAIN, 14));
+    private Observable<Color> fontColorObservable = BehaviorSubject.createDefault(Color.BLACK);
 
     public PaintTool(PaintToolType type) {
         this.type = type;
     }
 
+    /**
+     * Activates the tool on a given canvas.
+     *
+     * A paint tool does not "paint" on the canvas until it is activated. Typically, only one tool is active on
+     * a canvas at any given time, but there is no technical limitation preventing multiple tools from being active
+     * at once.
+     *
+     * Use {@link #deactivate()} to stop this tool from painting on the canvas.
+     *
+     * @param canvas The paint canvas on which to activate the tool.
+     */
     public void activate (PaintCanvas canvas) {
         this.canvas = canvas;
         this.canvas.addSurfaceInteractionObserver(this);
         this.canvas.setCursor(toolCursor);
     }
 
+    /**
+     * Deactivates the tool on the canvas. A deactivated tool no longer affects the canvas and all listeners / observers
+     * are un-subscribed making the tool available for garbage collection.
+     */
     public void deactivate() {
         if (canvas != null) {
             canvas.removeSurfaceInteractionObserver(this);
@@ -70,88 +87,86 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         return canvas;
     }
 
-    public void setFontColorProvider(Provider<Color> fontColorProvider) {
-        this.fontColorProvider = fontColorProvider;
+    public void setFontColorObservable(Observable<Color> fontColorObservable) {
+        this.fontColorObservable = fontColorObservable;
     }
 
-    public void setStrokePaintProvider(Provider<Paint> strokePaintProvider) {
-        if (strokePaintProvider != null) {
-            this.strokePaintProvider = strokePaintProvider;
+    public void setStrokePaintObservable(Observable<Paint> strokePaintObservable) {
+        if (strokePaintObservable != null) {
+            this.strokePaintObservable = strokePaintObservable;
         }
     }
 
-    public void setStrokeProvider(Provider<Stroke> strokeProvider) {
-        if (strokeProvider != null) {
-            this.strokeProvider = strokeProvider;
+    public void setStrokeObservable(Observable<Stroke> strokeObservable) {
+        if (strokeObservable != null) {
+            this.strokeObservable = strokeObservable;
         }
     }
 
-    public void setShapeSidesProvider(Provider<Integer> shapeSidesProvider) {
-        if (shapeSidesProvider != null) {
-            this.shapeSidesProvider = shapeSidesProvider;
+    public void setShapeSidesObservable(Observable<Integer> shapeSidesObservable) {
+        if (shapeSidesObservable != null) {
+            this.shapeSidesObservable = shapeSidesObservable;
         }
     }
 
-    public void setFontProvider(Provider<Font> fontProvider) {
-        if (fontProvider != null) {
-            this.fontProvider = fontProvider;
+    public void setFontObservable(Observable<Font> fontObservable) {
+        if (fontObservable != null) {
+            this.fontObservable = fontObservable;
         }
     }
 
-    public void setFillPaintProvider(Provider<Paint> fillPaintProvider) {
-        if (fillPaintProvider != null) {
-            this.fillPaintProvider = fillPaintProvider;
-        }
+    public void setFillPaintObservable(Observable<Optional<Paint>> fillPaintObservable) {
+        this.fillPaintObservable = fillPaintObservable;
     }
 
     public Stroke getStroke() {
-        return strokeProvider.get();
+        return strokeObservable.blockingFirst();
     }
 
-    public Paint getFillPaint() {
-        return fillPaintProvider.get();
+    public Optional<Paint> getFillPaint() {
+        return fillPaintObservable.blockingFirst();
     }
 
     public Font getFont() {
-        return fontProvider.get();
+        return fontObservable.blockingFirst();
     }
 
     public int getShapeSides() {
-        return shapeSidesProvider.get() < 3 ? 3 :
-                shapeSidesProvider.get() > 20 ? 20 :
-                shapeSidesProvider.get();
+        return shapeSidesObservable.blockingFirst() < 3 ? 3 :
+                shapeSidesObservable.blockingFirst() > 20 ? 20 :
+                shapeSidesObservable.blockingFirst();
     }
 
     public Paint getStrokePaint() {
-        return strokePaintProvider.get();
+        return strokePaintObservable.blockingFirst();
     }
 
     public Color getFontColor() {
-        return fontColorProvider.get();
+        return fontColorObservable.blockingFirst();
     }
 
-    public Provider<Paint> getFillPaintProvider() {
-        return fillPaintProvider;
+    public Observable<Optional<Paint>> getFillPaintObservable() {
+        return fillPaintObservable;
     }
 
-    public Provider<Stroke> getStrokeProvider() {
-        return strokeProvider;
+    public Observable<Stroke> getStrokeObservable() {
+        return strokeObservable;
     }
 
-    public Provider<Paint> getStrokePaintProvider() {
-        return strokePaintProvider;
+    public Observable<Paint> getStrokePaintObservable() {
+        return strokePaintObservable;
     }
 
-    public Provider<Integer> getShapeSidesProvider() {
-        return shapeSidesProvider;
+    public Observable<Integer> getShapeSidesObservable() {
+        return shapeSidesObservable;
     }
 
-    public Provider<Font> getFontProvider() {
-        return fontProvider;
+    public Observable<Font> getFontObservable() {
+        return fontObservable;
     }
 
-    public Provider<Color> getFontColorProvider() {
-        return fontColorProvider;
+    public Observable<Color> getFontColorObservable() {
+        return fontColorObservable;
     }
 
     public Cursor getToolCursor() {

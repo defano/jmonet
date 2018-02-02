@@ -25,7 +25,7 @@ public class OvalTool extends AbstractBoundsTool {
     /** {@inheritDoc} */
     @Override
     protected void fillBounds(Graphics2D g, Paint fill, Rectangle bounds, boolean isShiftDown) {
-        g.setPaint(getFillPaint());
+        g.setPaint(fill);
         g.fillOval(bounds.x, bounds.y, bounds.width, bounds.height);
     }
 }

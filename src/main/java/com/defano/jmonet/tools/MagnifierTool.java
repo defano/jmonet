@@ -65,7 +65,7 @@ public class MagnifierTool extends PaintTool {
     @Override
     public void activate(PaintCanvas canvas) {
         super.activate(canvas);
-        this.scale = canvas.getScaleProvider().get();
+        this.scale = canvas.getScaleObservable().blockingFirst();
     }
 
     private void reset() {

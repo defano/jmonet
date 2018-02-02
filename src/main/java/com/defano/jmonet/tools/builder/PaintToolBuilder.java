@@ -3,10 +3,12 @@ package com.defano.jmonet.tools.builder;
 import com.defano.jmonet.canvas.JFXPaintCanvasNode;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.model.Provider;
 import com.defano.jmonet.tools.base.PaintTool;
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
 
 import java.awt.*;
+import java.util.Optional;
 
 /**
  * A utility for building paint tools.
@@ -16,12 +18,12 @@ public class PaintToolBuilder {
     private final PaintToolType type;
 
     private PaintCanvas canvas;
-    private Provider<Stroke> strokeProvider;
-    private Provider<Paint> strokePaintProvider;
-    private Provider<Paint> fillPaintProvider;
-    private Provider<Integer> shapeSidesProvider;
-    private Provider<Font> fontProvider;
-    private Provider<Color> fontColorProvider;
+    private Observable<Stroke> strokeObservable;
+    private Observable<Paint> strokePaintObservable;
+    private Observable<Optional<Paint>> fillPaintObservable = BehaviorSubject.createDefault(Optional.empty());
+    private Observable<Integer> shapeSidesObservable;
+    private Observable<Font> fontObservable;
+    private Observable<Color> fontColorObservable;
 
     private PaintToolBuilder(PaintToolType toolType) {
         this.type = toolType;
@@ -42,62 +44,62 @@ public class PaintToolBuilder {
     }
 
     public PaintToolBuilder withFont(Font font) {
-        this.fontProvider = new Provider<>(font);
+        this.fontObservable = BehaviorSubject.createDefault(font);
         return this;
     }
 
-    public PaintToolBuilder withFontProvider(Provider<Font> fontProvider) {
-        this.fontProvider = fontProvider;
+    public PaintToolBuilder withFontObservable(Observable<Font> fontProvider) {
+        this.fontObservable = fontProvider;
         return this;
     }
 
     public PaintToolBuilder withShapeSides(int sides) {
-        this.shapeSidesProvider = new Provider<>(sides);
+        this.shapeSidesObservable = BehaviorSubject.createDefault(sides);
         return this;
     }
 
-    public PaintToolBuilder withShapeSidesProvider(Provider<Integer> shapeSidesProvider) {
-        this.shapeSidesProvider = shapeSidesProvider;
+    public PaintToolBuilder withShapeSidesObservable(Observable<Integer> shapeSidesProvider) {
+        this.shapeSidesObservable = shapeSidesProvider;
         return this;
     }
 
     public PaintToolBuilder withStroke(Stroke stroke) {
-        this.strokeProvider = new Provider<>(stroke);
+        this.strokeObservable = BehaviorSubject.createDefault(stroke);
         return this;
     }
 
-    public PaintToolBuilder withStrokeProvider(Provider<Stroke> strokeProvider) {
-        this.strokeProvider = strokeProvider;
+    public PaintToolBuilder withStrokeObservable(Observable<Stroke> strokeProvider) {
+        this.strokeObservable = strokeProvider;
         return this;
     }
 
     public PaintToolBuilder withStrokePaint(Paint strokePaint) {
-        this.strokePaintProvider = new Provider<>(strokePaint);
+        this.strokePaintObservable = BehaviorSubject.createDefault(strokePaint);
         return this;
     }
 
-    public PaintToolBuilder withStrokePaintProvider(Provider<Paint> strokePaintProvider) {
-        this.strokePaintProvider = strokePaintProvider;
+    public PaintToolBuilder withStrokePaintObservable(Observable<Paint> strokePaintProvider) {
+        this.strokePaintObservable = strokePaintProvider;
         return this;
     }
 
     public PaintToolBuilder withFillPaint(Paint paint) {
-        this.fillPaintProvider = new Provider<>(paint);
+        this.fillPaintObservable = BehaviorSubject.createDefault(Optional.of(paint));
         return this;
     }
 
-    public PaintToolBuilder withFillPaintProvider(Provider<Paint> paintProvider) {
-        this.fillPaintProvider = paintProvider;
+    public PaintToolBuilder withFillPaintObservable(Observable<Optional<Paint>> paintProvider) {
+        this.fillPaintObservable = paintProvider;
         return this;
     }
 
     public PaintToolBuilder withFontColor(Color color) {
-        this.fontColorProvider = new Provider<>(color);
+        this.fontColorObservable = BehaviorSubject.createDefault(color);
         return this;
     }
 
-    public PaintToolBuilder withFontColorProvider(Provider<Color> colorProvider) {
-        this.fontColorProvider = colorProvider;
+    public PaintToolBuilder withFontColorObservable(Observable<Color> colorProvider) {
+        this.fontColorObservable = colorProvider;
         return this;
     }
 
@@ -105,28 +107,28 @@ public class PaintToolBuilder {
 
         PaintTool selectedTool = type.getToolInstance();
 
-        if (strokeProvider != null) {
-            selectedTool.setStrokeProvider(strokeProvider);
+        if (strokeObservable != null) {
+            selectedTool.setStrokeObservable(strokeObservable);
         }
 
-        if (strokePaintProvider != null) {
-            selectedTool.setStrokePaintProvider(strokePaintProvider);
+        if (strokePaintObservable != null) {
+            selectedTool.setStrokePaintObservable(strokePaintObservable);
         }
 
-        if (shapeSidesProvider != null) {
-            selectedTool.setShapeSidesProvider(shapeSidesProvider);
+        if (shapeSidesObservable != null) {
+            selectedTool.setShapeSidesObservable(shapeSidesObservable);
         }
 
-        if (fontProvider != null) {
-            selectedTool.setFontProvider(fontProvider);
+        if (fontObservable != null) {
+            selectedTool.setFontObservable(fontObservable);
         }
 
-        if (fillPaintProvider != null) {
-            selectedTool.setFillPaintProvider(fillPaintProvider);
+        if (fillPaintObservable != null) {
+            selectedTool.setFillPaintObservable(fillPaintObservable);
         }
 
-        if (fontColorProvider != null) {
-            selectedTool.setFontColorProvider(fontColorProvider);
+        if (fontColorObservable != null) {
+            selectedTool.setFontColorObservable(fontColorObservable);
         }
 
         if (canvas != null) {

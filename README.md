@@ -4,12 +4,12 @@ An easy-to-use toolkit for incorporating paint tools similar to [MacPaint](https
 
 ## Features
 
-* Offers a standard suite of paint tools with common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
-* Painting canvas supports undo and redo operations on all paint tool changes, plus cut, copy and paste integration with the system clipboard.
-* Includes a variety of image transform tools like scale, rotate, shear, perspective and projection, plus the ability to adjust  color depth, transparency and brightness.
+* Standard suite of paint tools providing common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
+* Canvas supports undo and redo operations on all paint tool changes, plus cut, copy and paste integration with the system clipboard.
+* Includes a variety of image transform tools like scale, rotate, shear, perspective and projection, plus the ability to adjust color depth, transparency and brightness.
 * Painted images are zoomable via the Magnifier tool (displayed within a scrollable pane), and tools can be snapped to a grid.
-* Lightweight toolkit integrates easily into Swing and JavaFX applications.
-* All operations are backed by a standard Java `BufferedImage`; easy to import existing images and save changes.
+* Lightweight toolkit integrates easily into Swing and JavaFX applications and utilizes [ReactiveX](https://github.com/ReactiveX/RxJava) for observables.
+* All operations are backed by a standard Java `BufferedImage` making it easy to import and export graphics.
 
 ## Paint Tools
 
@@ -44,7 +44,7 @@ Icon | Tool            | Description
 ![Slant](icons/slant.png) | Slant | Define a selection, then use the drag handles to apply an affine shear transform to the selected graphic.
 ![Scale](icons/scale.png) | Scale | Define a selection, then expand or shrink the selected image by dragging a handle. Hold shift to maintain selection's original aspect ratio.
 ![Projection](icons/distort.png) | Projection | Define a selection, then use the drag handles to project the image onto the geometry of an arbitrary quadrilateral.
-![perspective](icons/perspective.png) | Perspective | Define a selection, then use the drag handles to warp the image onto an isosceles trapezoid, providing the effect of the left or right side of the image appearing nearer or farther from the viewer.
+![Perspective](icons/perspective.png) | Perspective | Define a selection, then use the drag handles to warp the image onto an isosceles trapezoid, providing the effect of the left or right side of the image appearing nearer or farther from the viewer.
 ![Rubber Sheet](icons/distort.png) | Rubber Sheet | Similar to the projection transform, but utilizes a "rubber sheet" algorithm that preserves relative position over linearity.
 
 #### Static transforms
@@ -76,7 +76,7 @@ JMonet is published to Maven Central; include the library in your Maven project'
 <dependency>
     <groupId>com.defano.jmonet</groupId>
     <artifactId>jmonet</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
 </dependency>
 ```
 
@@ -88,7 +88,7 @@ repositories {
 }
 
 dependencies {
-  compile 'com.defano.jmonet:jmonet:0.1.0'
+  compile 'com.defano.jmonet:jmonet:0.2.0'
 }
 ```
 
@@ -155,6 +155,41 @@ activeTool.deactivate();
 ```
 
 There's no technical limitation that prevents multiple tools from being active on the same canvas at the same time, but that's not usually desired behavior in a paint program.
+
+### Migrating from older versions
+
+JMonet versions 0.2.0 and later utilize [ReactiveX](https://github.com/ReactiveX/RxJava) for observables instead of the `Provider` classes that were present in earlier versions. Here's what you need to do to upgrade:
+
+1. **Change API signatures:** JMonet APIs ending with `Provider` now end with `Observable`. For example, `JMonetCanvas#getGridSpacingProvider()` is now `JMonetCanvas#getGridSpacingObservable()`.
+3. **Use `BehvaiorSubject` in lieu of `Provider`:** RxJava's `BehaviorSubject` is roughly equivalent to JMonet's former `Provider` class:
+
+To create an observable property (that is, one that a paint tool or canvas will respond to dynamically):
+```
+BehaviorSubject<BasicStroke> lineStrokeSubject = BehaviorSubject<>.createDefault(new BasicStroke(1));
+```
+
+To make the paint tool observe changes to it:
+```
+PaintToolBuilder.create(PaintToolType.LINE)
+    .withStrokePaintObservable(lineStrokeSubject)
+    ...
+    .build();
+```
+
+To change an `BehaviorSubject` that's providing an attribute to a tool or canvas:
+```
+lineStrokeSubject.onNext(new BasicStroke(2))
+```
+
+To listen to changes of a provided attribute:
+```
+lineStrokeSubject.subscribe(stroke -> System.out.println("Change: " + stroke.getLineWidth()));
+```
+
+To derive an observable attribute for another attribute:
+```
+Observable<Boolean> isSinglePxStroke = lineStrokeSubject.map(stroke -> stroke.getLineWidth() == 1);
+```
 
 ## Implement cut, copy and paste
 
@@ -237,33 +272,6 @@ The code below provides an implementation that cuts, copies and pastes the activ
 })
 
 ```
-
-## Tool and canvas attribute providers
-
-When building your paint application, you'll likely need to observe and/or make changes to various canvas and tool attributes from several locations in your codebase (i.e., change and observe the paint color from the menu, palette, picker dialogs, etc).
-
-To simplify this, attributes are wrapped in a `Provider` class. A Provider is an extension to Java's `Observable` with a bit of syntactical sugar to support one-liner lambda expressions and to derive observable attributes from other attributes.
-
-For example, create a provider of paint and inject it into the tool (you might keep this provider around globally to be shared across all tools whose paint you want to change):
-
-```
-Provider<Paint> paintProvider = new Provider(Color.BLACK);
-activeTool.setFillPaintProvider(paintProvider);
-```
-
-Now, you can observe changes to the tool's paint:
-
-```
-strokePaintProvider.addObserver((o, newValue) -> System.out.println("Got new paint: " + newValue));
-```
-
-More importantly, you can derive new Providers that listen for changes to an existing Provider and transform them into a different type. This is useful, for example, for checkmarking menu items or highlighting palette tools based on a selection.
-
-```
-ImmutableProvider<Boolean> isBlackColorSelected = ImmutableProvider.derivedFrom(strokePaintProvider, p -> p == Color.BLACK);
-```
-
-An `ImmutableProvider` is one whose underlying value cannot be changed. In this example, it wouldn't make sense to mutate `isBlackSelected` directly; its value follows the color provided by `strokePaintProvider`.
 
 ## Frequently asked questions
 

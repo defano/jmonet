@@ -19,15 +19,15 @@ public class AirbrushTool extends AbstractPathTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void startPath(Graphics2D g, Stroke stroke, Paint paint, Point initialPoint) {
+    protected void startPath(Graphics2D g, Stroke stroke, Paint fillPaint, Point initialPoint) {
         lastPoint = initialPoint;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void addPoint(Graphics2D g, Stroke stroke, Paint paint, Point point) {
+    protected void addPoint(Graphics2D g, Stroke stroke, Paint fillPaint, Point point) {
         g.setStroke(stroke);
-        g.setPaint(paint);
+        g.setPaint(fillPaint);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
         g.draw(new Line2D.Float(lastPoint, point));
 

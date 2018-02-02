@@ -7,8 +7,8 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 
 /**
- * Models a four-sided shape with no restrictions on the relationship between those sides (in terms of length or
- * parallelness).
+ * Models a four-sided, simple polygon (quadrilateral) with no restrictions on the length, angle or parallelness, except
+ * that the shape's edges do not cross each other (self-intersecting quadrilaterals are disallowed).
  */
 public class FlexQuadrilateral {
 

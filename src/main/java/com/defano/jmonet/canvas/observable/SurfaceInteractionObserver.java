@@ -16,7 +16,7 @@ public interface SurfaceInteractionObserver extends KeyListener {
      * and released) on the canvas.
      *
      * @param e The mouse event that occurred
-     * @param imageLocation the location (relative to the image) where the event occured
+     * @param imageLocation the location (relative to the image) where the event occurred
      */
     void mouseClicked(MouseEvent e, Point imageLocation);
 
@@ -24,7 +24,7 @@ public interface SurfaceInteractionObserver extends KeyListener {
      * Invoked when a mouse button has been pressed on a component.
      *
      * @param e The mouse event that occurred
-     * @param imageLocation the location (relative to the image) where the event occured
+     * @param imageLocation the location (relative to the image) where the event occurred
      */
     void mousePressed(MouseEvent e, Point imageLocation);
 
@@ -32,7 +32,7 @@ public interface SurfaceInteractionObserver extends KeyListener {
      * Invoked when a mouse button has been released on a component.
      *
      * @param e The mouse event that occurred
-     * @param imageLocation the location (relative to the image) where the event occured
+     * @param imageLocation the location (relative to the image) where the event occurred
      */
     void mouseReleased(MouseEvent e, Point imageLocation);
 
@@ -40,7 +40,7 @@ public interface SurfaceInteractionObserver extends KeyListener {
      * Invoked when the mouse enters a component.
      *
      * @param e The mouse event that occurred
-     * @param imageLocation the location (relative to the image) where the event occured
+     * @param imageLocation the location (relative to the image) where the event occurred
      */
     void mouseEntered(MouseEvent e, Point imageLocation);
 
@@ -48,7 +48,7 @@ public interface SurfaceInteractionObserver extends KeyListener {
      * Invoked when the mouse exits a component.
      *
      * @param e The mouse event that occurred
-     * @param imageLocation the location (relative to the image) where the event occured
+     * @param imageLocation the location (relative to the image) where the event occurred
      */
     void mouseExited(MouseEvent e, Point imageLocation);
 
@@ -64,7 +64,7 @@ public interface SurfaceInteractionObserver extends KeyListener {
      * Drag&amp;Drop operation.
      *
      * @param e The mouse event that occurred
-     * @param imageLocation the location (relative to the image) where the event occured
+     * @param imageLocation the location (relative to the image) where the event occurred
      */
     void mouseDragged(MouseEvent e, Point imageLocation);
 
@@ -73,7 +73,7 @@ public interface SurfaceInteractionObserver extends KeyListener {
      * but no buttons have been pushed.
      *
      * @param e The mouse event that occurred
-     * @param imageLocation the location (relative to the image) where the event occured
+     * @param imageLocation the location (relative to the image) where the event occurred
      */
     void mouseMoved(MouseEvent e, Point imageLocation);
 }

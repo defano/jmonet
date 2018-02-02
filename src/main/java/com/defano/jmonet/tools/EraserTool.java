@@ -22,14 +22,14 @@ public class EraserTool extends AbstractPathTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void startPath(Graphics2D g, Stroke stroke, Paint paint, Point initialPoint) {
+    protected void startPath(Graphics2D g, Stroke stroke, Paint fillPaint, Point initialPoint) {
         path = new Path2D.Double();
         path.moveTo(initialPoint.getX(), initialPoint.getY());
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void addPoint(Graphics2D g, Stroke stroke, Paint paint, Point point) {
+    protected void addPoint(Graphics2D g, Stroke stroke, Paint fillPaint, Point point) {
         path.lineTo(point.getX(), point.getY());
 
         g.setStroke(stroke);

@@ -4,8 +4,9 @@ import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.canvas.surface.AbstractScrollableSurface;
 import com.defano.jmonet.canvas.surface.PaintableSurface;
-import com.defano.jmonet.model.Provider;
 import com.defano.jmonet.tools.util.Geometry;
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
 
 import java.awt.*;
 import java.awt.event.ComponentEvent;
@@ -22,8 +23,8 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
     private final PaintableSurface surface = new PaintableSurface();
 
     private final java.util.List<CanvasCommitObserver> observers = new ArrayList<>();
-    private final Provider<Double> scale = new Provider<>(1.0);
-    private final Provider<Integer> gridSpacing = new Provider<>(1);
+    private final BehaviorSubject<Double> scaleSubject = BehaviorSubject.createDefault(1.0);
+    private final BehaviorSubject<Integer> gridSpacingSubject = BehaviorSubject.createDefault(1);
 
     private BufferedImage scratch;      // Temporary buffer for changes not yet committed to the canvas
 
@@ -36,11 +37,11 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
     }
 
     /**
-     * Invoke to mark this component safe for garbage collection; removes registered listeners and components.
+     * Marks this component safe for garbage collection; removes registered listeners and components.
      */
     public void dispose() {
-        scale.deleteObservers();
-        gridSpacing.deleteObservers();
+        scaleSubject.onComplete();
+        gridSpacingSubject.onComplete();
         observers.clear();
         surface.dispose();
         surface.removeComponentListener(this);
@@ -51,7 +52,7 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
     @Override
     public void setSize(int width, int height) {
         super.setSize(width, height);
-        surface.setPreferredSize(new Dimension((int) (width * scale.get()), (int) (height * scale.get())));
+        surface.setPreferredSize(new Dimension((int) (width * scaleSubject.getValue()), (int) (height * scaleSubject.getValue())));
 
         BufferedImage newScratch = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics newScratchGraphics = newScratch.getGraphics();
@@ -113,16 +114,16 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
     }
 
     private int translateX(int x) {
-        int gridSpacing = getGridSpacingProvider().get();
-        double scale = getScaleProvider().get();
+        int gridSpacing = getGridSpacingObservable().blockingFirst();
+        double scale = getScaleObservable().blockingFirst();
 
         x = Geometry.round(x, (int) (gridSpacing * scale));
         return (int) (x / scale);
     }
 
     private int translateY(int y) {
-        int gridSpacing = getGridSpacingProvider().get();
-        double scale = getScaleProvider().get();
+        int gridSpacing = getGridSpacingObservable().blockingFirst();
+        double scale = getScaleObservable().blockingFirst();
 
         y = Geometry.round(y, (int) (gridSpacing * scale));
         return (int) (y / scale);
@@ -173,31 +174,31 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
     /** {@inheritDoc} */
     @Override
     public double getScale() {
-        return scale.get();
+        return scaleSubject.getValue();
     }
 
     /** {@inheritDoc} */
     @Override
-    public Provider<Double> getScaleProvider() {
-        return scale;
+    public Observable<Double> getScaleObservable() {
+        return scaleSubject;
     }
 
     /** {@inheritDoc} */
     @Override
     public void setGridSpacing(int grid) {
-        this.gridSpacing.set(grid);
+        this.gridSpacingSubject.onNext(grid);
     }
 
     /** {@inheritDoc} */
     @Override
-    public Provider<Integer> getGridSpacingProvider() {
-        return gridSpacing;
+    public Observable<Integer> getGridSpacingObservable() {
+        return gridSpacingSubject;
     }
 
     /** {@inheritDoc} */
     @Override
     public void setScale(double scale) {
-        this.scale.set(scale);
+        this.scaleSubject.onNext(scale);
         surface.setPreferredSize(new Dimension((int) (getWidth() * scale), (int) (getHeight() * scale)));
         surface.revalidate();
 
