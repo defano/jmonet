@@ -4,11 +4,11 @@ An easy-to-use toolkit for incorporating paint tools similar to [MacPaint](https
 
 ## Features
 
-* Offers a standard suite of paint tools with common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
-* Painting canvas supports undo and redo operations on all paint tool changes, plus cut, copy and paste integration with the system clipboard.
+* Standard suite of paint tools providing common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
+* Canvas supports undo and redo operations on all paint tool changes, plus cut, copy and paste integration with the system clipboard.
 * Includes a variety of image transform tools like scale, rotate, shear, perspective and projection, plus the ability to adjust color depth, transparency and brightness.
 * Painted images are zoomable via the Magnifier tool (displayed within a scrollable pane), and tools can be snapped to a grid.
-* Lightweight toolkit integrates easily into Swing and JavaFX applications and utilizes ReactiveX for observables.
+* Lightweight toolkit integrates easily into Swing and JavaFX applications and utilizes [ReactiveX](https://github.com/ReactiveX/RxJava) for observables.
 * All operations are backed by a standard Java `BufferedImage` making it easy to import and export graphics.
 
 ## Paint Tools
@@ -158,7 +158,7 @@ There's no technical limitation that prevents multiple tools from being active o
 
 ### Migrating from older versions
 
-JMonet versions 0.2.0 and later utilize [ReactiveX](https://github.com/ReactiveX/RxJava) for observables instead of the `Provider` classes that were present in earlier versions. Here's the TL;DR on migrating to RxJava:
+JMonet versions 0.2.0 and later utilize [ReactiveX](https://github.com/ReactiveX/RxJava) for observables instead of the `Provider` classes that were present in earlier versions. Here's what you need to do to upgrade:
 
 1. **Change API signatures:** JMonet APIs ending with `Provider` now end with `Observable`. For example, `JMonetCanvas#getGridSpacingProvider()` is now `JMonetCanvas#getGridSpacingObservable()`.
 3. **Use `BehvaiorSubject` in lieu of `Provider`:** RxJava's `BehaviorSubject` is roughly equivalent to JMonet's former `Provider` class:
@@ -183,7 +183,7 @@ lineStrokeSubject.onNext(new BasicStroke(2))
 
 To listen to changes of a provided attribute:
 ```
-lineStrokeSubject.subscribe(stroke -> System.out.println("Line width changed: " + stroke.getLineWidth()));
+lineStrokeSubject.subscribe(stroke -> System.out.println("Change: " + stroke.getLineWidth()));
 ```
 
 To derive an observable attribute for another attribute:
