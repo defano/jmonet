@@ -393,10 +393,13 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     protected void drawSelectionOutline() {
         Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
 
+        g.setColor(Color.WHITE);
+        g.draw(getSelectionOutline());
+
         g.setStroke(MarchingAnts.getInstance().getMarchingAnts());
         g.setColor(Color.BLACK);
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.XOR));
         g.draw(getSelectionOutline());
+
         g.dispose();
     }
 
