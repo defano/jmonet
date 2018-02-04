@@ -3,7 +3,7 @@ package com.defano.jmonet.tools;
 import com.defano.jmonet.algo.BoundaryFunction;
 import com.defano.jmonet.algo.FillFunction;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.PaintTool;
+import com.defano.jmonet.tools.builder.PaintTool;
 import com.defano.jmonet.algo.FloodFill;
 
 import java.awt.*;

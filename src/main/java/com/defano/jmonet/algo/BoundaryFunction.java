@@ -3,7 +3,11 @@ package com.defano.jmonet.algo;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * A function for determining boundaries when flood-filling a raster.
+ */
 public interface BoundaryFunction {
+
     /**
      * Determines if a given pixel on the canvas should be flood-filled. This method will be invoked repeatedly until
      * the flood fill algorithm has filled all available pixels, thus, this method should execute quickly.

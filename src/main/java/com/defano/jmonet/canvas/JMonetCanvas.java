@@ -23,8 +23,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     private BehaviorSubject<Boolean> isRedoableSubject = BehaviorSubject.createDefault(false);
 
     /**
-     * Creates a new canvas with a given image initially displayed in it with
-     * a specified undo buffer depth.
+     * Creates a new canvas with a given image initially displayed in it with a specified undo buffer depth.
      *
      * @param initialImage The image to be displayed in the canvas.
      * @param undoBufferDepth The depth of the undo buffer (number of undo operations)
@@ -37,8 +36,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     }
 
     /**
-     * Creates a new canvas with a 1x1 transparent image displayed inside it
-     * and a specified undo buffer depth.
+     * Creates a new canvas with a 1x1 transparent image displayed inside it and a specified undo buffer depth.
      *
      * @param undoBufferDepth The depth of the undo buffer (number of undo operations)
      */
@@ -46,10 +44,18 @@ public class JMonetCanvas extends AbstractPaintCanvas {
         this(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB), undoBufferDepth);
     }
 
+    /**
+     * Create a new canvas with a default-sized undo/redo buffer, the size of, and containing the image of, the
+     * specified {@link BufferedImage}.
+     * @param initialImage The initial image to be displayed.
+     */
     public JMonetCanvas(BufferedImage initialImage) {
         this(initialImage, 12);
     }
 
+    /**
+     * Create a new canvas with a 1x1 transparent image displayed inside of it, with a default-sized undo/redo buffer.
+     */
     public JMonetCanvas() {
         this(12);
     }
@@ -143,7 +149,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     public void commit(ChangeSet changeSet) {
 
         // Special case: ChangeSet may be modified after it has been committed; listen for this so that we can notify observers of our own
-        changeSet.addChangeSetObserver(() -> fireCanvasCommitObservers(JMonetCanvas.this, null, getCanvasImage()));
+        changeSet.addChangeSetObserver(modified -> fireCanvasCommitObservers(JMonetCanvas.this, null, getCanvasImage()));
 
         // Clear the redo elements from the buffer; can't perform redo after committing a new change
         undoBuffer = undoBuffer.subList(0, undoBufferPointer + 1);
@@ -186,7 +192,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
             resizePermanent(changeSetDim);
         }
 
-        applyChangeSet(changeSet, permanent);
+        overlayChangeSet(changeSet, permanent);
     }
 
     /** {@inheritDoc} */
@@ -195,16 +201,25 @@ public class JMonetCanvas extends AbstractPaintCanvas {
         BufferedImage visibleImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         if (permanent != null) {
-            applyImage(permanent, visibleImage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+            overlayImage(permanent, visibleImage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
         }
 
         for (int index = 0; index <= undoBufferPointer; index++) {
-            applyChangeSet(undoBuffer.get(index), visibleImage);
+            overlayChangeSet(undoBuffer.get(index), visibleImage);
         }
 
         return visibleImage;
     }
 
+    /**
+     * Resize the permanent image buffer to the specified dimension, leaving any existing permanent image in place at
+     * (0, 0).
+     *
+     * The "permanent" image represents all the composited changes that have fallen out of the undo/redo buffer and can
+     * no longer be undone.
+     *
+     * @param dim The new dimension of the permanent image buffer.
+     */
     private void resizePermanent(Dimension dim) {
         BufferedImage newPerm = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
         if (permanent != null) {
@@ -213,5 +228,35 @@ public class JMonetCanvas extends AbstractPaintCanvas {
             g.dispose();
         }
         permanent = newPerm;
+    }
+
+    /**
+     * Draws the source image atop the existing destination image using the provided {@link AlphaComposite} mode.
+     * @param source The source image to draw
+     * @param destination The destination image on which to draw the source
+     * @param composite The alpha-composite mode to use.
+     */
+    private void overlayImage(BufferedImage source, BufferedImage destination, AlphaComposite composite) {
+        Graphics2D g2d = (Graphics2D) destination.getGraphics();
+        g2d.setComposite(composite);
+        g2d.drawImage(source, 0, 0, null);
+        g2d.dispose();
+    }
+
+    /**
+     * Draws a {@link ChangeSet} atop an existing image.
+     *
+     * @param changeSet The set of changes to be drawn
+     * @param destination The image on which to draw them
+     */
+    private void overlayChangeSet(ChangeSet changeSet, BufferedImage destination) {
+        Graphics2D g2d = (Graphics2D) destination.getGraphics();
+
+        for (int index = 0; index < changeSet.size(); index++) {
+            g2d.setComposite(changeSet.getComposite(index));
+            g2d.drawImage(changeSet.getImage(index), 0, 0, null);
+        }
+
+        g2d.dispose();
     }
 }

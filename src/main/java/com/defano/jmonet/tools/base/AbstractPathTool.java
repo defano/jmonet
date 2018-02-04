@@ -2,6 +2,7 @@ package com.defano.jmonet.tools.base;
 
 import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.tools.builder.PaintTool;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

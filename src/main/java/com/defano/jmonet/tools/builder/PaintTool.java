@@ -1,4 +1,4 @@
-package com.defano.jmonet.tools.base;
+package com.defano.jmonet.tools.builder;
 
 import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
@@ -33,6 +33,8 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     private Observable<Font> fontObservable = BehaviorSubject.createDefault(new Font("Courier", Font.PLAIN, 14));
     private Observable<Color> fontColorObservable = BehaviorSubject.createDefault(Color.BLACK);
     private Observable<Double> intensityObservable = BehaviorSubject.createDefault(0.1);
+    private Observable<Boolean> drawMultipleObservable = BehaviorSubject.createDefault(false);
+    private Observable<Boolean> drawCenteredObservable = BehaviorSubject.createDefault(false);
 
     public PaintTool(PaintToolType type) {
         this.type = type;
@@ -72,56 +74,80 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         // Nothing to do
     }
 
+    /**
+     * Gets the {@link AlphaComposite} mode used when committing images produced by this tool onto the canvas.
+     * @return The alpha composite mode.
+     */
     public AlphaComposite getComposite() {
         return composite;
     }
 
+    /**
+     * Sets the {@link AlphaComposite} mode used when committing images produced by this tool onto the canvas.
+     * @param composite The alpha composite mode.
+     */
     public void setComposite(AlphaComposite composite) {
         this.composite = composite;
     }
 
+    /**
+     * Gets the type of this tool.
+     * @return The tool type.
+     */
     public PaintToolType getToolType() {
         return this.type;
     }
 
+    /**
+     * Gets the canvas on which this tool is currently painting, or null, if not active.
+     * @return The canvas this tool is painting on, or null
+     */
     protected PaintCanvas getCanvas() {
         return canvas;
     }
 
-    public void setFontColorObservable(Observable<Color> fontColorObservable) {
+    void setFontColorObservable(Observable<Color> fontColorObservable) {
         this.fontColorObservable = fontColorObservable;
     }
 
-    public void setStrokePaintObservable(Observable<Paint> strokePaintObservable) {
+    void setStrokePaintObservable(Observable<Paint> strokePaintObservable) {
         if (strokePaintObservable != null) {
             this.strokePaintObservable = strokePaintObservable;
         }
     }
 
-    public void setStrokeObservable(Observable<Stroke> strokeObservable) {
+    void setStrokeObservable(Observable<Stroke> strokeObservable) {
         if (strokeObservable != null) {
             this.strokeObservable = strokeObservable;
         }
     }
 
-    public void setShapeSidesObservable(Observable<Integer> shapeSidesObservable) {
+    void setShapeSidesObservable(Observable<Integer> shapeSidesObservable) {
         if (shapeSidesObservable != null) {
             this.shapeSidesObservable = shapeSidesObservable;
         }
     }
 
-    public void setFontObservable(Observable<Font> fontObservable) {
+    void setFontObservable(Observable<Font> fontObservable) {
         if (fontObservable != null) {
             this.fontObservable = fontObservable;
         }
     }
 
-    public void setFillPaintObservable(Observable<Optional<Paint>> fillPaintObservable) {
+    void setFillPaintObservable(Observable<Optional<Paint>> fillPaintObservable) {
         this.fillPaintObservable = fillPaintObservable;
     }
 
-    public void setIntensityObservable(Observable<Double> intensityObservable) {
+    void setIntensityObservable(Observable<Double> intensityObservable) {
         this.intensityObservable = intensityObservable;
+    }
+
+    void setDrawMultipleObservable(Observable<Boolean> drawMultipleObservable) {
+        this.drawMultipleObservable = drawMultipleObservable;
+    }
+
+    void setDrawCenteredObservable(Observable<Boolean> drawCenteredObservable) {
+        this.drawCenteredObservable = drawCenteredObservable;
     }
 
     public Stroke getStroke() {
@@ -176,6 +202,14 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
 
     public Observable<Double> getIntensityObservable() {
         return intensityObservable;
+    }
+
+    public Observable<Boolean> getDrawCenteredObservable() {
+        return drawCenteredObservable;
+    }
+
+    public Observable<Boolean> getDrawMultipleObservable() {
+        return drawMultipleObservable;
     }
 
     public Cursor getToolCursor() {

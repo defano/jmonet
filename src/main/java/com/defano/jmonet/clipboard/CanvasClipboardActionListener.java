@@ -6,6 +6,9 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * A listener of clipboard-related actions (cut, copy and paste).
+ */
 public class CanvasClipboardActionListener implements ActionListener {
 
     private final CanvasFocusDelegate delegate;

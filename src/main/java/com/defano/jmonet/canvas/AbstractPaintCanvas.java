@@ -89,24 +89,6 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
         invalidateCanvas();
     }
 
-    protected void applyImage(BufferedImage source, BufferedImage destination, AlphaComposite composite) {
-        Graphics2D g2d = (Graphics2D) destination.getGraphics();
-        g2d.setComposite(composite);
-        g2d.drawImage(source, 0, 0, null);
-        g2d.dispose();
-    }
-
-    protected void applyChangeSet(ChangeSet changeSet, BufferedImage destination) {
-        Graphics2D g2d = (Graphics2D) destination.getGraphics();
-
-        for (int index = 0; index < changeSet.size(); index++) {
-            g2d.setComposite(changeSet.getComposite(index));
-            g2d.drawImage(changeSet.getImage(index), 0, 0, null);
-        }
-
-        g2d.dispose();
-    }
-
     /** {@inheritDoc} */
     @Override
     public Point convertPointToImage(Point p) {

@@ -3,7 +3,6 @@ package com.defano.jmonet.tools.builder;
 import com.defano.jmonet.canvas.JFXPaintCanvasNode;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.PaintTool;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -25,6 +24,8 @@ public class PaintToolBuilder {
     private Observable<Font> fontObservable;
     private Observable<Color> fontColorObservable;
     private Observable<Double> intensityObservable;
+    private Observable<Boolean> drawMultipleObservable;
+    private Observable<Boolean> drawCenteredObservable;
 
     private PaintToolBuilder(PaintToolType toolType) {
         this.type = toolType;
@@ -114,6 +115,26 @@ public class PaintToolBuilder {
         return this;
     }
 
+    public PaintToolBuilder withDrawCenteredObservable(Observable<Boolean> drawCenteredObservable) {
+        this.drawCenteredObservable = drawCenteredObservable;
+        return this;
+    }
+
+    public PaintToolBuilder withDrawCentered(boolean drawCentered) {
+        this.drawCenteredObservable = BehaviorSubject.createDefault(drawCentered);
+        return this;
+    }
+
+    public PaintToolBuilder withDrawMultipleObservable(Observable<Boolean> drawMultipleObservable) {
+        this.drawMultipleObservable = drawMultipleObservable;
+        return this;
+    }
+
+    public PaintToolBuilder withDrawMultiple(boolean drawMultiple) {
+        this.drawMultipleObservable = BehaviorSubject.createDefault(drawMultiple);
+        return this;
+    }
+
     public PaintTool build() {
 
         PaintTool selectedTool = type.getToolInstance();
@@ -144,6 +165,14 @@ public class PaintToolBuilder {
 
         if (intensityObservable != null) {
             selectedTool.setIntensityObservable(intensityObservable);
+        }
+
+        if (drawMultipleObservable != null) {
+            selectedTool.setDrawMultipleObservable(drawMultipleObservable);
+        }
+
+        if (drawCenteredObservable != null) {
+            selectedTool.setDrawCenteredObservable(drawCenteredObservable);
         }
 
         if (canvas != null) {

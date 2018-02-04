@@ -5,6 +5,9 @@ import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * A provider of clipboard image transfers.
+ */
 public interface CanvasTransferDelegate {
 
     /**

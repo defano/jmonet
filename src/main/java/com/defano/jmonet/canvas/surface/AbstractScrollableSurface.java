@@ -16,6 +16,10 @@ public abstract class AbstractScrollableSurface extends JScrollPane implements S
         getViewport().setOpaque(false);
     }
 
+    /**
+     * Sets the {@link PaintableSurface} to be scrolled within this component.
+     * @param surface The {@link PaintableSurface} to scroll.
+     */
     protected void setSurface(PaintableSurface surface) {
         this.surface = surface;
 
@@ -26,6 +30,10 @@ public abstract class AbstractScrollableSurface extends JScrollPane implements S
         revalidate();
     }
 
+    /**
+     * Gets the {@link PaintableSurface} comprising the viewport of this scroll pane.
+     * @return The viewport
+     */
     public PaintableSurface getSurface() {
         return surface;
     }

@@ -1,6 +1,7 @@
 package com.defano.jmonet.tools.base;
 
 import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.tools.builder.PaintTool;
 import com.defano.jmonet.tools.util.Geometry;
 
 import java.awt.*;

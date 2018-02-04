@@ -10,6 +10,9 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+/**
+ * A {@link TransferHandler} for JMonet canvas images.
+ */
 public class CanvasTransferHandler extends TransferHandler {
 
     private final CanvasTransferDelegate delegate;
@@ -99,7 +102,7 @@ public class CanvasTransferHandler extends TransferHandler {
 
         /** {@inheritDoc} */
         @Override
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
             if (flavor == DataFlavor.imageFlavor) {
                 return image;
             }

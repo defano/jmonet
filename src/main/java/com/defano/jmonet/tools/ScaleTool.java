@@ -22,7 +22,7 @@ public class ScaleTool extends AbstractTransformTool {
     @Override
     protected void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         if (isShiftDown) {
-            newPosition = Geometry.extrapolate(originalQuad().getBottomRightTopLeftLine(), quadrilateral.getBottomRight(), newPosition);
+            newPosition = Geometry.extrapolate(originalQuad().getBottomRightTopLeftDiagonal(), quadrilateral.getBottomRight(), newPosition);
         }
 
         quadrilateral.getTopLeft().setLocation(newPosition);
@@ -45,7 +45,7 @@ public class ScaleTool extends AbstractTransformTool {
     @Override
     protected void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         if (isShiftDown) {
-            newPosition = Geometry.extrapolate(originalQuad().getBottomLeftTopRightLine(), quadrilateral.getBottomLeft(), newPosition);
+            newPosition = Geometry.extrapolate(originalQuad().getBottomLeftTopRightDiagonal(), quadrilateral.getBottomLeft(), newPosition);
         }
 
         quadrilateral.getTopRight().setLocation(newPosition);
@@ -68,7 +68,7 @@ public class ScaleTool extends AbstractTransformTool {
     @Override
     protected void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         if (isShiftDown) {
-            newPosition = Geometry.extrapolate(originalQuad().getTopRightBottomLeftLine(), quadrilateral.getTopRight(), newPosition);
+            newPosition = Geometry.extrapolate(originalQuad().getTopRightBottomLeftDiagonal(), quadrilateral.getTopRight(), newPosition);
         }
 
         quadrilateral.getBottomLeft().setLocation(newPosition);
@@ -91,7 +91,7 @@ public class ScaleTool extends AbstractTransformTool {
     @Override
     protected void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         if (isShiftDown) {
-            newPosition = Geometry.extrapolate(originalQuad().getTopLeftBottomRightLine(), quadrilateral.getTopLeft(), newPosition);
+            newPosition = Geometry.extrapolate(originalQuad().getTopLeftBottomRightDiagonal(), quadrilateral.getTopLeft(), newPosition);
         }
 
         quadrilateral.getBottomRight().setLocation(newPosition);

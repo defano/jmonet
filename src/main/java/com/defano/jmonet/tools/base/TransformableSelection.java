@@ -1,6 +1,10 @@
 package com.defano.jmonet.tools.base;
 
 import com.defano.jmonet.algo.*;
+import com.defano.jmonet.algo.dither.*;
+import com.defano.jmonet.algo.dither.quant.ColorReductionQuantizer;
+import com.defano.jmonet.algo.dither.quant.GrayscaleQuantizer;
+import com.defano.jmonet.algo.dither.quant.MonochromaticQuantizer;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -28,59 +32,69 @@ public interface TransformableSelection extends MutableSelection {
      *
      * @param colorDepth The maximum number of unique colors that should appear in the resultant selection image; zero
      *                   produces a black and white (monochrome) image. Note that color depth should be cubic; if
-     *                   the cubed root of colorDepth is not an integer, the cube of the the floor of the cubed root
+     *                   the cubed root of colorDepth is not an integer, the cube of the floor of the cubed root
      *                   will be assumed.
+     * @param ditherer The dithering algorithm to use, for example, {@link FloydSteinbergDitherer}.
      */
-    default void reduceColor(int colorDepth) {
-        BufferedImage source = getSelectedImage();
-        int channelDepth = (int) Math.floor(Math.cbrt(colorDepth));
+    default void reduceColor(int colorDepth, Ditherer ditherer) {
+        if (hasSelection()) {
+            BufferedImage source = getSelectedImage();
+            int channelDepth = (int) Math.floor(Math.cbrt(colorDepth));
 
-        BufferedImage reduced = colorDepth == 0 ?
-                FloydSteinberg.dither(source, new MonochromaticQuantizer()) :
-                FloydSteinberg.dither(source, new ColorReductionQuantizer(channelDepth));
+            BufferedImage reduced = colorDepth == 0 ?
+                    ditherer.dither(source, new MonochromaticQuantizer()) :
+                    ditherer.dither(source, new ColorReductionQuantizer(channelDepth));
 
-        setSelectedImage(reduced);
-        setDirty();
+            setSelectedImage(reduced);
+            setDirty();
+        }
     }
 
     /**
      * Converts the current selection to a gray-scale image containing no more than the specified number of gray shades.
-     * See {@link #reduceColor(int)} for details about palette selection and dithering.
+     * See {@link #reduceColor(int, Ditherer)} for details about palette selection and dithering.
      *
      * @param grayDepth The maximum number of unique shades of gray in which to render the given image; zero produces
      *                  a black and white (monochrome) image.
+     * @param ditherer The dithering algorithm to use, for example {@link FloydSteinbergDitherer}.
      */
-    default void reduceGreyscale(int grayDepth) {
-        BufferedImage source = getSelectedImage();
+    default void reduceGreyscale(int grayDepth, Ditherer ditherer) {
+        if (hasSelection()) {
+            BufferedImage source = getSelectedImage();
 
-        BufferedImage reduced = grayDepth == 0 ?
-                FloydSteinberg.dither(source, new MonochromaticQuantizer()) :
-                FloydSteinberg.dither(source, new GrayscaleQuantizer(grayDepth));
+            BufferedImage reduced = grayDepth == 0 ?
+                    ditherer.dither(source, new MonochromaticQuantizer()) :
+                    ditherer.dither(source, new GrayscaleQuantizer(grayDepth));
 
-        setSelectedImage(reduced);
-        setDirty();
+            setSelectedImage(reduced);
+            setDirty();
+        }
     }
 
     /**
      * Rotates the image 90 degrees counter-clockwise.
      */
     default void rotateLeft() {
-        int width = getSelectedImage().getWidth();
-        int height = getSelectedImage().getHeight();
+        if (hasSelection()) {
+            int width = getSelectedImage().getWidth();
+            int height = getSelectedImage().getHeight();
 
-        applyTransform(Transform.rotateLeft(width, height));
-        adjustSelectionBounds((width - height) / 2, -(width - height) / 2);
+            applyTransform(Transform.rotateLeft(width, height));
+            adjustSelectionBounds((width - height) / 2, -(width - height) / 2);
+        }
     }
 
     /**
      * Rotates the image 90 degrees clockwise.
      */
     default void rotateRight() {
-        int width = getSelectedImage().getWidth();
-        int height = getSelectedImage().getHeight();
+        if (hasSelection()) {
+            int width = getSelectedImage().getWidth();
+            int height = getSelectedImage().getHeight();
 
-        applyTransform(Transform.rotateRight(width, height));
-        adjustSelectionBounds((width - height) / 2, -(width - height) / 2);
+            applyTransform(Transform.rotateRight(width, height));
+            adjustSelectionBounds((width - height) / 2, -(width - height) / 2);
+        }
     }
 
     /**
@@ -88,9 +102,10 @@ public interface TransformableSelection extends MutableSelection {
      * will move the right side and vice versa.
      */
     default void flipHorizontal() {
-        int width = getSelectedImage().getWidth();
-
-        applyTransform(Transform.flipHorizontalTransform(width));
+        if (hasSelection()) {
+            int width = getSelectedImage().getWidth();
+            applyTransform(Transform.flipHorizontalTransform(width));
+        }
     }
 
     /**
@@ -98,9 +113,10 @@ public interface TransformableSelection extends MutableSelection {
      * move to the bottom and vice versa.
      */
     default void flipVertical() {
-        int height = getSelectedImage().getHeight();
-
-        applyTransform(Transform.flipVerticalTransform(height));
+        if (hasSelection()) {
+            int height = getSelectedImage().getHeight();
+            applyTransform(Transform.flipVerticalTransform(height));
+        }
     }
 
     /**
@@ -111,8 +127,10 @@ public interface TransformableSelection extends MutableSelection {
      *              positive numbers brighten it.
      */
     default void adjustBrightness(int delta) {
-        Transform.adjustBrightness(getSelectedImage(), delta);
-        setDirty();
+        if (hasSelection()) {
+            Transform.adjustBrightness(getSelectedImage(), delta);
+            setDirty();
+        }
     }
 
     /**
@@ -122,16 +140,20 @@ public interface TransformableSelection extends MutableSelection {
      *              more transparent, positive numbers make the image more opaque.
      */
     default void adjustTransparency(int delta) {
-        Transform.adjustTransparency(getSelectedImage(), delta);
-        setDirty();
+        if (hasSelection()) {
+            Transform.adjustTransparency(getSelectedImage(), delta);
+            setDirty();
+        }
     }
 
     /**
      * Inverts the color of the image while preserving the alpha transparency.
      */
     default void invert() {
-        Transform.invert(getSelectedImage());
-        setDirty();
+        if (hasSelection()) {
+            Transform.invert(getSelectedImage());
+            setDirty();
+        }
     }
 
     /**

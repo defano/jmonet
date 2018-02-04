@@ -1,26 +1,38 @@
-package com.defano.jmonet.algo;
+package com.defano.jmonet.algo.dither;
+
+import com.defano.jmonet.algo.Transform;
+import com.defano.jmonet.algo.dither.quant.QuantizationFunction;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.HashSet;
 
-public class FloydSteinberg {
+/**
+ * Abstract base class for implementers of {@link Ditherer} that operate on 24-bit, true color
+ * ARGB images.
+ */
+public abstract class AbstractDitherer implements Ditherer {
+
+    private double[][][] matrix;
 
     /**
-     * An implementation of the Floyd-Steinberg dithering algorithm.
+     * Dithers a given quantization error for a specified pixel.
      *
-     * This method applies the given quantization function (which performs some transform on each pixel in the given
-     * source image), and diffuses the quantization error across the image.
+     * Most implementations of this method should distribute error by invoking
+     * {@link #distributeError(int, int, double, double, double, double)} one or more times.
      *
-     * See https://en.wikipedia.org/wiki/Floyd–Steinberg_dithering for a description of FS-dithering.
-     *
-     * @param source The source image to quantize and dither
-     * @param quantizer The quantization function to apply and whose error should be dithered
-     * @return A new image equal to the source image with the quantization function applied and dithered
+     * @param x The x-coordinate of the pixel to dither
+     * @param y The y-coordinate of the pixel to dither
+     * @param qer The quantization error in the red color channel
+     * @param qeg The quantization error in the green color channel
+     * @param qeb The quantization error in the blue color channel
      */
-    public static BufferedImage dither(BufferedImage source, QuantizationFunction quantizer) {
+    public abstract void ditherPixel(int x, int y, double qer, double qeg, double qeb);
 
-        double[][][] matrix = toColorCubeMatrix(source);
+    /** {@inheritDoc} */
+    @Override
+    public synchronized BufferedImage dither(BufferedImage source, QuantizationFunction quantizer) {
+        toColorCubeMatrix(source);
 
         for (int y = 0; y < matrix.length; y++) {
             for (int x = 0; x < matrix[y].length; x++) {
@@ -35,14 +47,11 @@ public class FloydSteinberg {
                 double qeg = oldPixel[1] - newPixel[1];
                 double qeb = oldPixel[2] - newPixel[2];
 
-                ditherPixel(matrix, x+1, y, qer, qeg, qeb, 7.0/16.0);
-                ditherPixel(matrix, x-1, y+1, qer, qeg, qeb, 3.0/16.0);
-                ditherPixel(matrix, x, y+1, qer, qeg, qeb, 5.0/16.0);
-                ditherPixel(matrix, x+1, y+1, qer, qeg, qeb, 1.0/16.0);
+                ditherPixel(x, y, qer, qeg, qeb);
             }
         }
 
-        return fromColorCubeMatrix(matrix);
+        return fromColorCubeMatrix();
     }
 
     /**
@@ -76,9 +85,8 @@ public class FloydSteinberg {
      * The fourth item is the pixel's alpha channel represented as 0..255
      *
      * @param image The image to convert into a color cube matrix
-     * @return A three dimensional array representing the ARGB value of each pixel in the source image.
      */
-    private static double[][][] toColorCubeMatrix(BufferedImage image) {
+    private void toColorCubeMatrix(BufferedImage image) {
 
         // Source needs to be ARGB type; make a copy to assure constraint is met
         image = Transform.argbCopy(image);
@@ -97,17 +105,16 @@ public class FloydSteinberg {
             }
         }
 
-        return matrix;
+        this.matrix = matrix;
     }
 
     /**
      * Converts a color cube matrix into a BufferedImage. See {@link #toColorCubeMatrix(BufferedImage)} for the
      * format details of the color cube matrix.
      *
-     * @param matrix The matrix to convert into an image
      * @return The BufferedImage resulting from the given color cube matrix
      */
-    private static BufferedImage fromColorCubeMatrix(double[][][] matrix) {
+    private BufferedImage fromColorCubeMatrix() {
         BufferedImage restored = new BufferedImage(matrix[0].length, matrix.length, BufferedImage.TYPE_INT_ARGB);
         WritableRaster raster = restored.getRaster();
 
@@ -131,11 +138,25 @@ public class FloydSteinberg {
         return restored;
     }
 
-    private static void ditherPixel(double[][][] matrix, int x, int y, double qer, double qeg, double qeb, double fraction) {
+    /**
+     * Distributes a fraction of the quantization error to another pixel in the raster. Distribution
+     * of quantization error adds (fraction * error) to the pixel's existing color channel values.
+     *
+     * Has no effect if the specified pixel is not in the bounds of the current image.
+     *
+     * @param x The x-coordinate of the pixel receiving the distributed quantization error
+     * @param y The y-coordinate of the pixel receiving the distributed quantization error
+     * @param qer The red channel quantization error
+     * @param qeg The green channel quantization error
+     * @param qeb The blue channel quantization error
+     * @param fraction The fraction of each channel's error to be distributed to this pixel.
+     */
+    protected void distributeError(int x, int y, double qer, double qeg, double qeb, double fraction) {
         if (y >= 0 && y < matrix.length && x >= 0 && x < matrix[y].length) {
             matrix[y][x][0] += qer * fraction;
             matrix[y][x][1] += qeg * fraction;
             matrix[y][x][2] += qeb * fraction;
         }
     }
+
 }

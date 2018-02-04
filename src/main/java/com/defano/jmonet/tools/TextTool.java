@@ -3,7 +3,7 @@ package com.defano.jmonet.tools;
 
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.PaintTool;
+import com.defano.jmonet.tools.builder.PaintTool;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;

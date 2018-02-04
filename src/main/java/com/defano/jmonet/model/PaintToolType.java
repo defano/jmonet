@@ -1,7 +1,7 @@
 package com.defano.jmonet.model;
 
 import com.defano.jmonet.tools.*;
-import com.defano.jmonet.tools.base.PaintTool;
+import com.defano.jmonet.tools.builder.PaintTool;
 
 /**
  * An enumeration of paint tools.
@@ -38,6 +38,10 @@ public enum PaintToolType {
         this.toolClass = clazz;
     }
 
+    /**
+     * Creates a new instance of this type of {@link PaintTool}.
+     * @return A new {@link PaintTool}.
+     */
     public PaintTool getToolInstance() {
         try {
             return toolClass.newInstance();
@@ -53,11 +57,11 @@ public enum PaintToolType {
      * @return True if the tool draws shapes; false otherwise.
      */
     public boolean isShapeTool() {
-        return  this == RECTANGLE       ||
+        return this == RECTANGLE ||
                 this == ROUND_RECTANGLE ||
-                this == OVAL            ||
-                this == POLYGON         ||
-                this == SHAPE           ||
+                this == OVAL ||
+                this == POLYGON ||
+                this == SHAPE ||
                 this == FREEFORM;
     }
 }

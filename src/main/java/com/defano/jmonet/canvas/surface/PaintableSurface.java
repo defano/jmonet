@@ -10,7 +10,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * A Swing component that can be painted on.
+ */
 public class PaintableSurface extends JComponent implements CompositeSurface, ObservableSurface, KeyListener, MouseListener, MouseMotionListener, KeyEventDispatcher {
 
     private ScalableLayeredPainting painting;
@@ -29,8 +31,10 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
     }
 
+    /**
+     * Unregisters listeners and removes all child components making this surface available for garbage collection.
+     */
     public void dispose() {
-
         KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(this);
         removeAll();
     }
@@ -146,10 +150,18 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
         }
     }
 
+    /**
+     * Sets the painting displayed on this surface.
+     * @param painting The painting to display.
+     */
     public void setPainting(ScalableLayeredPainting painting) {
         this.painting = painting;
     }
 
+    /**
+     * Gets the painting displayed on this surface.
+     * @return The painting displayed on this surface.
+     */
     public ScalableLayeredPainting getPainting() {
         return painting;
     }

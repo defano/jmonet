@@ -2,9 +2,13 @@ package com.defano.jmonet.algo;
 
 import Jama.Matrix;
 import com.defano.jmonet.model.FlexQuadrilateral;
+import com.defano.jmonet.model.Quadrilateral;
 
 import java.awt.image.BufferedImage;
 
+/**
+ * A utility for performing homography and rubber-sheet image projections.
+ */
 public class Projection {
 
     /**
@@ -20,12 +24,12 @@ public class Projection {
      * @param projection The geometry on which to project the image
      * @return The transformed image
      */
-    public static BufferedImage project(BufferedImage source, FlexQuadrilateral projection) {
+    public static BufferedImage project(BufferedImage source, Quadrilateral projection) {
 
         double x1, y1, x2, y2, x3, y3, x4, y4, X1, Y1, X2, Y2, X3, Y3, X4, Y4;
 
-        int imageWidth = projection.width();
-        int imageHeight = projection.height();
+        int imageWidth = projection.getWidth();
+        int imageHeight = projection.getHeight();
 
         // Destination image geometry (defined by projection)
         x1 = Math.abs(projection.getTopLeft().getX());
@@ -103,12 +107,12 @@ public class Projection {
      * @param projection The geometry on which to project the image
      * @return The transformed image
      */
-    public static BufferedImage rubberSheet(BufferedImage source, FlexQuadrilateral projection) {
+    public static BufferedImage rubberSheet(BufferedImage source, Quadrilateral projection) {
 
         double x1, y1, x2, y2, x3, y3, x4, y4, X1, Y1, X2, Y2, X3, Y3, X4, Y4;
 
-        int sourceWidth = projection.width();
-        int sourceHeight = projection.height();
+        int sourceWidth = projection.getWidth();
+        int sourceHeight = projection.getHeight();
 
         // Destination image geometry (defined by projection)
         x1 = Math.abs(projection.getTopLeft().getX());

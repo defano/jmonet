@@ -1,9 +1,8 @@
 package com.defano.jmonet.tools.base;
 
 import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.tools.builder.PaintTool;
 import com.defano.jmonet.tools.util.Geometry;
-import io.reactivex.Observable;
-import io.reactivex.subjects.BehaviorSubject;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -16,9 +15,6 @@ import java.awt.event.MouseEvent;
  * larger of the two dimensions defined by the mouse location.
  */
 public abstract class AbstractBoundsTool extends PaintTool {
-
-    private Observable<Boolean> drawMultiple = BehaviorSubject.createDefault(false);
-    private Observable<Boolean> drawCentered = BehaviorSubject.createDefault(false);
 
     protected Point initialPoint;
     protected Point currentPoint;
@@ -61,13 +57,13 @@ public abstract class AbstractBoundsTool extends PaintTool {
     public void mouseDragged(MouseEvent e, Point imageLocation) {
         currentPoint = imageLocation;
 
-        if (!drawMultiple.blockingFirst()) {
+        if (!getDrawMultipleObservable().blockingFirst()) {
             getCanvas().clearScratch();
         }
 
         Point originPoint = new Point(initialPoint);
 
-        if (drawCentered.blockingFirst()) {
+        if (getDrawCenteredObservable().blockingFirst()) {
             int height = currentPoint.y - initialPoint.y;
             int width = currentPoint.x - initialPoint.x;
 
@@ -101,21 +97,5 @@ public abstract class AbstractBoundsTool extends PaintTool {
     @Override
     public void mouseMoved(MouseEvent e, Point imageLocation) {
         setToolCursor(getToolCursor());
-    }
-
-    public Observable<Boolean> getDrawMultiple() {
-        return drawMultiple;
-    }
-
-    public void setDrawMultiple(Observable<Boolean> drawMultiple) {
-        this.drawMultiple = drawMultiple;
-    }
-
-    public Observable<Boolean> getDrawCentered() {
-        return drawCentered;
-    }
-
-    public void setDrawCentered(Observable<Boolean> drawCentered) {
-        this.drawCentered = drawCentered;
     }
 }

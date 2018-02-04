@@ -5,6 +5,7 @@ import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.RotateTool;
+import com.defano.jmonet.tools.builder.PaintTool;
 import com.defano.jmonet.tools.util.Geometry;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
@@ -514,7 +515,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
     /** {@inheritDoc} */
     @Override
-    public void onAntsMoved() {
+    public void onAntsMoved(Stroke ants) {
         if (hasSelection()) {
             redrawSelection();
         }

@@ -9,7 +9,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 
 /**
- * A utility class providing various affine transform routines supported by the paint tools.
+ * A utility for performing various affine transform routines supported by the paint tools.
  */
 public class Transform {
 
