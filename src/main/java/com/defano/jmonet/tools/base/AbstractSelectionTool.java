@@ -219,10 +219,16 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
                     Math.min(selectionBounds.getBounds().height, maskedSelection.getHeight() - selectionBounds.getBounds().y)
             );
 
-            Graphics2D g2d = (Graphics2D) getSelectedImage().getGraphics();
+            BufferedImage currentSelection = getSelectedImage();
+            BufferedImage newSelection = new BufferedImage(currentSelection.getWidth(), currentSelection.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+            Graphics2D g2d = (Graphics2D) newSelection.getGraphics();
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             g2d.drawImage(trimmedSelection, 0, 0, null);
+            g2d.drawImage(getSelectedImage(), 0, 0, null);
             g2d.dispose();
+
+            setSelectedImage(newSelection);
 
             eraseSelectionFromCanvas();
         }
@@ -340,11 +346,14 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      */
     protected void finishSelection() {
         if (hasSelection()) {
+            Point selectedLocation = getSelectedImageLocation();
+            resetSelection();
+
             getCanvas().clearScratch();
             BufferedImage scratch = getCanvas().getScratchImage();
 
             Graphics2D g2d = (Graphics2D) scratch.getGraphics();
-            g2d.drawImage(selectedImage.getValue().get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
+            g2d.drawImage(selectedImage.getValue().get(), selectedLocation.x, selectedLocation.y, null);
             g2d.dispose();
 
             // Nothing to commit/change if user hasn't moved (dirtied) the selection
