@@ -28,9 +28,8 @@ public class AirbrushTool extends AbstractPathTool {
     protected void addPoint(Graphics2D g, Stroke stroke, Paint fillPaint, Point point) {
         g.setStroke(stroke);
         g.setPaint(fillPaint);
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.1f));
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getIntensityObservable().blockingFirst().floatValue()));
         g.draw(new Line2D.Float(lastPoint, point));
-
         lastPoint = point;
     }
 }

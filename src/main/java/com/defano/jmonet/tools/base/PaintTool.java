@@ -32,6 +32,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     private Observable<Integer> shapeSidesObservable = BehaviorSubject.createDefault(5);
     private Observable<Font> fontObservable = BehaviorSubject.createDefault(new Font("Courier", Font.PLAIN, 14));
     private Observable<Color> fontColorObservable = BehaviorSubject.createDefault(Color.BLACK);
+    private Observable<Double> intensityObservable = BehaviorSubject.createDefault(0.1);
 
     public PaintTool(PaintToolType type) {
         this.type = type;
@@ -119,6 +120,10 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         this.fillPaintObservable = fillPaintObservable;
     }
 
+    public void setIntensityObservable(Observable<Double> intensityObservable) {
+        this.intensityObservable = intensityObservable;
+    }
+
     public Stroke getStroke() {
         return strokeObservable.blockingFirst();
     }
@@ -167,6 +172,10 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
 
     public Observable<Color> getFontColorObservable() {
         return fontColorObservable;
+    }
+
+    public Observable<Double> getIntensityObservable() {
+        return intensityObservable;
     }
 
     public Cursor getToolCursor() {

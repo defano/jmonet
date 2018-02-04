@@ -24,6 +24,7 @@ public class PaintToolBuilder {
     private Observable<Integer> shapeSidesObservable;
     private Observable<Font> fontObservable;
     private Observable<Color> fontColorObservable;
+    private Observable<Double> intensityObservable;
 
     private PaintToolBuilder(PaintToolType toolType) {
         this.type = toolType;
@@ -103,6 +104,16 @@ public class PaintToolBuilder {
         return this;
     }
 
+    public PaintToolBuilder withIntensity(double intensity) {
+        this.intensityObservable = BehaviorSubject.createDefault(intensity);
+        return this;
+    }
+
+    public PaintToolBuilder withIntensityObservable(Observable<Double> intensityObservable) {
+        this.intensityObservable = intensityObservable;
+        return this;
+    }
+
     public PaintTool build() {
 
         PaintTool selectedTool = type.getToolInstance();
@@ -129,6 +140,10 @@ public class PaintToolBuilder {
 
         if (fontColorObservable != null) {
             selectedTool.setFontColorObservable(fontColorObservable);
+        }
+
+        if (intensityObservable != null) {
+            selectedTool.setIntensityObservable(intensityObservable);
         }
 
         if (canvas != null) {
