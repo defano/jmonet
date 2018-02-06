@@ -348,20 +348,20 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     protected void finishSelection() {
         if (hasSelection()) {
             Point selectedLocation = getSelectedImageLocation();
-            resetSelection();
 
-            getCanvas().clearScratch();
-            BufferedImage scratch = getCanvas().getScratchImage();
-
-            Graphics2D g2d = (Graphics2D) scratch.getGraphics();
+            // Make a "local" scratch buffer and copy the selected image onto it. Why bother? Because using the canvas'
+            // scratch buffer results in a race condition... the onAntsMarched method may fire while we're preparing
+            // change set and draw marching ants onto our committed image (persisting the dotted-line border).
+            BufferedImage localScratch = new BufferedImage(getCanvas().getScratchImage().getWidth(), getCanvas().getScratchImage().getWidth(), BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = localScratch.createGraphics();
             g2d.drawImage(selectedImage.getValue().get(), selectedLocation.x, selectedLocation.y, null);
             g2d.dispose();
 
             // Nothing to commit/change if user hasn't moved (dirtied) the selection
             if (selectionChange != null) {
-                selectionChange.addChange(scratch, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+                selectionChange.addChange(localScratch, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             } else {
-                getCanvas().commit();
+                getCanvas().commit(new ChangeSet(localScratch));
             }
 
             clearSelection();
@@ -373,7 +373,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     public void redrawSelection() {
         getCanvas().clearScratch();
 
-        if (isDirty()) {
+        if (isDirty() && hasSelection()) {
             Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
             g.drawImage(selectedImage.getValue().get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
             g.dispose();

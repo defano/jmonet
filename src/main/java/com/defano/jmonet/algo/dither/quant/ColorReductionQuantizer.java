@@ -1,12 +1,12 @@
 package com.defano.jmonet.algo.dither.quant;
 
 /**
- * Quantizes (reduces) an 24-bit, RGB-encoded color value to a reduced palette where the total number
- * of unique color values cannot not exceed a user-specified count.
+ * Quantizes (reduces) a 24-bit, RGB-encoded color value to a reduced palette where the total number
+ * of unique color values cannot not exceed a specified count.
  *
- * This quantizer provides a trivial, equal distribution of color values. It does not attempt to
- * analyze an image and generate a reduced palette optimized for the color distribution of the
- * source image.
+ * This class implements a naive color quantization algorithm that does not optimize the reduced color palette for the
+ * given image; it simply produces a new palette with colors evenly distributed in the color space, and maps colors
+ * in the input to the nearest color in the reduced palette.
  */
 public class ColorReductionQuantizer implements QuantizationFunction {
 

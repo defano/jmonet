@@ -37,7 +37,6 @@ public class RotateTool extends AbstractSelectionTool {
 
         // User clicked inside drag handle
         if (hasSelection() && dragHandle.contains(imageLocation)) {
-            rotating = true;
 
             if (centerpoint == null) {
                 originalImage = square(getSelectedImage());
@@ -46,6 +45,8 @@ public class RotateTool extends AbstractSelectionTool {
                 Rectangle selectionBounds = getSelectionOutline().getBounds();
                 centerpoint = new Point(selectionBounds.x + selectionBounds.width / 2, selectionBounds.y + selectionBounds.height / 2);
             }
+
+            rotating = true;
         }
 
         // User did not click inside a drag handle; delegate to superclass
@@ -59,7 +60,7 @@ public class RotateTool extends AbstractSelectionTool {
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
 
-        if (rotating) {
+        if (hasSelection() && rotating) {
             setDirty();     // Mutating the selected image
 
             // Calculate the rotation angle
@@ -91,6 +92,7 @@ public class RotateTool extends AbstractSelectionTool {
         centerpoint = null;
         dragLocation = null;
         originalImage = null;
+        rotating = false;
     }
 
     /** {@inheritDoc} */
@@ -114,8 +116,10 @@ public class RotateTool extends AbstractSelectionTool {
     /** {@inheritDoc} */
     @Override
     public void completeSelection(Point finalPoint) {
-        originalImage = square(getSelectedImage());
-        originalSelectionBounds = getSelectionOutline();
+        if (hasSelection()) {
+            originalImage = square(getSelectedImage());
+            originalSelectionBounds = getSelectionOutline();
+        }
     }
 
     /** {@inheritDoc} */
@@ -162,8 +166,9 @@ public class RotateTool extends AbstractSelectionTool {
      * @return A square image whose height and width are equal to the diagonal of the original image.
      */
     private BufferedImage square(BufferedImage image) {
+
         if (image == null) {
-            return null;
+            throw new IllegalArgumentException("Image to square cannot be null.");
         }
 
         int diagonal = (int) Math.ceil(Math.sqrt(image.getHeight() * image.getHeight() + image.getWidth() * image.getWidth()));

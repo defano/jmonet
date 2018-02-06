@@ -84,9 +84,10 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
 
     /** {@inheritDoc} */
     @Override
-    public void clearScratch() {
+    public BufferedImage clearScratch() {
         scratch = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
         invalidateCanvas();
+        return scratch;
     }
 
     /** {@inheritDoc} */

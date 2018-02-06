@@ -1,7 +1,7 @@
 package com.defano.jmonet.algo.dither.quant;
 
 /**
- * Quantizes (reduces) an 24-bit, RGB-encoded color value to a monochrome (black and white) palette
+ * Quantizes (reduces) a 24-bit, RGB-encoded color value to a monochrome (black and white) palette
  * where each pixel is either white (0xffffff) or black (0x000000).
  */
 public class MonochromaticQuantizer implements QuantizationFunction {

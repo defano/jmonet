@@ -104,9 +104,12 @@ public interface PaintCanvas extends ScalableLayeredPainting, Scrollable, Observ
     void setScratchImage(BufferedImage image);
 
     /**
-     * Creates a clean scratch buffer (replacing all pixels in the graphics context with transparent pixels).
+     * Creates and returns a clean scratch buffer (replacing all pixels in the graphics context with transparent
+     * pixels).
+     *
+     * @return The new, clean scratch buffer image.
      */
-    void clearScratch();
+    BufferedImage clearScratch();
 
     /**
      * Clears the canvas by filling the scratch buffer with all white pixels, and then committing this change with
