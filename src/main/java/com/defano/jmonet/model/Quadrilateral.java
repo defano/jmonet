@@ -1,6 +1,7 @@
 package com.defano.jmonet.model;
 
 import java.awt.*;
+import java.awt.geom.GeneralPath;
 
 /**
  * A four-sided, simple polygon (quadrilateral) with no restrictions on the length, angle or parallelness, except that
@@ -67,5 +68,22 @@ public interface Quadrilateral {
      * @return The right-most coordinate.
      */
     int getRight();
+
+
+    /**
+     * Gets a {@link Shape} from this Quadrilateral.
+     *
+     * @return The shape.
+     */
+    default Shape getShape() {
+        GeneralPath path = new GeneralPath();
+        path.moveTo(getTopLeft().getX(), getTopLeft().getY());
+        path.lineTo(getTopRight().getX(), getTopRight().getY());
+        path.lineTo(getBottomRight().getX(), getBottomRight().getY());
+        path.lineTo(getBottomLeft().getX(), getBottomLeft().getY());
+        path.closePath();
+
+        return path;
+    }
 
 }

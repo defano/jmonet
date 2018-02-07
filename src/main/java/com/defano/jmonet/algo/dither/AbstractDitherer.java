@@ -13,23 +13,37 @@ import java.util.HashSet;
  */
 public abstract class AbstractDitherer implements Ditherer {
 
+    /**
+     * A matrix providing a mapping of pixel coordinate to ARGB color value:
+     * <p>
+     * The first dimension is the pixel's y-coordinate
+     * The second dimension is the pixel's x-coordinate
+     * The third dimension is the pixel's four-value color cube, where:
+     * <p>
+     * The first item is the pixel's red channel color value represented as 0..1
+     * The second item is the pixel's green channel color value represented as 0..1
+     * The third item is the pixel's blue channel color value represented as 0..1
+     * The fourth item is the pixel's alpha channel represented as 0..255
+     */
     private double[][][] matrix;
 
     /**
      * Dithers a given quantization error for a specified pixel.
-     *
+     * <p>
      * Most implementations of this method should distribute error by invoking
      * {@link #distributeError(int, int, double, double, double, double)} one or more times.
      *
-     * @param x The x-coordinate of the pixel to dither
-     * @param y The y-coordinate of the pixel to dither
+     * @param x   The x-coordinate of the pixel to dither
+     * @param y   The y-coordinate of the pixel to dither
      * @param qer The quantization error in the red color channel
      * @param qeg The quantization error in the green color channel
      * @param qeb The quantization error in the blue color channel
      */
     public abstract void ditherPixel(int x, int y, double qer, double qeg, double qeb);
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public synchronized BufferedImage dither(BufferedImage source, QuantizationFunction quantizer) {
         toColorCubeMatrix(source);
@@ -74,11 +88,11 @@ public abstract class AbstractDitherer implements Ditherer {
 
     /**
      * Converts the given image into a three-dimension matrix of color cubes.
-     *
+     * <p>
      * The first dimension is the pixel's y-coordinate
      * The second dimension is the pixel's x-coordinate
      * the third dimension is the pixel's four-value color cube, where:
-     *
+     * <p>
      * The first item is the pixel's red channel color value represented as 0..1
      * The second item is the pixel's green channel color value represented as 0..1
      * The third item is the pixel's blue channel color value represented as 0..1
@@ -141,14 +155,14 @@ public abstract class AbstractDitherer implements Ditherer {
     /**
      * Distributes a fraction of the quantization error to another pixel in the raster. Distribution
      * of quantization error adds (fraction * error) to the pixel's existing color channel values.
-     *
+     * <p>
      * Has no effect if the specified pixel is not in the bounds of the current image.
      *
-     * @param x The x-coordinate of the pixel receiving the distributed quantization error
-     * @param y The y-coordinate of the pixel receiving the distributed quantization error
-     * @param qer The red channel quantization error
-     * @param qeg The green channel quantization error
-     * @param qeb The blue channel quantization error
+     * @param x        The x-coordinate of the pixel receiving the distributed quantization error
+     * @param y        The y-coordinate of the pixel receiving the distributed quantization error
+     * @param qer      The red channel quantization error
+     * @param qeg      The green channel quantization error
+     * @param qeb      The blue channel quantization error
      * @param fraction The fraction of each channel's error to be distributed to this pixel.
      */
     protected void distributeError(int x, int y, double qer, double qeg, double qeb, double fraction) {

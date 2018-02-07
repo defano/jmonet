@@ -103,8 +103,8 @@ public class Geometry {
      * Calculates the theta angle (in radians) formed between two lines represented by (origin, p1) and (origin, p2).
      *
      * @param origin The common point of both lines
-     * @param p1 The second point in line (origin, p1)
-     * @param p2 The second point in line (origin, p2)
+     * @param p1 The second point in line 1 (origin, p1)
+     * @param p2 The second point in line 2 (origin, p2)
      * @return The theta angle (in radians) between (origin, p1) and (origin, p2)
      */
     public static double theta(Point origin, Point p1, Point p2) {

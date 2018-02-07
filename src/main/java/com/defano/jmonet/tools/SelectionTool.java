@@ -2,6 +2,8 @@ package com.defano.jmonet.tools;
 
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
+import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
+import com.defano.jmonet.tools.selection.TransformableSelection;
 import com.defano.jmonet.tools.util.Geometry;
 
 import java.awt.*;
@@ -9,7 +11,7 @@ import java.awt.*;
 /**
  * A tool for drawing a rectangular selection on the canvas.
  */
-public class SelectionTool extends AbstractSelectionTool {
+public class SelectionTool extends AbstractSelectionTool implements TransformableSelection, TransformableCanvasSelection {
 
     private Rectangle selectionBounds;
 
@@ -54,7 +56,7 @@ public class SelectionTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    public void adjustSelectionBounds(int xDelta, int yDelta) {
+    public void translateSelection(int xDelta, int yDelta) {
         selectionBounds.setLocation(selectionBounds.x + xDelta, selectionBounds.y + yDelta);
     }
 

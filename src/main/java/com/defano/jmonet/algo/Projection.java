@@ -8,6 +8,8 @@ import java.awt.image.BufferedImage;
 
 /**
  * A utility for performing homography and rubber-sheet image projections.
+ * <p>
+ * Based on algorithms published at http://www.corrmap.com.
  */
 public class Projection {
 
@@ -16,11 +18,11 @@ public class Projection {
      * the source image is the same dimensions as the bounds of the quadrilateral. Additional geometric limitations
      * of this algorithm exist which have been accounted for in {@link FlexQuadrilateral} (i.e., top-left bounds
      * must remain to the left of top-right or bottom-right points).
-     *
+     * <p>
      * This magical incantation of linear algebra is as described by CorrMap:
      * http://www.corrmap.com/features/homography_transformation.php
      *
-     * @param source The source image to be projected
+     * @param source     The source image to be projected
      * @param projection The geometry on which to project the image
      * @return The transformed image
      */
@@ -52,7 +54,7 @@ public class Projection {
         Y4 = imageHeight - 1;
 
         double M_a[][] =
-                {       {x1, y1, 1, 0, 0, 0, -x1 * X1, -y1 * X1},
+                {{x1, y1, 1, 0, 0, 0, -x1 * X1, -y1 * X1},
                         {x2, y2, 1, 0, 0, 0, -x2 * X2, -y2 * X2},
                         {x3, y3, 1, 0, 0, 0, -x3 * X3, -y3 * X3},
                         {x4, y4, 1, 0, 0, 0, -x4 * X4, -y4 * X4},
@@ -84,7 +86,7 @@ public class Projection {
                 int x = (int) (((a * i) + (b * j) + c) / ((g * i) + (h * j) + 1));
                 int y = (int) (((d * i) + (e * j) + f) / ((g * i) + (h * j) + 1));
 
-                if (x > 0 && x < source.getWidth() && y > 0 && y < source.getHeight() && i > 0 && i < output.getWidth() && j > 0 && j< output.getHeight()) {
+                if (x > 0 && x < source.getWidth() && y > 0 && y < source.getHeight() && i > 0 && i < output.getWidth() && j > 0 && j < output.getHeight()) {
                     int p = source.getRGB(x, y);
                     output.setRGB(i, j, p);
                 }
@@ -99,11 +101,11 @@ public class Projection {
      * the source image is the same dimensions as the bounds of the quadrilateral. Additional geometric limitations
      * of this algorithm exist which have been accounted for in {@link FlexQuadrilateral} (i.e., top-left bounds
      * must remain to the left of top-right or bottom-right points).
-     *
+     * <p>
      * This magical incantation of linear algebra is as described by CorrMap:
      * http://www.corrmap.com/features/rubber-sheeting_transformation.php
      *
-     * @param source The source image to be projected
+     * @param source     The source image to be projected
      * @param projection The geometry on which to project the image
      * @return The transformed image
      */
@@ -135,7 +137,7 @@ public class Projection {
         Y4 = sourceHeight - 1;
 
         double M_a[][] =
-                {       {x1 * y1, x1, y1, 1, 0, 0, 0, 0},
+                {{x1 * y1, x1, y1, 1, 0, 0, 0, 0},
                         {x2 * y2, x2, y2, 1, 0, 0, 0, 0},
                         {x3 * y3, x3, y3, 1, 0, 0, 0, 0},
                         {x4 * y4, x4, y4, 1, 0, 0, 0, 0},
@@ -167,7 +169,7 @@ public class Projection {
                 int x = (int) ((a * i * j) + (b * i) + (c * j) + d);
                 int y = (int) ((e * i * j) + (f * i) + (g * j) + h);
 
-                if (x > 0 && x < source.getWidth() && y > 0 && y < source.getHeight() && i > 0 && i < output.getWidth() && j > 0 && j< output.getHeight()) {
+                if (x > 0 && x < source.getWidth() && y > 0 && y < source.getHeight() && i > 0 && i < output.getWidth() && j > 0 && j < output.getHeight()) {
                     int p = source.getRGB(x, y);
                     output.setRGB(i, j, p);
                 }

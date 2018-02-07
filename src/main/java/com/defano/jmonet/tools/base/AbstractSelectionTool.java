@@ -6,6 +6,7 @@ import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.RotateTool;
 import com.defano.jmonet.tools.builder.PaintTool;
+import com.defano.jmonet.tools.selection.TransformableImageSelection;
 import com.defano.jmonet.tools.util.Geometry;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
@@ -21,7 +22,7 @@ import java.util.Optional;
 /**
  * Mouse and keyboard handler for drawing selections (free-form or bounded) on the canvas.
  */
-public abstract class AbstractSelectionTool extends PaintTool implements MarchingAntsObserver, TransformableSelection {
+public abstract class AbstractSelectionTool extends PaintTool implements MarchingAntsObserver, TransformableImageSelection {
 
     private final BehaviorSubject<Optional<BufferedImage>> selectedImage = BehaviorSubject.createDefault(Optional.empty());
 
@@ -135,7 +136,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         // User is moving an existing selection
         if (hasSelection() && isMovingSelection) {
             setDirty();
-            adjustSelectionBounds(imageLocation.x - lastPoint.x, imageLocation.y - lastPoint.y);
+            translateSelection(imageLocation.x - lastPoint.x, imageLocation.y - lastPoint.y);
             redrawSelection();
             lastPoint = imageLocation;
         }
@@ -199,40 +200,6 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
 
         // Nothing to do if not holding a selection
-    }
-
-    /**
-     * Add the graphics underneath the selection to the currently selected image. Has no effect if a selection is not
-     * active or has not been dirtied.
-     *
-     * This method "picks up" the paint underneath the selection (that wasn't part of the paint initially
-     * picked up when the selection bounds were defined).
-     */
-    public void pickupSelection() {
-
-        if (hasSelection()) {
-            Shape selectionBounds = getSelectionOutline();
-            BufferedImage maskedSelection = maskSelection(getCanvas().getCanvasImage(), selectionBounds);
-            BufferedImage trimmedSelection = maskedSelection.getSubimage(
-                    Math.max(0, selectionBounds.getBounds().x),
-                    Math.max(0, selectionBounds.getBounds().y),
-                    Math.min(selectionBounds.getBounds().width, maskedSelection.getWidth() - selectionBounds.getBounds().x),
-                    Math.min(selectionBounds.getBounds().height, maskedSelection.getHeight() - selectionBounds.getBounds().y)
-            );
-
-            BufferedImage currentSelection = getSelectedImage();
-            BufferedImage newSelection = new BufferedImage(currentSelection.getWidth(), currentSelection.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
-            Graphics2D g2d = (Graphics2D) newSelection.getGraphics();
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-            g2d.drawImage(trimmedSelection, 0, 0, null);
-            g2d.drawImage(getSelectedImage(), 0, 0, null);
-            g2d.dispose();
-
-            setSelectedImage(newSelection);
-
-            eraseSelectionFromCanvas();
-        }
     }
 
     /**
@@ -304,7 +271,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         getCanvas().clearScratch();
 
         Shape selectionBounds = getSelectionOutline();
-        BufferedImage maskedSelection = maskSelection(getCanvas().getCanvasImage(), selectionBounds);
+        BufferedImage maskedSelection = maskSelection(getCanvas().getCanvasImage());
         BufferedImage trimmedSelection = maskedSelection.getSubimage(selectionBounds.getBounds().x, selectionBounds.getBounds().y, selectionBounds.getBounds().width, selectionBounds.getBounds().height);
 
         selectedImage.onNext(Optional.of(trimmedSelection));
@@ -325,7 +292,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * Removes the image bounded by the selection outline from the canvas by replacing bounded pixels with
      * fully transparent pixels.
      */
-    private void eraseSelectionFromCanvas() {
+    public void eraseSelectionFromCanvas() {
         if (hasSelectionBounds()) {
             getCanvas().clearScratch();
 
@@ -435,33 +402,6 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         return dirty;
     }
 
-    /**
-     * Creates a new image in which every pixel not within the given shape has been changed to fully transparent.
-     *
-     * @param image The image to mask
-     * @param mask  The shape bounding the subimage to keep
-     * @return A BufferedImage in which every pixel not within the selection has been made fully transparent
-     */
-    private BufferedImage maskSelection(BufferedImage image, Shape mask) {
-        BufferedImage subimage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
-        int clearPixel = new Color(0, 0, 0, 0).getRGB();
-
-        for (int y = 0; y < image.getRaster().getHeight(); y++) {
-            for (int x = 0; x < image.getRaster().getWidth(); x++) {
-                if (x > image.getWidth() || y > image.getHeight()) continue;
-
-                if (mask.contains(x, y)) {
-                    subimage.setRGB(x, y, image.getRGB(x, y));
-                } else {
-                    subimage.setRGB(x, y, clearPixel);
-                }
-            }
-        }
-
-        return subimage;
-    }
-
     /** {@inheritDoc} */
     @Override
     public void onCommit(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage) {
@@ -488,25 +428,25 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
                 case KeyEvent.VK_LEFT:
                     setDirty();
-                    adjustSelectionBounds(-1, 0);
+                    translateSelection(-1, 0);
                     redrawSelection();
                     break;
 
                 case KeyEvent.VK_RIGHT:
                     setDirty();
-                    adjustSelectionBounds(1, 0);
+                    translateSelection(1, 0);
                     redrawSelection();
                     break;
 
                 case KeyEvent.VK_UP:
                     setDirty();
-                    adjustSelectionBounds(0, -1);
+                    translateSelection(0, -1);
                     redrawSelection();
                     break;
 
                 case KeyEvent.VK_DOWN:
                     setDirty();
-                    adjustSelectionBounds(0, 1);
+                    translateSelection(0, 1);
                     redrawSelection();
                     break;
             }

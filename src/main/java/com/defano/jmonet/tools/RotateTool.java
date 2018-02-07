@@ -130,7 +130,7 @@ public class RotateTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    public void adjustSelectionBounds(int xDelta, int yDelta) {
+    public void translateSelection(int xDelta, int yDelta) {
         // Nothing to do; user can't move selection
         selectionBounds = AffineTransform.getTranslateInstance(xDelta, yDelta).createTransformedShape(selectionBounds);
         originalSelectionBounds = AffineTransform.getTranslateInstance(xDelta, yDelta).createTransformedShape(originalSelectionBounds);

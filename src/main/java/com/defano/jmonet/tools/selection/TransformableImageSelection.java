@@ -1,20 +1,26 @@
-package com.defano.jmonet.tools.base;
+package com.defano.jmonet.tools.selection;
 
-import com.defano.jmonet.algo.*;
-import com.defano.jmonet.algo.dither.*;
+import com.defano.jmonet.algo.BoundaryFunction;
+import com.defano.jmonet.algo.DefaultFillFunction;
+import com.defano.jmonet.algo.FillFunction;
+import com.defano.jmonet.algo.Transform;
+import com.defano.jmonet.algo.dither.Ditherer;
+import com.defano.jmonet.algo.dither.FloydSteinbergDitherer;
 import com.defano.jmonet.algo.dither.quant.ColorReductionQuantizer;
 import com.defano.jmonet.algo.dither.quant.GrayscaleQuantizer;
 import com.defano.jmonet.algo.dither.quant.MonochromaticQuantizer;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 /**
- * Defines a series of "static" transforms that can be applied to a selection. A static transform is one that can
- * be applied directly, without user/mouse engagement (e.g., scale, slant, or projection).
+ * Represents a selection in which the pixels of the selected image can be transformed (i.e., change of brightness,
+ * opacity, etc.).
+ *
+ * Differs from {@link TransformableSelection} in that these transforms do no change the selection shape (outline) or
+ * location on the canvas; only the underlying selected image.
  */
-public interface TransformableSelection extends MutableSelection {
+public interface TransformableImageSelection extends MutableSelection {
 
     /**
      * Converts the current selection to a reduced palette containing no more than the specified number of colors.
@@ -72,54 +78,6 @@ public interface TransformableSelection extends MutableSelection {
     }
 
     /**
-     * Rotates the image 90 degrees counter-clockwise.
-     */
-    default void rotateLeft() {
-        if (hasSelection()) {
-            int width = getSelectedImage().getWidth();
-            int height = getSelectedImage().getHeight();
-
-            applyTransform(Transform.rotateLeft(width, height));
-            adjustSelectionBounds((width - height) / 2, -(width - height) / 2);
-        }
-    }
-
-    /**
-     * Rotates the image 90 degrees clockwise.
-     */
-    default void rotateRight() {
-        if (hasSelection()) {
-            int width = getSelectedImage().getWidth();
-            int height = getSelectedImage().getHeight();
-
-            applyTransform(Transform.rotateRight(width, height));
-            adjustSelectionBounds((width - height) / 2, -(width - height) / 2);
-        }
-    }
-
-    /**
-     * Flips or mirrors the image along its vertical axis. That is, all pixels on the left side of the image
-     * will move the right side and vice versa.
-     */
-    default void flipHorizontal() {
-        if (hasSelection()) {
-            int width = getSelectedImage().getWidth();
-            applyTransform(Transform.flipHorizontalTransform(width));
-        }
-    }
-
-    /**
-     * Flips or mirrors the image along its horizontal axis. That is, all pixels on the top of the image will
-     * move to the bottom and vice versa.
-     */
-    default void flipVertical() {
-        if (hasSelection()) {
-            int height = getSelectedImage().getHeight();
-            applyTransform(Transform.flipVerticalTransform(height));
-        }
-    }
-
-    /**
      * Adjusts the brightness of the image by the amount specified in delta while preserving the image's alpha
      * transparency.
      *
@@ -128,7 +86,7 @@ public interface TransformableSelection extends MutableSelection {
      */
     default void adjustBrightness(int delta) {
         if (hasSelection()) {
-            Transform.adjustBrightness(getSelectedImage(), delta);
+            Transform.adjustBrightness(getSelectedImage(), getIdentitySelectionOutline(), delta);
             setDirty();
         }
     }
@@ -141,7 +99,7 @@ public interface TransformableSelection extends MutableSelection {
      */
     default void adjustTransparency(int delta) {
         if (hasSelection()) {
-            Transform.adjustTransparency(getSelectedImage(), delta);
+            Transform.adjustTransparency(getSelectedImage(), getIdentitySelectionOutline(), delta);
             setDirty();
         }
     }
@@ -151,31 +109,20 @@ public interface TransformableSelection extends MutableSelection {
      */
     default void invert() {
         if (hasSelection()) {
-            Transform.invert(getSelectedImage());
+            Transform.invert(getSelectedImage(), getIdentitySelectionOutline());
             setDirty();
         }
     }
 
     /**
-     * Applies an AffineTransform the current image.
-     * @param transform The transform to apply.
+     * Fills all transparent pixels in the selection with the given fill paint.
+     * @param fillPaint The paint to fill with.
      */
-    default void applyTransform(AffineTransform transform) {
+    default void fill(Paint fillPaint) {
         if (hasSelection()) {
+            Transform.fill(getSelectedImage(), getIdentitySelectionOutline(), fillPaint, new DefaultFillFunction());
             setDirty();
-
-            // Get the original location of the selection
-            Point originalLocation = getSelectionLocation();
-
-            // Transform the selected image
-            setSelectedImage(Transform.transform(getSelectedImage(), transform));
-
-            // Relocate the image to its original location
-            Rectangle newBounds = getSelectedImage().getRaster().getBounds();
-            newBounds.setLocation(originalLocation);
-            setSelectionOutline(newBounds);
-
-            redrawSelection();
         }
     }
+
 }

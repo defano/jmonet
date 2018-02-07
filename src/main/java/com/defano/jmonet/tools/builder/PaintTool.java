@@ -102,7 +102,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
      * Gets the canvas on which this tool is currently painting, or null, if not active.
      * @return The canvas this tool is painting on, or null
      */
-    protected PaintCanvas getCanvas() {
+    public PaintCanvas getCanvas() {
         return canvas;
     }
 

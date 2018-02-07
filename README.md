@@ -5,66 +5,70 @@ An easy-to-use toolkit for incorporating paint tools similar to [MacPaint](https
 ## Features
 
 * Standard suite of paint tools providing common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
-* Canvas supports undo and redo operations on all paint tool changes, plus cut, copy and paste integration with the system clipboard.
+* Paint canvas supports undo and redo operations on all tool changes; plus cut, copy and paste integration with the system clipboard.
 * Includes a variety of image transform tools like scale, rotate, shear, perspective and projection, plus the ability to adjust color depth, transparency and brightness.
 * Painted images are zoomable via the Magnifier tool (displayed within a scrollable pane), and tools can be snapped to a grid.
 * Lightweight toolkit integrates easily into Swing and JavaFX applications and utilizes [ReactiveX](https://github.com/ReactiveX/RxJava) for observables.
-* All operations are backed by a standard Java `BufferedImage` making it easy to import and export graphics.
+* Images are backed by a standard Java `BufferedImage` object making it easy to import and export graphics.
 
 ## Paint Tools
 
 JMonet provides the following suite of paint tools:
 
-Icon | Tool            | Description
------|-----------------|--------------
-![Arrow](icons/arrow.png) | Arrow | A no-op tool that does not modify the canvas in any way.
-![Magnifier](icons/magnifier.png) | Magnifier | Zoom in (scale the canvas) at the location clicked; hold `shift` to zoom out or `ctrl` to restore normal zoom.
-![Airbrush](icons/spraypaint.png) | Airbrush | Paints translucent color or texture onto the canvas.
-![Curve](icons/curve.png) | Curve | Draws quadratic (Bezier) curves by clicking to specify points on the curve.
-![Eraser](icons/eraser.png) | Eraser | Removes paint from the canvas by restoring affected pixels to their fully-transparent state.
-![Fill](icons/fill.png) | Fill | Shades an enclosed area with paint using a [flood-fill](https://en.wikipedia.org/wiki/Flood_fill) algorithm.
-![Lasso](icons/lasso.png) | Lasso | Define a free-form selection boundary ([marching ants](https://en.wikipedia.org/wiki/Marching_ants)) for clearing or moving paint.
-![Line](icons/line.png) | Line | Draws straight lines; hold `shift` to restrict lines to 15-degree angles.
-![Oval](icons/oval.png) | Oval | Draws filled or outlined oval shapes; hold `shift` to constrain boundary to circle.
-![Paintbrush](icons/paintbrush.png) | Paintbrush | Draws paint on the canvas (using configurable stroke and color/texture).
-![Pencil](icons/pencil.png) | Pencil | Draws a free-form, narrow black path on the canvas.
-![Polygon](icons/polygon.png) | Polygon | Draws filled or outlined irregular polygons by clicking to specify points. Double-click to complete the polygon; press `esc` to keep only the lines visible; hold `shift` to restrict line angles to 15 degree multiples.
-![Freeform](icons/freeform.png) | Freeform | Draws a closed, free-form shape on the canvas. Click and drag to draw a path; release the mouse to draw a straight line connecting the final point on the path to the initial point.
-![Rectangle](icons/rectangle.png) | Rectangle | Draws filled or outlined rectangles on the canvas; hold `shift` to constrain boundary to a square.
-![Round Rect](icons/roundrect.png) | Round Rect | Draws filled or outlined round-rectangles on the canvas.
-![Selection](icons/selection.png) | Selection | Define a selection rectangle ([marching ants](https://en.wikipedia.org/wiki/Marching_ants)) whose underlying graphic can be moved or cleared (press `delete`)
-![Shape](icons/shape.png) | Shape | Draws filled or outlined regular polygons (i.e., shapes--triangles, squares, polygons, hexagons, etc.)
-![Text](icons/text.png) | Text | Draws rasterized text (of a configurable font, size and style) on the canvas. Text remains editable until user clicks away.
+Icon                                  | Tool         | Description
+--------------------------------------|--------------|--------------
+![Arrow](icons/arrow.png)             | Arrow        | A no-op tool (does not modify the canvas).
+![Magnifier](icons/magnifier.png)     | Magnifier    | Zoom in (scale the canvas) at the location clicked; hold `shift` to zoom out or `ctrl` to restore normal zoom.
+![Airbrush](icons/spraypaint.png)     | Airbrush     | Paints translucent color or texture onto the canvas.
+![Curve](icons/curve.png)             | Curve        | Draws quadratic (Bezier) curves by clicking to specify points on the curve.
+![Eraser](icons/eraser.png)           | Eraser       | Removes paint from the canvas by restoring affected pixels to their fully-transparent state.
+![Fill](icons/fill.png)               | Fill         | Shades an enclosed area with paint using a [flood-fill](https://en.wikipedia.org/wiki/Flood_fill) algorithm.
+![Line](icons/line.png)               | Line         | Draws straight lines; hold `shift` to restrict lines to 15-degree angles.
+![Oval](icons/oval.png)               | Oval         | Draws filled or outlined oval shapes; hold `shift` to constrain boundary to circle.
+![Paintbrush](icons/paintbrush.png)   | Paintbrush   | Draws paint on the canvas (using configurable stroke and color/texture).
+![Pencil](icons/pencil.png)           | Pencil       | Draws a free-form, narrow black path on the canvas.
+![Polygon](icons/polygon.png)         | Polygon      | Draws filled or outlined irregular polygons by clicking to specify points. Double-click to close the polygon; press `esc` to keep only the lines visible; hold `shift` to restrict line angles to 15 degree multiples.
+![Freeform](icons/freeform.png)       | Freeform     | Draws a closed, free-form shape on the canvas. Click and drag to draw a path; release the mouse to close the shape.
+![Rectangle](icons/rectangle.png)     | Rectangle    | Draws filled or stroked rectangles on the canvas; hold `shift` to constrain boundary to a square.
+![Round Rect](icons/roundrect.png)    | Round Rect   | Draws filled or stroked round-rectangles on the canvas.
+![Shape](icons/shape.png)             | Shape        | Draws filled or stroked regular polygons (i.e., shapes--triangles, squares, polygons, hexagons, etc.)
+![Text](icons/text.png)               | Text         | Draws rasterized text of configurable font, size and style on the canvas. Text remains editable until user clicks away.
 
-## Transform tools
+### Selection tools
 
-Icon | Tool            | Description
------|----------| -------------
-![Rotate](icons/rotate.png) | Rotate | Define a selection, then use the drag handle to free-rotate the selected graphic around its center. Hold shift to restrict rotation angle to 15-degree increments.
-![Slant](icons/slant.png) | Slant | Define a selection, then use the drag handles to apply an affine shear transform to the selected graphic.
-![Scale](icons/scale.png) | Scale | Define a selection, then expand or shrink the selected image by dragging a handle. Hold shift to maintain selection's original aspect ratio.
-![Projection](icons/distort.png) | Projection | Define a selection, then use the drag handles to project the image onto the geometry of an arbitrary quadrilateral.
-![Perspective](icons/perspective.png) | Perspective | Define a selection, then use the drag handles to warp the image onto an isosceles trapezoid, providing the effect of the left or right side of the image appearing nearer or farther from the viewer.
-![Rubber Sheet](icons/distort.png) | Rubber Sheet | Similar to the projection transform, but utilizes a "rubber sheet" algorithm that preserves relative position over linearity.
+Icon                                  | Tool         | Description
+--------------------------------------|--------------| -------------------------
+![Lasso](icons/lasso.png)             | Lasso        | Define a free-form selection boundary ([marching ants](https://en.wikipedia.org/wiki/Marching_ants)) for clearing or moving paint.
+![Selection](icons/selection.png)     | Selection    | Define a selection rectangle ([marching ants](https://en.wikipedia.org/wiki/Marching_ants)) whose underlying graphic can be moved or cleared (press `delete`)
 
-#### Static transforms
+### Transform tools
 
-Selections can be flipped horizontally, vertically or rotated 90 degrees via any of the selection or transform tools. Adjustments to brightness, transparency and color are also available.
+Icon                                  | Tool         | Description
+--------------------------------------|--------------| -------------------------
+![Rotate](icons/rotate.png)           | Rotate       | Define a selection, then use the drag handle to free-rotate the selected graphic around its center. Hold shift to restrict rotation angle to 15-degree increments.
+![Slant](icons/slant.png)             | Slant        | Define a selection, then use the drag handles to apply an affine shear transform to the selected graphic.
+![Scale](icons/scale.png)             | Scale        | Define a selection, then expand or shrink the selected image by dragging a handle. Hold shift to maintain selection's original aspect ratio.
+![Projection](icons/distort.png)      | Projection   | Define a selection, then use the drag handles to project the image onto the geometry of an arbitrary quadrilateral.
+![Perspective](icons/perspective.png) | Perspective  | Define a selection, then use the drag handles to warp the image onto an isosceles trapezoid, providing the effect of the left or right side of the image appearing nearer or farther from the viewer.
+![Rubber Sheet](icons/distort.png)    | Rubber Sheet | Similar to the projection transform, but utilizes a "rubber sheet" algorithm that preserves relative position over linearity.
 
-Once a selection has been made, invoke one of the following methods on the selection tool object to transform it:
+### Image transforms
 
-```
-void rotateLeft();
-void rotateRight();
-void flipHorizontal();
-void flipVertical();
+Once a selection has been made, invoke one of the following methods on the `PaintTool` object to transform its selection:
 
-void adjustBrightness(int delta);
-void adjustTransparency(int delta);
-void invert();
-void reduceColor(int colorDepth);
-void reduceGreyscale(int grayDepth);
-```
+Transform               | Tool Availability             | Description
+------------------------|-------------------------------|-------------------------
+`adjustBrightness`      | Selection and transform tools | Changes the brightness/luminosity of all pixels in the selected image by adding `delta` to each red, green and blue color channel value (a value between 0..255, where 0 is completely dark, 255 is completely light).
+`adjustTransparency`    | Selection and transform tools | Changes the opacity of each pixel in the selected image by adding `delta` the alpha channel (a value between 0..255 where 0 is fully transparent and 255 is fully opaque).
+`applyTransform`        | Selection tools               | Applies an `AffineTransform` to the selection.
+`flipHorizontal`        | Selection tools               | Flips the selection about a vertical axis drawn through the center of the image.
+`flipVertical`          | Selection tools               | Flips the selection about a horizontal axis drawn through the center of the image.
+`invert`                | Selection and transform tools | Inverts the color
+`pickupSelection`       | Selection tools               | "Picks up" the pixels on the canvas that are currently within the bounds of the selection and adds them to the selection. Useful when moving a selection over another region of the canvas.
+`reduceColor`           | Selection and transform tools | Performs a color quantization and dithers the result using a specified dithering algorithm. See the `com.defano.algo.dither` package for available dithering implementations (or implement your own).
+`reduceGreyscale`       | Selection and transform tools | Performs a luminosity quantization and dithers the result using a specified dithering algorithm.
+`rotateLeft`            | Selection tools               | Rotates the selection 90 degrees counter-clockwise.
+`rotateRight`           | Selection tools               | Rotates the selection 90 degrees clockwise.
 
 ## Getting started
 

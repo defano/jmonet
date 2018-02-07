@@ -12,8 +12,8 @@ public interface QuantizationFunction {
      *
      * @param input A color value where input[0] is the red channel, input[1] is the green channel
      *              input[2] is the blue channel and input[3] in the alpha channel.
-     * @return A quantized color where input[0] is the red channel, input[1] is the green channel
-     * input[2] is the blue channel and input[3] in the alpha channel
+     * @return A quantized color where element[0] is the red channel, element[1] is the green channel
+     * element[2] is the blue channel and element[3] is the alpha channel
      */
     double[] quantize(double[] input);
 }

@@ -70,14 +70,6 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
         super(type);
     }
 
-    /**
-     * Not supported on transform tools. Has no effect when invoked.
-     */
-    @Override
-    public void pickupSelection() {
-        // Not typically supported; can't pickup paint while transforming an image
-    }
-
     /** {@inheritDoc} */
     @Override
     public void createSelection(Rectangle bounds) {
@@ -203,7 +195,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    public void adjustSelectionBounds(int xDelta, int yDelta) {
+    public void translateSelection(int xDelta, int yDelta) {
         selectionBounds.setLocation(selectionBounds.x + xDelta, selectionBounds.y + yDelta);
         transformBounds.getBottomLeft().x += xDelta;
         transformBounds.getBottomLeft().y += yDelta;

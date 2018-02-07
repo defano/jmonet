@@ -237,22 +237,6 @@ public class FlexQuadrilateral implements Quadrilateral {
     }
 
     /**
-     * Gets a {@link Shape} from this Quadrilateral.
-     *
-     * @return The shape.
-     */
-    public Shape getShape() {
-        GeneralPath path = new GeneralPath();
-        path.moveTo(topLeft.getX(), topLeft.getY());
-        path.lineTo(topRight.getX(), topRight.getY());
-        path.lineTo(bottomRight.getX(), bottomRight.getY());
-        path.lineTo(bottomLeft.getX(), bottomLeft.getY());
-        path.closePath();
-
-        return path;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override

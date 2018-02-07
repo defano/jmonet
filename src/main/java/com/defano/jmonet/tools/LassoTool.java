@@ -2,6 +2,8 @@ package com.defano.jmonet.tools;
 
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
+import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
+import com.defano.jmonet.tools.selection.TransformableSelection;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -10,7 +12,7 @@ import java.awt.geom.Path2D;
 /**
  * Selection tool allowing the user to draw a free-form selection path on the canvas.
  */
-public class LassoTool extends AbstractSelectionTool {
+public class LassoTool extends AbstractSelectionTool implements TransformableSelection, TransformableCanvasSelection {
 
     private Path2D selectionBounds;
 
@@ -55,7 +57,7 @@ public class LassoTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    public void adjustSelectionBounds(int xDelta, int yDelta) {
+    public void translateSelection(int xDelta, int yDelta) {
         selectionBounds.transform(AffineTransform.getTranslateInstance(xDelta, yDelta));
     }
 }
