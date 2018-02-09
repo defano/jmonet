@@ -14,7 +14,7 @@ if [ "$TRAVIS_REPO_SLUG" == "defano/jmonet" ] && [ "$TRAVIS_JDK_VERSION" == "ora
 
   echo -e "Publishing JavaDocs...\n"
 
-  cp -R build/docs/javadoc $HOME/javadoc-latest
+  cp -R javadoc $HOME/javadoc-latest
 
   cd $HOME
   git config --global user.email "travis@travis-ci.org"
