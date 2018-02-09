@@ -95,9 +95,6 @@
                         <goals>
                             <goal>jar</goal>
                         </goals>
-                        <configuration>
-                            <outputDirectory>${project.basedir}/javadoc</outputDirectory>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
