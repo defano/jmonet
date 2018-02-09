@@ -1,16 +1,6 @@
 #!/bin/bash
 
-echo -e "Checking to publish Javadocs...\n"
-echo -e "$TRAVIS_REPO_SLUG"
-echo -e "\n"
-echo -e "$TRAVIS_JDK_VERSION"
-echo -e "\n"
-echo -e "$TRAVIS_PULL_REQUEST"
-echo -e "\n"
-echo -e "TRAVIS_BRANCH"
-
-
-if [ "$TRAVIS_REPO_SLUG" == "defano/jmonet" ] && [ "$TRAVIS_JDK_VERSION" == "oraclejdk8" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "feature/travis" ]; then
+if [ "$TRAVIS_REPO_SLUG" == "defano/jmonet" ] && [ "$TRAVIS_JDK_VERSION" == "oraclejdk8" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "master" ]; then
 
   echo -e "Publishing JavaDocs...\n"
 
@@ -25,7 +15,7 @@ if [ "$TRAVIS_REPO_SLUG" == "defano/jmonet" ] && [ "$TRAVIS_JDK_VERSION" == "ora
   git rm -rf ./javadoc
   cp -Rf $HOME/javadoc-latest ./javadoc
   git add -f .
-  git commit -m "Latest javadoc on successful travis build $TRAVIS_BUILD_NUMBER auto-pushed to gh-pages"
+  git commit -m "Javadoc publication by Travis build $TRAVIS_BUILD_NUMBER"
   git push -fq origin gh-pages > /dev/null
 
   echo -e "Published Javadoc to gh-pages.\n"
