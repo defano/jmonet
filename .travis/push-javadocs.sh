@@ -1,5 +1,15 @@
 #!/bin/bash
 
+echo -e "Checking to publish Javadocs...\n"
+echo -e "$TRAVIS_REPO_SLUG"
+echo -e "\n"
+echo -e "$TRAVIS_JDK_VERSION"
+echo -e "\n"
+echo -e "$TRAVIS_PULL_REQUEST"
+echo -e "\n"
+echo -e "TRAVIS_BRANCH"
+
+
 if [ "$TRAVIS_REPO_SLUG" == "defano/jmonet" ] && [ "$TRAVIS_JDK_VERSION" == "oraclejdk8" ] && [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "feature/travis" ]; then
 
   echo -e "Publishing JavaDocs...\n"
