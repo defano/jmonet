@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents one or more changes that should be applied to the canvas atomically.
@@ -114,5 +115,20 @@ public class ChangeSet {
         for (ChangeSetObserver observer : observers) {
             observer.onChangeSetModified(this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChangeSet changeSet = (ChangeSet) o;
+        return Objects.equals(observers, changeSet.observers) &&
+                Objects.equals(images, changeSet.images) &&
+                Objects.equals(composites, changeSet.composites);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(images, composites);
     }
 }

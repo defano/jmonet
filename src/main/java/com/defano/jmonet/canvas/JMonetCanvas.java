@@ -7,6 +7,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * A paint tools canvas with a built-in undo and redo buffer. Extends the capabilities inherent in {@link AbstractPaintCanvas}.
@@ -22,10 +23,13 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     private BehaviorSubject<Boolean> isUndoableSubject = BehaviorSubject.createDefault(false);
     private BehaviorSubject<Boolean> isRedoableSubject = BehaviorSubject.createDefault(false);
 
+    private BufferedImage cachedCanvasImage;
+    private long cachedCanvasImageHash;
+
     /**
      * Creates a new canvas with a given image initially displayed in it with a specified undo buffer depth.
      *
-     * @param initialImage The image to be displayed in the canvas.
+     * @param initialImage    The image to be displayed in the canvas.
      * @param undoBufferDepth The depth of the undo buffer (number of undo operations)
      */
     public JMonetCanvas(BufferedImage initialImage, int undoBufferDepth) {
@@ -47,6 +51,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     /**
      * Create a new canvas with a default-sized undo/redo buffer, the size of, and containing the image of, the
      * specified {@link BufferedImage}.
+     *
      * @param initialImage The initial image to be displayed.
      */
     public JMonetCanvas(BufferedImage initialImage) {
@@ -70,7 +75,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
 
         if (hasUndoableChanges()) {
             undoBufferPointer--;
-            fireCanvasCommitObservers(this,null, getCanvasImage());
+            fireCanvasCommitObservers(this, null, getCanvasImage());
             invalidateCanvas();
 
             isUndoableSubject.onNext(hasUndoableChanges());
@@ -84,13 +89,14 @@ public class JMonetCanvas extends AbstractPaintCanvas {
 
     /**
      * Reverts the previous undo; has no effect if a commit was made following the previous undo.
+     *
      * @return True if the redo was successful, false if there is no undo available to revert.
      */
     public boolean redo() {
 
         if (hasRedoableChanges()) {
             undoBufferPointer++;
-            fireCanvasCommitObservers(this,null, getCanvasImage());
+            fireCanvasCommitObservers(this, null, getCanvasImage());
             invalidateCanvas();
 
             isUndoableSubject.onNext(hasUndoableChanges());
@@ -122,6 +128,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
 
     /**
      * Gets the maximum depth of the undo buffer.
+     *
      * @return The maximum number of undos that are supported by this PaintCanvas.
      */
     public int getMaxUndoBufferDepth() {
@@ -130,6 +137,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
 
     /**
      * Gets an observable of the {@link #hasUndoableChanges()} property.
+     *
      * @return An observable of when the undo operation is supported.
      */
     public Observable<Boolean> isUndoableObservable() {
@@ -138,13 +146,16 @@ public class JMonetCanvas extends AbstractPaintCanvas {
 
     /**
      * Gets an observable of the {@link #hasRedoableChanges()} property.
+     *
      * @return An observable of when the redo operation is supported.
      */
     public Observable<Boolean> isRedoableObservable() {
         return isRedoableSubject;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void commit(ChangeSet changeSet) {
 
@@ -154,7 +165,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
         // Clear the redo elements from the buffer; can't perform redo after committing a new change
         undoBuffer = undoBuffer.subList(0, undoBufferPointer + 1);
 
-        // Add the change to the redo buffer
+        // Add the change to the undo buffer
         undoBuffer.add(changeSet);
 
         // If we've exceeded the max undo size, trim the buffer and write the evicted image element to the base canvas
@@ -175,13 +186,36 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public BufferedImage getCanvasImage() {
+
+        // Creating an image by overlaying ChangeSets is expensive; return cached copy when available
+        if (cachedCanvasImageHash != getCanvasImageHash()) {
+            cachedCanvasImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+            if (permanent != null) {
+                overlayImage(permanent, cachedCanvasImage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+            }
+
+            for (int index = 0; index <= undoBufferPointer; index++) {
+                overlayChangeSet(undoBuffer.get(index), cachedCanvasImage);
+            }
+
+            cachedCanvasImageHash = getCanvasImageHash();
+        }
+
+        return cachedCanvasImage;
+    }
+
+    /**
      * Applies a {@link ChangeSet} to the permanent (not-undoable) layer of the canvas. Invoked when a committed change
      * has been evicted from the undo buffer as a result of exceeding its depth, or when applying an initial, base image
      * at construction.
-     *
+     * <p>
      * If there is no permanent image in place, the given image is made permanent. Otherwise, the given image is
      * drawn atop the permanent image.
-     *
      */
     private void makePermanent(ChangeSet changeSet) {
         Dimension changeSetDim = changeSet.getImageSize();
@@ -195,26 +229,10 @@ public class JMonetCanvas extends AbstractPaintCanvas {
         overlayChangeSet(changeSet, permanent);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public BufferedImage getCanvasImage() {
-        BufferedImage visibleImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-
-        if (permanent != null) {
-            overlayImage(permanent, visibleImage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-        }
-
-        for (int index = 0; index <= undoBufferPointer; index++) {
-            overlayChangeSet(undoBuffer.get(index), visibleImage);
-        }
-
-        return visibleImage;
-    }
-
     /**
      * Resize the permanent image buffer to the specified dimension, leaving any existing permanent image in place at
      * (0, 0).
-     *
+     * <p>
      * The "permanent" image represents all the composited changes that have fallen out of the undo/redo buffer and can
      * no longer be undone.
      *
@@ -232,9 +250,10 @@ public class JMonetCanvas extends AbstractPaintCanvas {
 
     /**
      * Draws the source image atop the existing destination image using the provided {@link AlphaComposite} mode.
-     * @param source The source image to draw
+     *
+     * @param source      The source image to draw
      * @param destination The destination image on which to draw the source
-     * @param composite The alpha-composite mode to use.
+     * @param composite   The alpha-composite mode to use.
      */
     private void overlayImage(BufferedImage source, BufferedImage destination, AlphaComposite composite) {
         Graphics2D g2d = (Graphics2D) destination.getGraphics();
@@ -246,7 +265,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     /**
      * Draws a {@link ChangeSet} atop an existing image.
      *
-     * @param changeSet The set of changes to be drawn
+     * @param changeSet   The set of changes to be drawn
      * @param destination The image on which to draw them
      */
     private void overlayChangeSet(ChangeSet changeSet, BufferedImage destination) {
@@ -258,5 +277,20 @@ public class JMonetCanvas extends AbstractPaintCanvas {
         }
 
         g2d.dispose();
+    }
+
+    /**
+     * Calculates a hashcode representing the image currently returned by {@link #getCanvasImage()}. Used to determine
+     * if the last image generated by {@link #getCanvasImage()} can be reused given the current state of the undo
+     * buffer and perm layer.
+     *
+     * @return A hashcode representing the image produced by {@link #getCanvasImage()}.
+     */
+    private long getCanvasImageHash() {
+        if (undoBufferPointer >= 0) {
+            return Objects.hash(permanent, undoBuffer.subList(undoBufferPointer, undoBuffer.size()));
+        } else {
+            return Objects.hash(permanent);
+        }
     }
 }
