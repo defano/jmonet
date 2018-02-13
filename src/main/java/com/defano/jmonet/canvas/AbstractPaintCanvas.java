@@ -8,6 +8,7 @@ import com.defano.jmonet.tools.util.Geometry;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -88,6 +89,12 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
         scratch = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
         invalidateCanvas();
         return scratch;
+    }
+
+    @Override
+    public Color getCanvasColor() {
+        Color background = (Color) UIManager.getLookAndFeelDefaults().get("Panel.background");
+        return background == null ? Color.WHITE : background;
     }
 
     /** {@inheritDoc} */

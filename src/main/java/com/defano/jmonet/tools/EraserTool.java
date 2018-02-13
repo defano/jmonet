@@ -31,9 +31,8 @@ public class EraserTool extends AbstractPathTool {
     @Override
     protected void addPoint(Graphics2D g, Stroke stroke, Paint fillPaint, Point point) {
         path.lineTo(point.getX(), point.getY());
-
         g.setStroke(stroke);
-        g.setPaint(Color.WHITE);
+        g.setPaint(getCanvas().getCanvasColor());
         g.draw(path);
     }
 }

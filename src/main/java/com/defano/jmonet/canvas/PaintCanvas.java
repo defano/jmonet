@@ -149,4 +149,11 @@ public interface PaintCanvas extends ScalableLayeredPainting, Scrollable, Observ
      * @return The bounds of the canvas component.
      */
     Rectangle getBounds();
+
+    /**
+     * Gets the background color of the canvas, typically the panel color specified by the current Swing look-and-feel's
+     * UIManager.
+     * @return The canvas color.
+     */
+    Color getCanvasColor();
 }
