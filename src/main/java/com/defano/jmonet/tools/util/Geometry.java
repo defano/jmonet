@@ -3,6 +3,9 @@ package com.defano.jmonet.tools.util;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A utility class with geometric and trigonometric routines used by various tools.
@@ -35,6 +38,39 @@ public class Geometry {
         }
 
         return toNearest * Math.round(value / toNearest);
+    }
+
+
+    /**
+     * Calculates the length of the line represented by two points.
+     *
+     * @param p1 The first point on the line
+     * @param p2 The second point on the line
+     * @return The length of the line
+     */
+    public static double length(Point p1, Point p2) {
+        return Math.sqrt(Math.pow(Math.abs(p1.x - p2.x), 2) + Math.pow(Math.abs(p1.y - p2.y), 2));
+    }
+
+    /**
+     * Produces a linear interpolation of all points existing between two other points.
+     * @param p1 The first point
+     * @param p2 The second point
+     * @return A list of all unique points existing on the line between p1 and p2
+     */
+    public static List<Point> linearInterpolation(Point p1, Point p2) {
+
+        ArrayList<Point> interpolatedPoints = new ArrayList<>();
+
+        double length = Geometry.length(p1, p2);
+        double xStep = (p2.x - p1.x) / length;
+        double yStep = (p2.y - p1.y) / length;
+
+        for (int step = 0; step < length; step++) {
+            interpolatedPoints.add(new Point((int)(p1.x + xStep * step), (int)(p1.y + yStep * step)));
+        }
+
+        return interpolatedPoints;
     }
 
     /**

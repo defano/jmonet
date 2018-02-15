@@ -11,8 +11,6 @@ import java.awt.geom.Line2D;
  */
 public class AirbrushTool extends AbstractPathTool {
 
-    private Point lastPoint;
-
     public AirbrushTool() {
         super(PaintToolType.AIRBRUSH);
     }
@@ -20,16 +18,15 @@ public class AirbrushTool extends AbstractPathTool {
     /** {@inheritDoc} */
     @Override
     protected void startPath(Graphics2D g, Stroke stroke, Paint fillPaint, Point initialPoint) {
-        lastPoint = initialPoint;
+        // Nothing to do
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void addPoint(Graphics2D g, Stroke stroke, Paint fillPaint, Point point) {
+    protected void addPoint(Graphics2D g, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
         g.setStroke(stroke);
         g.setPaint(fillPaint);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getIntensityObservable().blockingFirst().floatValue()));
-        g.draw(new Line2D.Float(lastPoint, point));
-        lastPoint = point;
+        g.draw(new Line2D.Float(lastPoint, thisPoint));
     }
 }
