@@ -3,37 +3,42 @@ package com.defano.jmonet.tools.brushes;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * A brush whose tip is a user-provided shape. Produces a stroke where every point on the stroked path is "stamped" with a
  * filled shape.
  */
-public class ShapeBrush extends InterpolatedStampStroke {
+public class ShapeBrush extends StampStroke {
 
-    private final Shape shape;
-    private final boolean translated;
+    private final List<Shape> shapes = new ArrayList<>();
 
     /**
      * Produces a brush of given shape.
-     * @param shape The shape of the brush
-     * @param translated When true, the shape will be translated half its width left, and half its height up.
+     *
+     * @param shape      The shape of the brush
      */
-    public ShapeBrush(Shape shape, boolean translated) {
-        this.shape = shape;
-        this.translated = translated;
+    public ShapeBrush(Shape shape) {
+        this.shapes.add(shape);
     }
 
-    /** {@inheritDoc} */
+    public ShapeBrush(Collection<Shape> shapes) {
+        this.shapes.addAll(shapes);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void stampPoint(GeneralPath path, Point point) {
-        if (translated) {
-            path.append(AffineTransform
-                    .getTranslateInstance(point.x - shape.getBounds().getWidth() / 2.0, point.y + shape.getBounds().getHeight() / 2.0)
-                    .createTransformedShape(shape), false);
-        } else {
-            path.append(AffineTransform
-                    .getTranslateInstance(point.x, point.y)
-                    .createTransformedShape(shape), false);
+        for (Shape shape : shapes) {
+            Shape stamp = AffineTransform
+                    .getTranslateInstance(point.x - (shape.getBounds().width / 2) - shape.getBounds().x, point.y - (shape.getBounds().height / 2) - shape.getBounds().y)
+                    .createTransformedShape(shape);
+
+            path.append(stamp, false);
         }
     }
 }

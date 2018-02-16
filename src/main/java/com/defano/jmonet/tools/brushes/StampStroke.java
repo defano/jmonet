@@ -8,9 +8,9 @@ import java.awt.geom.PathIterator;
 
 /**
  * A stroke in which every point on the stroked shape's path can be stamped/marked independently. Useful for producing
- * strokes that emulate a "pen" whose tip is of any arbitrary shape.
+ * strokes that emulates a "pen" whose tip is of some arbitrary shape.
  */
-public abstract class InterpolatedStampStroke implements Stroke {
+public abstract class StampStroke implements Stroke {
 
     private boolean linearInterpolated = true;
 
