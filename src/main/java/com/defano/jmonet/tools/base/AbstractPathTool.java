@@ -61,7 +61,7 @@ public abstract class AbstractPathTool extends PaintTool {
         getCanvas().clearScratch();
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
-        startPath(g2d, getStroke(), getFillPaint().orElse(null), imageLocation);
+        startPath(g2d, getStroke(), getStrokePaint(), imageLocation);
         g2d.dispose();
 
         lastPoint = imageLocation;
@@ -72,7 +72,7 @@ public abstract class AbstractPathTool extends PaintTool {
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
-        addPoint(g2d, getStroke(), getFillPaint().orElse(null), lastPoint, imageLocation);
+        addPoint(g2d, getStroke(), getStrokePaint(), lastPoint, imageLocation);
         g2d.dispose();
 
         lastPoint = imageLocation;
@@ -83,7 +83,7 @@ public abstract class AbstractPathTool extends PaintTool {
     @Override
     public void mouseReleased(MouseEvent e, Point imageLocation) {
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
-        completePath(g2d, getStroke(), getFillPaint().orElse(null));
+        completePath(g2d, getStroke(), getStrokePaint());
         g2d.dispose();
 
         getCanvas().commit(new ChangeSet(getCanvas().getScratchImage(), getComposite()));

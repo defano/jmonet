@@ -3,6 +3,7 @@ package com.defano.jmonet.tools.brushes;
 import com.defano.jmonet.tools.util.Geometry;
 
 import java.awt.*;
+import java.awt.geom.FlatteningPathIterator;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 
@@ -13,6 +14,7 @@ import java.awt.geom.PathIterator;
 public abstract class StampStroke implements Stroke {
 
     private boolean linearInterpolated = true;
+    private int flatness = 1;
 
     /**
      * Stamps a given point on a stroked shape's path.
@@ -29,23 +31,18 @@ public abstract class StampStroke implements Stroke {
     public Shape createStrokedShape(Shape shape) {
 
         Point thisPoint, lastPoint = null;
-        GeneralPath strokedShape = new GeneralPath(shape);
+        GeneralPath strokedShape = new GeneralPath(new BasicStroke(0f).createStrokedShape(shape));
 
-        float[] coords = new float[6];
-        for (PathIterator i = shape.getPathIterator(null); !i.isDone(); i.next()) {
-            switch (i.currentSegment(coords)) {
+        float[] coordinates = new float[6];
+        for (PathIterator i = new FlatteningPathIterator(shape.getPathIterator(null), 1); !i.isDone(); i.next()) {
+            switch (i.currentSegment(coordinates)) {
                 case PathIterator.SEG_CUBICTO:
-                    thisPoint = new Point((int)coords[4], (int)coords[5]);
-                    stampPoint(strokedShape, lastPoint, thisPoint); // falls through
-                    lastPoint = thisPoint;
                 case PathIterator.SEG_QUADTO:
-                    thisPoint = new Point((int)coords[2], (int)coords[3]);
-                    stampPoint(strokedShape, lastPoint, thisPoint); // falls through
-                    lastPoint = thisPoint;
+                    throw new IllegalStateException("Bug! Shape is not flattened.");
                 case PathIterator.SEG_MOVETO:
                 case PathIterator.SEG_LINETO:
-                    thisPoint = new Point((int)coords[0], (int)coords[1]);
-                    stampPoint(strokedShape, lastPoint, thisPoint); // falls through
+                    thisPoint = new Point((int)coordinates[0], (int)coordinates[1]);
+                    stampPoint(strokedShape, lastPoint, thisPoint);
                     lastPoint = thisPoint;
                 case PathIterator.SEG_CLOSE:
                     break;
@@ -56,13 +53,11 @@ public abstract class StampStroke implements Stroke {
     }
 
     private void stampPoint(GeneralPath path, Point lastPoint, Point thisPoint) {
-
         if (lastPoint != null && linearInterpolated) {
             for (Point interpolated : Geometry.linearInterpolation(lastPoint, thisPoint)) {
                 stampPoint(path, interpolated);
             }
         }
-
         stampPoint(path, thisPoint);
     }
 
@@ -84,5 +79,24 @@ public abstract class StampStroke implements Stroke {
      */
     public void setLinearInterpolated(boolean linearInterpolated) {
         this.linearInterpolated = linearInterpolated;
+    }
+
+    /**
+     * Gets the flatness used to render curved surfaces. See {@link #setFlatness(int)}.
+     *
+     * @return The current flatness; default is 1
+     */
+    public int getFlatness() {
+        return flatness;
+    }
+
+    /**
+     * When stamping curved shape segments, defines the flatness of the curve. That is, the the maximum allowable
+     * distance between the control points and the flattened curve.
+     *
+     * @param flatness The flatness, in pixels.
+     */
+    public void setFlatness(int flatness) {
+        this.flatness = flatness;
     }
 }

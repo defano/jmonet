@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -67,7 +66,10 @@ public class Geometry {
         double yStep = (p2.y - p1.y) / length;
 
         for (int step = 0; step < length; step++) {
-            interpolatedPoints.add(new Point((int)(p1.x + xStep * step), (int)(p1.y + yStep * step)));
+            Point interpolated = new Point((int)(p1.x + xStep * step), (int)(p1.y + yStep * step));
+            if (!interpolatedPoints.contains(interpolated)) {
+                interpolatedPoints.add(interpolated);
+            }
         }
 
         return interpolatedPoints;
