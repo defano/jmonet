@@ -154,9 +154,10 @@ public class StrokeBuilder {
         /**
          * Creates a linear stroke.
          *
-         * @param length          The length of the line
+         * @param length The length of the line
+         * @param width The width of the line
          * @param rotationDegrees A rotation, in degrees, of the line. 0 degrees is horizontal; 90 degrees is vertical.
-         * @return
+         * @return The builder
          */
         public ShapeStrokeBuilder ofLine(int length, int width, double rotationDegrees) {
             shapes.add(AffineTransform.getRotateInstance(Math.toRadians(rotationDegrees)).createTransformedShape(new Rectangle2D.Float(0, 0, length, width)));

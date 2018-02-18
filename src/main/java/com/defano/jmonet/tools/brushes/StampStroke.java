@@ -71,7 +71,8 @@ public abstract class StampStroke implements Stroke {
     }
 
     /**
-     * Gets the linear interpolation interval currently in use; a value <1 indicates that interpolation is disabled.
+     * Gets the linear interpolation interval currently in use; a value less than 1 indicates that interpolation is
+     * disabled.
      *
      * @return The interpolation interval.
      */
@@ -80,18 +81,19 @@ public abstract class StampStroke implements Stroke {
     }
 
     /**
-     * Defines the linear interpolation interval used when stamping the stroke shape. An interval <1 disables
+     * Defines the linear interpolation interval used when stamping the stroke shape. An interval less than 1 disables
      * interpolation.
      * <p>
-     * When interval is positive, every interval pixel on the stroked shape's path is stroked; when <1, only points
-     * returned by the shape's path iterator are stamped.
+     * When interval is positive, every interval pixel on the stroked shape's path is stroked; when less than 1, only
+     * points returned by the shape's path iterator are stamped.
      * <p>
      * For example, when disabled (interval=0), stroking a line shape will invoke
      * {@link #stampPoint(GeneralPath, Point)} only twice; at the start and end points of the line). When interval = 1,
      * stroking the same line will invoke {@link #stampPoint(GeneralPath, Point)} at every pixel on the line formed
      * between the two points. When interval = 2, every other pixel will be stamped.
      *
-     * @param interval Specifies every nth pixel between control points to stamp; <1 stamps only control points.
+     * @param interval Specifies every nth pixel between control points to stamp; value less than 1 stamps only control
+     *                 points.
      */
     public void setInterpolationInterval(int interval) {
         this.interval = interval;
@@ -117,7 +119,7 @@ public abstract class StampStroke implements Stroke {
      * <p>
      * See {@link FlatteningPathIterator}.
      *
-     * @param flatness The flatness, in pixels. Value must be >= 0.
+     * @param flatness The flatness, in pixels. Value must be greater than or equal to 0.
      */
     public void setFlatness(double flatness) {
         this.flatness = flatness;

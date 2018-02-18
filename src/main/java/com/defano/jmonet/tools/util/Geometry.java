@@ -55,9 +55,10 @@ public class Geometry {
      * Produces a linear interpolation of all points existing between two other points.
      * @param p1 The first point
      * @param p2 The second point
+     * @param interval The interval on which to perform the interpolation
      * @return A list of all unique points existing on the line between p1 and p2
      */
-    public static List<Point> linearInterpolation(Point p1, Point p2, int resolution) {
+    public static List<Point> linearInterpolation(Point p1, Point p2, int interval) {
 
         ArrayList<Point> interpolatedPoints = new ArrayList<>();
 
@@ -65,7 +66,7 @@ public class Geometry {
         double xStep = (p2.x - p1.x) / length;
         double yStep = (p2.y - p1.y) / length;
 
-        for (int step = 0; step < length; step += resolution) {
+        for (int step = 0; step < length; step += interval) {
             Point interpolated = new Point((int)(p1.x + xStep * step), (int)(p1.y + yStep * step));
             if (!interpolatedPoints.contains(interpolated)) {
                 interpolatedPoints.add(interpolated);

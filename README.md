@@ -165,7 +165,9 @@ There's no technical limitation that prevents multiple tools from being active o
 
 ### Creating complex brush shapes
 
-A stroke represents the size, shape and style of the "pen" used to mark the outline of a shape or path. JMonet's `ShapeStroke` class can produce a stroke of any arbitrary shape (even the shape of text). A builder class (`StrokeBuilder`) provides a convenient mechanism for creating both `BasicStroke` or `ShapeStroke` objects. Note that `StrokeBuilder` replaces the `BasicBrush` enumeration present in older versions of the library.
+A stroke represents the size and shape of the "pen" used to mark the outline of a shape or path.
+
+JMonet's `ShapeStroke` class can produce a stroke of any arbitrary shape (even the shape of text). A builder class (`StrokeBuilder`) provides a convenient mechanism for creating both `BasicStroke` or `ShapeStroke` objects. Note that `StrokeBuilder` replaces the `BasicBrush` enumeration present in older versions of the library.
 
 To produce a stroke in the shape of a vertical line, 20 pixels tall:
 
