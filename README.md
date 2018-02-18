@@ -148,10 +148,10 @@ Start painting by making a tool active on the canvas with the `PaintToolBuilder`
 
 ```
 PaintTool activeTool = PaintToolBuilder.create(PaintToolType.PAINTBRUSH)
-        .withStroke(BasicBrush.ROUND_8X8.stroke)
-        .withFillPaint(Color.RED)
-        .makeActiveOnCanvas(myCanvas)
-        .build();
+    .withStroke(StrokeBuilder.withShape().ofCircle(8).build())
+    .withStrokePaint(Color.RED)
+    .makeActiveOnCanvas(myCanvas)
+    .build();
 ```
 
 Voila! You're ready to start painting a round, 8-pixel, bright red brushstroke onto your canvas. Don't forget to deactivate this tool when you're done with it or wish to start using another tool:
@@ -163,12 +163,54 @@ activeTool.deactivate();
 
 There's no technical limitation that prevents multiple tools from being active on the same canvas at the same time, but that's not usually desired behavior in a paint program.
 
+### Creating complex brush shapes
+
+A stroke represents the size, shape and style of the "pen" used to mark the outline of a shape or path. JMonet's `ShapeStroke` class can produce a stroke of any arbitrary shape (even the shape of text). A builder class (`StrokeBuilder`) provides a convenient mechanism for creating both `BasicStroke` or `ShapeStroke` objects. Note that `StrokeBuilder` replaces the `BasicBrush` enumeration present in older versions of the library.
+
+To produce a stroke in the shape of a vertical line, 20 pixels tall:
+
+```
+StrokeBuilder.withShape()
+    .ofVerticalLine(20)
+    .build();
+```
+
+Stroked shapes can be transformed, too. This produces a 20x10 parallelogram stroke:
+
+```
+StrokeBuilder.withShape()
+    .ofRectangle(20, 10)
+    .sheared(1, 0)
+    .build();
+```
+
+Shapes can be combined together to create a composite stroke shape. This example produces a stroke in the shape of the international [no symbol](https://en.wikipedia.org/wiki/No_symbol):
+
+```
+StrokeBuilder.withShape()
+    .ofCircle(48)         // draw circle
+    .outlined(6)          // ... outlined with 6px border, not filled
+    .ofRectangle(6, 60)   // draw slash (6px wide, 60px long)
+    .rotated(-45)         // ... rotate it 45 degrees
+    .build();
+```
+
+Instances of Java's `BasicStroke` can also be created with this builder. This example produces an 8-pixel stroke with a 10-pixel dashed pattern:
+
+```
+StrokeBuilder.withBasicStroke()
+    .ofWidth(8)
+    .withDash(10)
+    .build();
+```
+
 ### Migrating from older versions
 
 JMonet versions 0.2.0 and later utilize [ReactiveX](https://github.com/ReactiveX/RxJava) for observables instead of the `Provider` classes that were present in earlier versions. Here's what you need to do to upgrade:
 
 1. **Change API signatures:** JMonet APIs ending with `Provider` now end with `Observable`. For example, `JMonetCanvas#getGridSpacingProvider()` is now `JMonetCanvas#getGridSpacingObservable()`.
-3. **Use `BehvaiorSubject` in lieu of `Provider`:** RxJava's `BehaviorSubject` is roughly equivalent to JMonet's former `Provider` class:
+
+2. **Use `BehvaiorSubject` in lieu of `Provider`:** RxJava's `BehaviorSubject` is roughly equivalent to JMonet's former `Provider` class:
 
 To create an observable property (that is, one that a paint tool or canvas will respond to dynamically):
 ```
@@ -343,3 +385,7 @@ When you're done with a canvas, call `.dispose()` on the canvas object to allow 
 #### What about vector graphic tools (i.e., "draw" apps)?
 
 Sorry, that's not the intent of this library. That said, many pieces of this library could be leveraged for such a tool...
+
+#### I created a custom stroke using a line shape but it doesn't work. What gives?
+
+The area defined by the stroke's shape is where the "pen" will produce ink. A line (or a curve) has no area and therefore produces no paint on the canvas. Use a thin `Rectangle2D` instead.

@@ -1,7 +1,7 @@
 package com.defano.jmonet.tools.builder;
 
 import com.defano.jmonet.model.Quadrilateral;
-import com.defano.jmonet.tools.brushes.ShapeBrush;
+import com.defano.jmonet.tools.brushes.ShapeStroke;
 import com.defano.jmonet.tools.util.Geometry;
 
 import javax.swing.*;
@@ -15,7 +15,10 @@ import java.util.ArrayList;
 public class StrokeBuilder {
 
     /**
-     * Builds a stroke in which a shape is "stamped" along each point of the stroked path.
+     * Builds a stroke in which a shape is "stamped" along each point of the stroked path. Note that the stamped shape
+     * (the pen) is not automatically rotated to match the angular perpendicular to the path (as occurs with a
+     * {@link #withBasicStroke()}.
+     *
      * @return The builder.
      */
     public static ShapeStrokeBuilder withShape() {
@@ -24,18 +27,26 @@ public class StrokeBuilder {
 
     /**
      * Builds a basic stroke.
+     *
      * @return The builder
      */
-    public static BasicStrokeBuilder withStroke() {
+    public static BasicStrokeBuilder withBasicStroke() {
         return new BasicStrokeBuilder();
     }
 
+    /**
+     * Builds strokes in which every point on the stroked shape's line is stamped with a shape.
+     */
     public static class ShapeStrokeBuilder {
 
         private ArrayList<Shape> shapes = new ArrayList<>();
-        private boolean linearInterpolation = true;
+        private int interpolation = 1;
 
-        private ShapeStrokeBuilder() {}
+        /**
+         * Use {@link StrokeBuilder#withShape()} to get an instance of this class
+         */
+        private ShapeStrokeBuilder() {
+        }
 
         /**
          * Creates a circular stroke of a specified diameter.
@@ -51,7 +62,7 @@ public class StrokeBuilder {
         /**
          * Creates an oval stroke of a specified width and height.
          *
-         * @param width The width of the oval
+         * @param width  The width of the oval
          * @param height The height of the oval
          * @return The builder
          */
@@ -63,8 +74,8 @@ public class StrokeBuilder {
         /**
          * Creates a regular polygon stroke.
          *
-         * @param sides The number of sides of the polygon (i.e., 3 for a triangle, 8 for an octagon, etc.)
-         * @param sideLength The length, in pixels, of each side.
+         * @param sides           The number of sides of the polygon (i.e., 3 for a triangle, 8 for an octagon, etc.)
+         * @param sideLength      The length, in pixels, of each side.
          * @param rotationDegrees Degrees to rotate the orientation of the polygon
          * @return The builder
          */
@@ -87,7 +98,7 @@ public class StrokeBuilder {
         /**
          * Creates a rectangular stroke.
          *
-         * @param width The width of the rectangle
+         * @param width  The width of the rectangle
          * @param height The height of the rectangle
          * @return The builder
          */
@@ -110,9 +121,9 @@ public class StrokeBuilder {
         /**
          * Creates a round rectangle stroke.
          *
-         * @param width The width of the round rectangle
+         * @param width  The width of the round rectangle
          * @param height The height of the round rectangle
-         * @param arc And height and width of the arc that rounds the rectangle
+         * @param arc    And height and width of the arc that rounds the rectangle
          * @return The builder
          */
         public ShapeStrokeBuilder ofRoundRectangle(int width, int height, int arc) {
@@ -127,7 +138,7 @@ public class StrokeBuilder {
          * @return The builder
          */
         public ShapeStrokeBuilder ofHorizontalLine(int length) {
-            return ofLine(length, 0);
+            return ofLine(length, 2, 0);
         }
 
         /**
@@ -137,18 +148,18 @@ public class StrokeBuilder {
          * @return The builder
          */
         public ShapeStrokeBuilder ofVerticalLine(int length) {
-            return ofLine(length, 90);
+            return ofLine(length, 2, 90);
         }
 
         /**
          * Creates a linear stroke.
          *
-         * @param length The length of the line
+         * @param length          The length of the line
          * @param rotationDegrees A rotation, in degrees, of the line. 0 degrees is horizontal; 90 degrees is vertical.
          * @return
          */
-        public ShapeStrokeBuilder ofLine(int length, double rotationDegrees) {
-            shapes.add(AffineTransform.getRotateInstance(Math.toRadians(rotationDegrees)).createTransformedShape(new Rectangle2D.Float(0, 0, length, 2)));
+        public ShapeStrokeBuilder ofLine(int length, int width, double rotationDegrees) {
+            shapes.add(AffineTransform.getRotateInstance(Math.toRadians(rotationDegrees)).createTransformedShape(new Rectangle2D.Float(0, 0, length, width)));
             return this;
         }
 
@@ -246,10 +257,9 @@ public class StrokeBuilder {
         }
 
         /**
-         * Transforms the last specified stroke shape from a filled (solid) shape into a stroked shape, stroked by a
-         * given stroke (potentially a different stroke built by this builder). That is, this method chains one
-         * stroke to another.
-         *
+         * Transforms the last specified shape from a filled (solid) shape into a stroked shape that is stroked by the
+         * given stroke. That is, this method produces a stroke from another stroke.
+         * <p>
          * It is advised not to stroke a stroke with a {@link com.defano.jmonet.tools.brushes.StampStroke}, as doing
          * so exponentially increases the drawing complexity of whatever shape is being stroked.
          *
@@ -267,24 +277,34 @@ public class StrokeBuilder {
 
         /**
          * When invoked, the stroke shape will be "stamped" only at each point where two paths join.
+         *
          * @return The builder
          */
         public ShapeStrokeBuilder withoutInterpolation() {
-            this.linearInterpolation = false;
+            this.interpolation = 0;
+            return this;
+        }
+
+        public ShapeStrokeBuilder interpolated(int resolution) {
+            this.interpolation = resolution;
             return this;
         }
 
         /**
          * Creates the stroke as specified.
+         *
          * @return The built stroke
          */
         public Stroke build() {
-            ShapeBrush brush = new ShapeBrush(shapes);
-            brush.setLinearInterpolated(linearInterpolation);
+            ShapeStroke brush = new ShapeStroke(shapes);
+            brush.setInterpolationInterval(interpolation);
             return brush;
         }
     }
 
+    /**
+     * Builds {@link BasicStroke} objects.
+     */
     public static class BasicStrokeBuilder {
 
         private float width = 1;
@@ -292,61 +312,129 @@ public class StrokeBuilder {
         private int join = BasicStroke.JOIN_ROUND;
         private ArrayList<Float> dash = new ArrayList<>();
         private float dashPhase = 0;
-        private float miterLimit = 0;
+        private float miterLimit = 1;
 
+        /**
+         * Use {@link StrokeBuilder#withBasicStroke()} to get an instance of this class.
+         */
         private BasicStrokeBuilder() {}
 
+        /**
+         * Specifies the width, in pixels, of the stroke.
+         * @param width The width
+         * @return The builder
+         */
         public BasicStrokeBuilder ofWidth(float width) {
             this.width = width;
             return this;
         }
 
+        /**
+         * Ends unclosed subpaths and dash segments with a round decoration that has a radius equal to half of the
+         * width of the pen.
+         *
+         * @return The builder
+         */
         public BasicStrokeBuilder withRoundCap() {
             this.cap = BasicStroke.CAP_ROUND;
             return this;
         }
 
+        /**
+         * Ends unclosed subpaths and dash segments with no added decoration.
+         *
+         * @return The builder
+         */
         public BasicStrokeBuilder withButtCap() {
             this.cap = BasicStroke.CAP_BUTT;
             return this;
         }
 
+        /**
+         * Ends unclosed subpaths and dash segments with a square projection that extends beyond the end of the segment
+         * to a distance equal to half of the line width.
+         *
+         * @return The builder
+         */
         public BasicStrokeBuilder withSquareCap() {
             this.cap = BasicStroke.CAP_SQUARE;
             return this;
         }
 
+        /**
+         * Joins path segments by rounding off the corner at a radius of half the line width.
+         *
+         * @return The builder
+         */
         public BasicStrokeBuilder withRoundJoin() {
             this.join = BasicStroke.JOIN_ROUND;
             return this;
         }
 
+        /**
+         * Joins path segments by extending their outside edges until they meet.
+         *
+         * @return The builder
+         */
         public BasicStrokeBuilder withMiterJoin() {
             this.join = BasicStroke.JOIN_MITER;
             return this;
         }
 
+        /**
+         * Joins path segments by connecting the outer corners of their wide outlines with a straight segment.
+         *
+         * @return The builder
+         */
         public BasicStrokeBuilder withBevelJoin() {
             this.join = BasicStroke.JOIN_BEVEL;
             return this;
         }
 
+        /**
+         * Adds a dash pattern element to the stroke.
+         *
+         * For example, specifying '5' as the argument to this method produces a dashed/dotted line where every 5 pixels
+         * are filled, and every 5 pixels are not. Invoking this method subsequent times appends values to the dash
+         * pattern. Calling a second time with '2' produces a line where every 5 pixels are filled followed by 2 that
+         * are not.
+         *
+         * @param dashLength The length of the dash pattern element to append
+         * @return The Builder
+         */
         public BasicStrokeBuilder withDash(float dashLength) {
             this.dash.add(dashLength);
             return this;
         }
 
+        /**
+         * The limit to trim the miter join; must be greater than or equal to 1.0f.
+         *
+         * @param miterLimit The miter limit
+         * @return The builder
+         */
         public BasicStrokeBuilder withMiterLimit(float miterLimit) {
             this.miterLimit = miterLimit;
             return this;
         }
 
+        /**
+         * The offset at which to start the dashing pattern.
+         *
+         * @param dashPhase The dash phase offset
+         * @return The builder
+         */
         public BasicStrokeBuilder withDashPhase(float dashPhase) {
             this.dashPhase = dashPhase;
             return this;
         }
 
-        public Stroke build() {
+        /**
+         * Creates the {@link BasicStroke} as specified.
+         *
+         * @return The stroke
+         */
+        public BasicStroke build() {
             if (dash.isEmpty()) {
                 return new BasicStroke(width, cap, join, miterLimit);
             } else {

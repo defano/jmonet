@@ -11,7 +11,7 @@ import java.util.List;
  * A brush whose tip is a user-provided shape. Produces a stroke where every point on the stroked path is "stamped" with a
  * filled shape.
  */
-public class ShapeBrush extends StampStroke {
+public class ShapeStroke extends StampStroke {
 
     private final List<Shape> shapes = new ArrayList<>();
 
@@ -20,11 +20,11 @@ public class ShapeBrush extends StampStroke {
      *
      * @param shape      The shape of the brush
      */
-    public ShapeBrush(Shape shape) {
+    public ShapeStroke(Shape shape) {
         this.shapes.add(shape);
     }
 
-    public ShapeBrush(Collection<Shape> shapes) {
+    public ShapeStroke(Collection<Shape> shapes) {
         this.shapes.addAll(shapes);
     }
 

@@ -3,8 +3,6 @@ package com.defano.jmonet.model;
 import com.defano.jmonet.tools.util.Geometry;
 
 import java.awt.*;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Line2D;
 
 /**
  * Models a mutable, four-sided, simple polygon (quadrilateral) with no restrictions on the length, angle or

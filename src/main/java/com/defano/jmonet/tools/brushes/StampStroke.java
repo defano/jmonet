@@ -13,38 +13,38 @@ import java.awt.geom.PathIterator;
  */
 public abstract class StampStroke implements Stroke {
 
-    private boolean linearInterpolated = true;
-    private int flatness = 1;
+    private int interval = 1;
+    private double flatness = 2.0;
 
     /**
      * Stamps a given point on a stroked shape's path.
+     * <p>
+     * This method should append zero or more shapes to given the path, each of which represents the mark that the "pen"
+     * should leave at this point on the path. Typically, the stamped shape should be translated such that it's center-
+     * point is located at the given point.
      *
-     * This method should append zero or more segments/shapes to given the path, each segment/shape representing the
-     * mark that the "pen" should leave at this point on the path.
-     *
-     * @param path A path of the stroked shape
+     * @param path  A path of the stroked shape
      * @param point A point in the given path that should be stroked.
      */
     public abstract void stampPoint(GeneralPath path, Point point);
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public Shape createStrokedShape(Shape shape) {
 
+        float[] coordinates = new float[6];
         Point thisPoint, lastPoint = null;
         GeneralPath strokedShape = new GeneralPath(new BasicStroke(0f).createStrokedShape(shape));
 
-        float[] coordinates = new float[6];
+        // FlatteningPathIterator removes curved segments from the path
         for (PathIterator i = new FlatteningPathIterator(shape.getPathIterator(null), 1); !i.isDone(); i.next()) {
             switch (i.currentSegment(coordinates)) {
-                case PathIterator.SEG_CUBICTO:
-                case PathIterator.SEG_QUADTO:
-                    throw new IllegalStateException("Bug! Shape is not flattened.");
                 case PathIterator.SEG_MOVETO:
                 case PathIterator.SEG_LINETO:
-                    thisPoint = new Point((int)coordinates[0], (int)coordinates[1]);
-                    stampPoint(strokedShape, lastPoint, thisPoint);
+                    thisPoint = new Point((int) coordinates[0], (int) coordinates[1]);
+                    stampLine(strokedShape, lastPoint, thisPoint);
                     lastPoint = thisPoint;
-                case PathIterator.SEG_CLOSE:
                     break;
             }
         }
@@ -52,51 +52,74 @@ public abstract class StampStroke implements Stroke {
         return strokedShape;
     }
 
-    private void stampPoint(GeneralPath path, Point lastPoint, Point thisPoint) {
-        if (lastPoint != null && linearInterpolated) {
-            for (Point interpolated : Geometry.linearInterpolation(lastPoint, thisPoint)) {
+    /**
+     * Stamps the line formed by p1, p2 interpolating points on the line as indicated by
+     * {@link #setInterpolationInterval(int)}.
+     *
+     * @param path  The path onto which stamps should be added
+     * @param start The start point of the line
+     * @param end   The end point of the line
+     */
+    private void stampLine(GeneralPath path, Point start, Point end) {
+        if (start != null && interval > 0) {
+            for (Point interpolated : Geometry.linearInterpolation(start, end, interval)) {
                 stampPoint(path, interpolated);
             }
         }
-        stampPoint(path, thisPoint);
+
+        stampPoint(path, end);
     }
 
     /**
-     * Determines if linear interpolation is enabled. See {@link #setLinearInterpolated(boolean)}.
-     * @return True to enable; false to disable
-     */
-    public boolean isLinearInterpolated() {
-        return linearInterpolated;
-    }
-
-    /**
-     * Enables or disables linear interpolation; when enabled, every pixel on the stroked shape's path is stroked; when
-     * disabled, only points returned by the shape's path iterator are stroked (for example, when disabled, stroking a
-     * line shape will invoke {@link #stampPoint(GeneralPath, Point)} only twice; the start and end points of the
-     * line).
+     * Gets the linear interpolation interval currently in use; a value <1 indicates that interpolation is disabled.
      *
-     * @param linearInterpolated True to enable linear interpolation; false to disable.
+     * @return The interpolation interval.
      */
-    public void setLinearInterpolated(boolean linearInterpolated) {
-        this.linearInterpolated = linearInterpolated;
+    public int getInterpolationInterval() {
+        return interval;
     }
 
     /**
-     * Gets the flatness used to render curved surfaces. See {@link #setFlatness(int)}.
+     * Defines the linear interpolation interval used when stamping the stroke shape. An interval <1 disables
+     * interpolation.
+     * <p>
+     * When interval is positive, every interval pixel on the stroked shape's path is stroked; when <1, only points
+     * returned by the shape's path iterator are stamped.
+     * <p>
+     * For example, when disabled (interval=0), stroking a line shape will invoke
+     * {@link #stampPoint(GeneralPath, Point)} only twice; at the start and end points of the line). When interval = 1,
+     * stroking the same line will invoke {@link #stampPoint(GeneralPath, Point)} at every pixel on the line formed
+     * between the two points. When interval = 2, every other pixel will be stamped.
+     *
+     * @param interval Specifies every nth pixel between control points to stamp; <1 stamps only control points.
+     */
+    public void setInterpolationInterval(int interval) {
+        this.interval = interval;
+    }
+
+    /**
+     * Gets the flatness used to render curved surfaces. See {@link #setFlatness(double)}.
      *
      * @return The current flatness; default is 1
      */
-    public int getFlatness() {
+    public double getFlatness() {
         return flatness;
     }
 
     /**
-     * When stamping curved shape segments, defines the flatness of the curve. That is, the the maximum allowable
-     * distance between the control points and the flattened curve.
+     * Defines the flatness of curved segments of the stamped path. Smaller values produce smoother curves; larger
+     * values produce flatter, approximated curves. Smaller values produce a more complex stroked shape that will take
+     * longer to render.
+     * <p>
+     * Curved portions of a stroked path are recursively "flattened" into linear sub-segments, such that the final path
+     * is comprised only of linear segments. This value defines the maximum length of any linear sub-segment on the
+     * final path.
+     * <p>
+     * See {@link FlatteningPathIterator}.
      *
-     * @param flatness The flatness, in pixels.
+     * @param flatness The flatness, in pixels. Value must be >= 0.
      */
-    public void setFlatness(int flatness) {
+    public void setFlatness(double flatness) {
         this.flatness = flatness;
     }
 }
