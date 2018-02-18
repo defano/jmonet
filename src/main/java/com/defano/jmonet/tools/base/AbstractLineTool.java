@@ -57,6 +57,7 @@ public abstract class AbstractLineTool extends PaintTool {
         }
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
+        setRenderingHints(g2d);
         drawLine(g2d, getStroke(), getStrokePaint(), initialPoint.x, initialPoint.y, currentLoc.x, currentLoc.y);
         g2d.dispose();
 

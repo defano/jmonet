@@ -86,6 +86,8 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         BufferedImage argbImage = Transform.argbCopy(image);
 
         Graphics2D g = getCanvas().getScratchImage().createGraphics();
+        setRenderingHints(g);
+
         g.drawImage(argbImage, location.x, location.y, null);
         g.dispose();
 
@@ -327,6 +329,8 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
         if (isDirty() && hasSelection()) {
             Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
+            setRenderingHints(g);
+
             g.drawImage(selectedImage.getValue().get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
             g.dispose();
         }
@@ -387,6 +391,8 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
             // change set and draw marching ants onto our committed image (persisting the dotted-line border).
             BufferedImage localScratch = new BufferedImage(getCanvas().getScratchImage().getWidth(), getCanvas().getScratchImage().getWidth(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2d = localScratch.createGraphics();
+            setRenderingHints(g2d);
+
             g2d.drawImage(selectedImage.getValue().get(), selectedLocation.x, selectedLocation.y, null);
             g2d.dispose();
 

@@ -76,6 +76,7 @@ public abstract class AbstractBoundsTool extends PaintTool {
                 Geometry.rectangle(originPoint, currentPoint);
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
+        setRenderingHints(g2d);
 
         if (getFillPaint().isPresent()) {
             fillBounds(g2d, getFillPaint().get(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());

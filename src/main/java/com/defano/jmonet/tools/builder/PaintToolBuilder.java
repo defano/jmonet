@@ -2,6 +2,7 @@ package com.defano.jmonet.tools.builder;
 
 import com.defano.jmonet.canvas.JFXPaintCanvasNode;
 import com.defano.jmonet.canvas.PaintCanvas;
+import com.defano.jmonet.model.ImageAntiAliasingMode;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractBoundsTool;
 import io.reactivex.Observable;
@@ -28,6 +29,7 @@ public class PaintToolBuilder {
     private Observable<Boolean> drawMultipleObservable;
     private Observable<Boolean> drawCenteredObservable;
     private Observable<Integer> cornerRadiusObservable;
+    private Observable<ImageAntiAliasingMode> antiAliasingObservable;
 
     /**
      * Constructs a builder for the specified tool type. Use {@link #create(PaintToolType)} to retrieve an instance
@@ -296,6 +298,17 @@ public class PaintToolBuilder {
     }
 
     /**
+     * Specifies the antialiasing mode to use when rendering shapes and images. See {@link ImageAntiAliasingMode}.
+     *
+     * @param mode The mode to use with this tool.
+     * @return The PaintToolBuilder
+     */
+    public PaintToolBuilder withAntiAliasing(ImageAntiAliasingMode mode) {
+        this.antiAliasingObservable = BehaviorSubject.createDefault(mode);
+        return this;
+    }
+
+    /**
      * Creates a paint tool as previously configured.
      * @return The built paint tool.
      */
@@ -342,6 +355,11 @@ public class PaintToolBuilder {
         if (cornerRadiusObservable != null) {
             selectedTool.setCornerRadiusObservable(cornerRadiusObservable);
         }
+
+        if (antiAliasingObservable != null) {
+            selectedTool.setAntiAliasingObservable(antiAliasingObservable);
+        }
+
         if (canvas != null) {
             selectedTool.activate(canvas);
         }

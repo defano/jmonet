@@ -82,6 +82,8 @@ public abstract class AbstractPolylineTool extends PaintTool {
         getCanvas().clearScratch();
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
+        setRenderingHints(g2d);
+
         strokePolyline(g2d, getStroke(), getStrokePaint(), xs, ys);
         g2d.dispose();
 
@@ -121,6 +123,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
         currentPoint = null;
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
+        setRenderingHints(g2d);
 
         if (getFillPaint().isPresent()) {
             fillPolygon(g2d, getFillPaint().get(), xs, ys);
@@ -142,6 +145,8 @@ public abstract class AbstractPolylineTool extends PaintTool {
         currentPoint = null;
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
+        setRenderingHints(g2d);
+
         strokePolyline(g2d, getStroke(), getStrokePaint(), xs, ys);
         g2d.dispose();
 

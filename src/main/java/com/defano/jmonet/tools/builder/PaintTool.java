@@ -4,6 +4,7 @@ import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
+import com.defano.jmonet.model.ImageAntiAliasingMode;
 import com.defano.jmonet.model.PaintToolType;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -35,6 +36,8 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     private Observable<Double> intensityObservable = BehaviorSubject.createDefault(0.1);
     private Observable<Boolean> drawMultipleObservable = BehaviorSubject.createDefault(false);
     private Observable<Boolean> drawCenteredObservable = BehaviorSubject.createDefault(false);
+    private Observable<Integer> cornerRadiusObservable = BehaviorSubject.createDefault(10);
+    private Observable<ImageAntiAliasingMode> antiAliasingObservable = BehaviorSubject.createDefault(ImageAntiAliasingMode.BILINEAR);
 
     public PaintTool(PaintToolType type) {
         this.type = type;
@@ -231,12 +234,52 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     public void setCornerRadiusObservable(Observable<Integer> cornerRadiusObservable) {
         this.cornerRadiusObservable = cornerRadiusObservable;
     }
+
     public int getConstrainedAngle() {
         return constrainedAngle;
     }
 
     public void setConstrainedAngle(int constrainedAngle) {
         this.constrainedAngle = constrainedAngle;
+    }
+
+    public Observable<ImageAntiAliasingMode> getAntiAliasingObservable() {
+        return antiAliasingObservable;
+    }
+
+    public void setAntiAliasingObservable(Observable<ImageAntiAliasingMode> antiAliasingObservable) {
+        this.antiAliasingObservable = antiAliasingObservable;
+    }
+
+    public void setRenderingHints(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+
+        switch (antiAliasingObservable.blockingFirst()) {
+            case OFF:
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+                break;
+            case DEFAULT:
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
+                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT);
+                break;
+            case NEAREST_NEIGHBOR:
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                break;
+            case BICUBIC:
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                break;
+            case BILINEAR:
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                break;
+        }
     }
 
     /** {@inheritDoc} */
