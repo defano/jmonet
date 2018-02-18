@@ -1,8 +1,6 @@
 package com.defano.jmonet.tools.selection;
 
-import com.defano.jmonet.algo.BoundaryFunction;
 import com.defano.jmonet.algo.DefaultFillFunction;
-import com.defano.jmonet.algo.FillFunction;
 import com.defano.jmonet.algo.Transform;
 import com.defano.jmonet.algo.dither.Ditherer;
 import com.defano.jmonet.algo.dither.FloydSteinbergDitherer;
@@ -52,7 +50,7 @@ public interface TransformableImageSelection extends MutableSelection {
                     ditherer.dither(source, new ColorReductionQuantizer(channelDepth));
 
             setSelectedImage(reduced);
-            setDirty();
+            commitChange();
         }
     }
 
@@ -73,7 +71,7 @@ public interface TransformableImageSelection extends MutableSelection {
                     ditherer.dither(source, new GrayscaleQuantizer(grayDepth));
 
             setSelectedImage(reduced);
-            setDirty();
+            commitChange();
         }
     }
 
@@ -87,7 +85,7 @@ public interface TransformableImageSelection extends MutableSelection {
     default void adjustBrightness(int delta) {
         if (hasSelection()) {
             Transform.adjustBrightness(getSelectedImage(), getIdentitySelectionOutline(), delta);
-            setDirty();
+            commitChange();
         }
     }
 
@@ -100,7 +98,7 @@ public interface TransformableImageSelection extends MutableSelection {
     default void adjustTransparency(int delta) {
         if (hasSelection()) {
             Transform.adjustTransparency(getSelectedImage(), getIdentitySelectionOutline(), delta);
-            setDirty();
+            commitChange();
         }
     }
 
@@ -110,7 +108,7 @@ public interface TransformableImageSelection extends MutableSelection {
     default void invert() {
         if (hasSelection()) {
             Transform.invert(getSelectedImage(), getIdentitySelectionOutline());
-            setDirty();
+            commitChange();
         }
     }
 
@@ -121,7 +119,7 @@ public interface TransformableImageSelection extends MutableSelection {
     default void fill(Paint fillPaint) {
         if (hasSelection()) {
             Transform.fill(getSelectedImage(), getIdentitySelectionOutline(), fillPaint, new DefaultFillFunction());
-            setDirty();
+            commitChange();
         }
     }
 

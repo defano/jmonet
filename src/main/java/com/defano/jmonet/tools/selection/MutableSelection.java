@@ -29,6 +29,8 @@ public interface MutableSelection extends Selection {
      */
     void setDirty();
 
+    void commitChange();
+
     /**
      * Replaces the current selected image with the given image. It is the caller's responsibility to mask the given
      * image to assure it does not exceed the selection bounds.

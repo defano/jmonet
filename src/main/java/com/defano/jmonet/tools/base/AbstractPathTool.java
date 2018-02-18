@@ -12,6 +12,8 @@ import java.awt.event.MouseEvent;
  */
 public abstract class AbstractPathTool extends PaintTool {
 
+    protected Point lastPoint;
+
     /**
      * Begins drawing a path on the given graphics context.
      *
@@ -28,9 +30,10 @@ public abstract class AbstractPathTool extends PaintTool {
      * @param g The graphics context on which to draw.
      * @param stroke The stroke with which to draw
      * @param fillPaint The paint with which to draw
-     * @param point The new point to add to the current path
+     * @param lastPoint The last point added to the current path
+     * @param thisPoint The new point to add to the current path
      */
-    protected abstract void addPoint(Graphics2D g, Stroke stroke, Paint fillPaint, Point point);
+    protected abstract void addPoint(Graphics2D g, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint);
 
     /**
      * Completes the path begun via a call to {@link #startPath(Graphics2D, Stroke, Paint, Point)}.
@@ -58,9 +61,10 @@ public abstract class AbstractPathTool extends PaintTool {
         getCanvas().clearScratch();
 
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
-        startPath(g2d, getStroke(), getFillPaint().orElse(null), imageLocation);
+        startPath(g2d, getStroke(), getStrokePaint(), imageLocation);
         g2d.dispose();
 
+        lastPoint = imageLocation;
         getCanvas().invalidateCanvas();
     }
 
@@ -68,9 +72,10 @@ public abstract class AbstractPathTool extends PaintTool {
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
-        addPoint(g2d, getStroke(), getFillPaint().orElse(null), imageLocation);
+        addPoint(g2d, getStroke(), getStrokePaint(), lastPoint, imageLocation);
         g2d.dispose();
 
+        lastPoint = imageLocation;
         getCanvas().invalidateCanvas();
     }
 
@@ -78,7 +83,7 @@ public abstract class AbstractPathTool extends PaintTool {
     @Override
     public void mouseReleased(MouseEvent e, Point imageLocation) {
         Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
-        completePath(g2d, getStroke(), getFillPaint().orElse(null));
+        completePath(g2d, getStroke(), getStrokePaint());
         g2d.dispose();
 
         getCanvas().commit(new ChangeSet(getCanvas().getScratchImage(), getComposite()));

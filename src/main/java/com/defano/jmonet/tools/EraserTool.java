@@ -4,14 +4,12 @@ import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractPathTool;
 
 import java.awt.*;
-import java.awt.geom.Path2D;
+import java.awt.geom.Line2D;
 
 /**
  * Tool that erases pixels from the canvas by turning them back to fully transparent.
  */
 public class EraserTool extends AbstractPathTool {
-
-    private Path2D path;
 
     public EraserTool() {
         super(PaintToolType.ERASER);
@@ -23,16 +21,16 @@ public class EraserTool extends AbstractPathTool {
     /** {@inheritDoc} */
     @Override
     protected void startPath(Graphics2D g, Stroke stroke, Paint fillPaint, Point initialPoint) {
-        path = new Path2D.Double();
-        path.moveTo(initialPoint.getX(), initialPoint.getY());
+        g.setStroke(stroke);
+        g.setPaint(getCanvas().getCanvasColor());
+        g.draw(new Line2D.Float(initialPoint, initialPoint));
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void addPoint(Graphics2D g, Stroke stroke, Paint fillPaint, Point point) {
-        path.lineTo(point.getX(), point.getY());
+    protected void addPoint(Graphics2D g, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
         g.setStroke(stroke);
         g.setPaint(getCanvas().getCanvasColor());
-        g.draw(path);
+        g.draw(new Line2D.Float(lastPoint, thisPoint));
     }
 }

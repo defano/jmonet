@@ -27,8 +27,8 @@ public class FreeformShapeTool extends AbstractPathTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void addPoint(Graphics2D g, Stroke stroke, Paint fillPaint, Point point) {
-        path.lineTo(point.getX(), point.getY());
+    protected void addPoint(Graphics2D g, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
+        path.lineTo(thisPoint.getX(), thisPoint.getY());
 
         g.setStroke(stroke);
         g.setPaint(getStrokePaint());
