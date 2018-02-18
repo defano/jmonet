@@ -27,6 +27,7 @@ public class PaintToolBuilder {
     private Observable<Double> intensityObservable;
     private Observable<Boolean> drawMultipleObservable;
     private Observable<Boolean> drawCenteredObservable;
+    private Observable<Integer> cornerRadiusObservable;
 
     /**
      * Constructs a builder for the specified tool type. Use {@link #create(PaintToolType)} to retrieve an instance
@@ -284,6 +285,17 @@ public class PaintToolBuilder {
     }
 
     /**
+     * Specifies the height and width of the corner used for round rectangles.
+     *
+     * @param cornerRadius The height and width of the corner radius
+     * @return The PaintToolBuilder
+     */
+    public PaintToolBuilder withCornerRadius(int cornerRadius) {
+        this.cornerRadiusObservable = BehaviorSubject.createDefault(cornerRadius);
+        return this;
+    }
+
+    /**
      * Creates a paint tool as previously configured.
      * @return The built paint tool.
      */
@@ -327,6 +339,9 @@ public class PaintToolBuilder {
             selectedTool.setDrawCenteredObservable(drawCenteredObservable);
         }
 
+        if (cornerRadiusObservable != null) {
+            selectedTool.setCornerRadiusObservable(cornerRadiusObservable);
+        }
         if (canvas != null) {
             selectedTool.activate(canvas);
         }

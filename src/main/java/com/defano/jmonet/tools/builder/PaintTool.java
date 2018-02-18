@@ -224,6 +224,13 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         }
     }
 
+    public Observable<Integer> getCornerRadiusObservable() {
+        return cornerRadiusObservable;
+    }
+
+    public void setCornerRadiusObservable(Observable<Integer> cornerRadiusObservable) {
+        this.cornerRadiusObservable = cornerRadiusObservable;
+    }
     public int getConstrainedAngle() {
         return constrainedAngle;
     }
