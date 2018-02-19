@@ -50,7 +50,7 @@ public interface TransformableImageSelection extends MutableSelection {
                     ditherer.dither(source, new ColorReductionQuantizer(channelDepth));
 
             setSelectedImage(reduced);
-            commitChange();
+            setDirty();
         }
     }
 
@@ -71,7 +71,7 @@ public interface TransformableImageSelection extends MutableSelection {
                     ditherer.dither(source, new GrayscaleQuantizer(grayDepth));
 
             setSelectedImage(reduced);
-            commitChange();
+            setDirty();
         }
     }
 
@@ -85,7 +85,7 @@ public interface TransformableImageSelection extends MutableSelection {
     default void adjustBrightness(int delta) {
         if (hasSelection()) {
             Transform.adjustBrightness(getSelectedImage(), getIdentitySelectionOutline(), delta);
-            commitChange();
+            setDirty();
         }
     }
 
@@ -98,7 +98,7 @@ public interface TransformableImageSelection extends MutableSelection {
     default void adjustTransparency(int delta) {
         if (hasSelection()) {
             Transform.adjustTransparency(getSelectedImage(), getIdentitySelectionOutline(), delta);
-            commitChange();
+            setDirty();
         }
     }
 
@@ -108,7 +108,7 @@ public interface TransformableImageSelection extends MutableSelection {
     default void invert() {
         if (hasSelection()) {
             Transform.invert(getSelectedImage(), getIdentitySelectionOutline());
-            commitChange();
+            setDirty();
         }
     }
 
@@ -119,7 +119,7 @@ public interface TransformableImageSelection extends MutableSelection {
     default void fill(Paint fillPaint) {
         if (hasSelection()) {
             Transform.fill(getSelectedImage(), getIdentitySelectionOutline(), fillPaint, new DefaultFillFunction());
-            commitChange();
+            setDirty();
         }
     }
 
