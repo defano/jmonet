@@ -122,6 +122,8 @@ public class TextTool extends PaintTool implements Consumer {
 
         BufferedImage image = new BufferedImage(textArea.getWidth(), textArea.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) image.getGraphics();
+        setRenderingHints(g);
+
         textArea.printAll(g);
         g.dispose();
 
@@ -135,6 +137,8 @@ public class TextTool extends PaintTool implements Consumer {
         // Don't commit if user hasn't entered any text
         if (textArea.getText().trim().length() > 0) {
             Graphics g = getCanvas().getScratchImage().getGraphics();
+            setRenderingHints(g);
+
             g.drawImage(rasterizeText(), (int)(textLocation.x / getCanvas().getScale()), (int)(textLocation.y / getCanvas().getScale()), null);
             g.dispose();
 

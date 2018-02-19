@@ -251,7 +251,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         this.antiAliasingObservable = antiAliasingObservable;
     }
 
-    public void setRenderingHints(Graphics g) {
+    protected void setRenderingHints(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
         switch (antiAliasingObservable.blockingFirst()) {
