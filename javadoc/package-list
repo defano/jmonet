@@ -1,6 +1,7 @@
 com.defano.jmonet.algo
 com.defano.jmonet.algo.dither
 com.defano.jmonet.algo.dither.quant
+com.defano.jmonet.algo.transform
 com.defano.jmonet.canvas
 com.defano.jmonet.canvas.observable
 com.defano.jmonet.canvas.surface
