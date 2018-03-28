@@ -1,6 +1,6 @@
 package com.defano.jmonet.tools.base;
 
-import com.defano.jmonet.algo.Transform;
+import com.defano.jmonet.algo.transform.Transform;
 import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;

@@ -62,7 +62,8 @@ Transform               | Tool Availability             | Description
 ------------------------|-------------------------------|-------------------------
 `adjustBrightness`      | Selection and transform tools | Changes the brightness/luminosity of all pixels in the selected image by adding `delta` to each red, green and blue color channel value (a value between 0..255, where 0 is completely dark, 255 is completely light).
 `adjustTransparency`    | Selection and transform tools | Changes the opacity of each pixel in the selected image by adding `delta` the alpha channel (a value between 0..255 where 0 is fully transparent and 255 is fully opaque).
-`applyTransform`        | Selection tools               | Applies an `AffineTransform` to the selection.
+`removeTranslucency`    | Selection and transform tools | Makes translucent pixels either fully transparent of fully opaque.          
+`applyTransform`        | Selection tools               | Applies an `AffineTransform` or a `PixelTransform` to the selection.
 `fill`                  | Selection and transform tools | Fills any fully-transparent pixels in the selection with a given `Paint`.
 `flipHorizontal`        | Selection tools               | Flips the selection about a vertical axis drawn through the center of the image.
 `flipVertical`          | Selection tools               | Flips the selection about a horizontal axis drawn through the center of the image.

@@ -3,7 +3,7 @@ package com.defano.jmonet.tools;
 import com.defano.jmonet.model.FlexQuadrilateral;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractTransformTool;
-import com.defano.jmonet.algo.Transform;
+import com.defano.jmonet.algo.transform.Transform;
 
 import java.awt.*;
 

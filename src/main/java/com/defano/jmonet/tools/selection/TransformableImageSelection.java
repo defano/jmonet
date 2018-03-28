@@ -1,7 +1,8 @@
 package com.defano.jmonet.tools.selection;
 
 import com.defano.jmonet.algo.DefaultFillFunction;
-import com.defano.jmonet.algo.Transform;
+import com.defano.jmonet.algo.transform.PixelTransform;
+import com.defano.jmonet.algo.transform.Transform;
 import com.defano.jmonet.algo.dither.Ditherer;
 import com.defano.jmonet.algo.dither.FloydSteinbergDitherer;
 import com.defano.jmonet.algo.dither.quant.ColorReductionQuantizer;
@@ -113,12 +114,36 @@ public interface TransformableImageSelection extends MutableSelection {
     }
 
     /**
+     * Makes translucent pixels in the active selection either fully transparent or fully opaque. Has no effect on
+     * pixels that are either fully opaque or fully transparent.
+     *
+     * @param makeTransparent When true, translucent pixels will become transparent; when false, opaque.
+     */
+    default void removeTranslucency(boolean makeTransparent) {
+        if (hasSelection()) {
+            Transform.removeTranslucency(getSelectedImage(), getIdentitySelectionOutline(), makeTransparent);
+            setDirty();
+        }
+    }
+
+    /**
      * Fills all transparent pixels in the selection with the given fill paint.
      * @param fillPaint The paint to fill with.
      */
     default void fill(Paint fillPaint) {
         if (hasSelection()) {
             Transform.fill(getSelectedImage(), getIdentitySelectionOutline(), fillPaint, new DefaultFillFunction());
+            setDirty();
+        }
+    }
+
+    /**
+     * Performs a per-pixel transformation on all pixels bound by the selection.
+     * @param transform The transform operation to apply
+     */
+    default void transform(PixelTransform transform) {
+        if (hasSelection()) {
+            Transform.transform(getSelectedImage(), getIdentitySelectionOutline(), transform);
             setDirty();
         }
     }

@@ -1,6 +1,6 @@
 package com.defano.jmonet.tools.selection;
 
-import com.defano.jmonet.algo.*;
+import com.defano.jmonet.algo.transform.Transform;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

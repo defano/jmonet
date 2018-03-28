@@ -1,6 +1,6 @@
 package com.defano.jmonet.algo.dither;
 
-import com.defano.jmonet.algo.Transform;
+import com.defano.jmonet.algo.transform.Transform;
 import com.defano.jmonet.algo.dither.quant.QuantizationFunction;
 
 import java.awt.image.BufferedImage;

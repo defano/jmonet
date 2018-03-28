@@ -1,5 +1,8 @@
-package com.defano.jmonet.algo;
+package com.defano.jmonet.algo.transform;
 
+import com.defano.jmonet.algo.DefaultFillFunction;
+import com.defano.jmonet.algo.FillFunction;
+import com.defano.jmonet.algo.Projection;
 import com.defano.jmonet.model.Quadrilateral;
 
 import java.awt.*;
@@ -45,17 +48,6 @@ public class Transform {
      */
     public static BufferedImage rotate(BufferedImage image, double theta, int anchorX, int anchorY) {
         return new AffineTransformOp(rotateTransform(theta, anchorX, anchorY), AffineTransformOp.TYPE_BICUBIC).filter(image, null);
-    }
-
-    /**
-     * Performs an affine transform on a given image.
-     *
-     * @param image The image to transform
-     * @param transform The transform to perform
-     * @return The transformed image
-     */
-    public static BufferedImage transform(BufferedImage image, AffineTransform transform) {
-        return new AffineTransformOp(transform, AffineTransformOp.TYPE_BICUBIC).filter(image, null);
     }
 
     /**
@@ -174,19 +166,7 @@ public class Transform {
      * @param mask The shape determining which pixels to invert; null to invert all pixels
      */
     public static void invert(BufferedImage selectedImage, Shape mask) {
-        for (int x = 0; x < selectedImage.getWidth(); x++) {
-            for (int y = 0; y < selectedImage.getHeight(); y++) {
-                if (mask == null || mask.contains(x, y)) {
-
-                    int argb = selectedImage.getRGB(x, y);
-                    int alpha = 0xff000000 & argb;
-                    int rgb = 0x00ffffff & argb;
-
-                    // Invert preserving alpha channel
-                    selectedImage.setRGB(x, y, alpha | (~rgb & 0x00ffffff));
-                }
-            }
-        }
+        transform(selectedImage, mask, new InvertPixelTransform());
     }
 
     /**
@@ -199,26 +179,7 @@ public class Transform {
      *              channel values are clipped in the range of 0..255).
      */
     public static void adjustBrightness(BufferedImage selectedImage, Shape mask, int delta) {
-        for (int x = 0; x < selectedImage.getWidth(); x++) {
-            for (int y = 0; y < selectedImage.getHeight(); y++) {
-                if (mask == null || mask.contains(x, y)) {
-
-                    int argb = selectedImage.getRGB(x, y);
-                    int alpha = 0xff000000 & argb;
-                    int r = ((0xff0000 & argb) >> 16) + delta;
-                    int g = ((0xff00 & argb) >> 8) + delta;
-                    int b = (0xff & argb) + delta;
-
-                    // Saturate at 0 and 256
-                    r = r > 0xff ? 0xff : r < 0 ? 0 : r;
-                    g = g > 0xff ? 0xff : g < 0 ? 0 : g;
-                    b = b > 0xff ? 0xff : b < 0 ? 0 : b;
-
-                    // Adjust preserving alpha channel
-                    selectedImage.setRGB(x, y, alpha | (r << 16) | (g << 8) | b);
-                }
-            }
-        }
+        transform(selectedImage, mask, new BrightnessPixelTransform(delta));
     }
 
     /**
@@ -231,19 +192,20 @@ public class Transform {
      *              is clipped in the range of 0..255).
      */
     public static void adjustTransparency(BufferedImage selectedImage, Shape mask, int delta) {
-        for (int x = 0; x < selectedImage.getWidth(); x++) {
-            for (int y = 0; y < selectedImage.getHeight(); y++) {
-                if (mask == null || mask.contains(x, y)) {
+        transform(selectedImage, mask, new TransparencyPixelTransform(delta));
+    }
 
-                    Color c = new Color(selectedImage.getRGB(x, y), true);
-                    int alpha = c.getAlpha() + delta;
-                    alpha = alpha > 255 ? 255 : alpha < 0 ? 0 : alpha;
-
-                    // Adjust preserving alpha channel
-                    selectedImage.setRGB(x, y, new Color(c.getRed(), c.getGreen(), c.getBlue(), alpha).getRGB());
-                }
-            }
-        }
+    /**
+     * Modifies every masked pixel that is translucent (that is, neither fully opaque or fully transparent) by changing
+     * the pixel to fully transparent or fully opaque. Has no effect on pixels that are fully opaque or fully
+     * transparent as does {@link #adjustTransparency(BufferedImage, Shape, int)}.
+     *
+     * @param selectedImage The image whose pixels should be transformed
+     * @param mask The shape determining which pixels to adjust; null to adjust all pixels
+     * @param makeTransparent When true, translucent pixels will be made fully transparent; when false, fully opaque.
+     */
+    public static void removeTranslucency(BufferedImage selectedImage, Shape mask, boolean makeTransparent) {
+        transform(selectedImage, mask, new RemoveAlphaPixelTransform(makeTransparent));
     }
 
     /**
@@ -261,7 +223,6 @@ public class Transform {
         for (int x = 0; x < selectedImage.getWidth(); x++) {
             for (int y = 0; y < selectedImage.getHeight(); y++) {
                 if (mask == null || mask.contains(x, y)) {
-
                     Color c = new Color(selectedImage.getRGB(x, y), true);
                     if (c.getAlpha() == 0) {
                         fillFunction.fill(selectedImage, new Point(x, y), paint);
@@ -269,6 +230,35 @@ public class Transform {
                 }
             }
         }
+    }
+
+    /**
+     * Applies a transformation function to every pixel bounded by the mask in the given image. This method is
+     * destructive: It modifies the given image directly.
+     *
+     * @param selectedImage The image to transform
+     * @param mask The shape determining which transparent pixels to fill; null to transform all pixels
+     * @param transform The transformation function to apply
+     */
+    public static void transform(BufferedImage selectedImage, Shape mask, PixelTransform transform) {
+        for (int x = 0; x < selectedImage.getWidth(); x++) {
+            for (int y = 0; y < selectedImage.getHeight(); y++) {
+                if (mask == null || mask.contains(x, y)) {
+                    selectedImage.setRGB(x, y, transform.transformPixel(x, y, selectedImage.getRGB(x, y)));
+                }
+            }
+        }
+    }
+
+    /**
+     * Performs an affine transform on a given image.
+     *
+     * @param image The image to transform
+     * @param transform The transform to perform
+     * @return The transformed image
+     */
+    public static BufferedImage transform(BufferedImage image, AffineTransform transform) {
+        return new AffineTransformOp(transform, AffineTransformOp.TYPE_BICUBIC).filter(image, null);
     }
 
     /**
@@ -324,5 +314,4 @@ public class Transform {
         g.dispose();
         return copy;
     }
-
 }
