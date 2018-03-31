@@ -21,6 +21,7 @@ public interface TransformableSelection extends TransformableImageSelection {
 
             applyTransform(Transform.rotateLeft(width, height));
             translateSelection((width - height) / 2, -(width - height) / 2);
+            redrawSelection();
         }
     }
 
@@ -34,6 +35,7 @@ public interface TransformableSelection extends TransformableImageSelection {
 
             applyTransform(Transform.rotateRight(width, height));
             translateSelection((width - height) / 2, -(width - height) / 2);
+            redrawSelection();
         }
     }
 
@@ -45,6 +47,7 @@ public interface TransformableSelection extends TransformableImageSelection {
         if (hasSelection()) {
             int width = getSelectedImage().getWidth();
             applyTransform(Transform.flipHorizontalTransform(width));
+            redrawSelection();
         }
     }
 
@@ -56,6 +59,7 @@ public interface TransformableSelection extends TransformableImageSelection {
         if (hasSelection()) {
             int height = getSelectedImage().getHeight();
             applyTransform(Transform.flipVerticalTransform(height));
+            redrawSelection();
         }
     }
 
@@ -77,8 +81,6 @@ public interface TransformableSelection extends TransformableImageSelection {
             Rectangle newBounds = getSelectedImage().getRaster().getBounds();
             newBounds.setLocation(originalLocation);
             setSelectionOutline(newBounds);
-
-            redrawSelection();
         }
     }
 }
