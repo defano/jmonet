@@ -316,8 +316,11 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      */
     protected void finishSelection() {
         if (hasSelection()) {
-            commitChange();
-            getCanvas().commit(selectionChange);
+            if (isDirty()) {
+                commitChange();
+                getCanvas().commit(selectionChange);
+            }
+
             clearSelection();
         }
     }
