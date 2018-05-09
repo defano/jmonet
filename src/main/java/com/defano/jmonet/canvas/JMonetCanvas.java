@@ -66,14 +66,16 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     }
 
     /**
-     * Undoes the previous committed change. Maybe called successively to revert committed changes one-by-one until
+     * Undoes the previous committed change. May be called successively to revert committed changes one-by-one until
      * the undo buffer is exhausted.
      *
-     * @return True if the undo was successful, false if there are no unable changes in the buffer.
+     * @return The ChangeSet that was undone by this operation, or null if there were no undoable changes.
      */
-    public boolean undo() {
+    public ChangeSet undo() {
 
         if (hasUndoableChanges()) {
+            ChangeSet undid = undoBuffer.get(undoBufferPointer);
+
             undoBufferPointer--;
             fireCanvasCommitObservers(this, null, getCanvasImage());
             invalidateCanvas();
@@ -81,10 +83,10 @@ public class JMonetCanvas extends AbstractPaintCanvas {
             isUndoableSubject.onNext(hasUndoableChanges());
             isRedoableSubject.onNext(hasRedoableChanges());
 
-            return true;
+            return undid;
         }
 
-        return false;
+        return null;
     }
 
     /**

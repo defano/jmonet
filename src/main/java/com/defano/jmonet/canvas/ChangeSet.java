@@ -10,7 +10,7 @@ import java.util.Objects;
 
 /**
  * Represents one or more changes that should be applied to the canvas atomically.
- *
+ * <p>
  * This is useful for "packaging" multiple changes together. For example, selecting and moving a portion of the canvas
  * is represented by a two-change, {@link ChangeSet}; first, the deletion of the selected image
  * from the canvas, followed by the addition of that selected image back to the canvas in its new location.
@@ -31,11 +31,11 @@ public class ChangeSet {
 
     /**
      * Add a change to this ChangeSet.
-     *
+     * <p>
      * When producing an image from a ChangeSet, each change image is drawn atop the previous using the
      * {@link AlphaComposite} associated with the change.
      *
-     * @param image The image associated with this change.
+     * @param image     The image associated with this change.
      * @param composite The compositing mode to use when drawing it.
      */
     public void addChange(BufferedImage image, AlphaComposite composite) {
@@ -47,10 +47,32 @@ public class ChangeSet {
 
     /**
      * The number of changes in this ChangeSet; never less than 1.
+     *
      * @return The size of the ChangeSet
      */
     public int size() {
         return images.size();
+    }
+
+    /**
+     * Gets the image produced by applying all changes in this ChangeSet. Produces an empty, 0x0 image if this
+     * ChangeSet is empty.
+     *
+     * @return The rendered image.
+     */
+    public BufferedImage getImage() {
+        Dimension size = getImageSize();
+        BufferedImage rendering = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
+
+        Graphics2D g2d = rendering.createGraphics();
+
+        for (int index = 0; index < size(); index++) {
+            g2d.setComposite(getComposite(index));
+            g2d.drawImage(getImage(index), 0, 0, null);
+        }
+
+        g2d.dispose();
+        return rendering;
     }
 
     /**
@@ -75,6 +97,7 @@ public class ChangeSet {
 
     /**
      * Adds an observer to this ChangeSet to notify listeners of new changes added to it.
+     *
      * @param observer The observer to be added.
      */
     public void addChangeSetObserver(ChangeSetObserver observer) {
@@ -83,6 +106,7 @@ public class ChangeSet {
 
     /**
      * Removes an observer of this ChangeSet.
+     *
      * @param observer The observer to remove.
      * @return True if the observer exists and was removed; false otherwise.
      */
@@ -92,6 +116,7 @@ public class ChangeSet {
 
     /**
      * Gets the size of the image produced by the ChangeSet.
+     *
      * @return The dimension of the image.
      */
     public Dimension getImageSize() {
