@@ -309,6 +309,17 @@ public class PaintToolBuilder {
     }
 
     /**
+     * Specifies an observable provider of anti-aliasing configuration.
+     *
+     * @param observable An observable providing the current {@link ImageAntiAliasingMode}.
+     * @return The PaintToolBuilder
+     */
+    public PaintToolBuilder withAntiAliasingObservable(Observable<ImageAntiAliasingMode> observable) {
+        this.antiAliasingObservable = observable;
+        return this;
+    }
+
+    /**
      * Creates a paint tool as previously configured.
      * @return The built paint tool.
      */
