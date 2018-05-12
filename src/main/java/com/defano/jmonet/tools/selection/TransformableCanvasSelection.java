@@ -24,8 +24,8 @@ public interface TransformableCanvasSelection extends MutableSelection {
     default void pickupSelection() {
 
         if (hasSelection()) {
-            Shape selectionBounds = getSelectionOutline();
-            BufferedImage maskedSelection = maskSelection(getCanvas().getCanvasImage());
+            Shape selectionBounds = getSelectionFrame();
+            BufferedImage maskedSelection = cropToSelection(getCanvas().getCanvasImage());
             BufferedImage trimmedSelection = maskedSelection.getSubimage(
                     Math.max(0, selectionBounds.getBounds().x),
                     Math.max(0, selectionBounds.getBounds().y),

@@ -34,7 +34,7 @@ public class LassoTool extends AbstractSelectionTool implements TransformableSel
 
     /** {@inheritDoc} */
     @Override
-    protected void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
+    protected void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         if (selectionBounds == null) {
             selectionBounds = new Path2D.Double();
             selectionBounds.moveTo(initialPoint.getX(), initialPoint.getY());
@@ -45,13 +45,13 @@ public class LassoTool extends AbstractSelectionTool implements TransformableSel
 
     /** {@inheritDoc} */
     @Override
-    protected void completeSelection(Point finalPoint) {
+    protected void closeSelectionFrame(Point finalPoint) {
         selectionBounds.closePath();
     }
 
     /** {@inheritDoc} */
     @Override
-    public Shape getSelectionOutline() {
+    public Shape getSelectionFrame() {
         return selectionBounds;
     }
 

@@ -152,7 +152,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
+    protected void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         selectionBounds = new Rectangle(initialPoint);
         selectionBounds.add(newPoint);
 
@@ -168,7 +168,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void completeSelection(Point finalPoint) {
+    protected void closeSelectionFrame(Point finalPoint) {
         transformBounds = new FlexQuadrilateral(selectionBounds);
     }
 
@@ -189,7 +189,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    public Shape getSelectionOutline() {
+    public Shape getSelectionFrame() {
         return transformBounds != null ? transformBounds.getShape() : selectionBounds;
     }
 

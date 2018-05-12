@@ -23,7 +23,7 @@ public class SlantTool extends AbstractTransformTool {
         quadrilateral.getTopRight().x += newPosition.x - quadrilateral.getTopLeft().x;
         quadrilateral.getTopLeft().x = newPosition.x;
 
-        int xTranslation = (quadrilateral.getTopLeft().x - getSelectionOutline().getBounds().x) / 2;
+        int xTranslation = (quadrilateral.getTopLeft().x - getSelectionFrame().getBounds().x) / 2;
         setSelectedImage(Transform.slant(getOriginalImage(), getTheta(quadrilateral), xTranslation));
     }
 
@@ -33,7 +33,7 @@ public class SlantTool extends AbstractTransformTool {
         quadrilateral.getTopLeft().x += newPosition.x - quadrilateral.getTopRight().x;
         quadrilateral.getTopRight().x = newPosition.x;
 
-        int xTranslation = (quadrilateral.getTopLeft().x - getSelectionOutline().getBounds().x) / 2;
+        int xTranslation = (quadrilateral.getTopLeft().x - getSelectionFrame().getBounds().x) / 2;
         setSelectedImage(Transform.slant(getOriginalImage(), getTheta(quadrilateral), xTranslation));
     }
 
@@ -43,7 +43,7 @@ public class SlantTool extends AbstractTransformTool {
         quadrilateral.getBottomRight().x += newPosition.x - quadrilateral.getBottomLeft().x;
         quadrilateral.getBottomLeft().x = newPosition.x;
 
-        int xTranslation = ((getSelectionOutline().getBounds().x + getSelectionOutline().getBounds().width) - quadrilateral.getBottomRight().x) / 2;
+        int xTranslation = ((getSelectionFrame().getBounds().x + getSelectionFrame().getBounds().width) - quadrilateral.getBottomRight().x) / 2;
         setSelectedImage(Transform.slant(getOriginalImage(), getTheta(quadrilateral), xTranslation));
     }
 
@@ -53,7 +53,7 @@ public class SlantTool extends AbstractTransformTool {
         quadrilateral.getBottomLeft().x += newPosition.x - quadrilateral.getBottomRight().x;
         quadrilateral.getBottomRight().x = newPosition.x;
 
-        int xTranslation = ((getSelectionOutline().getBounds().x + getSelectionOutline().getBounds().width) - quadrilateral.getBottomRight().x) / 2;
+        int xTranslation = ((getSelectionFrame().getBounds().x + getSelectionFrame().getBounds().width) - quadrilateral.getBottomRight().x) / 2;
         setSelectedImage(Transform.slant(getOriginalImage(), getTheta(quadrilateral), xTranslation));
     }
 

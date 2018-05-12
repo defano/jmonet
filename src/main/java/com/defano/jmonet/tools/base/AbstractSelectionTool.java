@@ -29,10 +29,13 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     private Point initialPoint, lastPoint;
     private Cursor movementCursor = Cursor.getDefaultCursor();
     private Cursor boundaryCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
-    private ChangeSet selectionChange;
 
     private boolean isMovingSelection = false;
     private boolean dirty = false;
+
+    public AbstractSelectionTool(PaintToolType type) {
+        super(type);
+    }
 
     /**
      * Invoked to indicate that the user has defined a new point on the selection path.
@@ -41,18 +44,15 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * @param newPoint       A new point to append to the selection path (i.e., where the mouse is now)
      * @param isShiftKeyDown When true, indicates user is holding the shift key down
      */
-    protected abstract void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown);
+    protected abstract void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown);
 
     /**
-     * Invoked to indicate that the given point should be considered the last point in the selection path.
+     * Invoked to indicate that the given point should be considered the last point in the selection path, and the
+     * path shape should be closed.
      *
      * @param finalPoint The final point on the selection path.
      */
-    protected abstract void completeSelection(Point finalPoint);
-
-    public AbstractSelectionTool(PaintToolType type) {
-        super(type);
-    }
+    protected abstract void closeSelectionFrame(Point finalPoint);
 
     /**
      * Creates a selection bounded by the given rectangle. Equivalent to the user clicking and dragging from the top-
@@ -62,24 +62,25 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      */
     public void createSelection(Rectangle bounds) {
         if (hasSelection()) {
-            finishSelection();
+            completeSelection();
         }
 
-        addSelectionPoint(bounds.getLocation(), new Point(bounds.x + bounds.width, bounds.y + bounds.height), false);
+        addPointToSelectionFrame(bounds.getLocation(), new Point(bounds.x + bounds.width, bounds.y + bounds.height), false);
         getSelectionFromCanvas();
-        completeSelection(new Point(bounds.x + bounds.width, bounds.y + bounds.height));
+        closeSelectionFrame(new Point(bounds.x + bounds.width, bounds.y + bounds.height));
     }
 
     /**
-     * Creates a selection containing the given image at the requested location on the canvas.
+     * Creates a selection containing the given image at the requested location on the canvas. The size of the selection
+     * will equal the bounds of the given image.
      *
-     * @param image The image contained by the selection. Note that the selection bounds will equal the bounds of this
-     *              image.
+     * @param image    The image contained by the selection. Note that the selection bounds will equal the bounds of this
+     *                 image.
      * @param location The location on the canvas where the selection (and image) will initially appear.
      */
     public void createSelection(BufferedImage image, Point location) {
         if (hasSelection()) {
-            finishSelection();
+            completeSelection();
         }
 
         // Make an ARGB copy of the image (input may not have alpha channel)
@@ -91,28 +92,34 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         g.drawImage(argbImage, location.x, location.y, null);
         g.dispose();
 
-        addSelectionPoint(location.getLocation(), new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()), false);
-        completeSelection(new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()));
+        addPointToSelectionFrame(location.getLocation(), new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()), false);
+        closeSelectionFrame(new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()));
         selectedImage.onNext(Optional.of(argbImage));
 
         // Don't call setDirty(), doing so will remove underlying pixels from the canvas
         dirty = true;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void mouseMoved(MouseEvent e, Point imageLocation) {
-        if (hasSelectionBounds() && getSelectionOutline().contains(imageLocation)) {
+
+        // Update tool cursor
+        if (hasSelectionFrame() && getSelectionFrame().contains(imageLocation)) {
             setToolCursor(getMovementCursor());
         } else {
             setToolCursor(getBoundaryCursor());
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
-        isMovingSelection = getSelectionOutline() != null && getSelectionOutline().contains(imageLocation);
+        isMovingSelection = getSelectionFrame() != null && getSelectionFrame().contains(imageLocation);
 
         // User clicked inside selection bounds; start moving selection
         if (isMovingSelection) {
@@ -122,16 +129,18 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         // User clicked outside current selection bounds
         else {
             if (isDirty()) {
-                finishSelection();
+                completeSelection();
             } else {
-                clearSelection();
+                abortSelection();
             }
 
             initialPoint = imageLocation;
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
 
@@ -145,7 +154,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
         // User is defining a new selection rectangle
         else {
-            addSelectionPoint(initialPoint, Geometry.constrainToBounds(imageLocation, getCanvas().getBounds()), e.isShiftDown());
+            addPointToSelectionFrame(initialPoint, Geometry.constrainToBounds(imageLocation, getCanvas().getBounds()), e.isShiftDown());
 
             getCanvas().clearScratch();
             drawSelectionOutline();
@@ -153,17 +162,21 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void mouseReleased(MouseEvent e, Point imageLocation) {
         // User released mouse after defining a selection
-        if (!hasSelection() && hasSelectionBounds()) {
+        if (!hasSelection() && hasSelectionFrame()) {
             getSelectionFromCanvas();
-            completeSelection(imageLocation);
+            closeSelectionFrame(imageLocation);
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void activate(PaintCanvas canvas) {
         super.activate(canvas);
@@ -172,13 +185,15 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         MarchingAnts.getInstance().addObserver(this);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void deactivate() {
         super.deactivate();
 
         // Need to remove selection frame when tool is no longer active
-        finishSelection();
+        completeSelection();
 
         getCanvas().removeCanvasCommitObserver(this);
         MarchingAnts.getInstance().removeObserver(this);
@@ -188,7 +203,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * Takes the current selection represented by this tool and transfers it over to the given tool. Note that invoking
      * this method clears the selection from this tool, but does not deactivate the tool from the canvas. In most uses,
      * the caller will want to deactivate this tool immediately after calling this method.
-     *
+     * <p>
      * For example, this allows the user to draw a selection with the lasso tool and then transform it with a transform
      * tool (i.e., {@link com.defano.jmonet.tools.PerspectiveTool} without having to redraw the selection bounds.
      *
@@ -198,7 +213,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         if (hasSelection()) {
             setDirty();
             to.createSelection(getSelectedImage(), getSelectedImageLocation());
-            clearSelection();
+            abortSelection();
         }
 
         // Nothing to do if not holding a selection
@@ -214,13 +229,17 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         return selectedImage;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BufferedImage getSelectedImage() {
         return selectedImage.getValue().orElse(null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setSelectedImage(BufferedImage selectedImage) {
         this.selectedImage.onNext(Optional.of(selectedImage));
@@ -229,9 +248,9 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
     /**
      * Clears the current selection frame (removes any "marching ants" from the canvas), but does not "erase" the
-     * selected image, nor does it commit the selected image.
+     * selected image, nor does it commit the selected image. See {@link #closeSelectionFrame(Point)}
      */
-    public void clearSelection() {
+    protected void abortSelection() {
         selectedImage.onNext(Optional.empty());
         dirty = false;
         resetSelection();
@@ -241,17 +260,34 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     }
 
     /**
-     * Deletes the selection image from the canvas and clears the selection (removes marching ants)
+     * Drops the selected image onto the canvas (committing the change) and clears the selection outline. This has the
+     * effect of completing a select-and-move operation.
+     */
+    protected void completeSelection() {
+        if (hasSelection()) {
+            if (isDirty()) {
+                commitChange();
+            }
+
+            abortSelection();
+        }
+    }
+
+    /**
+     * Deletes the selected image from the canvas, commits the change, then clears the selection (removes marching
+     * ants). Has the effect of the user pressing 'delete' when an active selection exists.
      */
     public void deleteSelection() {
         setDirty();
-        clearSelection();
+        abortSelection();
         getCanvas().commit();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     public boolean hasSelection() {
-        return hasSelectionBounds() && selectedImage.getValue().isPresent();
+        return hasSelectionFrame() && selectedImage.getValue().isPresent();
     }
 
     /**
@@ -262,32 +298,35 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      *
      * @return True if a selection boundary exists, false otherwise.
      */
-    public boolean hasSelectionBounds() {
-        return getSelectionOutline() != null && getSelectionOutline().getBounds().width > 0 && getSelectionOutline().getBounds().height > 0;
+    protected boolean hasSelectionFrame() {
+        return getSelectionFrame() != null && getSelectionFrame().getBounds().width > 0 && getSelectionFrame().getBounds().height > 0;
     }
 
     /**
-     * Make the canvas image bounded by the given selection shape the current selected image.
+     * Make the canvas image bounded by the given selection shape the current selected image. Does not modify the canvas
+     * in any way (does not "pick up" the image from the canvas).
      */
     protected void getSelectionFromCanvas() {
         getCanvas().clearScratch();
 
-        Shape selectionBounds = getSelectionOutline();
-        BufferedImage maskedSelection = maskSelection(getCanvas().getCanvasImage());
+        Shape selectionBounds = getSelectionFrame();
+        BufferedImage maskedSelection = cropToSelection(getCanvas().getCanvasImage());
         BufferedImage trimmedSelection = maskedSelection.getSubimage(selectionBounds.getBounds().x, selectionBounds.getBounds().y, selectionBounds.getBounds().width, selectionBounds.getBounds().height);
 
         selectedImage.onNext(Optional.of(trimmedSelection));
         redrawSelection();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Point getSelectionLocation() {
         if (!hasSelection()) {
             return null;
         }
 
-        return getSelectionOutline().getBounds().getLocation();
+        return getSelectionFrame().getBounds().getLocation();
     }
 
     /**
@@ -295,37 +334,23 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * fully transparent pixels.
      */
     public void eraseSelectionFromCanvas() {
-        if (hasSelectionBounds()) {
+        if (hasSelectionFrame()) {
             getCanvas().clearScratch();
 
             // Clear image underneath selection
             Graphics2D scratch = (Graphics2D) getCanvas().getScratchImage().getGraphics();
             scratch.setColor(Color.WHITE);
-            scratch.fill(getSelectionOutline());
+            scratch.fill(getSelectionFrame());
             scratch.dispose();
 
-            selectionChange = new ChangeSet(getCanvas().getScratchImage(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
-            getCanvas().commit(selectionChange);
+            getCanvas().commit(new ChangeSet(getCanvas().getScratchImage(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f)));
             redrawSelection();
         }
     }
 
     /**
-     * Drops the selected image onto the canvas (committing the change) and clears the selection outline. This has the
-     * effect of completing a select-and-move operation.
+     * {@inheritDoc}
      */
-    protected void finishSelection() {
-        if (hasSelection()) {
-            if (isDirty()) {
-                commitChange();
-                getCanvas().commit(selectionChange);
-            }
-
-            clearSelection();
-        }
-    }
-
-    /** {@inheritDoc} */
     @Override
     public void redrawSelection() {
         getCanvas().clearScratch();
@@ -333,13 +358,11 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         if (isDirty() && hasSelection()) {
             Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
             setRenderingHints(g);
-
             g.drawImage(selectedImage.getValue().get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
             g.dispose();
         }
-        
-        drawSelectionOutline();
 
+        drawSelectionOutline();
         getCanvas().invalidateCanvas();
     }
 
@@ -353,7 +376,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * @return The x,y coordinate where the selected image should be drawn on the canvas.
      */
     protected Point getSelectedImageLocation() {
-        return getSelectionOutline().getBounds().getLocation();
+        return getSelectionFrame().getBounds().getLocation();
     }
 
     /**
@@ -363,16 +386,18 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
 
         g.setColor(Color.WHITE);
-        g.draw(getSelectionOutline());
+        g.draw(getSelectionFrame());
 
         g.setStroke(MarchingAnts.getInstance().getMarchingAnts());
         g.setColor(Color.BLACK);
-        g.draw(getSelectionOutline());
+        g.draw(getSelectionFrame());
 
         g.dispose();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setDirty() {
 
@@ -384,8 +409,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         dirty = true;
     }
 
-    @Override
-    public void commitChange() {
+    private void commitChange() {
         if (hasSelection()) {
             Point selectedLocation = getSelectedImageLocation();
 
@@ -395,17 +419,10 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
             BufferedImage localScratch = new BufferedImage(getCanvas().getScratchImage().getWidth(), getCanvas().getScratchImage().getWidth(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2d = localScratch.createGraphics();
             setRenderingHints(g2d);
-
             g2d.drawImage(selectedImage.getValue().get(), selectedLocation.x, selectedLocation.y, null);
             g2d.dispose();
 
-            // Nothing to commit/change if user hasn't moved (dirtied) the selection
-            if (selectionChange != null) {
-                selectionChange.addChange(localScratch, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-            } else {
-                selectionChange = new ChangeSet(localScratch);
-            }
-
+            getCanvas().commit(new ChangeSet(localScratch));
             setDirty();
         }
     }
@@ -420,16 +437,20 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         return dirty;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onCommit(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage) {
         // Clear selection if user invokes undo/redo
         if (hasSelection() && changeSet == null) {
-            clearSelection();
+            abortSelection();
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void keyPressed(KeyEvent e) {
 
@@ -441,7 +462,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
                     break;
 
                 case KeyEvent.VK_ESCAPE:
-                    finishSelection();
+                    completeSelection();
                     break;
 
                 case KeyEvent.VK_LEFT:
@@ -471,7 +492,9 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onAntsMoved(Stroke ants) {
         if (hasSelection()) {
@@ -481,6 +504,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
     /**
      * Gets the cursor used to drag or move the selection on the canvas.
+     *
      * @return The movement cursor
      */
     public Cursor getMovementCursor() {
@@ -489,6 +513,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
     /**
      * Sets the cursor used when dragging or moving the selection on the canvas.
+     *
      * @param movementCursor The movement cursor
      */
     public void setMovementCursor(Cursor movementCursor) {
@@ -497,6 +522,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
     /**
      * Gets the cursor used to define or adjust selection boundary.
+     *
      * @return The boundary cursor
      */
     public Cursor getBoundaryCursor() {
@@ -505,6 +531,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
     /**
      * Sets the cursor used to define a selection boundary.
+     *
      * @param boundaryCursor The boundary cursor
      */
     public void setBoundaryCursor(Cursor boundaryCursor) {

@@ -40,9 +40,9 @@ public class RotateTool extends AbstractSelectionTool {
 
             if (centerpoint == null) {
                 originalImage = square(getSelectedImage());
-                originalSelectionBounds = getSelectionOutline();
+                originalSelectionBounds = getSelectionFrame();
 
-                Rectangle selectionBounds = getSelectionOutline().getBounds();
+                Rectangle selectionBounds = getSelectionFrame().getBounds();
                 centerpoint = new Point(selectionBounds.x + selectionBounds.width / 2, selectionBounds.y + selectionBounds.height / 2);
             }
 
@@ -103,7 +103,7 @@ public class RotateTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
+    protected void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         int handleSize = 8;
 
         Rectangle selectionRectangle = new Rectangle(initialPoint);
@@ -115,16 +115,16 @@ public class RotateTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    public void completeSelection(Point finalPoint) {
+    public void closeSelectionFrame(Point finalPoint) {
         if (hasSelection()) {
             originalImage = square(getSelectedImage());
-            originalSelectionBounds = getSelectionOutline();
+            originalSelectionBounds = getSelectionFrame();
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public Shape getSelectionOutline() {
+    public Shape getSelectionFrame() {
         return selectionBounds;
     }
 
@@ -137,7 +137,7 @@ public class RotateTool extends AbstractSelectionTool {
         dragHandle = AffineTransform.getTranslateInstance(xDelta, yDelta).createTransformedShape(dragHandle);
         originalDragHandle = AffineTransform.getTranslateInstance(xDelta, yDelta).createTransformedShape(originalDragHandle);
 
-        Rectangle selectionBounds = getSelectionOutline().getBounds();
+        Rectangle selectionBounds = getSelectionFrame().getBounds();
         centerpoint = new Point(selectionBounds.x + selectionBounds.width / 2, selectionBounds.y + selectionBounds.height / 2);
     }
 
@@ -146,7 +146,7 @@ public class RotateTool extends AbstractSelectionTool {
     protected Point getSelectedImageLocation() {
 
         if (dragLocation == null || originalImage == null) {
-            return getSelectionOutline().getBounds().getLocation();
+            return getSelectionFrame().getBounds().getLocation();
         } else {
             Rectangle enlargedBounds = originalImage.getRaster().getBounds();
             Geometry.center(enlargedBounds, originalSelectionBounds.getBounds());

@@ -11,7 +11,7 @@ public interface MutableSelection extends Selection {
     /**
      * Transitions to an un-selected state.
      *
-     * Reset the selection boundary to its initial, no-selection state. {@link #getSelectionOutline()} should return
+     * Reset the selection boundary to its initial, no-selection state. {@link #getSelectionFrame()} should return
      * null following a selection reset, but prior to defining a new selection.
      */
     void resetSelection();
@@ -29,11 +29,10 @@ public interface MutableSelection extends Selection {
      */
     void setDirty();
 
-    void commitChange();
-
     /**
      * Replaces the current selected image with the given image. It is the caller's responsibility to mask the given
      * image to assure it does not exceed the selection bounds.
+     *
      * @param image The image with which to replace the selection.
      */
     void setSelectedImage(BufferedImage image);
