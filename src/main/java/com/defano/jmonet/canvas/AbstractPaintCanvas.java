@@ -2,7 +2,7 @@ package com.defano.jmonet.canvas;
 
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
-import com.defano.jmonet.canvas.surface.AbstractScrollableSurface;
+import com.defano.jmonet.canvas.surface.AbstractScrollablePaintSurface;
 import com.defano.jmonet.canvas.surface.ImageLayer;
 import com.defano.jmonet.canvas.surface.PaintableSurface;
 import com.defano.jmonet.tools.util.Geometry;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * A scrollable, Swing component that can be painted upon using the paint tools in {@link com.defano.jmonet.tools}. See
  * {@link JMonetCanvas} for a canvas with an undo/redo buffer.
  */
-public abstract class AbstractPaintCanvas extends AbstractScrollableSurface implements PaintCanvas, ComponentListener {
+public abstract class AbstractPaintCanvas extends AbstractScrollablePaintSurface implements PaintCanvas, ComponentListener {
 
     private final PaintableSurface surface = new PaintableSurface();
 

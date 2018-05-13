@@ -6,12 +6,12 @@ import javax.swing.*;
 /**
  * A scrollable pane containing a {@link PaintableSurface}.
  */
-public abstract class AbstractScrollableSurface extends JScrollPane implements Scrollable {
+public abstract class AbstractScrollablePaintSurface extends JScrollPane implements Scrollable {
 
     private PaintableSurface surface;
     private double scrollPercentX, scrollPercentY = 0;
 
-    public AbstractScrollableSurface() {
+    public AbstractScrollablePaintSurface() {
         setOpaque(false);
         getViewport().setOpaque(false);
     }

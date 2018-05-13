@@ -5,6 +5,9 @@ import com.defano.jmonet.tools.builder.PaintTool;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * A scratch buffer for changes being made to the canvas that haven't yet been committed.
+ */
 public class Scratch {
 
     int width, height;

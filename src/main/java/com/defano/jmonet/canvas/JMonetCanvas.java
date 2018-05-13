@@ -112,6 +112,23 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     }
 
     /**
+     * Returns the {@link ChangeSet} representing the undo at the given depth in the buffer.
+     *
+     * @param index The index of the requested undoable change where index 0 is the most recent undoable change. The
+     *              maximum legal index is equal to {@link #getUndoBufferDepth()} - 1.
+     * @return The requested change set
+     * @throws IndexOutOfBoundsException If there are no undoable changes in the buffer, or if the index equals or
+     *                                   exceeds the number of undoable changes.
+     */
+    public ChangeSet peek(int index) {
+        if (index >= getUndoBufferDepth()) {
+            throw new IndexOutOfBoundsException("Index exceeds depth of undo buffer.");
+        }
+
+        return undoBuffer.get(undoBufferPointer - index);
+    }
+
+    /**
      * Determines if a commit is available to be undone.
      *
      * @return True if {@link #undo()} will succeed; false otherwise.
@@ -136,6 +153,24 @@ public class JMonetCanvas extends AbstractPaintCanvas {
      */
     public int getMaxUndoBufferDepth() {
         return maxUndoBufferDepth;
+    }
+
+    /**
+     * Gets the number of changes that can be "undone".
+     *
+     * @return The depth of undo buffer.
+     */
+    public int getUndoBufferDepth() {
+        return undoBufferPointer + 1;
+    }
+
+    /**
+     * Gets the number of changes that can be "redone".
+     *
+     * @return The depth of the redo buffer.
+     */
+    public int getRedoBufferDepth() {
+        return undoBuffer.size() - undoBufferPointer - 1;
     }
 
     /**

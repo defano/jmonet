@@ -48,10 +48,6 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
             double scale = painting.getScale();
             BufferedImage rendering = painting.render();
             g.drawImage(rendering, 0, 0, (int) (rendering.getWidth() * scale), (int) (rendering.getHeight() * scale), null);
-
-//            for (ImageLayer thisLayer : painting.getImageLayers()) {
-//                thisLayer.drawOnto((Graphics2D) g,  scale);
-//            }
         }
 
         // DO NOT dispose the graphics context in this method.
