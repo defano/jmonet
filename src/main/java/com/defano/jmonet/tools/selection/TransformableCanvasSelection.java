@@ -25,10 +25,11 @@ public interface TransformableCanvasSelection extends MutableSelection {
 
         if (hasSelection()) {
             Shape selectionBounds = getSelectionFrame();
-            BufferedImage maskedSelection = cropToSelection(getCanvas().getCanvasImage());
+            BufferedImage maskedSelection = cropToSelection(getCanvas().render());
+
             BufferedImage trimmedSelection = maskedSelection.getSubimage(
-                    Math.max(0, selectionBounds.getBounds().x),
-                    Math.max(0, selectionBounds.getBounds().y),
+                    Math.max(1, selectionBounds.getBounds().x + 1),
+                    Math.max(1, selectionBounds.getBounds().y + 1),
                     Math.min(selectionBounds.getBounds().width, maskedSelection.getWidth() - selectionBounds.getBounds().x),
                     Math.min(selectionBounds.getBounds().height, maskedSelection.getHeight() - selectionBounds.getBounds().y)
             );

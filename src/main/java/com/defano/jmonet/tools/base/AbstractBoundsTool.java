@@ -1,5 +1,6 @@
 package com.defano.jmonet.tools.base;
 
+import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.builder.PaintTool;
 import com.defano.jmonet.tools.util.Geometry;
@@ -26,25 +27,25 @@ public abstract class AbstractBoundsTool extends PaintTool {
     /**
      * Draws the stroke (outline) of a shape described by a rectangular boundary.
      *
-     * @param g The graphics context on which to draw
+     * @param scratch The scratch buffer on which to draw
      * @param stroke The stroke with which to draw
      * @param paint The paint with which to draw
      * @param bounds The bounds of the shape to draw
      * @param isShiftDown True to indicate that the user is holding the shift key; implementers may use this flag to
      *                    constrain the bounds or otherwise modify the tool behavior.
      */
-    protected abstract void strokeBounds(Graphics2D g, Stroke stroke, Paint paint, Rectangle bounds, boolean isShiftDown);
+    protected abstract void strokeBounds(Scratch scratch, Stroke stroke, Paint paint, Rectangle bounds, boolean isShiftDown);
 
     /**
      * Fills a shape described by a rectangular boundary.
      *
-     * @param g The graphics context on which to draw
+     * @param scratch The scratch buffer on which to draw
      * @param fill The paint with which to fill the shape
      * @param bounds The bounds of the shape to draw
      * @param isShiftDown True to indicate that the user is holding the shift key; implementers may use this flag to
      *                    constrain the bounds or otherwise modify the tool behavior.
      */
-    protected abstract void fillBounds(Graphics2D g, Paint fill, Rectangle bounds, boolean isShiftDown);
+    protected abstract void fillBounds(Scratch scratch, Paint fill, Rectangle bounds, boolean isShiftDown);
 
     /** {@inheritDoc} */
     @Override
@@ -58,7 +59,7 @@ public abstract class AbstractBoundsTool extends PaintTool {
         currentPoint = imageLocation;
 
         if (!getDrawMultipleObservable().blockingFirst()) {
-            getCanvas().clearScratch();
+            getScratch().clear();
         }
 
         Point originPoint = new Point(initialPoint);
@@ -75,16 +76,11 @@ public abstract class AbstractBoundsTool extends PaintTool {
                 Geometry.square(originPoint, currentPoint) :
                 Geometry.rectangle(originPoint, currentPoint);
 
-        Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
-        setRenderingHints(g2d);
-
         if (getFillPaint().isPresent()) {
-            fillBounds(g2d, getFillPaint().get(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
+            fillBounds(getScratch(), getFillPaint().get(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
         }
 
-        strokeBounds(g2d, getStroke(), getStrokePaint(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
-
-        g2d.dispose();
+        strokeBounds(getScratch(), getStroke(), getStrokePaint(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
         getCanvas().invalidateCanvas();
     }
 

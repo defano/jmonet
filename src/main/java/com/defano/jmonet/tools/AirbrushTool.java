@@ -1,5 +1,6 @@
 package com.defano.jmonet.tools;
 
+import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractPathTool;
 
@@ -17,13 +18,15 @@ public class AirbrushTool extends AbstractPathTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void startPath(Graphics2D g, Stroke stroke, Paint fillPaint, Point initialPoint) {
+    protected void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
         // Nothing to do
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void addPoint(Graphics2D g, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
+    protected void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
+        Graphics2D g = scratch.getAddScratchGraphics();
+
         g.setStroke(stroke);
         g.setPaint(fillPaint);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getIntensityObservable().blockingFirst().floatValue()));

@@ -2,6 +2,7 @@ package com.defano.jmonet.tools.builder;
 
 import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
+import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.model.ImageAntiAliasingMode;
@@ -78,22 +79,6 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     }
 
     /**
-     * Gets the {@link AlphaComposite} mode used when committing images produced by this tool onto the canvas.
-     * @return The alpha composite mode.
-     */
-    public AlphaComposite getComposite() {
-        return composite;
-    }
-
-    /**
-     * Sets the {@link AlphaComposite} mode used when committing images produced by this tool onto the canvas.
-     * @param composite The alpha composite mode.
-     */
-    public void setComposite(AlphaComposite composite) {
-        this.composite = composite;
-    }
-
-    /**
      * Gets the type of this tool.
      * @return The tool type.
      */
@@ -107,6 +92,10 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
      */
     public PaintCanvas getCanvas() {
         return canvas;
+    }
+
+    public Scratch getScratch() {
+        return getCanvas().getScratch();
     }
 
     void setFontColorObservable(Observable<Color> fontColorObservable) {
@@ -251,7 +240,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         this.antiAliasingObservable = antiAliasingObservable;
     }
 
-    protected void setRenderingHints(Graphics g) {
+    public void applyRenderingHints(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
         switch (antiAliasingObservable.blockingFirst()) {

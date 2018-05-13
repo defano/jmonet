@@ -1,5 +1,6 @@
 package com.defano.jmonet.canvas;
 
+import com.defano.jmonet.canvas.surface.ImageLayer;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -180,7 +181,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
 
         fireCanvasCommitObservers(this, changeSet, getCanvasImage());
 
-        clearScratch();
+        getScratch().clear();
         invalidateCanvas();
 
         isUndoableSubject.onNext(hasUndoableChanges());
@@ -220,7 +221,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
      * drawn atop the permanent image.
      */
     private void makePermanent(ChangeSet changeSet) {
-        Dimension changeSetDim = changeSet.getImageSize();
+        Dimension changeSetDim = changeSet.getSize();
 
         if (permanent == null) {
             permanent = new BufferedImage(changeSetDim.width, changeSetDim.height, BufferedImage.TYPE_INT_ARGB);
@@ -273,9 +274,8 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     private void overlayChangeSet(ChangeSet changeSet, BufferedImage destination) {
         Graphics2D g2d = (Graphics2D) destination.getGraphics();
 
-        for (int index = 0; index < changeSet.size(); index++) {
-            g2d.setComposite(changeSet.getComposite(index));
-            g2d.drawImage(changeSet.getImage(index), 0, 0, null);
+        for (ImageLayer thisLayer : changeSet.getImageLayers()) {
+            thisLayer.drawOnto(g2d);
         }
 
         g2d.dispose();

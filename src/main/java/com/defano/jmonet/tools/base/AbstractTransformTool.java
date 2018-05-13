@@ -213,13 +213,13 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void drawSelectionOutline() {
-        super.drawSelectionOutline();
+    protected void drawSelectionFrame() {
+        super.drawSelectionFrame();
 
         if (hasSelection() && transformBounds != null) {
 
             // Render drag handles on selection bounds
-            Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
+            Graphics2D g = getCanvas().getScratch().getAddScratchGraphics();
             g.setPaint(Color.BLACK);
 
             topLeftHandle = new Rectangle(transformBounds.getTopLeft().x, transformBounds.getTopLeft().y, HANDLE_SIZE, HANDLE_SIZE);
@@ -231,8 +231,6 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
             g.fill(topRightHandle);
             g.fill(bottomRightHandle);
             g.fill(bottomLeftHandle);
-
-            g.dispose();
         }
     }
 

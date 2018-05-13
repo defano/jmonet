@@ -1,5 +1,6 @@
 package com.defano.jmonet.tools.base;
 
+import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.builder.PaintTool;
 import com.defano.jmonet.tools.util.Geometry;
@@ -23,34 +24,34 @@ public abstract class AbstractPolylineTool extends PaintTool {
     /**
      * Draws one or more sides (edges) of a polygon which is not filled and may not be closed.
      *
-     * @param g The graphics context on which to draw.
+     * @param scratch The scratch buffer on which to draw.
      * @param stroke The current stroke context.
      * @param strokePaint The current paint context.
      * @param xPoints An array of x points, see {@link Graphics2D#drawPolyline(int[], int[], int)}
      * @param yPoints An array of y points, see {@link Graphics2D#drawPolyline(int[], int[], int)}
      */
-    protected abstract void strokePolyline(Graphics2D g, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints);
+    protected abstract void strokePolyline(Scratch scratch, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints);
 
     /**
      * Draws one or more sides (edges) of a polygon, closing the shape as needed.
      *
-     * @param g The graphics context on which to draw.
+     * @param scratch The scratch buffer on which to draw.
      * @param stroke The current stroke context.
      * @param strokePaint The current paint context.
      * @param xPoints An array of x points, see {@link Graphics2D#drawPolygon(int[], int[], int)} (int[], int[], int)}
      * @param yPoints An array of y points, see {@link Graphics2D#drawPolygon(int[], int[], int)} (int[], int[], int)}
      */
-    protected abstract void strokePolygon(Graphics2D g, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints);
+    protected abstract void strokePolygon(Scratch scratch, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints);
 
     /**
      * Draws a filled polygon.
      *
-     * @param g The graphics context on which to draw.
+     * @param scratch The scratch buffer on which to draw.
      * @param fillPaint The paint with which to fill the polyfon
      * @param xPoints An array of x points, see {@link Graphics2D#fillPolygon(int[], int[], int)} (int[], int[], int)}
      * @param yPoints An array of y points, see {@link Graphics2D#fillPolygon(int[], int[], int)} (int[], int[], int)}
      */
-    protected abstract void fillPolygon(Graphics2D g, Paint fillPaint, int[] xPoints, int[] yPoints);
+    protected abstract void fillPolygon(Scratch scratch, Paint fillPaint, int[] xPoints, int[] yPoints);
 
     public AbstractPolylineTool(PaintToolType type) {
         super(type);
@@ -79,14 +80,8 @@ public abstract class AbstractPolylineTool extends PaintTool {
         int[] xs = points.stream().mapToInt(i -> i.x).toArray();
         int[] ys = points.stream().mapToInt(i -> i.y).toArray();
 
-        getCanvas().clearScratch();
-
-        Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
-        setRenderingHints(g2d);
-
-        strokePolyline(g2d, getStroke(), getStrokePaint(), xs, ys);
-        g2d.dispose();
-
+        getScratch().clear();
+        strokePolyline(getCanvas().getScratch(), getStroke(), getStrokePaint(), xs, ys);
         getCanvas().invalidateCanvas();
 
         points.remove(points.size() - 1);
@@ -114,7 +109,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
     }
 
     private void commitPolygon() {
-        getCanvas().clearScratch();
+        getScratch().clear();
 
         int[] xs = points.stream().mapToInt(i -> i.x).toArray();
         int[] ys = points.stream().mapToInt(i -> i.y).toArray();
@@ -122,21 +117,16 @@ public abstract class AbstractPolylineTool extends PaintTool {
         points.clear();
         currentPoint = null;
 
-        Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
-        setRenderingHints(g2d);
-
         if (getFillPaint().isPresent()) {
-            fillPolygon(g2d, getFillPaint().get(), xs, ys);
+            fillPolygon(getCanvas().getScratch(), getFillPaint().get(), xs, ys);
         }
 
-        strokePolygon(g2d, getStroke(), getStrokePaint(), xs, ys);
-        g2d.dispose();
-
+        strokePolygon(getCanvas().getScratch(), getStroke(), getStrokePaint(), xs, ys);
         getCanvas().commit();
     }
 
     private void commitPolyline() {
-        getCanvas().clearScratch();
+        getScratch().clear();
 
         int[] xs = points.stream().mapToInt(i -> i.x).toArray();
         int[] ys = points.stream().mapToInt(i -> i.y).toArray();
@@ -144,12 +134,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
         points.clear();
         currentPoint = null;
 
-        Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
-        setRenderingHints(g2d);
-
-        strokePolyline(g2d, getStroke(), getStrokePaint(), xs, ys);
-        g2d.dispose();
-
+        strokePolyline(getCanvas().getScratch(), getStroke(), getStrokePaint(), xs, ys);
         getCanvas().commit();
     }
 

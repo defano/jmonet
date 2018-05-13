@@ -191,7 +191,7 @@ public class RotateTool extends AbstractSelectionTool {
         super.redrawSelection();
 
         // Draw the drag handle on the selection
-        Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
+        Graphics2D g = getCanvas().getScratch().getAddScratchGraphics();
         g.setColor(Color.black);
         g.fill(dragHandle);
         g.dispose();

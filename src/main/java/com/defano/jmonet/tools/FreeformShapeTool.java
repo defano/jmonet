@@ -1,5 +1,6 @@
 package com.defano.jmonet.tools;
 
+import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractPathTool;
 
@@ -20,16 +21,17 @@ public class FreeformShapeTool extends AbstractPathTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void startPath(Graphics2D g, Stroke stroke, Paint fillPaint, Point initialPoint) {
+    protected void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
         path = new Path2D.Double();
         path.moveTo(initialPoint.getX(), initialPoint.getY());
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void addPoint(Graphics2D g, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
+    protected void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
         path.lineTo(thisPoint.getX(), thisPoint.getY());
 
+        Graphics2D g = scratch.getAddScratchGraphics();
         g.setStroke(stroke);
         g.setPaint(getStrokePaint());
         g.draw(path);
@@ -37,7 +39,8 @@ public class FreeformShapeTool extends AbstractPathTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void completePath(Graphics2D g, Stroke stroke, Paint fillPaint) {
+    protected void completePath(Scratch scratch, Stroke stroke, Paint fillPaint) {
+        Graphics2D g = scratch.getAddScratchGraphics();
         path.closePath();
 
         if (getFillPaint().isPresent()) {

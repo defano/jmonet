@@ -1,13 +1,13 @@
 package com.defano.jmonet.canvas.observable;
 
-import com.defano.jmonet.canvas.surface.ScalableLayeredPainting;
+import com.defano.jmonet.canvas.surface.ScaledLayeredImage;
 
 import java.awt.*;
 import java.awt.event.*;
 
 /**
- * An observer of mouse and keyboard events taking place on a {@link ScalableLayeredPainting}.
- * Converts mouse events to the coordinate space of the image represented by the ScalableLayeredPainting.
+ * An observer of mouse and keyboard events taking place on a {@link ScaledLayeredImage}.
+ * Converts mouse events to the coordinate space of the image represented by the ScaledLayeredImage.
  */
 public interface SurfaceInteractionObserver extends KeyListener {
 

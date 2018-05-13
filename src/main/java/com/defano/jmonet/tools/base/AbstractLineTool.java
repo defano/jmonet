@@ -1,5 +1,6 @@
 package com.defano.jmonet.tools.base;
 
+import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.builder.PaintTool;
 import com.defano.jmonet.tools.util.Geometry;
@@ -23,7 +24,7 @@ public abstract class AbstractLineTool extends PaintTool {
     /**
      * Draws a line from (x1, y1) to (x2, y2) on the given graphics context.
      *
-     * @param g The graphics context on which to draw
+     * @param scratch The scratch buffer on which to draw
      * @param stroke The stroke with which to draw
      * @param paint The paint with which to draw
      * @param x1 First x coordinate of the line
@@ -31,7 +32,7 @@ public abstract class AbstractLineTool extends PaintTool {
      * @param x2 Second x coordinate of the line
      * @param y2 Second y coordinate of the line
      */
-    protected abstract void drawLine(Graphics2D g, Stroke stroke, Paint paint, int x1, int y1, int x2, int y2);
+    protected abstract void drawLine(Scratch scratch, Stroke stroke, Paint paint, int x1, int y1, int x2, int y2);
 
     /** {@inheritDoc} */
     @Override
@@ -48,7 +49,7 @@ public abstract class AbstractLineTool extends PaintTool {
     /** {@inheritDoc} */
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
-        getCanvas().clearScratch();
+        getScratch().clear();
 
         Point currentLoc = imageLocation;
 
@@ -56,11 +57,7 @@ public abstract class AbstractLineTool extends PaintTool {
             currentLoc = Geometry.line(initialPoint, currentLoc, getConstrainedAngle());
         }
 
-        Graphics2D g2d = (Graphics2D) getCanvas().getScratchImage().getGraphics();
-        setRenderingHints(g2d);
-        drawLine(g2d, getStroke(), getStrokePaint(), initialPoint.x, initialPoint.y, currentLoc.x, currentLoc.y);
-        g2d.dispose();
-
+        drawLine(getScratch(), getStroke(), getStrokePaint(), initialPoint.x, initialPoint.y, currentLoc.x, currentLoc.y);
         getCanvas().invalidateCanvas();
     }
 

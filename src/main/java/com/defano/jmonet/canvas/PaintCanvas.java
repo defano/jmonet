@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage;
 /**
  * A canvas that can be painted upon by the paint tools.
  */
-public interface PaintCanvas extends ScalableLayeredPainting, Scrollable, ObservableSurface, CompositeSurface {
+public interface PaintCanvas extends ScaledLayeredImage, Scrollable, ObservableSurface, CompositeSurface {
 
     /**
      * Sets whether the canvas is visible. When invisible, the component hierarchy will be drawn as though this
@@ -98,20 +98,6 @@ public interface PaintCanvas extends ScalableLayeredPainting, Scrollable, Observ
     Observable<Integer> getGridSpacingObservable();
 
     /**
-     * Sets the contents of the scratch buffer to the provided image.
-     * @param image The image that should replace the contents of the current scratch buffer.
-     */
-    void setScratchImage(BufferedImage image);
-
-    /**
-     * Creates and returns a clean scratch buffer (replacing all pixels in the graphics context with transparent
-     * pixels).
-     *
-     * @return The new, clean scratch buffer image.
-     */
-    BufferedImage clearScratch();
-
-    /**
      * Clears the canvas by filling the scratch buffer with all white pixels, and then committing this change with
      * a DST_OUT composite mode.
      */
@@ -123,7 +109,7 @@ public interface PaintCanvas extends ScalableLayeredPainting, Scrollable, Observ
      *
      * @return The scratch buffer image.
      */
-    BufferedImage getScratchImage();
+    Scratch getScratch();
 
     /**
      * Gets the image represented by this drawable; not including any ephemeral changes that have been made--but not
