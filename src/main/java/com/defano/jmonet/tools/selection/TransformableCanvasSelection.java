@@ -25,11 +25,12 @@ public interface TransformableCanvasSelection extends MutableSelection {
 
         if (hasSelection()) {
             Shape selectionBounds = getSelectionFrame();
-            BufferedImage maskedSelection = cropToSelection(getCanvas().render());
+            redrawSelection(false);
+            BufferedImage maskedSelection = crop(getCanvas().render());
 
             BufferedImage trimmedSelection = maskedSelection.getSubimage(
-                    Math.max(1, selectionBounds.getBounds().x + 1),
-                    Math.max(1, selectionBounds.getBounds().y + 1),
+                    Math.max(0, selectionBounds.getBounds().x + 0),
+                    Math.max(0, selectionBounds.getBounds().y + 0),
                     Math.min(selectionBounds.getBounds().width, maskedSelection.getWidth() - selectionBounds.getBounds().x),
                     Math.min(selectionBounds.getBounds().height, maskedSelection.getHeight() - selectionBounds.getBounds().y)
             );
@@ -46,6 +47,7 @@ public interface TransformableCanvasSelection extends MutableSelection {
             setSelectedImage(newSelection);
 
             eraseSelectionFromCanvas();
+            redrawSelection(true);
         }
     }
 

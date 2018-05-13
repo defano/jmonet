@@ -187,8 +187,8 @@ public class RotateTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    public void redrawSelection() {
-        super.redrawSelection();
+    public void redrawSelection(boolean includeFrame) {
+        super.redrawSelection(includeFrame);
 
         // Draw the drag handle on the selection
         Graphics2D g = getCanvas().getScratch().getAddScratchGraphics();

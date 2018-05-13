@@ -113,16 +113,16 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
             if (dragTopLeft) {
                 moveTopLeft(transformBounds, imageLocation, e.isShiftDown());
-                redrawSelection();
+                redrawSelection(true);
             } else if (dragTopRight) {
                 moveTopRight(transformBounds, imageLocation, e.isShiftDown());
-                redrawSelection();
+                redrawSelection(true);
             } else if (dragBottomLeft) {
                 moveBottomLeft(transformBounds, imageLocation, e.isShiftDown());
-                redrawSelection();
+                redrawSelection(true);
             } else if (dragBottomRight) {
                 moveBottomRight(transformBounds, imageLocation, e.isShiftDown());
-                redrawSelection();
+                redrawSelection(true);
             } else {
                 super.mouseDragged(e, imageLocation);
             }

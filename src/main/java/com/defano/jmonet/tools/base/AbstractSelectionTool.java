@@ -145,7 +145,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         if (hasSelection() && isMovingSelection) {
             setDirty();
             translateSelection(imageLocation.x - lastPoint.x, imageLocation.y - lastPoint.y);
-            redrawSelection();
+            redrawSelection(true);
             lastPoint = imageLocation;
         }
 
@@ -254,7 +254,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     @Override
     public void setSelectedImage(BufferedImage selectedImage) {
         this.selectedImage.onNext(Optional.of(selectedImage));
-        redrawSelection();
+        redrawSelection(true);
     }
 
     /**
@@ -319,11 +319,11 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      */
     protected void getSelectionFromCanvas() {
         Shape selectionBounds = getSelectionFrame();
-        BufferedImage maskedSelection = cropToSelection(getCanvas().getCanvasImage());
+        BufferedImage maskedSelection = crop(getCanvas().getCanvasImage());
         BufferedImage trimmedSelection = maskedSelection.getSubimage(selectionBounds.getBounds().x, selectionBounds.getBounds().y, selectionBounds.getBounds().width, selectionBounds.getBounds().height);
 
         selectedImage.onNext(Optional.of(trimmedSelection));
-        redrawSelection();
+        redrawSelection(true);
     }
 
     /**
@@ -344,13 +344,13 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      */
     public void eraseSelectionFromCanvas() {
         if (hasSelectionFrame()) {
-System.err.println("PICKING UP!");
+
             // Clear image underneath selection
             Graphics2D g = getCanvas().getScratch().getRemoveScratchGraphics();
             g.setColor(Color.WHITE);
             g.fill(getSelectionFrame());
 
-            redrawSelection();
+            redrawSelection(true);
         }
     }
 
@@ -358,7 +358,7 @@ System.err.println("PICKING UP!");
      * {@inheritDoc}
      */
     @Override
-    public void redrawSelection() {
+    public void redrawSelection(boolean includeFrame) {
         getScratch().clearAdd();
 
         if (hasSelection()) {
@@ -366,7 +366,10 @@ System.err.println("PICKING UP!");
             g.drawImage(selectedImage.getValue().get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
         }
 
-        drawSelectionFrame();
+        if (includeFrame) {
+            drawSelectionFrame();
+        }
+
         getCanvas().invalidateCanvas();
     }
 
@@ -467,25 +470,25 @@ System.err.println("PICKING UP!");
                 case KeyEvent.VK_LEFT:
                     setDirty();
                     translateSelection(-1, 0);
-                    redrawSelection();
+                    redrawSelection(true);
                     break;
 
                 case KeyEvent.VK_RIGHT:
                     setDirty();
                     translateSelection(1, 0);
-                    redrawSelection();
+                    redrawSelection(true);
                     break;
 
                 case KeyEvent.VK_UP:
                     setDirty();
                     translateSelection(0, -1);
-                    redrawSelection();
+                    redrawSelection(true);
                     break;
 
                 case KeyEvent.VK_DOWN:
                     setDirty();
                     translateSelection(0, 1);
-                    redrawSelection();
+                    redrawSelection(true);
                     break;
             }
         }
@@ -497,7 +500,7 @@ System.err.println("PICKING UP!");
     @Override
     public void onAntsMoved(Stroke ants) {
         if (hasSelection()) {
-            redrawSelection();
+            redrawSelection(true);
         }
     }
 
