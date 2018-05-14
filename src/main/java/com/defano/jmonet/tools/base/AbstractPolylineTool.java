@@ -81,7 +81,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
         int[] ys = points.stream().mapToInt(i -> i.y).toArray();
 
         getScratch().clear();
-        strokePolyline(getCanvas().getScratch(), getStroke(), getStrokePaint(), xs, ys);
+        strokePolyline(getScratch(), getStroke(), getStrokePaint(), xs, ys);
         getCanvas().invalidateCanvas();
 
         points.remove(points.size() - 1);
@@ -118,10 +118,10 @@ public abstract class AbstractPolylineTool extends PaintTool {
         currentPoint = null;
 
         if (getFillPaint().isPresent()) {
-            fillPolygon(getCanvas().getScratch(), getFillPaint().get(), xs, ys);
+            fillPolygon(getScratch(), getFillPaint().get(), xs, ys);
         }
 
-        strokePolygon(getCanvas().getScratch(), getStroke(), getStrokePaint(), xs, ys);
+        strokePolygon(getScratch(), getStroke(), getStrokePaint(), xs, ys);
         getCanvas().commit();
     }
 
@@ -134,7 +134,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
         points.clear();
         currentPoint = null;
 
-        strokePolyline(getCanvas().getScratch(), getStroke(), getStrokePaint(), xs, ys);
+        strokePolyline(getScratch(), getStroke(), getStrokePaint(), xs, ys);
         getCanvas().commit();
     }
 

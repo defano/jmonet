@@ -24,7 +24,6 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
 
     private PaintCanvas canvas;
     private final PaintToolType type;
-    private AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
     private Cursor toolCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
     private int constrainedAngle = 15;
 
@@ -94,8 +93,22 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         return canvas;
     }
 
+    /**
+     * Gets the scratch buffer of the canvas that this tool is presently activated on, applying this tool's anti-
+     * aliasing mode to scratch buffer's graphics context.
+     *
+     * @return The active scratch buffer.
+     */
     public Scratch getScratch() {
-        return getCanvas().getScratch();
+        if (getCanvas() == null) {
+            throw new IllegalStateException("Tool is not active on a canvas.");
+        }
+
+        Scratch scratch = getCanvas().getScratch();
+        applyRenderingHints(scratch.getAddScratchGraphics());
+        applyRenderingHints(scratch.getRemoveScratchGraphics());
+
+        return scratch;
     }
 
     void setFontColorObservable(Observable<Color> fontColorObservable) {
@@ -240,9 +253,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         this.antiAliasingObservable = antiAliasingObservable;
     }
 
-    public void applyRenderingHints(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-
+    public void applyRenderingHints(Graphics2D g2d) {
         switch (antiAliasingObservable.blockingFirst()) {
             case OFF:
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
