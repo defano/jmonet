@@ -2,7 +2,8 @@ package com.defano.jmonet.canvas;
 
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
-import com.defano.jmonet.canvas.surface.AbstractScrollableSurface;
+import com.defano.jmonet.canvas.surface.AbstractScrollablePaintSurface;
+import com.defano.jmonet.canvas.surface.ImageLayer;
 import com.defano.jmonet.canvas.surface.PaintableSurface;
 import com.defano.jmonet.tools.util.Geometry;
 import io.reactivex.Observable;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
  * A scrollable, Swing component that can be painted upon using the paint tools in {@link com.defano.jmonet.tools}. See
  * {@link JMonetCanvas} for a canvas with an undo/redo buffer.
  */
-public abstract class AbstractPaintCanvas extends AbstractScrollableSurface implements PaintCanvas, ComponentListener {
+public abstract class AbstractPaintCanvas extends AbstractScrollablePaintSurface implements PaintCanvas, ComponentListener {
 
     private final PaintableSurface surface = new PaintableSurface();
 
@@ -27,7 +28,7 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
     private final BehaviorSubject<Double> scaleSubject = BehaviorSubject.createDefault(1.0);
     private final BehaviorSubject<Integer> gridSpacingSubject = BehaviorSubject.createDefault(1);
 
-    private BufferedImage scratch;      // Temporary buffer for changes not yet committed to the canvas
+    private Scratch scratch = new Scratch();
 
     /**
      * Creates a new AbstractPaintCanvas with a blank (transparent) initial image displayed in it.
@@ -54,41 +55,28 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
     public void setSize(int width, int height) {
         super.setSize(width, height);
         surface.setPreferredSize(new Dimension((int) (width * scaleSubject.getValue()), (int) (height * scaleSubject.getValue())));
-
-        BufferedImage newScratch = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics newScratchGraphics = newScratch.getGraphics();
-        newScratchGraphics.drawImage(getScratchImage(), 0, 0, null);
-        setScratchImage(newScratch);
-
-        newScratchGraphics.dispose();
-
+        scratch.resize(width, height);
         surface.addComponentListener(this);
         invalidateCanvas();
     }
 
     /** {@inheritDoc} */
     @Override
-    public BufferedImage[] getPaintLayers() {
-        return new BufferedImage[]{getCanvasImage(), getScratchImage()};
+    public ImageLayer[] getImageLayers() {
+        return new ImageLayer[] {
+                new ImageLayer(getCanvasImage()),
+                new ImageLayer(getScratch().getRemoveScratch(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f)),
+                new ImageLayer(getScratch().getAddScratch(), AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f))};
     }
 
     /** {@inheritDoc} */
     @Override
     public void clearCanvas() {
-        Graphics2D g2 = (Graphics2D) getScratchImage().getGraphics();
+        Graphics2D g2 = scratch.getRemoveScratchGraphics();
         g2.setColor(Color.WHITE);
         g2.fillRect(0, 0, getWidth(), getHeight());
-        g2.dispose();
 
-        commit(new ChangeSet(getScratchImage(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f)));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public BufferedImage clearScratch() {
-        scratch = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-        invalidateCanvas();
-        return scratch;
+        commit(scratch.getChangeSet());
     }
 
     @Override
@@ -99,42 +87,21 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
 
     /** {@inheritDoc} */
     @Override
-    public Point convertPointToImage(Point p) {
+    public Point convertViewPointToModel(Point p) {
         return new Point(translateX(p.x), translateY(p.y));
-    }
-
-    private int translateX(int x) {
-        int gridSpacing = getGridSpacingObservable().blockingFirst();
-        double scale = getScaleObservable().blockingFirst();
-
-        x = Geometry.round(x, (int) (gridSpacing * scale));
-        return (int) (x / scale);
-    }
-
-    private int translateY(int y) {
-        int gridSpacing = getGridSpacingObservable().blockingFirst();
-        double scale = getScaleObservable().blockingFirst();
-
-        y = Geometry.round(y, (int) (gridSpacing * scale));
-        return (int) (y / scale);
     }
 
     /** {@inheritDoc} */
     @Override
-    public BufferedImage getScratchImage() {
+    public Scratch getScratch() {
         return scratch;
     }
 
     /** {@inheritDoc} */
     @Override
-    public void setScratchImage(BufferedImage image) {
-        this.scratch = image;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void commit() {
-        commit(new ChangeSet(getScratchImage()));
+        commit(scratch.getChangeSet());
+        invalidateCanvas();
     }
 
     /** {@inheritDoc} */
@@ -241,5 +208,21 @@ public abstract class AbstractPaintCanvas extends AbstractScrollableSurface impl
     @Override
     public void componentHidden(ComponentEvent e) {
         // Nothing to do
+    }
+
+    private int translateX(int x) {
+        int gridSpacing = getGridSpacingObservable().blockingFirst();
+        double scale = getScaleObservable().blockingFirst();
+
+        x = Geometry.round(x, (int) (gridSpacing * scale));
+        return (int) (x / scale);
+    }
+
+    private int translateY(int y) {
+        int gridSpacing = getGridSpacingObservable().blockingFirst();
+        double scale = getScaleObservable().blockingFirst();
+
+        y = Geometry.round(y, (int) (gridSpacing * scale));
+        return (int) (y / scale);
     }
 }

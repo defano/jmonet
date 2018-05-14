@@ -26,7 +26,7 @@ public class FillTool extends PaintTool {
 
         // Nothing to do if no fill paint is specified
         if (getFillPaint().isPresent()) {
-            getCanvas().clearScratch();
+            getScratch().clear();
 
             FloodFill.floodFill(
                     getCanvas(),

@@ -21,13 +21,13 @@ public class SelectionTool extends AbstractSelectionTool implements Transformabl
 
     /** {@inheritDoc} */
     @Override
-    public Shape getSelectionOutline() {
+    public Shape getSelectionFrame() {
         return selectionBounds;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
+    protected void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         selectionBounds = new Rectangle(initialPoint);
         selectionBounds.add(newPoint);
 
@@ -41,7 +41,7 @@ public class SelectionTool extends AbstractSelectionTool implements Transformabl
 
     /** {@inheritDoc} */
     @Override
-    protected void completeSelection(Point finalPoint) {
+    protected void closeSelectionFrame(Point finalPoint) {
         // Nothing to do
     }
 

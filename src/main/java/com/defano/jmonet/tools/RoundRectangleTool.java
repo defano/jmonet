@@ -1,5 +1,6 @@
 package com.defano.jmonet.tools;
 
+import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractBoundsTool;
 
@@ -16,7 +17,8 @@ public class RoundRectangleTool extends AbstractBoundsTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void strokeBounds(Graphics2D g, Stroke stroke, Paint paint, Rectangle bounds, boolean isShiftDown) {
+    protected void strokeBounds(Scratch scratch, Stroke stroke, Paint paint, Rectangle bounds, boolean isShiftDown) {
+        Graphics2D g = scratch.getAddScratchGraphics();
         int cornerRadius = getCornerRadiusObservable().blockingFirst();
 
         g.setPaint(paint);
@@ -26,7 +28,8 @@ public class RoundRectangleTool extends AbstractBoundsTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void fillBounds(Graphics2D g, Paint fill, Rectangle bounds, boolean isShiftDown) {
+    protected void fillBounds(Scratch scratch, Paint fill, Rectangle bounds, boolean isShiftDown) {
+        Graphics2D g = scratch.getAddScratchGraphics();
         int cornerRadius = getCornerRadiusObservable().blockingFirst();
 
         g.setPaint(fill);

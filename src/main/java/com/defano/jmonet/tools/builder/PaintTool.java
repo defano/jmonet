@@ -2,6 +2,7 @@ package com.defano.jmonet.tools.builder;
 
 import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
+import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.model.ImageAntiAliasingMode;
@@ -23,7 +24,6 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
 
     private PaintCanvas canvas;
     private final PaintToolType type;
-    private AlphaComposite composite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f);
     private Cursor toolCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
     private int constrainedAngle = 15;
 
@@ -78,22 +78,6 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     }
 
     /**
-     * Gets the {@link AlphaComposite} mode used when committing images produced by this tool onto the canvas.
-     * @return The alpha composite mode.
-     */
-    public AlphaComposite getComposite() {
-        return composite;
-    }
-
-    /**
-     * Sets the {@link AlphaComposite} mode used when committing images produced by this tool onto the canvas.
-     * @param composite The alpha composite mode.
-     */
-    public void setComposite(AlphaComposite composite) {
-        this.composite = composite;
-    }
-
-    /**
      * Gets the type of this tool.
      * @return The tool type.
      */
@@ -107,6 +91,24 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
      */
     public PaintCanvas getCanvas() {
         return canvas;
+    }
+
+    /**
+     * Gets the scratch buffer of the canvas that this tool is presently activated on, applying this tool's anti-
+     * aliasing mode to scratch buffer's graphics context.
+     *
+     * @return The active scratch buffer.
+     */
+    public Scratch getScratch() {
+        if (getCanvas() == null) {
+            throw new IllegalStateException("Tool is not active on a canvas.");
+        }
+
+        Scratch scratch = getCanvas().getScratch();
+        applyRenderingHints(scratch.getAddScratchGraphics());
+        applyRenderingHints(scratch.getRemoveScratchGraphics());
+
+        return scratch;
     }
 
     void setFontColorObservable(Observable<Color> fontColorObservable) {
@@ -251,9 +253,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         this.antiAliasingObservable = antiAliasingObservable;
     }
 
-    protected void setRenderingHints(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-
+    public void applyRenderingHints(Graphics2D g2d) {
         switch (antiAliasingObservable.blockingFirst()) {
             case OFF:
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);

@@ -113,16 +113,16 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
             if (dragTopLeft) {
                 moveTopLeft(transformBounds, imageLocation, e.isShiftDown());
-                redrawSelection();
+                redrawSelection(true);
             } else if (dragTopRight) {
                 moveTopRight(transformBounds, imageLocation, e.isShiftDown());
-                redrawSelection();
+                redrawSelection(true);
             } else if (dragBottomLeft) {
                 moveBottomLeft(transformBounds, imageLocation, e.isShiftDown());
-                redrawSelection();
+                redrawSelection(true);
             } else if (dragBottomRight) {
                 moveBottomRight(transformBounds, imageLocation, e.isShiftDown());
-                redrawSelection();
+                redrawSelection(true);
             } else {
                 super.mouseDragged(e, imageLocation);
             }
@@ -152,7 +152,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
+    protected void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         selectionBounds = new Rectangle(initialPoint);
         selectionBounds.add(newPoint);
 
@@ -168,7 +168,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void completeSelection(Point finalPoint) {
+    protected void closeSelectionFrame(Point finalPoint) {
         transformBounds = new FlexQuadrilateral(selectionBounds);
     }
 
@@ -189,7 +189,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    public Shape getSelectionOutline() {
+    public Shape getSelectionFrame() {
         return transformBounds != null ? transformBounds.getShape() : selectionBounds;
     }
 
@@ -213,13 +213,13 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void drawSelectionOutline() {
-        super.drawSelectionOutline();
+    protected void drawSelectionFrame() {
+        super.drawSelectionFrame();
 
         if (hasSelection() && transformBounds != null) {
 
             // Render drag handles on selection bounds
-            Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
+            Graphics2D g = getCanvas().getScratch().getAddScratchGraphics();
             g.setPaint(Color.BLACK);
 
             topLeftHandle = new Rectangle(transformBounds.getTopLeft().x, transformBounds.getTopLeft().y, HANDLE_SIZE, HANDLE_SIZE);
@@ -231,8 +231,6 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
             g.fill(topRightHandle);
             g.fill(bottomRightHandle);
             g.fill(bottomLeftHandle);
-
-            g.dispose();
         }
     }
 

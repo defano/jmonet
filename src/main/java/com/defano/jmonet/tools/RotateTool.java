@@ -15,23 +15,36 @@ import java.awt.image.BufferedImage;
  */
 public class RotateTool extends AbstractSelectionTool {
 
-    private Point centerpoint;
-    private Point dragLocation;
+    private Point centerpoint;                  // Point around which image rotates
+    private Point dragLocation;                 // Location of the drag handle
 
-    private BufferedImage originalImage;
+    private BufferedImage originalImage;        // Unmodified image being rotated
 
-    private Shape selectionBounds;
-    private Shape originalSelectionBounds;
-    private Shape dragHandle;
-    private Shape originalDragHandle;
+    private Shape selectionBounds;              // Rotated selection frame
+    private Shape originalSelectionBounds;      // Un-rotated selection frame
+    private Shape dragHandle;                   // Shape of drag handle (transformed for rotation)
+    private Shape originalDragHandle;           // Un-rotated drag angle
 
-    private boolean rotating = false;
+    private boolean rotating = false;           // Drag-rotate in progress
 
     public RotateTool() {
         super(PaintToolType.ROTATE);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void createSelection(BufferedImage image, Point location) {
+        super.createSelection(image, location);
+
+        originalImage = square(image);
+        originalSelectionBounds = new Rectangle(location.x, location.y, image.getWidth(), image.getHeight());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
 
@@ -40,9 +53,9 @@ public class RotateTool extends AbstractSelectionTool {
 
             if (centerpoint == null) {
                 originalImage = square(getSelectedImage());
-                originalSelectionBounds = getSelectionOutline();
+                originalSelectionBounds = getSelectionFrame();
 
-                Rectangle selectionBounds = getSelectionOutline().getBounds();
+                Rectangle selectionBounds = getSelectionFrame().getBounds();
                 centerpoint = new Point(selectionBounds.x + selectionBounds.width / 2, selectionBounds.y + selectionBounds.height / 2);
             }
 
@@ -56,7 +69,9 @@ public class RotateTool extends AbstractSelectionTool {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
 
@@ -84,7 +99,9 @@ public class RotateTool extends AbstractSelectionTool {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void resetSelection() {
         selectionBounds = null;
@@ -95,15 +112,19 @@ public class RotateTool extends AbstractSelectionTool {
         rotating = false;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setSelectionOutline(Rectangle bounds) {
         selectionBounds = bounds;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected void addSelectionPoint(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
+    protected void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         int handleSize = 8;
 
         Rectangle selectionRectangle = new Rectangle(initialPoint);
@@ -113,22 +134,28 @@ public class RotateTool extends AbstractSelectionTool {
         originalDragHandle = dragHandle = new Rectangle(selectionRectangle.x + selectionRectangle.width - handleSize, selectionRectangle.y + selectionRectangle.height / 2 - handleSize / 2, handleSize, handleSize);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void completeSelection(Point finalPoint) {
+    public void closeSelectionFrame(Point finalPoint) {
         if (hasSelection()) {
             originalImage = square(getSelectedImage());
-            originalSelectionBounds = getSelectionOutline();
+            originalSelectionBounds = getSelectionFrame();
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Shape getSelectionOutline() {
+    public Shape getSelectionFrame() {
         return selectionBounds;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void translateSelection(int xDelta, int yDelta) {
         // Nothing to do; user can't move selection
@@ -137,16 +164,18 @@ public class RotateTool extends AbstractSelectionTool {
         dragHandle = AffineTransform.getTranslateInstance(xDelta, yDelta).createTransformedShape(dragHandle);
         originalDragHandle = AffineTransform.getTranslateInstance(xDelta, yDelta).createTransformedShape(originalDragHandle);
 
-        Rectangle selectionBounds = getSelectionOutline().getBounds();
+        Rectangle selectionBounds = getSelectionFrame().getBounds();
         centerpoint = new Point(selectionBounds.x + selectionBounds.width / 2, selectionBounds.y + selectionBounds.height / 2);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Point getSelectedImageLocation() {
 
         if (dragLocation == null || originalImage == null) {
-            return getSelectionOutline().getBounds().getLocation();
+            return getSelectionFrame().getBounds().getLocation();
         } else {
             Rectangle enlargedBounds = originalImage.getRaster().getBounds();
             Geometry.center(enlargedBounds, originalSelectionBounds.getBounds());
@@ -185,13 +214,15 @@ public class RotateTool extends AbstractSelectionTool {
         return enlarged;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void redrawSelection() {
-        super.redrawSelection();
+    public void redrawSelection(boolean includeFrame) {
+        super.redrawSelection(includeFrame);
 
         // Draw the drag handle on the selection
-        Graphics2D g = (Graphics2D) getCanvas().getScratchImage().getGraphics();
+        Graphics2D g = getCanvas().getScratch().getAddScratchGraphics();
         g.setColor(Color.black);
         g.fill(dragHandle);
         g.dispose();

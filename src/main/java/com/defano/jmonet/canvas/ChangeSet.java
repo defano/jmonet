@@ -1,6 +1,8 @@
 package com.defano.jmonet.canvas;
 
 import com.defano.jmonet.canvas.observable.ChangeSetObserver;
+import com.defano.jmonet.canvas.surface.ImageLayer;
+import com.defano.jmonet.canvas.surface.LayeredImage;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -15,7 +17,7 @@ import java.util.Objects;
  * is represented by a two-change, {@link ChangeSet}; first, the deletion of the selected image
  * from the canvas, followed by the addition of that selected image back to the canvas in its new location.
  */
-public class ChangeSet {
+public class ChangeSet implements LayeredImage {
 
     private final List<ChangeSetObserver> observers = new ArrayList<>();
     private final List<BufferedImage> images = new ArrayList<>();
@@ -50,35 +52,25 @@ public class ChangeSet {
      *
      * @return The size of the ChangeSet
      */
-    public int size() {
+    public int getChangesCount() {
         return images.size();
     }
 
-    /**
-     * Gets the image produced by applying all changes in this ChangeSet. Produces an empty, 0x0 image if this
-     * ChangeSet is empty.
-     *
-     * @return The rendered image.
-     */
-    public BufferedImage getImage() {
-        Dimension size = getImageSize();
-        BufferedImage rendering = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
+    @Override
+    public ImageLayer[] getImageLayers() {
+        ImageLayer[] layers = new ImageLayer[getChangesCount()];
 
-        Graphics2D g2d = rendering.createGraphics();
-
-        for (int index = 0; index < size(); index++) {
-            g2d.setComposite(getComposite(index));
-            g2d.drawImage(getImage(index), 0, 0, null);
+        for (int index = 0; index < getChangesCount(); index++) {
+            layers[index] = new ImageLayer(images.get(index), composites.get(index));
         }
 
-        g2d.dispose();
-        return rendering;
+        return layers;
     }
 
     /**
      * Gets the image associated with the change at the specified index.
      *
-     * @param change The change index, a value between 0 and less than {@link #size()}
+     * @param change The change index, a value between 0 and less than {@link #getChangesCount()}
      * @return The associated image.
      */
     public BufferedImage getImage(int change) {
@@ -88,7 +80,7 @@ public class ChangeSet {
     /**
      * Gets the composite mode associated with the change at the specified index.
      *
-     * @param change The change index, a value between 0 and less than {@link #size()}
+     * @param change The change index, a value between 0 and less than {@link #getChangesCount()}
      * @return The associated composite mode.
      */
     public AlphaComposite getComposite(int change) {
@@ -112,28 +104,6 @@ public class ChangeSet {
      */
     public boolean removeChangeSetObserver(ChangeSetObserver observer) {
         return observers.remove(observer);
-    }
-
-    /**
-     * Gets the size of the image produced by the ChangeSet.
-     *
-     * @return The dimension of the image.
-     */
-    public Dimension getImageSize() {
-        int width = 0;
-        int height = 0;
-
-        for (BufferedImage thisImage : images) {
-            if (thisImage.getWidth() > width) {
-                width = thisImage.getWidth();
-            }
-
-            if (thisImage.getHeight() > height) {
-                height = thisImage.getHeight();
-            }
-        }
-
-        return new Dimension(width, height);
     }
 
     private void fireChangeSetObservers() {

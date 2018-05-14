@@ -18,10 +18,10 @@ public interface Selection {
     PaintCanvas getCanvas();
 
     /**
-     * Determines the location (top-left coordinate) of the selection outline ({@link #getSelectionOutline()} on
+     * Determines the location (top-left coordinate) of the selection outline ({@link #getSelectionFrame()} on
      * the canvas, relative to the top-left coordinate of the canvas.
      *
-     * @return Get the top-left coordinate of the selection boundary
+     * @return Get the top-left coordinate of the selection boundary or null if no selection exists
      */
     Point getSelectionLocation();
 
@@ -30,12 +30,12 @@ public interface Selection {
      * be drawn.
      *
      * Note that the location of the shape's bounds is translated to the selection's location on the canvas. Use
-     * {@link #getIdentitySelectionOutline()} for a selection outline located at (0, 0) and suitable for testing whether
+     * {@link #getIdentitySelectionFrame()} for a selection outline located at (0, 0) and suitable for testing whether
      * a pixel in the selected image is within the selection shape's mask.
      *
      * @return The selection outline's shape and location on the canvas
      */
-    Shape getSelectionOutline();
+    Shape getSelectionFrame();
 
     /**
      * Gets the current selection outline's shape, located at (0, 0).
@@ -45,9 +45,9 @@ public interface Selection {
      *
      * @return The selection outline's shape
      */
-    default Shape getIdentitySelectionOutline() {
+    default Shape getIdentitySelectionFrame() {
         return AffineTransform.getTranslateInstance(-getSelectionLocation().x, -getSelectionLocation().y)
-                .createTransformedShape(getSelectionOutline());
+                .createTransformedShape(getSelectionFrame());
     }
 
     /**
@@ -62,29 +62,30 @@ public interface Selection {
      * Gets the image represented by the selection, or null, if no selection exists.
      * <p>
      * Note that a user can select a non-rectangular selection, but the selected image returned by this method will
-     * always be a rectangle whose bounds are the smallest rectangle that can fit in the selected shape
-     * (i.e., {@link #getSelectionOutline()}).
-     * <p>
-     * Any pixels outside the user's selection shape will be fully transparent pixels in the returned image.
+     * always be a rectangle whose bounds are the smallest rectangle that can fit in the selected shape Any pixels
+     * outside the user's selection frame will be fully transparent in the returned image.
      *
      * @return The selected image
      */
     BufferedImage getSelectedImage();
 
     /**
-     * Clears the scratch buffer then draws the selected image and selection outline ("marching ants") onto it.
+     * Clears the scratch buffer and redraws the current state of the selection onto it.
+     *
+     * @param includeFrame When true, draws the selection frame (marching ants) on the buffer; when false, the frame
+     *                     is omitted.
      */
-    void redrawSelection();
+    void redrawSelection(boolean includeFrame);
 
     /**
-     * Creates a new image in which every pixel not within the selected shape (i.e., bounded by marching ants) has been
-     * changed to fully transparent.
+     * Creates a new image in which every pixel not within the selection frame (i.e., bounded by marching ants) has been
+     * changed to fully transparent; the image produced is the same dimensions as the source image.
      *
-     * @param image The image to mask
+     * @param image The image to crop
      * @return A BufferedImage in which every pixel not within the selection has been made transparent
      */
-    default BufferedImage maskSelection(BufferedImage image) {
-        Shape mask = getSelectionOutline();
+    default BufferedImage crop(BufferedImage image) {
+        Shape mask = getSelectionFrame();
         BufferedImage maskedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         int clearPixel = new Color(0, 0, 0, 0).getRGB();

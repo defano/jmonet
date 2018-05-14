@@ -85,7 +85,7 @@ public interface TransformableImageSelection extends MutableSelection {
      */
     default void adjustBrightness(int delta) {
         if (hasSelection()) {
-            Transform.adjustBrightness(getSelectedImage(), getIdentitySelectionOutline(), delta);
+            Transform.adjustBrightness(getSelectedImage(), getIdentitySelectionFrame(), delta);
             setDirty();
         }
     }
@@ -98,7 +98,7 @@ public interface TransformableImageSelection extends MutableSelection {
      */
     default void adjustTransparency(int delta) {
         if (hasSelection()) {
-            Transform.adjustTransparency(getSelectedImage(), getIdentitySelectionOutline(), delta);
+            Transform.adjustTransparency(getSelectedImage(), getIdentitySelectionFrame(), delta);
             setDirty();
         }
     }
@@ -108,7 +108,7 @@ public interface TransformableImageSelection extends MutableSelection {
      */
     default void invert() {
         if (hasSelection()) {
-            Transform.invert(getSelectedImage(), getIdentitySelectionOutline());
+            Transform.invert(getSelectedImage(), getIdentitySelectionFrame());
             setDirty();
         }
     }
@@ -121,7 +121,7 @@ public interface TransformableImageSelection extends MutableSelection {
      */
     default void removeTranslucency(boolean makeTransparent) {
         if (hasSelection()) {
-            Transform.removeTranslucency(getSelectedImage(), getIdentitySelectionOutline(), makeTransparent);
+            Transform.removeTranslucency(getSelectedImage(), getIdentitySelectionFrame(), makeTransparent);
             setDirty();
         }
     }
@@ -132,7 +132,7 @@ public interface TransformableImageSelection extends MutableSelection {
      */
     default void fill(Paint fillPaint) {
         if (hasSelection()) {
-            Transform.fill(getSelectedImage(), getIdentitySelectionOutline(), fillPaint, new DefaultFillFunction());
+            Transform.fill(getSelectedImage(), getIdentitySelectionFrame(), fillPaint, new DefaultFillFunction());
             setDirty();
         }
     }
@@ -143,7 +143,7 @@ public interface TransformableImageSelection extends MutableSelection {
      */
     default void transform(PixelTransform transform) {
         if (hasSelection()) {
-            Transform.transform(getSelectedImage(), getIdentitySelectionOutline(), transform);
+            Transform.transform(getSelectedImage(), getIdentitySelectionFrame(), transform);
             setDirty();
         }
     }

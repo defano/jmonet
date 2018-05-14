@@ -1,5 +1,6 @@
 package com.defano.jmonet.canvas;
 
+import com.defano.jmonet.canvas.surface.ImageLayer;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -111,6 +112,23 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     }
 
     /**
+     * Returns the {@link ChangeSet} representing the undo at the given depth in the buffer.
+     *
+     * @param index The index of the requested undoable change where index 0 is the most recent undoable change. The
+     *              maximum legal index is equal to {@link #getUndoBufferDepth()} - 1.
+     * @return The requested change set
+     * @throws IndexOutOfBoundsException If there are no undoable changes in the buffer, or if the index equals or
+     *                                   exceeds the number of undoable changes.
+     */
+    public ChangeSet peek(int index) {
+        if (index >= getUndoBufferDepth()) {
+            throw new IndexOutOfBoundsException("Index exceeds depth of undo buffer.");
+        }
+
+        return undoBuffer.get(undoBufferPointer - index);
+    }
+
+    /**
      * Determines if a commit is available to be undone.
      *
      * @return True if {@link #undo()} will succeed; false otherwise.
@@ -135,6 +153,24 @@ public class JMonetCanvas extends AbstractPaintCanvas {
      */
     public int getMaxUndoBufferDepth() {
         return maxUndoBufferDepth;
+    }
+
+    /**
+     * Gets the number of changes that can be "undone".
+     *
+     * @return The depth of undo buffer.
+     */
+    public int getUndoBufferDepth() {
+        return undoBufferPointer + 1;
+    }
+
+    /**
+     * Gets the number of changes that can be "redone".
+     *
+     * @return The depth of the redo buffer.
+     */
+    public int getRedoBufferDepth() {
+        return undoBuffer.size() - undoBufferPointer - 1;
     }
 
     /**
@@ -180,7 +216,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
 
         fireCanvasCommitObservers(this, changeSet, getCanvasImage());
 
-        clearScratch();
+        getScratch().clear();
         invalidateCanvas();
 
         isUndoableSubject.onNext(hasUndoableChanges());
@@ -220,7 +256,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
      * drawn atop the permanent image.
      */
     private void makePermanent(ChangeSet changeSet) {
-        Dimension changeSetDim = changeSet.getImageSize();
+        Dimension changeSetDim = changeSet.getSize();
 
         if (permanent == null) {
             permanent = new BufferedImage(changeSetDim.width, changeSetDim.height, BufferedImage.TYPE_INT_ARGB);
@@ -273,9 +309,8 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     private void overlayChangeSet(ChangeSet changeSet, BufferedImage destination) {
         Graphics2D g2d = (Graphics2D) destination.getGraphics();
 
-        for (int index = 0; index < changeSet.size(); index++) {
-            g2d.setComposite(changeSet.getComposite(index));
-            g2d.drawImage(changeSet.getImage(index), 0, 0, null);
+        for (ImageLayer thisLayer : changeSet.getImageLayers()) {
+            thisLayer.drawOnto(g2d);
         }
 
         g2d.dispose();

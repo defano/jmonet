@@ -25,7 +25,7 @@ public class FloodFill {
         final Stack<Point> fillPixels = new Stack<>();
 
         BufferedImage canvasImage = canvas.getCanvasImage();
-        BufferedImage scratchImage = canvas.getScratchImage();
+        BufferedImage scratchImage = canvas.getScratch().getAddScratch();
         Rectangle bounds = canvas.getBounds();
 
         // Start by filling clicked pixel
