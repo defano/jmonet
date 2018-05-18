@@ -1,6 +1,10 @@
 package com.defano.jmonet.tools.selection;
 
-import com.defano.jmonet.algo.transform.Transform;
+import com.defano.jmonet.algo.transform.affine.FlipHorizontalTransform;
+import com.defano.jmonet.algo.transform.affine.FlipVerticalTransform;
+import com.defano.jmonet.algo.transform.affine.RotateLeftTransform;
+import com.defano.jmonet.algo.transform.affine.RotateRightTransform;
+import com.defano.jmonet.algo.transform.image.ApplyAffineTransform;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -19,7 +23,7 @@ public interface TransformableSelection extends TransformableImageSelection {
             int width = getSelectedImage().getWidth();
             int height = getSelectedImage().getHeight();
 
-            applyTransform(Transform.rotateLeft(width, height));
+            applyTransform(new RotateLeftTransform(width, height));
             translateSelection((width - height) / 2, -(width - height) / 2);
             redrawSelection(true);
         }
@@ -33,7 +37,7 @@ public interface TransformableSelection extends TransformableImageSelection {
             int width = getSelectedImage().getWidth();
             int height = getSelectedImage().getHeight();
 
-            applyTransform(Transform.rotateRight(width, height));
+            applyTransform(new RotateRightTransform(width, height));
             translateSelection((width - height) / 2, -(width - height) / 2);
             redrawSelection(true);
         }
@@ -46,7 +50,7 @@ public interface TransformableSelection extends TransformableImageSelection {
     default void flipHorizontal() {
         if (hasSelection()) {
             int width = getSelectedImage().getWidth();
-            applyTransform(Transform.flipHorizontalTransform(width));
+            applyTransform(new FlipHorizontalTransform(width));
             redrawSelection(true);
         }
     }
@@ -58,7 +62,7 @@ public interface TransformableSelection extends TransformableImageSelection {
     default void flipVertical() {
         if (hasSelection()) {
             int height = getSelectedImage().getHeight();
-            applyTransform(Transform.flipVerticalTransform(height));
+            applyTransform(new FlipVerticalTransform(height));
             redrawSelection(true);
         }
     }
@@ -75,7 +79,7 @@ public interface TransformableSelection extends TransformableImageSelection {
             Point originalLocation = getSelectionLocation();
 
             // Transform the selected image
-            setSelectedImage(Transform.transform(getSelectedImage(), transform));
+            setSelectedImage(new ApplyAffineTransform(transform).apply(getSelectedImage()));
 
             // Relocate the image to its original location
             Rectangle newBounds = getSelectedImage().getRaster().getBounds();

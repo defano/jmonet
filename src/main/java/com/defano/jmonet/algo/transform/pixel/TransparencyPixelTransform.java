@@ -1,4 +1,6 @@
-package com.defano.jmonet.algo.transform;
+package com.defano.jmonet.algo.transform.pixel;
+
+import com.defano.jmonet.algo.transform.PixelTransform;
 
 import java.awt.*;
 
@@ -11,7 +13,7 @@ public class TransparencyPixelTransform implements PixelTransform {
     }
 
     @Override
-    public int transformPixel(int x, int y, int rgb) {
+    public int apply(int x, int y, int rgb) {
         Color color = new Color(rgb, true);
 
         int alpha = color.getAlpha() + delta;

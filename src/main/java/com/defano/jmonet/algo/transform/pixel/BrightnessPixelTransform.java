@@ -1,4 +1,6 @@
-package com.defano.jmonet.algo.transform;
+package com.defano.jmonet.algo.transform.pixel;
+
+import com.defano.jmonet.algo.transform.PixelTransform;
 
 public class BrightnessPixelTransform implements PixelTransform {
 
@@ -9,7 +11,7 @@ public class BrightnessPixelTransform implements PixelTransform {
     }
 
     @Override
-    public int transformPixel(int x, int y, int rgb) {
+    public int apply(int x, int y, int rgb) {
         int alpha = 0xff000000 & rgb;
         int r = ((0xff0000 & rgb) >> 16) + delta;
         int g = ((0xff00 & rgb) >> 8) + delta;

@@ -1,9 +1,9 @@
 package com.defano.jmonet.tools;
 
+import com.defano.jmonet.algo.transform.image.SlantTransform;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractTransformTool;
 import com.defano.jmonet.model.FlexQuadrilateral;
-import com.defano.jmonet.algo.transform.Transform;
 import com.defano.jmonet.tools.util.Geometry;
 
 import java.awt.*;
@@ -24,7 +24,7 @@ public class SlantTool extends AbstractTransformTool {
         quadrilateral.getTopLeft().x = newPosition.x;
 
         int xTranslation = (quadrilateral.getTopLeft().x - getSelectionFrame().getBounds().x) / 2;
-        setSelectedImage(Transform.slant(getOriginalImage(), getTheta(quadrilateral), xTranslation));
+        setSelectedImage(new SlantTransform(getTheta(quadrilateral), xTranslation).apply(getOriginalImage()));
     }
 
     /** {@inheritDoc} */
@@ -34,7 +34,7 @@ public class SlantTool extends AbstractTransformTool {
         quadrilateral.getTopRight().x = newPosition.x;
 
         int xTranslation = (quadrilateral.getTopLeft().x - getSelectionFrame().getBounds().x) / 2;
-        setSelectedImage(Transform.slant(getOriginalImage(), getTheta(quadrilateral), xTranslation));
+        setSelectedImage(new SlantTransform(getTheta(quadrilateral), xTranslation).apply(getOriginalImage()));
     }
 
     /** {@inheritDoc} */
@@ -44,7 +44,7 @@ public class SlantTool extends AbstractTransformTool {
         quadrilateral.getBottomLeft().x = newPosition.x;
 
         int xTranslation = ((getSelectionFrame().getBounds().x + getSelectionFrame().getBounds().width) - quadrilateral.getBottomRight().x) / 2;
-        setSelectedImage(Transform.slant(getOriginalImage(), getTheta(quadrilateral), xTranslation));
+        setSelectedImage(new SlantTransform(getTheta(quadrilateral), xTranslation).apply(getOriginalImage()));
     }
 
     /** {@inheritDoc} */
@@ -54,7 +54,7 @@ public class SlantTool extends AbstractTransformTool {
         quadrilateral.getBottomRight().x = newPosition.x;
 
         int xTranslation = ((getSelectionFrame().getBounds().x + getSelectionFrame().getBounds().width) - quadrilateral.getBottomRight().x) / 2;
-        setSelectedImage(Transform.slant(getOriginalImage(), getTheta(quadrilateral), xTranslation));
+        setSelectedImage(new SlantTransform(getTheta(quadrilateral), xTranslation).apply(getOriginalImage()));
     }
 
     private double getTheta(FlexQuadrilateral quadrilateral) {

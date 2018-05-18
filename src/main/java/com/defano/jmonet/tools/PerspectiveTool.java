@@ -1,9 +1,9 @@
 package com.defano.jmonet.tools;
 
+import com.defano.jmonet.algo.transform.image.ProjectionTransform;
 import com.defano.jmonet.model.FlexQuadrilateral;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractTransformTool;
-import com.defano.jmonet.algo.transform.Transform;
 
 import java.awt.*;
 
@@ -24,7 +24,7 @@ public class PerspectiveTool extends AbstractTransformTool {
         quadrilateral.setBottomLeft(new Point(quadrilateral.getBottomLeft().x, bottomLeft));
         quadrilateral.setTopLeft(new Point(quadrilateral.getTopLeft().x, newPosition.y));
 
-        setSelectedImage(Transform.project(getOriginalImage(), quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)));
+        setSelectedImage(new ProjectionTransform(quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)).apply(getOriginalImage()));
     }
 
     /** {@inheritDoc} */
@@ -35,7 +35,7 @@ public class PerspectiveTool extends AbstractTransformTool {
         quadrilateral.setBottomRight(new Point(quadrilateral.getBottomRight().x, bottomRight));
         quadrilateral.setTopRight(new Point(quadrilateral.getTopRight().x, newPosition.y));
 
-        setSelectedImage(Transform.project(getOriginalImage(), quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)));
+        setSelectedImage(new ProjectionTransform(quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)).apply(getOriginalImage()));
     }
 
     /** {@inheritDoc} */
@@ -46,7 +46,7 @@ public class PerspectiveTool extends AbstractTransformTool {
         quadrilateral.setTopLeft(new Point(quadrilateral.getTopLeft().x, topLeft));
         quadrilateral.setBottomLeft(new Point(quadrilateral.getBottomLeft().x, newPosition.y));
 
-        setSelectedImage(Transform.project(getOriginalImage(), quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)));
+        setSelectedImage(new ProjectionTransform(quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)).apply(getOriginalImage()));
     }
 
     /** {@inheritDoc} */
@@ -57,7 +57,7 @@ public class PerspectiveTool extends AbstractTransformTool {
         quadrilateral.setTopRight(new Point(quadrilateral.getTopRight().x, topRight));
         quadrilateral.setBottomRight(new Point(quadrilateral.getBottomRight().x, newPosition.y));
 
-        setSelectedImage(Transform.project(getOriginalImage(), quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)));
+        setSelectedImage(new ProjectionTransform(quadrilateral.translate(getSelectedImageLocation().x, getSelectedImageLocation().y)).apply(getOriginalImage()));
     }
 
 }

@@ -1,6 +1,5 @@
 package com.defano.jmonet.tools.base;
 
-import com.defano.jmonet.algo.transform.Transform;
 import com.defano.jmonet.canvas.ChangeSet;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
@@ -8,6 +7,7 @@ import com.defano.jmonet.tools.RotateTool;
 import com.defano.jmonet.tools.builder.PaintTool;
 import com.defano.jmonet.tools.selection.TransformableImageSelection;
 import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.ImageUtils;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
 import io.reactivex.Observable;
@@ -84,7 +84,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
 
         // Make an ARGB copy of the image (input may not have alpha channel)
-        BufferedImage argbImage = Transform.argbCopy(image);
+        BufferedImage argbImage = ImageUtils.argbCopy(image);
 
         Graphics2D g = getCanvas().getScratch().getAddScratchGraphics();
         g.drawImage(argbImage, location.x, location.y, null);
