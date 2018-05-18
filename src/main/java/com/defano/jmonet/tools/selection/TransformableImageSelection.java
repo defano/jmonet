@@ -103,6 +103,7 @@ public interface TransformableImageSelection extends MutableSelection {
      * Fills all transparent pixels in the selection with the given fill paint.
      *
      * @param fillPaint The paint to fill with.
+     * @param fillFunction A method to fill pixels in the selected image
      */
     default void fill(Paint fillPaint, FillFunction fillFunction) {
         transform(new FillTransform(getIdentitySelectionFrame(), fillPaint, fillFunction));
@@ -117,6 +118,12 @@ public interface TransformableImageSelection extends MutableSelection {
         transform(new ApplyPixelTransform(transform, getIdentitySelectionFrame()));
     }
 
+    /**
+     * Performs a transformation on the selected image that does not effect the dimensions, bounds or location of the
+     * selection.
+     *
+     * @param transform The transform to perform.
+     */
     default void transform(StaticImageTransform transform) {
         if (hasSelection()) {
             setSelectedImage(transform.apply(getSelectedImage()));
