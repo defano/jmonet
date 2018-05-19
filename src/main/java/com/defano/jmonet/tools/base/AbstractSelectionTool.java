@@ -208,12 +208,10 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      */
     public void morphSelection(AbstractSelectionTool to) {
 
-        // Commit any existing changes before morphing
-        if (hasSelection() && isDirty()) {
-            commitSelection();
-        }
-
         if (hasSelection()) {
+
+            // Mark current selection as dirty to pick up existing selection from canvas
+            setDirty();
 
             // Capture selected image and its selection frame on the canvas
             BufferedImage selection = getSelectedImage();
@@ -224,7 +222,6 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
             // Re-create the selection in the new tool
             to.createSelection(selection, location);
-            to.dirty = false;       // Required to allow new tool to "pick up" graphics when dirtied
         }
 
         // Nothing to do if not holding a selection
