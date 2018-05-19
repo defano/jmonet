@@ -5,6 +5,8 @@ import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.RotateTool;
 import com.defano.jmonet.tools.builder.PaintTool;
+import com.defano.jmonet.tools.selection.MutableSelection;
+import com.defano.jmonet.tools.selection.Selection;
 import com.defano.jmonet.tools.selection.TransformableImageSelection;
 import com.defano.jmonet.tools.util.Geometry;
 import com.defano.jmonet.tools.util.ImageUtils;
@@ -22,7 +24,7 @@ import java.util.Optional;
 /**
  * Mouse and keyboard handler for drawing selections (free-form or bounded) on the canvas.
  */
-public abstract class AbstractSelectionTool extends PaintTool implements MarchingAntsObserver, TransformableImageSelection {
+public abstract class AbstractSelectionTool extends PaintTool implements MarchingAntsObserver, MutableSelection {
 
     private final BehaviorSubject<Optional<BufferedImage>> selectedImage = BehaviorSubject.createDefault(Optional.empty());
 
