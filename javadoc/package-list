@@ -1,8 +1,12 @@
-com.defano.jmonet.algo
 com.defano.jmonet.algo.dither
 com.defano.jmonet.algo.dither.quant
+com.defano.jmonet.algo.fill
 com.defano.jmonet.algo.transform
+com.defano.jmonet.algo.transform.affine
+com.defano.jmonet.algo.transform.image
+com.defano.jmonet.algo.transform.pixel
 com.defano.jmonet.canvas
+com.defano.jmonet.canvas.layer
 com.defano.jmonet.canvas.observable
 com.defano.jmonet.canvas.surface
 com.defano.jmonet.clipboard
