@@ -8,6 +8,9 @@ import java.awt.image.BufferedImage;
  */
 public class DefaultBoundaryFunction implements BoundaryFunction {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean shouldFillPixel(BufferedImage canvas, BufferedImage scratch, Point point) {
         Color canvasPixel = new Color(canvas.getRGB(point.x, point.y), true);

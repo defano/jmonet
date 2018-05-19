@@ -3,7 +3,7 @@ package com.defano.jmonet.algo.dither.quant;
 /**
  * Quantizes (reduces) a 24-bit, RGB-encoded color value to a gray-scale palette where the total number
  * of unique grays cannot not exceed a specified count.
- *
+ * <p>
  * This class implements a naive quantization algorithm that does not optimize the palette of grays for the
  * given input; it simply produces a new palette with grays evenly distributed in the color space, and maps colors
  * in the input to the nearest gray in the reduced palette.
@@ -15,7 +15,7 @@ public class GrayscaleQuantizer implements QuantizationFunction {
     /**
      * Creates a {@link GrayscaleQuantizer} that reduces the color palette to a series of "true" grays
      * not exceeding the specified count.
-     *
+     * <p>
      * Note that 24-bit RGB color images support only 256 "true" grays (including full white and full
      * black); specifying any value greater than this will have the same effect as 256.
      *
@@ -25,7 +25,9 @@ public class GrayscaleQuantizer implements QuantizationFunction {
         this.graysCount = graysCount;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double[] quantize(double[] input) {
         double[] reduced = new double[4];

@@ -18,7 +18,7 @@ public class SlantTransform implements ImageTransform {
     /**
      * Creates a slant image transform.
      *
-     * @param theta The angle, in radians, to shear the image
+     * @param theta        The angle, in radians, to shear the image
      * @param xTranslation The number of pixels to translate the image, typically this is calculated by determining the
      *                     number of pixels left or right the image has been sheared (delta between top-left corner and
      *                     bottom-left corner), then dividing this value in half.
@@ -28,14 +28,16 @@ public class SlantTransform implements ImageTransform {
         this.xTranslation = xTranslation;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public BufferedImage apply(BufferedImage image) {
+    public BufferedImage apply(BufferedImage source) {
         AffineTransform transform = AffineTransform.getTranslateInstance(xTranslation, 0);
         transform.shear(Math.tan(theta), 0);
 
         transform.translate(xTranslation, 0);
         AffineTransformOp op = new AffineTransformOp(transform, AffineTransformOp.TYPE_BICUBIC);
-        return op.filter(image, null);
+        return op.filter(source, null);
     }
 }

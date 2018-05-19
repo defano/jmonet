@@ -27,6 +27,9 @@ public class ApplyPixelTransform implements StaticImageTransform {
         this.mask = mask;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BufferedImage apply(BufferedImage source) {
         BufferedImage transformed = ImageUtils.argbCopy(source);

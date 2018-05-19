@@ -28,6 +28,9 @@ public class GreyscaleReductionTransform implements StaticImageTransform {
         this.grayDepth = grayDepth;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BufferedImage apply(BufferedImage source) {
         return grayDepth == 0 ?

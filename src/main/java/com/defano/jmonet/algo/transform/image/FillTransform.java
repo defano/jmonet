@@ -11,6 +11,8 @@ import java.awt.image.BufferedImage;
 /**
  * Fills every transparent pixel of an image that lies within a given mask with a specified paint or texture.
  * Has no effect on pixels which are not fully transparent (i.e., alpha == 0).
+ *
+ * See {@link FloodFillTransform} for the "spill paint" transform.
  */
 public class FillTransform implements StaticImageTransform {
 
@@ -32,6 +34,9 @@ public class FillTransform implements StaticImageTransform {
         this.fillFunction = fillFunction;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BufferedImage apply(BufferedImage source) {
         BufferedImage transformed = ImageUtils.argbCopy(source);

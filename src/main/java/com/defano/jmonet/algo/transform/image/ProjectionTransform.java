@@ -32,6 +32,9 @@ public class ProjectionTransform implements ImageTransform {
         this.projection = projection;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BufferedImage apply(BufferedImage input) {
 

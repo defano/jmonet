@@ -9,11 +9,11 @@ import com.defano.jmonet.algo.transform.StaticImageTransform;
 import java.awt.image.BufferedImage;
 
 /**
- * Converts the current selection to a reduced palette containing no more than the specified number of colors.
- *
- * Note that this transform merely adjusts the look of the image and does not affect the canvas' image storage
+ * Converts the color space of an image to a reduced palette containing no more than a specified number of colors.
+ * <p>
+ * Note that this transform merely adjusts the look of the image and does not affect the image storage
  * in any way (all images are always stored in 24-bit "true color" irrespective of whether they have been reduced
- * via this method. Thus, reducing colors will not reduce memory usage or affect how the image is exported or saved.
+ * via this method). Thus, reducing colors will not reduce memory usage or affect how the image is exported or saved.
  */
 public class ColorReductionTransform implements StaticImageTransform {
 
@@ -34,6 +34,9 @@ public class ColorReductionTransform implements StaticImageTransform {
         this.colorDepth = colorDepth;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BufferedImage apply(BufferedImage source) {
         int channelDepth = (int) Math.floor(Math.cbrt(colorDepth));

@@ -2,14 +2,27 @@ package com.defano.jmonet.algo.transform.pixel;
 
 import com.defano.jmonet.algo.transform.PixelTransform;
 
+/**
+ * Modifies the brightness (luminosity) of each affected pixel by adding/subtracting a delta value to each color channel
+ * of an affected pixel.
+ */
 public class BrightnessPixelTransform implements PixelTransform {
 
     private final int delta;
 
+    /**
+     * Creates a brightness-adjusting transform.
+     *
+     * @param delta The amount by which to adjust brightness; a value of -255 assures that every pixel is completely
+     *              black; a value of +255 assures that every pixel is completely white.
+     */
     public BrightnessPixelTransform(int delta) {
         this.delta = delta;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int apply(int x, int y, int rgb) {
         int alpha = 0xff000000 & rgb;

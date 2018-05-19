@@ -10,7 +10,7 @@ public class RotateRightTransform extends AffineTransform {
     /**
      * Creates a rotate-right transform.
      *
-     * @param width The width of the shape or image to be rotated
+     * @param width  The width of the shape or image to be rotated
      * @param height The height of the shape or image to be rotated
      */
     public RotateRightTransform(int width, int height) {

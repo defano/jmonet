@@ -3,7 +3,7 @@ package com.defano.jmonet.algo.dither.quant;
 /**
  * Quantizes (reduces) a 24-bit, RGB-encoded color value to a reduced palette where the total number
  * of unique color values cannot not exceed a specified count.
- *
+ * <p>
  * This class implements a naive color quantization algorithm that does not optimize the reduced color palette for the
  * given image; it simply produces a new palette with colors evenly distributed in the color space, and maps colors
  * in the input to the nearest color in the reduced palette.
@@ -15,7 +15,7 @@ public class ColorReductionQuantizer implements QuantizationFunction {
     /**
      * Creates a {@link ColorReductionQuantizer} that reduces the color palette such that the resulting
      * image has no more than the given number of values in each color channel--red, green, and blue.
-     *
+     * <p>
      * Note that the specified color depth is on a per-channel basis. The total number of colors
      * in the palette will be the cube of this value. For example, a channelColorCount of 2 produces
      * an image with 8 unique colors--2 unique reds * 2 unique greens * 2 unique blues.
@@ -27,7 +27,9 @@ public class ColorReductionQuantizer implements QuantizationFunction {
         this.channelColorCount = channelColorCount - 1;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double[] quantize(double[] input) {
         double[] reduced = new double[4];

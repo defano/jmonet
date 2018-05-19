@@ -6,7 +6,9 @@ package com.defano.jmonet.algo.dither.quant;
  */
 public class MonochromaticQuantizer implements QuantizationFunction {
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public double[] quantize(double[] input) {
         double[] reduced = new double[4];

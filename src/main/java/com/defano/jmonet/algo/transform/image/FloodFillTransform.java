@@ -8,6 +8,12 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Stack;
 
+/**
+ * Performs a "flood fill", "seed fill" (sometimes called "spill paint") of the image with a provided paint or texture.
+ *
+ * Given an origin point in the image, this algorithm iteratively paints every adjacent pixel with the given color or
+ * texture until it reaches a boundary pixel.
+ */
 public class FloodFillTransform implements ImageTransform {
 
     private final BoundaryFunction boundary;
@@ -15,6 +21,14 @@ public class FloodFillTransform implements ImageTransform {
     private final Point origin;
     private final Paint fillPaint;
 
+    /**
+     * Creates a flood-fill transform.
+     *
+     * @param fillPaint The color or texture to flood-fill the image with
+     * @param origin The seed or origin point in the image where the flooding should begin
+     * @param fill A function that applies the fill paint to pixels identified for painting
+     * @param boundary A function that determines which pixels in the image "enclose" the paint
+     */
     public FloodFillTransform(Paint fillPaint, Point origin, FillFunction fill, BoundaryFunction boundary) {
         this.fillPaint = fillPaint;
         this.origin = origin;
@@ -22,6 +36,9 @@ public class FloodFillTransform implements ImageTransform {
         this.boundary = boundary;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BufferedImage apply(BufferedImage source) {
 

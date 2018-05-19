@@ -32,6 +32,9 @@ public class RubbersheetTransform implements ImageTransform {
         this.projection = projection;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BufferedImage apply(BufferedImage input) {
         // Scale the source image to match the dimensions of the projection geometry
