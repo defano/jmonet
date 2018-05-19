@@ -1,11 +1,11 @@
 package com.defano.jmonet.tools.builder;
 
-import com.defano.jmonet.canvas.ChangeSet;
+import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
-import com.defano.jmonet.model.ImageAntiAliasingMode;
+import com.defano.jmonet.model.Interpolation;
 import com.defano.jmonet.model.PaintToolType;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -37,7 +37,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     private Observable<Boolean> drawMultipleObservable = BehaviorSubject.createDefault(false);
     private Observable<Boolean> drawCenteredObservable = BehaviorSubject.createDefault(false);
     private Observable<Integer> cornerRadiusObservable = BehaviorSubject.createDefault(10);
-    private Observable<ImageAntiAliasingMode> antiAliasingObservable = BehaviorSubject.createDefault(ImageAntiAliasingMode.BILINEAR);
+    private Observable<Interpolation> antiAliasingObservable = BehaviorSubject.createDefault(Interpolation.BILINEAR);
 
     public PaintTool(PaintToolType type) {
         this.type = type;
@@ -73,7 +73,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
 
     /** {@inheritDoc} */
     @Override
-    public void onCommit(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage) {
+    public void onCommit(PaintCanvas canvas, ImageLayerSet imageLayerSet, BufferedImage canvasImage) {
         // Nothing to do
     }
 
@@ -245,17 +245,17 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         this.constrainedAngle = constrainedAngle;
     }
 
-    public Observable<ImageAntiAliasingMode> getAntiAliasingObservable() {
+    public Observable<Interpolation> getAntiAliasingObservable() {
         return antiAliasingObservable;
     }
 
-    public void setAntiAliasingObservable(Observable<ImageAntiAliasingMode> antiAliasingObservable) {
+    public void setAntiAliasingObservable(Observable<Interpolation> antiAliasingObservable) {
         this.antiAliasingObservable = antiAliasingObservable;
     }
 
     public void applyRenderingHints(Graphics2D g2d) {
         switch (antiAliasingObservable.blockingFirst()) {
-            case OFF:
+            case NONE:
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
                 g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
                 break;

@@ -4,11 +4,11 @@ package com.defano.jmonet.canvas.surface;
 import javax.swing.*;
 
 /**
- * A scrollable pane containing a {@link PaintableSurface}.
+ * A scrollable pane containing a {@link PaintSurface}.
  */
 public abstract class AbstractScrollablePaintSurface extends JScrollPane implements Scrollable {
 
-    private PaintableSurface surface;
+    private PaintSurface surface;
     private double scrollPercentX, scrollPercentY = 0;
 
     public AbstractScrollablePaintSurface() {
@@ -17,10 +17,10 @@ public abstract class AbstractScrollablePaintSurface extends JScrollPane impleme
     }
 
     /**
-     * Sets the {@link PaintableSurface} to be scrolled within this component.
-     * @param surface The {@link PaintableSurface} to scroll.
+     * Sets the {@link PaintSurface} to be scrolled within this component.
+     * @param surface The {@link PaintSurface} to scroll.
      */
-    protected void setSurface(PaintableSurface surface) {
+    protected void setSurface(PaintSurface surface) {
         this.surface = surface;
 
         setBorder(BorderFactory.createEmptyBorder());
@@ -31,10 +31,10 @@ public abstract class AbstractScrollablePaintSurface extends JScrollPane impleme
     }
 
     /**
-     * Gets the {@link PaintableSurface} comprising the viewport of this scroll pane.
+     * Gets the {@link PaintSurface} comprising the viewport of this scroll pane.
      * @return The viewport
      */
-    public PaintableSurface getSurface() {
+    public PaintSurface getSurface() {
         return surface;
     }
 

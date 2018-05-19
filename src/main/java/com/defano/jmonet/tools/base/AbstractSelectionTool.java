@@ -1,13 +1,13 @@
 package com.defano.jmonet.tools.base;
 
-import com.defano.jmonet.algo.transform.Transform;
-import com.defano.jmonet.canvas.ChangeSet;
+import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.RotateTool;
 import com.defano.jmonet.tools.builder.PaintTool;
-import com.defano.jmonet.tools.selection.TransformableImageSelection;
+import com.defano.jmonet.tools.selection.MutableSelection;
 import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.ImageUtils;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
 import io.reactivex.Observable;
@@ -22,7 +22,7 @@ import java.util.Optional;
 /**
  * Mouse and keyboard handler for drawing selections (free-form or bounded) on the canvas.
  */
-public abstract class AbstractSelectionTool extends PaintTool implements MarchingAntsObserver, TransformableImageSelection {
+public abstract class AbstractSelectionTool extends PaintTool implements MarchingAntsObserver, MutableSelection {
 
     private final BehaviorSubject<Optional<BufferedImage>> selectedImage = BehaviorSubject.createDefault(Optional.empty());
 
@@ -84,7 +84,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         }
 
         // Make an ARGB copy of the image (input may not have alpha channel)
-        BufferedImage argbImage = Transform.argbCopy(image);
+        BufferedImage argbImage = ImageUtils.argbCopy(image);
 
         Graphics2D g = getCanvas().getScratch().getAddScratchGraphics();
         g.drawImage(argbImage, location.x, location.y, null);
@@ -202,20 +202,18 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * the caller will want to deactivate this tool immediately after calling this method.
      * <p>
      * For example, this allows the user to draw a selection with the lasso tool and then transform it with a transform
-     * tool (i.e., {@link com.defano.jmonet.tools.PerspectiveTool} without having to redraw the selection bounds.
+     * tool (i.e., {@link com.defano.jmonet.tools.PerspectiveTool} without having to redefine the selection bounds.
      *
      * @param to The tool that the current selection should be transferred to.
      */
     public void morphSelection(AbstractSelectionTool to) {
 
-        // Commit any existing changes before morphing
-        if (hasSelection() && isDirty()) {
-            commit();
-        }
-
         if (hasSelection()) {
 
-            // Capture selected image and its location on the canvas
+            // Mark current selection as dirty to pick up existing selection from canvas
+            setDirty();
+
+            // Capture selected image and its selection frame on the canvas
             BufferedImage selection = getSelectedImage();
             Point location = getSelectedImageLocation();
 
@@ -224,14 +222,13 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
             // Re-create the selection in the new tool
             to.createSelection(selection, location);
-            to.dirty = false;       // Required to allow new tool to "pick up" graphics when dirtied
         }
 
         // Nothing to do if not holding a selection
     }
 
     /**
-     * Gets an ImmuatableProvider containing the selected image, useful for observing changes made to the selected
+     * Gets an Observable containing the selected image, useful for observing changes made to the selected
      * image.
      *
      * @return The provider.
@@ -258,15 +255,19 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     }
 
     /**
-     * Clears the current selection frame (removes any "marching ants" from the canvas), but does not "erase" the
-     * selected image, nor does it commit the selected image. See {@link #closeSelectionFrame(Point)}
+     * Aborts the current selection (equivalent to the user clicking away from the selection or typing escape).
+     * <p>
+     * Removes the selected image such that a subsequent call to {@link #getSelectedImage()} will return null;
+     * marks the selection as clean (indicating no changes made by the user); resets the selection frame to an
+     * unselected state; clears any pixels (like marching ants) drawn on the add-scratch buffer and finally invalidates
+     * the canvas for repainting.
      */
-    protected void abortSelection() {
+    private void abortSelection() {
         selectedImage.onNext(Optional.empty());
         dirty = false;
         resetSelection();
 
-        getScratch().clear();
+        getScratch().clearAdd();
         getCanvas().invalidateCanvas();
     }
 
@@ -274,10 +275,11 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * Drops the selected image onto the canvas (committing the change) and clears the selection outline. This has the
      * effect of completing a select-and-move operation.
      */
-    protected void completeSelection() {
+    private void completeSelection() {
         if (hasSelection()) {
+
             if (isDirty()) {
-                commit();
+                commitSelection();
             }
 
             abortSelection();
@@ -289,7 +291,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * ants). Has the effect of the user pressing 'delete' when an active selection exists.
      */
     public void deleteSelection() {
-        setDirty();
+        eraseSelectedPixelsFromCanvas();
         abortSelection();
         getCanvas().commit();
     }
@@ -339,10 +341,9 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     }
 
     /**
-     * Removes the image bounded by the selection outline from the canvas by replacing bounded pixels with
-     * fully transparent pixels.
+     * {@inheritDoc}
      */
-    public void eraseSelectionFromCanvas() {
+    public void eraseSelectedPixelsFromCanvas() {
         if (hasSelectionFrame()) {
 
             // Clear image underneath selection
@@ -408,13 +409,13 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
         // First time we attempt to modify the selection, clear it from the canvas (so that we don't duplicate it)
         if (!dirty) {
-            eraseSelectionFromCanvas();
+            eraseSelectedPixelsFromCanvas();
         }
 
         dirty = true;
     }
 
-    private void commit() {
+    private void commitSelection() {
         if (hasSelection()) {
 
             // Re-render the scratch buffer without the selection frame (don't want to commit marching ants to canvas)
@@ -443,9 +444,9 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * {@inheritDoc}
      */
     @Override
-    public void onCommit(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage) {
+    public void onCommit(PaintCanvas canvas, ImageLayerSet imageLayerSet, BufferedImage canvasImage) {
         // Clear selection if user invokes undo/redo
-        if (hasSelection() && changeSet == null) {
+        if (hasSelection() && imageLayerSet == null) {
             abortSelection();
         }
     }

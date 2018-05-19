@@ -1,7 +1,7 @@
 package com.defano.jmonet.tools;
 
+import com.defano.jmonet.algo.transform.image.ApplyAffineTransform;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.algo.transform.Transform;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.util.Geometry;
 
@@ -89,11 +89,11 @@ public class RotateTool extends AbstractSelectionTool {
             double angle = Math.toRadians(degrees);
 
             // Rotate the marching ants and drag handle
-            selectionBounds = Transform.rotateTransform(angle, originalSelectionBounds.getBounds().x + originalSelectionBounds.getBounds().width / 2, originalSelectionBounds.getBounds().y + originalSelectionBounds.getBounds().height / 2).createTransformedShape(originalSelectionBounds);
-            dragHandle = Transform.rotateTransform(angle, originalSelectionBounds.getBounds().x + originalSelectionBounds.getBounds().width / 2, originalSelectionBounds.getBounds().y + originalSelectionBounds.getBounds().height / 2).createTransformedShape(originalDragHandle);
+            selectionBounds = AffineTransform.getRotateInstance(angle, originalSelectionBounds.getBounds().x + originalSelectionBounds.getBounds().width / 2, originalSelectionBounds.getBounds().y + originalSelectionBounds.getBounds().height / 2).createTransformedShape(originalSelectionBounds);
+            dragHandle = AffineTransform.getRotateInstance(angle, originalSelectionBounds.getBounds().x + originalSelectionBounds.getBounds().width / 2, originalSelectionBounds.getBounds().y + originalSelectionBounds.getBounds().height / 2).createTransformedShape(originalDragHandle);
 
             // Rotate the selected canvas image
-            setSelectedImage(Transform.rotate(originalImage, angle, originalImage.getWidth() / 2, originalImage.getHeight() / 2));
+            setSelectedImage(new ApplyAffineTransform(AffineTransform.getRotateInstance(angle, originalImage.getWidth() / 2, originalImage.getHeight() / 2)).apply(originalImage));
         } else {
             super.mouseDragged(e, imageLocation);
         }

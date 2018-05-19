@@ -1,6 +1,6 @@
 package com.defano.jmonet.tools;
 
-import com.defano.jmonet.algo.transform.Transform;
+import com.defano.jmonet.algo.transform.image.ScaleTransform;
 import com.defano.jmonet.model.FlexQuadrilateral;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractTransformTool;
@@ -38,7 +38,7 @@ public class ScaleTool extends AbstractTransformTool {
         quadrilateral.getTopRight().y = quadrilateral.getTopLeft().y;
         quadrilateral.getBottomLeft().x = quadrilateral.getTopLeft().x;
 
-        setSelectedImage(Transform.resize(getOriginalImage(), quadrilateral.getShape().getBounds().getSize()));
+        setSelectedImage(new ScaleTransform(quadrilateral.getShape().getBounds().getSize()).apply(getOriginalImage()));
     }
 
     /** {@inheritDoc} */
@@ -61,7 +61,7 @@ public class ScaleTool extends AbstractTransformTool {
         quadrilateral.getTopLeft().y = quadrilateral.getTopRight().y;
         quadrilateral.getBottomRight().x = quadrilateral.getTopRight().x;
 
-        setSelectedImage(Transform.resize(getOriginalImage(), quadrilateral.getShape().getBounds().getSize()));
+        setSelectedImage(new ScaleTransform(quadrilateral.getShape().getBounds().getSize()).apply(getOriginalImage()));
     }
 
     /** {@inheritDoc} */
@@ -84,7 +84,7 @@ public class ScaleTool extends AbstractTransformTool {
         quadrilateral.getTopLeft().x = quadrilateral.getBottomLeft().x;
         quadrilateral.getBottomRight().y = quadrilateral.getBottomLeft().y;
 
-        setSelectedImage(Transform.resize(getOriginalImage(), quadrilateral.getShape().getBounds().getSize()));
+        setSelectedImage(new ScaleTransform(quadrilateral.getShape().getBounds().getSize()).apply(getOriginalImage()));
     }
 
     /** {@inheritDoc} */
@@ -107,7 +107,7 @@ public class ScaleTool extends AbstractTransformTool {
         quadrilateral.getBottomLeft().y = quadrilateral.getBottomRight().y;
         quadrilateral.getTopRight().x = quadrilateral.getBottomRight().x;
 
-        setSelectedImage(Transform.resize(getOriginalImage(), quadrilateral.getShape().getBounds().getSize()));
+        setSelectedImage(new ScaleTransform(quadrilateral.getShape().getBounds().getSize()).apply(getOriginalImage()));
     }
 
     private FlexQuadrilateral originalQuad() {

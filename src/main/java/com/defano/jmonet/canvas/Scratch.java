@@ -1,6 +1,9 @@
 package com.defano.jmonet.canvas;
 
+import com.defano.jmonet.canvas.layer.ImageLayer;
+import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.tools.builder.PaintTool;
+import com.defano.jmonet.tools.util.ImageUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -10,7 +13,7 @@ import java.awt.image.BufferedImage;
  */
 public class Scratch {
 
-    int width, height;
+    private int width, height;
     private BufferedImage addScratch;
     private BufferedImage removeScratch;
     private Graphics2D addScratchGraphics, removeScratchGraphics;
@@ -100,9 +103,17 @@ public class Scratch {
         this.removeScratchGraphics = this.removeScratch.createGraphics();
     }
 
-    public ChangeSet getChangeSet() {
-        ChangeSet changeSet = new ChangeSet(getRemoveScratch(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
-        changeSet.addChange(getAddScratch(), AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-        return changeSet;
+    public ImageLayerSet getChangeSet() {
+        ImageLayerSet imageLayerSet = new ImageLayerSet();
+
+        if (!ImageUtils.getMinimumBounds(getRemoveScratch()).isEmpty()) {
+            imageLayerSet.addLayer(new ImageLayer(getRemoveScratch(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f)));
+        }
+
+        if (!ImageUtils.getMinimumBounds(getAddScratch()).isEmpty()) {
+            imageLayerSet.addLayer(new ImageLayer(getAddScratch(), AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f)));
+        }
+
+        return imageLayerSet;
     }
 }

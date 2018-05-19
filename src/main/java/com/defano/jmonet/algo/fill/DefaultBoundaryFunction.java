@@ -1,4 +1,4 @@
-package com.defano.jmonet.algo;
+package com.defano.jmonet.algo.fill;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -7,6 +7,10 @@ import java.awt.image.BufferedImage;
  * Default boundary function; fills all fully-transparent pixels.
  */
 public class DefaultBoundaryFunction implements BoundaryFunction {
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean shouldFillPixel(BufferedImage canvas, BufferedImage scratch, Point point) {
         Color canvasPixel = new Color(canvas.getRGB(point.x, point.y), true);

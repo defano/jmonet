@@ -1,7 +1,7 @@
 package com.defano.jmonet.algo.dither;
 
-import com.defano.jmonet.algo.transform.Transform;
 import com.defano.jmonet.algo.dither.quant.QuantizationFunction;
+import com.defano.jmonet.tools.util.ImageUtils;
 
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
@@ -103,7 +103,7 @@ public abstract class AbstractDitherer implements Ditherer {
     private void toColorCubeMatrix(BufferedImage image) {
 
         // Source needs to be ARGB type; make a copy to assure constraint is met
-        image = Transform.argbCopy(image);
+        image = ImageUtils.argbCopy(image);
 
         double[][][] matrix = new double[image.getHeight()][image.getWidth()][4];
         WritableRaster raster = image.getRaster();

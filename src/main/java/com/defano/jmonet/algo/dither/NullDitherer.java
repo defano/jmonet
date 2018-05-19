@@ -5,7 +5,9 @@ package com.defano.jmonet.algo.dither;
  */
 public class NullDitherer extends AbstractDitherer {
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void ditherPixel(int x, int y, double qer, double qeg, double qeb) {
         // Nothing to do

@@ -1,11 +1,13 @@
 package com.defano.jmonet.tools;
 
-import com.defano.jmonet.algo.*;
+import com.defano.jmonet.algo.fill.*;
+import com.defano.jmonet.algo.transform.image.FloodFillTransform;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.builder.PaintTool;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
 
 /**
  * Tool that performs a flood-fill of all transparent pixels.
@@ -28,13 +30,8 @@ public class FillTool extends PaintTool {
         if (getFillPaint().isPresent()) {
             getScratch().clear();
 
-            FloodFill.floodFill(
-                    getCanvas(),
-                    getFillPaint().get(),
-                    imageLocation.x,
-                    imageLocation.y,
-                    fillFunction,
-                    boundaryFunction);
+            BufferedImage filled = new FloodFillTransform(getFillPaint().get(), imageLocation, fillFunction, boundaryFunction).apply(getCanvas().getCanvasImage());
+            getScratch().setAddScratch(filled);
 
             getCanvas().commit();
             getCanvas().invalidateCanvas();

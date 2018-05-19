@@ -1,9 +1,17 @@
-package com.defano.jmonet.algo.transform;
+package com.defano.jmonet.algo.transform.pixel;
 
+import com.defano.jmonet.algo.transform.PixelTransform;
+
+/**
+ * Inverts the color value of each affected pixel.
+ */
 public class InvertPixelTransform implements PixelTransform {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public int transformPixel(int x, int y, int argb) {
+    public int apply(int x, int y, int argb) {
         int alpha = 0xff000000 & argb;
         int rgb = 0x00ffffff & argb;
 

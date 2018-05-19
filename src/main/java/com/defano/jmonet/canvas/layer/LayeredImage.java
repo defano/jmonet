@@ -1,10 +1,10 @@
-package com.defano.jmonet.canvas.surface;
+package com.defano.jmonet.canvas.layer;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * An image that composed of multiple image layers rendered atop one another.
+ * An image that is composed of multiple layers rendered atop one another.
  */
 public interface LayeredImage {
 
@@ -21,23 +21,25 @@ public interface LayeredImage {
      * @return A rendering of this image.
      */
     default BufferedImage render() {
-        ImageLayer[] layers = getImageLayers();
-
-        if (layers == null || layers.length == 0) {
-            throw new IllegalStateException("Cannot render empty image.");
-        }
-
         Dimension size = getSize();
         BufferedImage rendering = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
+
         Graphics2D g = rendering.createGraphics();
-
-        for (ImageLayer layer : layers) {
-            layer.drawOnto(g);
-        }
-
+        drawOnto(g);
         g.dispose();
 
         return rendering;
+    }
+
+    /**
+     * Draws this layered image onto the given graphics context.
+     *
+     * @param g The graphics context on which to draw
+     */
+    default void drawOnto(Graphics2D g) {
+        for (ImageLayer layer : getImageLayers()) {
+            layer.drawOnto(g);
+        }
     }
 
     /**

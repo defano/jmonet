@@ -1,5 +1,7 @@
 package com.defano.jmonet.canvas.surface;
 
+import com.defano.jmonet.canvas.layer.LayeredImage;
+
 import java.awt.*;
 
 /**

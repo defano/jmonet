@@ -1,4 +1,4 @@
-package com.defano.jmonet.algo;
+package com.defano.jmonet.algo.fill;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -8,6 +8,9 @@ import java.awt.image.BufferedImage;
  */
 public class DefaultFillFunction implements FillFunction {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void fill(BufferedImage image, Point p, Paint fillPaint) {
         int rgb = getFillPixel(p.x, p.y, fillPaint);

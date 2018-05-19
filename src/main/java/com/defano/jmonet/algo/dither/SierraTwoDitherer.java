@@ -1,6 +1,10 @@
 package com.defano.jmonet.algo.dither;
 
 public class SierraTwoDitherer extends AbstractDitherer {
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void ditherPixel(int x, int y, double qer, double qeg, double qeb) {
         distributeError(x+1, y+0, qer, qeg, qeb, 4.0/16.0);
