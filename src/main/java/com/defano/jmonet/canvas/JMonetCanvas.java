@@ -1,7 +1,10 @@
 package com.defano.jmonet.canvas;
 
-import com.defano.jmonet.canvas.surface.ImageLayer;
+import com.defano.jmonet.canvas.layer.ImageLayer;
+import com.defano.jmonet.canvas.layer.ImageLayerSet;
+import com.defano.jmonet.canvas.layer.LayeredImage;
 import io.reactivex.Observable;
+import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
 
 import java.awt.*;
@@ -15,14 +18,17 @@ import java.util.Objects;
  */
 public class JMonetCanvas extends AbstractPaintCanvas {
 
+    // Maximum number of allowable undo operations
     private final int maxUndoBufferDepth;
 
-    private int undoBufferPointer = -1;                     // An internal index into the list of changes; moves left and right to denote undo/redo
-    private BufferedImage permanent;                        // Image elements that are no longer undoable; null until the undo depth has been exceeded.
-    private List<ChangeSet> undoBuffer = new ArrayList<>(); // List of changes as they're committed from the scratch buffer; lower indices are older; higher indices are newer
+    // An internal index into the list of layer sets; moves left and right to denote undo/redo
+    private BehaviorSubject<Integer> undoBufferPointer = BehaviorSubject.createDefault(-1);
 
-    private BehaviorSubject<Boolean> isUndoableSubject = BehaviorSubject.createDefault(false);
-    private BehaviorSubject<Boolean> isRedoableSubject = BehaviorSubject.createDefault(false);
+    // Image elements that are no longer undoable; null until the undo depth has been exceeded.
+    private BufferedImage permanent;
+
+    // List of changes as they're committed from the scratch buffer; lower indices are older; higher indices are newer
+    private List<ImageLayerSet> undoBuffer = new ArrayList<>();
 
     private BufferedImage cachedCanvasImage;
     private long cachedCanvasImageHash;
@@ -37,7 +43,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
         super();
         this.maxUndoBufferDepth = undoBufferDepth;
         setSize(initialImage.getWidth(), initialImage.getHeight());
-        makePermanent(new ChangeSet(initialImage));
+        makePermanent(new ImageLayerSet(new ImageLayer(initialImage)));
     }
 
     /**
@@ -72,17 +78,14 @@ public class JMonetCanvas extends AbstractPaintCanvas {
      *
      * @return The ChangeSet that was undone by this operation, or null if there were no undoable changes.
      */
-    public ChangeSet undo() {
+    public ImageLayerSet undo() {
 
         if (hasUndoableChanges()) {
-            ChangeSet undid = undoBuffer.get(undoBufferPointer);
+            ImageLayerSet undid = undoBuffer.get(undoBufferPointer.blockingFirst());
 
-            undoBufferPointer--;
+            undoBufferPointer.onNext(undoBufferPointer.blockingFirst() - 1);
             fireCanvasCommitObservers(this, null, getCanvasImage());
             invalidateCanvas();
-
-            isUndoableSubject.onNext(hasUndoableChanges());
-            isRedoableSubject.onNext(hasRedoableChanges());
 
             return undid;
         }
@@ -98,12 +101,9 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     public boolean redo() {
 
         if (hasRedoableChanges()) {
-            undoBufferPointer++;
+            undoBufferPointer.onNext(undoBufferPointer.blockingFirst() + 1);
             fireCanvasCommitObservers(this, null, getCanvasImage());
             invalidateCanvas();
-
-            isUndoableSubject.onNext(hasUndoableChanges());
-            isRedoableSubject.onNext(hasRedoableChanges());
 
             return true;
         }
@@ -112,7 +112,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     }
 
     /**
-     * Returns the {@link ChangeSet} representing the undo at the given depth in the buffer.
+     * Returns the {@link ImageLayerSet} representing the undo at the given depth in the buffer.
      *
      * @param index The index of the requested undoable change where index 0 is the most recent undoable change. The
      *              maximum legal index is equal to {@link #getUndoBufferDepth()} - 1.
@@ -120,12 +120,12 @@ public class JMonetCanvas extends AbstractPaintCanvas {
      * @throws IndexOutOfBoundsException If there are no undoable changes in the buffer, or if the index equals or
      *                                   exceeds the number of undoable changes.
      */
-    public ChangeSet peek(int index) {
+    public ImageLayerSet peek(int index) {
         if (index >= getUndoBufferDepth()) {
             throw new IndexOutOfBoundsException("Index exceeds depth of undo buffer.");
         }
 
-        return undoBuffer.get(undoBufferPointer - index);
+        return undoBuffer.get(undoBufferPointer.blockingFirst() - index);
     }
 
     /**
@@ -134,7 +134,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
      * @return True if {@link #undo()} will succeed; false otherwise.
      */
     public boolean hasUndoableChanges() {
-        return undoBufferPointer >= 0;
+        return undoBufferPointer.blockingFirst() >= 0;
     }
 
     /**
@@ -143,7 +143,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
      * @return True if {@link #redo()} will succeed; false otherwise.
      */
     public boolean hasRedoableChanges() {
-        return undoBufferPointer < undoBuffer.size() - 1;
+        return undoBufferPointer.blockingFirst() < undoBuffer.size() - 1;
     }
 
     /**
@@ -161,7 +161,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
      * @return The depth of undo buffer.
      */
     public int getUndoBufferDepth() {
-        return undoBufferPointer + 1;
+        return undoBufferPointer.blockingFirst() + 1;
     }
 
     /**
@@ -170,7 +170,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
      * @return The depth of the redo buffer.
      */
     public int getRedoBufferDepth() {
-        return undoBuffer.size() - undoBufferPointer - 1;
+        return undoBuffer.size() - undoBufferPointer.blockingFirst() - 1;
     }
 
     /**
@@ -179,7 +179,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
      * @return An observable of when the undo operation is supported.
      */
     public Observable<Boolean> isUndoableObservable() {
-        return isUndoableSubject;
+        return undoBufferPointer.map(integer -> hasUndoableChanges());
     }
 
     /**
@@ -188,23 +188,23 @@ public class JMonetCanvas extends AbstractPaintCanvas {
      * @return An observable of when the redo operation is supported.
      */
     public Observable<Boolean> isRedoableObservable() {
-        return isRedoableSubject;
+        return undoBufferPointer.map(integer -> hasRedoableChanges());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void commit(ChangeSet changeSet) {
+    public void commit(ImageLayerSet imageLayerSet) {
 
         // Special case: ChangeSet may be modified after it has been committed; listen for this so that we can notify observers of our own
-        changeSet.addChangeSetObserver(modified -> fireCanvasCommitObservers(JMonetCanvas.this, null, getCanvasImage()));
+        imageLayerSet.addLayerSetObserver(modified -> fireCanvasCommitObservers(JMonetCanvas.this, null, getCanvasImage()));
 
         // Clear the redo elements from the buffer; can't perform redo after committing a new change
-        undoBuffer = undoBuffer.subList(0, undoBufferPointer + 1);
+        undoBuffer = undoBuffer.subList(0, undoBufferPointer.blockingFirst() + 1);
 
         // Add the change to the undo buffer
-        undoBuffer.add(changeSet);
+        undoBuffer.add(imageLayerSet);
 
         // If we've exceeded the max undo size, trim the buffer and write the evicted image element to the base canvas
         if (undoBuffer.size() > maxUndoBufferDepth) {
@@ -212,15 +212,12 @@ public class JMonetCanvas extends AbstractPaintCanvas {
         }
 
         // Finally, move our pointer to the tail of the buffer
-        undoBufferPointer = undoBuffer.size() - 1;
+        undoBufferPointer.onNext(undoBuffer.size() - 1);
 
-        fireCanvasCommitObservers(this, changeSet, getCanvasImage());
+        fireCanvasCommitObservers(this, imageLayerSet, getCanvasImage());
 
         getScratch().clear();
         invalidateCanvas();
-
-        isUndoableSubject.onNext(hasUndoableChanges());
-        isRedoableSubject.onNext(hasRedoableChanges());
     }
 
     /**
@@ -237,8 +234,8 @@ public class JMonetCanvas extends AbstractPaintCanvas {
                 overlayImage(permanent, cachedCanvasImage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
             }
 
-            for (int index = 0; index <= undoBufferPointer; index++) {
-                overlayChangeSet(undoBuffer.get(index), cachedCanvasImage);
+            for (int index = 0; index <= undoBufferPointer.blockingFirst(); index++) {
+                overlayImage(undoBuffer.get(index), cachedCanvasImage);
             }
 
             cachedCanvasImageHash = getCanvasImageHash();
@@ -248,15 +245,15 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     }
 
     /**
-     * Applies a {@link ChangeSet} to the permanent (not-undoable) layer of the canvas. Invoked when a committed change
+     * Applies a {@link ImageLayerSet} to the permanent (not-undoable) layer of the canvas. Invoked when a committed change
      * has been evicted from the undo buffer as a result of exceeding its depth, or when applying an initial, base image
      * at construction.
      * <p>
      * If there is no permanent image in place, the given image is made permanent. Otherwise, the given image is
      * drawn atop the permanent image.
      */
-    private void makePermanent(ChangeSet changeSet) {
-        Dimension changeSetDim = changeSet.getSize();
+    private void makePermanent(ImageLayerSet imageLayerSet) {
+        Dimension changeSetDim = imageLayerSet.getSize();
 
         if (permanent == null) {
             permanent = new BufferedImage(changeSetDim.width, changeSetDim.height, BufferedImage.TYPE_INT_ARGB);
@@ -264,7 +261,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
             resizePermanent(changeSetDim);
         }
 
-        overlayChangeSet(changeSet, permanent);
+        overlayImage(imageLayerSet, permanent);
     }
 
     /**
@@ -301,18 +298,14 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     }
 
     /**
-     * Draws a {@link ChangeSet} atop an existing image.
+     * Draws a {@link ImageLayerSet} atop an existing image.
      *
-     * @param changeSet   The set of changes to be drawn
+     * @param layeredImage   The set of changes to be drawn
      * @param destination The image on which to draw them
      */
-    private void overlayChangeSet(ChangeSet changeSet, BufferedImage destination) {
+    private void overlayImage(LayeredImage layeredImage, BufferedImage destination) {
         Graphics2D g2d = (Graphics2D) destination.getGraphics();
-
-        for (ImageLayer thisLayer : changeSet.getImageLayers()) {
-            thisLayer.drawOnto(g2d);
-        }
-
+        layeredImage.drawOnto(g2d);
         g2d.dispose();
     }
 
@@ -324,8 +317,8 @@ public class JMonetCanvas extends AbstractPaintCanvas {
      * @return A hashcode representing the image produced by {@link #getCanvasImage()}.
      */
     private long getCanvasImageHash() {
-        if (undoBufferPointer >= 0) {
-            return Objects.hash(permanent, undoBuffer.subList(undoBufferPointer, undoBuffer.size()));
+        if (undoBufferPointer.blockingFirst() >= 0) {
+            return Objects.hash(permanent, undoBuffer.subList(undoBufferPointer.blockingFirst(), undoBuffer.size()));
         } else {
             return Objects.hash(permanent);
         }

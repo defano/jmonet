@@ -1,5 +1,6 @@
 package com.defano.jmonet.canvas;
 
+import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.observable.ObservableSurface;
 import com.defano.jmonet.canvas.surface.*;
@@ -66,10 +67,10 @@ public interface PaintCanvas extends ScaledLayeredImage, Scrollable, ObservableS
     void commit();
 
     /**
-     * Commits the given {@link ChangeSet} to the canvas.
-     * @param changeSet The {@link ChangeSet} to be committed.
+     * Commits the given {@link ImageLayerSet} to the canvas.
+     * @param imageLayerSet The {@link ImageLayerSet} to be committed.
      */
-    void commit(ChangeSet changeSet);
+    void commit(ImageLayerSet imageLayerSet);
 
     /**
      * Sets the scale factor of the canvas. Values greater than 1 result in the canvas image appearing enlarged; values

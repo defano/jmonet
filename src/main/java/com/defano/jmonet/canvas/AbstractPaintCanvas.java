@@ -3,8 +3,9 @@ package com.defano.jmonet.canvas;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.canvas.surface.AbstractScrollablePaintSurface;
-import com.defano.jmonet.canvas.surface.ImageLayer;
-import com.defano.jmonet.canvas.surface.PaintableSurface;
+import com.defano.jmonet.canvas.layer.ImageLayer;
+import com.defano.jmonet.canvas.layer.ImageLayerSet;
+import com.defano.jmonet.canvas.surface.PaintSurface;
 import com.defano.jmonet.tools.util.Geometry;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
  */
 public abstract class AbstractPaintCanvas extends AbstractScrollablePaintSurface implements PaintCanvas, ComponentListener {
 
-    private final PaintableSurface surface = new PaintableSurface();
+    private final PaintSurface surface = new PaintSurface();
 
     private final java.util.List<CanvasCommitObserver> observers = new ArrayList<>();
     private final BehaviorSubject<Double> scaleSubject = BehaviorSubject.createDefault(1.0);
@@ -174,9 +175,9 @@ public abstract class AbstractPaintCanvas extends AbstractScrollablePaintSurface
         return observers.remove(observer);
     }
 
-    protected void fireCanvasCommitObservers(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage) {
+    protected void fireCanvasCommitObservers(PaintCanvas canvas, ImageLayerSet imageLayerSet, BufferedImage canvasImage) {
         for (CanvasCommitObserver thisObserver : observers) {
-            thisObserver.onCommit(canvas, changeSet, canvasImage);
+            thisObserver.onCommit(canvas, imageLayerSet, canvasImage);
         }
     }
 

@@ -13,12 +13,12 @@ import java.util.List;
 /**
  * A Swing component that can be painted on.
  */
-public class PaintableSurface extends JComponent implements CompositeSurface, ObservableSurface, KeyListener, MouseListener, MouseMotionListener, KeyEventDispatcher {
+public class PaintSurface extends JComponent implements CompositeSurface, ObservableSurface, KeyListener, MouseListener, MouseMotionListener, KeyEventDispatcher {
 
     private ScaledLayeredImage painting;
     private final List<SurfaceInteractionObserver> interactionListeners = new ArrayList<>();
 
-    public PaintableSurface() {
+    public PaintSurface() {
         setOpaque(false);
         setLayout(null);
         setFocusable(true);
@@ -186,13 +186,13 @@ public class PaintableSurface extends JComponent implements CompositeSurface, Ob
     public boolean dispatchKeyEvent(KeyEvent e) {
         switch (e.getID()) {
             case KeyEvent.KEY_TYPED:
-                PaintableSurface.this.keyTyped(e);
+                PaintSurface.this.keyTyped(e);
                 break;
             case KeyEvent.KEY_PRESSED:
-                PaintableSurface.this.keyPressed(e);
+                PaintSurface.this.keyPressed(e);
                 break;
             case KeyEvent.KEY_RELEASED:
-                PaintableSurface.this.keyReleased(e);
+                PaintSurface.this.keyReleased(e);
                 break;
         }
 

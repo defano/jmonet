@@ -1,6 +1,6 @@
 package com.defano.jmonet.tools.builder;
 
-import com.defano.jmonet.canvas.ChangeSet;
+import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
@@ -73,7 +73,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
 
     /** {@inheritDoc} */
     @Override
-    public void onCommit(PaintCanvas canvas, ChangeSet changeSet, BufferedImage canvasImage) {
+    public void onCommit(PaintCanvas canvas, ImageLayerSet imageLayerSet, BufferedImage canvasImage) {
         // Nothing to do
     }
 
