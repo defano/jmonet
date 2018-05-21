@@ -1,6 +1,7 @@
 package com.defano.jmonet.canvas.layer;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 /**
  * A layer in a layered image.
@@ -8,7 +9,7 @@ import java.awt.*;
 public class ImageLayer {
 
     private final Point location;
-    private final Image image;
+    private final BufferedImage image;
     private final AlphaComposite composite;
 
     /**
@@ -17,7 +18,7 @@ public class ImageLayer {
      *
      * @param image The image comprising this layer.
      */
-    public ImageLayer(Image image) {
+    public ImageLayer(BufferedImage image) {
         this(new Point(0, 0), image, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
 
@@ -28,7 +29,7 @@ public class ImageLayer {
      * @param image     The image comprising this layer
      * @param composite The composite mode this layer is drawn with
      */
-    public ImageLayer(Image image, AlphaComposite composite) {
+    public ImageLayer(BufferedImage image, AlphaComposite composite) {
         this(new Point(0, 0), image, composite);
     }
 
@@ -36,11 +37,11 @@ public class ImageLayer {
      * Creates a lyer in which a given image is drawn atop a destination image at a given position using a provided
      * composite mode.
      *
-     * @param location The location on the destination where this layer should be drawn
-     * @param image The image to be drawn
+     * @param location  The location on the destination where this layer should be drawn
+     * @param image     The image to be drawn
      * @param composite The composite mode to draw with
      */
-    public ImageLayer(Point location, Image image, AlphaComposite composite) {
+    public ImageLayer(Point location, BufferedImage image, AlphaComposite composite) {
         this.location = location;
         this.image = image;
         this.composite = composite;
@@ -51,16 +52,39 @@ public class ImageLayer {
      *
      * @param g The graphics context on which to draw.
      */
-    public void drawOnto(Graphics2D g) {
+    public void drawOnto(Graphics2D g, Double scale, Rectangle clip) {
         g.setComposite(composite);
-        g.drawImage(image, location.x, location.y, null);
+
+        BufferedImage image = this.image;
+
+        if (clip != null) {
+            Rectangle drawBounds = new Rectangle(location.x, location.y, image.getWidth(), image.getHeight());
+            Rectangle clipping = drawBounds.intersection(clip);
+
+            if (clipping.isEmpty()) return;
+
+            int x = clipping.x > location.x ? clipping.x - location.x : 0;
+            int y = clipping.y > location.y ? clipping.y - location.y : 0;
+
+            int width = Math.min(x + clipping.width, image.getWidth() - x);
+            int height = Math.min(y + clipping.height, image.getHeight() - y);
+
+            g.drawImage(image.getSubimage(x, y, width, height), location.x + x, location.y + y, null);
+            return;
+        }
+
+        if (scale == null) {
+            g.drawImage(image, location.x, location.y, null);
+        } else {
+            g.drawImage(image, (int) (location.x * scale), (int) (location.y * scale), (int) (image.getWidth(null) * scale), (int) (image.getHeight(null) * scale), null);
+        }
     }
 
     public Point getLocation() {
         return location;
     }
 
-    public Image getImage() {
+    public BufferedImage getImage() {
         return image;
     }
 

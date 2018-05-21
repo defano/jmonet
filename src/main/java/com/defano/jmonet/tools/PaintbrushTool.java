@@ -19,20 +19,24 @@ public class PaintbrushTool extends AbstractPathTool {
     /** {@inheritDoc} */
     @Override
     protected void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
-        Graphics2D g = scratch.getAddScratchGraphics();
+        Line2D line = new Line2D.Float(initialPoint, initialPoint);
+        scratch.updateAddScratchClip(stroke, line);
 
+        Graphics2D g = scratch.getAddScratchGraphics();
         g.setStroke(stroke);
         g.setPaint(fillPaint);
-        g.draw(new Line2D.Float(initialPoint, initialPoint));
+        g.draw(line);
     }
 
     /** {@inheritDoc} */
     @Override
     protected void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
-        Graphics2D g = scratch.getAddScratchGraphics();
+        Line2D line = new Line2D.Float(lastPoint, thisPoint);
+        scratch.updateAddScratchClip(stroke, line);
 
+        Graphics2D g = scratch.getAddScratchGraphics();
         g.setStroke(stroke);
         g.setPaint(fillPaint);
-        g.draw(new Line2D.Float(lastPoint, thisPoint));
+        g.draw(line);
     }
 }

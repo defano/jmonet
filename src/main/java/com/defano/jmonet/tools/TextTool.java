@@ -137,9 +137,11 @@ public class TextTool extends PaintTool implements Consumer {
 
         // Don't commit if user hasn't entered any text
         if (textArea.getText().trim().length() > 0) {
-            Graphics g = getCanvas().getScratch().getAddScratchGraphics();
-            g.drawImage(rasterizeText(), (int)(textLocation.x / getCanvas().getScale()), (int)(textLocation.y / getCanvas().getScale()), null);
+            BufferedImage text = rasterizeText();
+            getScratch().updateAddScratchClip(null, new Rectangle(textLocation.x, textLocation.y, textArea.getWidth(), textArea.getHeight()));
 
+            Graphics g = getCanvas().getScratch().getAddScratchGraphics();
+            g.drawImage(text, (int)(textLocation.x / getCanvas().getScale()), (int)(textLocation.y / getCanvas().getScale()), null);
             getCanvas().commit();
         }
     }

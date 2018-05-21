@@ -15,8 +15,12 @@ import java.util.List;
  */
 public class PaintSurface extends JComponent implements CompositeSurface, ObservableSurface, KeyListener, MouseListener, MouseMotionListener, KeyEventDispatcher {
 
-    private ScaledLayeredImage painting;
+    private final static Color CLEAR_COLOR = new Color(0, 0, 0, 0);
     private final List<SurfaceInteractionObserver> interactionListeners = new ArrayList<>();
+    private BufferedImage buffer;
+    private Graphics2D bufferGraphics;
+
+    private ScaledLayeredImage painting;
 
     public PaintSurface() {
         setOpaque(false);
@@ -25,6 +29,15 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
 
         addMouseListener(this);
         addMouseMotionListener(this);
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+                bufferGraphics = buffer.createGraphics();
+            }
+        });
 
         // Adding a KeyListener to this component won't always work the way the user expects; this is cheating, but
         // it assures paint tools get all key events, regardless of the component hierarchy we may be embedded in.
@@ -39,33 +52,47 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
         removeAll();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        if (isVisible()) {
-            double scale = painting.getScale();
-            BufferedImage rendering = painting.render();
-            g.drawImage(rendering, 0, 0, (int) (rendering.getWidth() * scale), (int) (rendering.getHeight() * scale), null);
-        }
+        Rectangle clip = g.getClipBounds();
 
+        if (isVisible()) {
+            Graphics2D g2d = buffer.createGraphics();
+            g2d.setBackground(CLEAR_COLOR);
+            g2d.clearRect(clip.x, clip.y, clip.width, clip.height);
+            painting.drawOnto(g2d, painting.getScale(), clip);
+            g2d.dispose();
+
+            g.drawImage(buffer.getSubimage(clip.x, clip.y, clip.width, clip.height), clip.x, clip.y, null);
+        }
+        
         // DO NOT dispose the graphics context in this method.
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addSurfaceInteractionObserver(SurfaceInteractionObserver listener) {
         interactionListeners.add(listener);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean removeSurfaceInteractionObserver(SurfaceInteractionObserver listener) {
         return interactionListeners.remove(listener);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void keyTyped(KeyEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
@@ -73,7 +100,9 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void keyPressed(KeyEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
@@ -81,7 +110,9 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void keyReleased(KeyEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
@@ -89,7 +120,9 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void mouseClicked(MouseEvent e) {
         requestFocus();
@@ -99,7 +132,9 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void mousePressed(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
@@ -107,7 +142,9 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void mouseReleased(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
@@ -115,7 +152,9 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void mouseEntered(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
@@ -123,7 +162,9 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void mouseExited(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
@@ -131,7 +172,9 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void mouseDragged(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
@@ -139,7 +182,9 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public final void mouseMoved(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
@@ -148,7 +193,17 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
     }
 
     /**
+     * Gets the painting displayed on this surface.
+     *
+     * @return The painting displayed on this surface.
+     */
+    public ScaledLayeredImage getPainting() {
+        return painting;
+    }
+
+    /**
      * Sets the painting displayed on this surface.
+     *
      * @param painting The painting to display.
      */
     public void setPainting(ScaledLayeredImage painting) {
@@ -156,14 +211,8 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
     }
 
     /**
-     * Gets the painting displayed on this surface.
-     * @return The painting displayed on this surface.
+     * {@inheritDoc}
      */
-    public ScaledLayeredImage getPainting() {
-        return painting;
-    }
-
-    /** {@inheritDoc} */
     @Override
     public void addComponent(Component component) {
         add(component);
@@ -172,7 +221,9 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
         repaint();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void removeComponent(Component component) {
         remove(component);
@@ -181,7 +232,9 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
         repaint();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean dispatchKeyEvent(KeyEvent e) {
         switch (e.getID()) {

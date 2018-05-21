@@ -8,8 +8,8 @@ An easy-to-use toolkit for incorporating paint tools similar to [MacPaint](https
 
 * Standard suite of paint tools providing common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
 * Paint canvas supports undo and redo operations on all tool changes; plus cut, copy and paste integration with the system clipboard.
-* Includes a variety of image transform tools like scale, rotate, shear, perspective and projection, plus the ability to adjust color depth, transparency and brightness.
-* Painted images are zoomable via the Magnifier tool (displayed within a scrollable pane), and tools can be snapped to a grid.
+* Variety of image transform tools like scale, rotate, shear, perspective and projection, plus the ability to adjust color depth, transparency and brightness.
+* Canvas can be magnified (and displayed within a scrollable pane); tools can be snapped to a grid.
 * Lightweight toolkit integrates easily into Swing and JavaFX applications and utilizes [ReactiveX](https://github.com/ReactiveX/RxJava) for observables.
 * Images are backed by a standard Java `BufferedImage` object making it easy to import and export graphics.
 

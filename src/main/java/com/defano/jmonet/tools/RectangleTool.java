@@ -18,11 +18,13 @@ public class RectangleTool extends AbstractBoundsTool {
     /** {@inheritDoc} */
     @Override
     protected void strokeBounds(Scratch scratch, Stroke stroke, Paint paint, Rectangle bounds, boolean isShiftDown) {
-        Graphics2D g = scratch.getAddScratchGraphics();
+        Rectangle rectangle = new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+        scratch.updateAddScratchClip(stroke, rectangle);
 
+        Graphics2D g = scratch.getAddScratchGraphics();
         g.setStroke(stroke);
         g.setPaint(paint);
-        g.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
+        g.draw(rectangle);
     }
 
     /** {@inheritDoc} */

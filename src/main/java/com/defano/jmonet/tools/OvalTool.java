@@ -5,6 +5,8 @@ import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractBoundsTool;
 
 import java.awt.*;
+import java.awt.geom.Arc2D;
+import java.awt.geom.Ellipse2D;
 
 /**
  * Tool for drawing outlined or filled ovals/circles on the canvas.
@@ -18,11 +20,13 @@ public class OvalTool extends AbstractBoundsTool {
     /** {@inheritDoc} */
     @Override
     protected void strokeBounds(Scratch scratch, Stroke stroke, Paint paint, Rectangle bounds, boolean isShiftDown) {
-        Graphics2D g = scratch.getAddScratchGraphics();
+        Ellipse2D oval = new Ellipse2D.Float(bounds.x, bounds.y, bounds.width, bounds.height);
+        scratch.updateAddScratchClip(stroke, oval);
 
+        Graphics2D g = scratch.getAddScratchGraphics();
         g.setStroke(stroke);
         g.setPaint(paint);
-        g.drawOval(bounds.x, bounds.y, bounds.width, bounds.height);
+        g.draw(oval);
     }
 
     /** {@inheritDoc} */

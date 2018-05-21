@@ -25,7 +25,7 @@ public interface LayeredImage {
         BufferedImage rendering = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D g = rendering.createGraphics();
-        drawOnto(g);
+        drawOnto(g, null, null);
         g.dispose();
 
         return rendering;
@@ -36,9 +36,11 @@ public interface LayeredImage {
      *
      * @param g The graphics context on which to draw
      */
-    default void drawOnto(Graphics2D g) {
-        for (ImageLayer layer : getImageLayers()) {
-            layer.drawOnto(g);
+    default void drawOnto(Graphics2D g, Double scale, Rectangle clip) {
+        for (ImageLayer thisLayer : getImageLayers()) {
+            if (thisLayer != null) {
+                thisLayer.drawOnto(g, scale, clip);
+            }
         }
     }
 

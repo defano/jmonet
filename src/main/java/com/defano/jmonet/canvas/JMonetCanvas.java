@@ -4,7 +4,6 @@ import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.layer.LayeredImage;
 import io.reactivex.Observable;
-import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
 
 import java.awt.*;
@@ -228,6 +227,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
 
         // Creating an image by overlaying ChangeSets is expensive; return cached copy when available
         if (cachedCanvasImageHash != getCanvasImageHash()) {
+            System.err.println("CACHE MISS");
             cachedCanvasImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 
             if (permanent != null) {
@@ -305,7 +305,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
      */
     private void overlayImage(LayeredImage layeredImage, BufferedImage destination) {
         Graphics2D g2d = (Graphics2D) destination.getGraphics();
-        layeredImage.drawOnto(g2d);
+        layeredImage.drawOnto(g2d, null, null);
         g2d.dispose();
     }
 

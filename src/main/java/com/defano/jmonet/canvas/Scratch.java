@@ -90,6 +90,27 @@ public class Scratch {
         this.addScratchGraphics = this.addScratch.createGraphics();
     }
 
+    public ImageLayer getRemoveScratchLayer() {
+        Rectangle minBounds = removeScratchGraphics.getClipBounds();
+        if (minBounds == null || minBounds.width == 0 || minBounds.height == 0) {
+            return null;
+        }
+
+        BufferedImage subimage = removeScratch.getSubimage(minBounds.x, minBounds.y, minBounds.width, minBounds.height);
+        return new ImageLayer(minBounds.getLocation(), subimage, AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
+    }
+
+    public ImageLayer getAddScratchLayer() {
+        Rectangle minBounds = addScratchGraphics.getClipBounds();
+
+        if (minBounds == null || minBounds.width == 0 || minBounds.height == 0) {
+            return null;
+        }
+
+        BufferedImage subimage = addScratch.getSubimage(minBounds.x, minBounds.y, minBounds.width, minBounds.height);
+        return new ImageLayer(minBounds.getLocation(), subimage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+    }
+
     public BufferedImage getRemoveScratch() {
         return removeScratch;
     }
@@ -103,17 +124,43 @@ public class Scratch {
         this.removeScratchGraphics = this.removeScratch.createGraphics();
     }
 
-    public ImageLayerSet getChangeSet() {
+    public ImageLayerSet getLayerSet() {
         ImageLayerSet imageLayerSet = new ImageLayerSet();
 
-        if (!ImageUtils.getMinimumBounds(getRemoveScratch()).isEmpty()) {
-            imageLayerSet.addLayer(new ImageLayer(getRemoveScratch(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f)));
+        if (removeScratchGraphics.getClipBounds() != null) {
+            imageLayerSet.addLayer(getRemoveScratchLayer());
         }
 
-        if (!ImageUtils.getMinimumBounds(getAddScratch()).isEmpty()) {
-            imageLayerSet.addLayer(new ImageLayer(getAddScratch(), AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f)));
+        if (addScratchGraphics.getClipBounds() != null) {
+            imageLayerSet.addLayer(getAddScratchLayer());
         }
 
         return imageLayerSet;
+    }
+
+    public void updateAddScratchClip(Stroke stroke, Shape shape) {
+        updateClip(stroke, shape, addScratchGraphics);
+    }
+
+    public void updateRemoveScratchClip(Stroke stroke, Shape shape) {
+        updateClip(stroke, shape, removeScratchGraphics);
+    }
+
+    private void updateClip(Stroke stroke, Shape shape, Graphics2D context) {
+        Rectangle clip = stroke != null ?
+                stroke.createStrokedShape(shape).getBounds() :
+                shape.getBounds();
+
+        clip = clip.intersection(new Rectangle(0, 0, width, height));
+        Rectangle bounds = context.getClipBounds();
+
+        if (bounds == null) {
+            context.setClip(clip.x, clip.y, clip.width, clip.height);
+        }
+
+        else if (!bounds.contains(clip)) {
+            Rectangle union = bounds.union(clip);
+            context.setClip(union.x, union.y, union.width, union.height);
+        }
     }
 }

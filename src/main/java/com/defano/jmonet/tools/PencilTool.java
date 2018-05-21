@@ -25,10 +25,13 @@ public class PencilTool extends AbstractPathTool {
     /** {@inheritDoc} */
     @Override
     protected void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
+        Line2D line = new Line2D.Float(lastPoint, thisPoint);
+        scratch.updateAddScratchClip(stroke, line);
+
         Graphics2D g = scratch.getAddScratchGraphics();
 
         g.setStroke(new BasicStroke(1));
         g.setPaint(Color.BLACK);
-        g.draw(new Line2D.Float(lastPoint, thisPoint));
+        g.draw(line);
     }
 }

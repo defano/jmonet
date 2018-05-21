@@ -66,8 +66,8 @@ public abstract class AbstractPaintCanvas extends AbstractScrollablePaintSurface
     public ImageLayer[] getImageLayers() {
         return new ImageLayer[] {
                 new ImageLayer(getCanvasImage()),
-                new ImageLayer(getScratch().getRemoveScratch(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f)),
-                new ImageLayer(getScratch().getAddScratch(), AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f))};
+                getScratch().getRemoveScratchLayer(),
+                getScratch().getAddScratchLayer()};
     }
 
     /** {@inheritDoc} */
@@ -77,7 +77,7 @@ public abstract class AbstractPaintCanvas extends AbstractScrollablePaintSurface
         g2.setColor(Color.WHITE);
         g2.fillRect(0, 0, getWidth(), getHeight());
 
-        commit(scratch.getChangeSet());
+        commit(scratch.getLayerSet());
     }
 
     @Override
@@ -101,7 +101,7 @@ public abstract class AbstractPaintCanvas extends AbstractScrollablePaintSurface
     /** {@inheritDoc} */
     @Override
     public void commit() {
-        commit(scratch.getChangeSet());
+        commit(scratch.getLayerSet());
         invalidateCanvas();
     }
 
