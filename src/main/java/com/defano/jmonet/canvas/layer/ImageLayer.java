@@ -57,7 +57,8 @@ public class ImageLayer {
 
         BufferedImage image = this.image;
 
-        if (clip != null) {
+        if (clip != null && (scale == null || scale == 1.0f)) {
+
             Rectangle drawBounds = new Rectangle(location.x, location.y, image.getWidth(), image.getHeight());
             Rectangle clipping = drawBounds.intersection(clip);
 

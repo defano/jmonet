@@ -1,8 +1,8 @@
 package com.defano.jmonet;
 
 import com.defano.jmonet.canvas.JMonetCanvas;
+import com.defano.jmonet.canvas.JMonetScrollPane;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.builder.PaintTool;
 import com.defano.jmonet.tools.builder.PaintToolBuilder;
 import com.defano.jmonet.tools.builder.StrokeBuilder;
 
@@ -16,9 +16,6 @@ public class Tester {
 
             Dimension size = new Dimension(640, 480);
 
-            JScrollPane scrollPane = new JScrollPane();
-            scrollPane.setSize(size);
-
             // Create and show Swing frame
             JFrame frame = new JFrame("My Pretty Picture");
             frame.setPreferredSize(size);
@@ -27,11 +24,10 @@ public class Tester {
             frame.setSize(size);
 
             // Create a JMonet canvas and add it to the window
-            JMonetCanvas myCanvas = new JMonetCanvas();
-            myCanvas.setSize(new Dimension(8000, 6000));
-            scrollPane.setViewportView(myCanvas);
+            JMonetCanvas myCanvas = new JMonetCanvas(new Dimension(8000, 8000));
+//            myCanvas.setScale(2.0f);
 
-            frame.getContentPane().add(scrollPane);
+            frame.getContentPane().add(new JMonetScrollPane(myCanvas));
 
             PaintToolBuilder.create(PaintToolType.PAINTBRUSH)
                     .withStroke(StrokeBuilder.withShape().ofCircle(8).build())

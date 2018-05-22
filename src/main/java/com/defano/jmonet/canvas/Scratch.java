@@ -19,8 +19,8 @@ public class Scratch {
     private Graphics2D addScratchGraphics, removeScratchGraphics;
     private final PaintTool tool;
 
-    public Scratch() {
-        this(null, 1, 1);
+    public Scratch(int width, int height) {
+        this(null, width, height);
     }
 
     public Scratch(PaintTool tool, int width, int height) {
@@ -92,7 +92,7 @@ public class Scratch {
 
     public ImageLayer getRemoveScratchLayer() {
         Rectangle minBounds = removeScratchGraphics.getClipBounds();
-        if (minBounds == null || minBounds.width == 0 || minBounds.height == 0) {
+        if (minBounds == null || minBounds.isEmpty()) {
             return null;
         }
 
@@ -103,7 +103,7 @@ public class Scratch {
     public ImageLayer getAddScratchLayer() {
         Rectangle minBounds = addScratchGraphics.getClipBounds();
 
-        if (minBounds == null || minBounds.width == 0 || minBounds.height == 0) {
+        if (minBounds == null || minBounds.isEmpty()) {
             return null;
         }
 

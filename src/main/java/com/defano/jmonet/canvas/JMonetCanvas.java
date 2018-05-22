@@ -39,19 +39,19 @@ public class JMonetCanvas extends AbstractPaintCanvas {
      * @param undoBufferDepth The depth of the undo buffer (number of undo operations)
      */
     public JMonetCanvas(BufferedImage initialImage, int undoBufferDepth) {
-        super();
+        super(new Dimension(initialImage.getWidth(), initialImage.getHeight()));
         this.maxUndoBufferDepth = undoBufferDepth;
         setSize(initialImage.getWidth(), initialImage.getHeight());
         makePermanent(new ImageLayerSet(new ImageLayer(initialImage)));
     }
 
     /**
-     * Creates a new canvas with a 1x1 transparent image displayed inside it and a specified undo buffer depth.
+     * Creates a new canvas with a transparent image displayed inside it and a specified undo buffer depth.
      *
      * @param undoBufferDepth The depth of the undo buffer (number of undo operations)
      */
-    public JMonetCanvas(int undoBufferDepth) {
-        this(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB), undoBufferDepth);
+    public JMonetCanvas(Dimension dimension, int undoBufferDepth) {
+        this(new BufferedImage(dimension.width, dimension.height, BufferedImage.TYPE_INT_ARGB), undoBufferDepth);
     }
 
     /**
@@ -67,8 +67,8 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     /**
      * Create a new canvas with a 1x1 transparent image displayed inside of it, with a default-sized undo/redo buffer.
      */
-    public JMonetCanvas() {
-        this(12);
+    public JMonetCanvas(Dimension dimension) {
+        this(dimension, 12);
     }
 
     /**
@@ -227,7 +227,6 @@ public class JMonetCanvas extends AbstractPaintCanvas {
 
         // Creating an image by overlaying ChangeSets is expensive; return cached copy when available
         if (cachedCanvasImageHash != getCanvasImageHash()) {
-            System.err.println("CACHE MISS");
             cachedCanvasImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
 
             if (permanent != null) {

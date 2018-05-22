@@ -2,8 +2,9 @@ package com.defano.jmonet.canvas.surface;
 
 import com.defano.jmonet.canvas.observable.ObservableSurface;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
+import io.reactivex.Observable;
+import io.reactivex.subjects.BehaviorSubject;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -11,18 +12,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A Swing component that can be painted on.
+ * A component that paints a layered image at scale.
  */
-public class PaintSurface extends JComponent implements CompositeSurface, ObservableSurface, KeyListener, MouseListener, MouseMotionListener, KeyEventDispatcher {
+public abstract class ScalableSurface extends ScrollableSurface implements
+        Disposable, Scalable, ScaledLayeredImage, SwingSurface, ObservableSurface, KeyListener, MouseListener,
+        MouseMotionListener, KeyEventDispatcher {
 
+    private Dimension surfaceDimensions = new Dimension();
     private final static Color CLEAR_COLOR = new Color(0, 0, 0, 0);
     private final List<SurfaceInteractionObserver> interactionListeners = new ArrayList<>();
     private BufferedImage buffer;
-    private Graphics2D bufferGraphics;
+    private final BehaviorSubject<Double> scaleSubject = BehaviorSubject.createDefault(1.0);
 
-    private ScaledLayeredImage painting;
-
-    public PaintSurface() {
+    /**
+     * Creates a ScalableSurface with the specified dimensions.
+     *
+     * @param surfaceDimensions The size of the surface.
+     */
+    public ScalableSurface(Dimension surfaceDimensions) {
         setOpaque(false);
         setLayout(null);
         setFocusable(true);
@@ -30,24 +37,81 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
         addMouseListener(this);
         addMouseMotionListener(this);
 
-        addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                super.componentResized(e);
-                buffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-                bufferGraphics = buffer.createGraphics();
-            }
-        });
-
         // Adding a KeyListener to this component won't always work the way the user expects; this is cheating, but
         // it assures paint tools get all key events, regardless of the component hierarchy we may be embedded in.
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
+
+        setSurfaceDimension(surfaceDimensions);
+    }
+
+    /**
+     * Gets the un-scaled dimensions of the surface (that is, the size of the image which can be painted on it).
+     *
+     * @return The un-scaled dimensions of this surface.
+     */
+    public Dimension getSurfaceDimension() {
+        return surfaceDimensions;
+    }
+
+    /**
+     * Gets the dimensions of the surface multiplied by the surface's scale factor.
+     *
+     * @return The scaled surface dimensions.
+     */
+    public Dimension getScaledSurfaceDimension() {
+        return getScaledDimension(surfaceDimensions);
+    }
+
+    /**
+     * Specifies the un-scaled size of this painting surface. This determines the size of the image (document) that will
+     * be painted by a user.
+     *
+     * @param surfaceDimensions  The dimensions of the painting surface
+     */
+    public void setSurfaceDimension(Dimension surfaceDimensions) {
+        this.surfaceDimensions = new Dimension(surfaceDimensions.width, surfaceDimensions.height);
+        Dimension scaledDimension = getScaledDimension(surfaceDimensions);
+
+        buffer = new BufferedImage(scaledDimension.width, scaledDimension.height, BufferedImage.TYPE_INT_ARGB);
+
+        super.setMaximumSize(scaledDimension);
+        super.setPreferredSize(scaledDimension);
+        super.setSize(scaledDimension);
+        super.invalidate();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public double getScale() {
+        return scaleSubject.getValue();
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Observable<Double> getScaleObservable() {
+        return scaleSubject;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setScale(double scale) {
+        scaleSubject.onNext(scale);
+        Dimension scaledDimension = getScaledDimension(surfaceDimensions);
+
+        buffer = new BufferedImage(scaledDimension.width, scaledDimension.height, BufferedImage.TYPE_INT_ARGB);
+
+        super.setPreferredSize(scaledDimension);
+        super.setMaximumSize(scaledDimension);
+        super.invalidate();
     }
 
     /**
      * Unregisters listeners and removes all child components making this surface available for garbage collection.
      */
     public void dispose() {
+        super.dispose();
+
+        scaleSubject.onComplete();
         KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(this);
         removeAll();
     }
@@ -59,15 +123,14 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        Rectangle clip = g.getClipBounds();
+        Rectangle clip = g.getClipBounds().intersection(new Rectangle(0, 0, buffer.getWidth(), buffer.getHeight()));
 
-        if (isVisible()) {
+        if (!clip.isEmpty() && isVisible() && buffer != null) {
             Graphics2D g2d = buffer.createGraphics();
             g2d.setBackground(CLEAR_COLOR);
             g2d.clearRect(clip.x, clip.y, clip.width, clip.height);
-            painting.drawOnto(g2d, painting.getScale(), clip);
+            drawOnto(g2d, getScale(), clip);
             g2d.dispose();
-
             g.drawImage(buffer.getSubimage(clip.x, clip.y, clip.width, clip.height), clip.x, clip.y, null);
         }
         
@@ -128,7 +191,7 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
         requestFocus();
 
         for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
-            thisListener.mouseClicked(e, painting.convertViewPointToModel(e.getPoint()));
+            thisListener.mouseClicked(e, convertViewPointToModel(e.getPoint()));
         }
     }
 
@@ -138,7 +201,7 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
     @Override
     public final void mousePressed(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
-            thisListener.mousePressed(e, painting.convertViewPointToModel(e.getPoint()));
+            thisListener.mousePressed(e, convertViewPointToModel(e.getPoint()));
         }
     }
 
@@ -148,7 +211,7 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
     @Override
     public final void mouseReleased(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
-            thisListener.mouseReleased(e, painting.convertViewPointToModel(e.getPoint()));
+            thisListener.mouseReleased(e, convertViewPointToModel(e.getPoint()));
         }
     }
 
@@ -158,7 +221,7 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
     @Override
     public final void mouseEntered(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
-            thisListener.mouseEntered(e, painting.convertViewPointToModel(e.getPoint()));
+            thisListener.mouseEntered(e, convertViewPointToModel(e.getPoint()));
         }
     }
 
@@ -168,7 +231,7 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
     @Override
     public final void mouseExited(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
-            thisListener.mouseExited(e, painting.convertViewPointToModel(e.getPoint()));
+            thisListener.mouseExited(e, convertViewPointToModel(e.getPoint()));
         }
     }
 
@@ -178,7 +241,7 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
     @Override
     public final void mouseDragged(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
-            thisListener.mouseDragged(e, painting.convertViewPointToModel(e.getPoint()));
+            thisListener.mouseDragged(e, convertViewPointToModel(e.getPoint()));
         }
     }
 
@@ -188,26 +251,8 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
     @Override
     public final void mouseMoved(MouseEvent e) {
         for (SurfaceInteractionObserver thisListener : interactionListeners.toArray(new SurfaceInteractionObserver[]{})) {
-            thisListener.mouseMoved(e, painting.convertViewPointToModel(e.getPoint()));
+            thisListener.mouseMoved(e, convertViewPointToModel(e.getPoint()));
         }
-    }
-
-    /**
-     * Gets the painting displayed on this surface.
-     *
-     * @return The painting displayed on this surface.
-     */
-    public ScaledLayeredImage getPainting() {
-        return painting;
-    }
-
-    /**
-     * Sets the painting displayed on this surface.
-     *
-     * @param painting The painting to display.
-     */
-    public void setPainting(ScaledLayeredImage painting) {
-        this.painting = painting;
     }
 
     /**
@@ -239,13 +284,13 @@ public class PaintSurface extends JComponent implements CompositeSurface, Observ
     public boolean dispatchKeyEvent(KeyEvent e) {
         switch (e.getID()) {
             case KeyEvent.KEY_TYPED:
-                PaintSurface.this.keyTyped(e);
+                ScalableSurface.this.keyTyped(e);
                 break;
             case KeyEvent.KEY_PRESSED:
-                PaintSurface.this.keyPressed(e);
+                ScalableSurface.this.keyPressed(e);
                 break;
             case KeyEvent.KEY_RELEASED:
-                PaintSurface.this.keyReleased(e);
+                ScalableSurface.this.keyReleased(e);
                 break;
         }
 

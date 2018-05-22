@@ -89,7 +89,7 @@ public class ImageLayerSet implements LayeredImage {
      */
     public boolean isRemovingPaint() {
         for (ImageLayer thisLayer : layers) {
-            if (thisLayer.getComposite().getRule() == AlphaComposite.DST_OUT) {
+            if (thisLayer != null && thisLayer.getComposite().getRule() == AlphaComposite.DST_OUT) {
                 return true;
             }
         }
@@ -105,7 +105,7 @@ public class ImageLayerSet implements LayeredImage {
      */
     public boolean isAddingPaint() {
         for (ImageLayer thisLayer : layers) {
-            if (thisLayer.getComposite().getRule() != AlphaComposite.DST_OUT) {
+            if (thisLayer != null && thisLayer.getComposite().getRule() != AlphaComposite.DST_OUT) {
                 return true;
             }
         }

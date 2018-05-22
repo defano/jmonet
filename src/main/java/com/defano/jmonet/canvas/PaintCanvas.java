@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
 /**
  * A canvas that can be painted upon by the paint tools.
  */
-public interface PaintCanvas extends ScaledLayeredImage, Scrollable, ObservableSurface, CompositeSurface {
+public interface PaintCanvas extends Scalable, ScaledLayeredImage, Scrollable, ObservableSurface, SwingSurface {
 
     /**
      * Sets whether the canvas is visible. When invisible, the component hierarchy will be drawn as though this
@@ -71,14 +71,6 @@ public interface PaintCanvas extends ScaledLayeredImage, Scrollable, ObservableS
      * @param imageLayerSet The {@link ImageLayerSet} to be committed.
      */
     void commit(ImageLayerSet imageLayerSet);
-
-    /**
-     * Sets the scale factor of the canvas. Values greater than 1 result in the canvas image appearing enlarged; values
-     * less than 1 result in the canvas image appearing shrunken.
-     *
-     * @param scale The scale factor
-     */
-    void setScale(double scale);
 
     /**
      * Gets an observable scale factor.
