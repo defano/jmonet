@@ -44,34 +44,39 @@ public class FloodFillTransform implements ImageTransform {
 
         Rectangle bounds = new Rectangle(0, 0, source.getWidth(), source.getHeight());
         BufferedImage transformed = new BufferedImage(source.getWidth(), source.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        final Stack<Point> fillPixels = new Stack<>();
+
+        int depth = 0;
+        final int[] fillPixelsX = new int[source.getWidth() * source.getHeight()];
+        final int[] fillPixelsY = new int[source.getHeight() * source.getHeight()];
 
         // Start by filling origin pixel (i.e., clicked pixel)
-        fillPixels.push(origin);
+        fillPixelsX[depth] = origin.x;
+        fillPixelsY[depth++] = origin.y;
 
-        while (!fillPixels.isEmpty()) {
-            final Point thisPixel = fillPixels.pop();
-            fill.fill(transformed, thisPixel, fillPaint);
+        while (depth != 0) {
+            int thisPixelX = fillPixelsX[--depth];
+            int thisPixelY = fillPixelsY[depth];
 
-            final Point right = new Point(thisPixel.x + 1, thisPixel.y);
-            final Point left = new Point(thisPixel.x - 1, thisPixel.y);
-            final Point down = new Point(thisPixel.x, thisPixel.y + 1);
-            final Point up = new Point(thisPixel.x, thisPixel.y - 1);
+            fill.fill(transformed, thisPixelX, thisPixelY, fillPaint);
 
-            if (bounds.contains(right) && boundary.shouldFillPixel(source, transformed, right)) {
-                fillPixels.push(right);
+            if (bounds.contains(thisPixelX + 1, thisPixelY) && boundary.shouldFillPixel(source, transformed, thisPixelX + 1, thisPixelY)) {
+                fillPixelsX[depth] = thisPixelX + 1;
+                fillPixelsY[depth++] = thisPixelY;
             }
 
-            if (bounds.contains(left) && boundary.shouldFillPixel(source, transformed, left)) {
-                fillPixels.push(left);
+            if (bounds.contains(thisPixelX - 1, thisPixelY) && boundary.shouldFillPixel(source, transformed, thisPixelX - 1, thisPixelY)) {
+                fillPixelsX[depth] = thisPixelX - 1;
+                fillPixelsY[depth++] = thisPixelY;
             }
 
-            if (bounds.contains(down) && boundary.shouldFillPixel(source, transformed, down)) {
-                fillPixels.push(down);
+            if (bounds.contains(thisPixelX, thisPixelY + 1) && boundary.shouldFillPixel(source, transformed, thisPixelX, thisPixelY + 1)) {
+                fillPixelsX[depth] = thisPixelX;
+                fillPixelsY[depth++] = thisPixelY + 1;
             }
 
-            if (bounds.contains(up) && boundary.shouldFillPixel(source, transformed, up)) {
-                fillPixels.push(up);
+            if (bounds.contains(thisPixelX, thisPixelY - 1) && boundary.shouldFillPixel(source, transformed, thisPixelX, thisPixelY - 1)) {
+                fillPixelsX[depth] = thisPixelX;
+                fillPixelsY[depth++] = thisPixelY - 1;
             }
         }
 

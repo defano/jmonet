@@ -15,5 +15,5 @@ public interface FillFunction {
      * @param p         The point / pixel to fill
      * @param fillPaint The paint to apply to the given pixel.
      */
-    void fill(BufferedImage image, Point p, Paint fillPaint);
+    void fill(BufferedImage image, int x, int y, Paint fillPaint);
 }

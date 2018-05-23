@@ -3,13 +3,12 @@ package com.defano.jmonet.canvas;
 import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.tools.builder.PaintTool;
-import com.defano.jmonet.tools.util.ImageUtils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * A scratch buffer for changes being made to the canvas that haven't yet been committed.
+ * A scratch buffer on which to draw changes being made to the canvas that haven't yet been committed.
  */
 public class Scratch {
 
@@ -73,11 +72,21 @@ public class Scratch {
         return addScratch;
     }
 
-    public Graphics2D getRemoveScratchGraphics() {
+    public Graphics2D getRemoveScratchGraphics(Stroke stroke, Shape shape) {
+        return getRemoveScratchGraphics(getBounds(stroke, shape));
+    }
+
+    public Graphics2D getRemoveScratchGraphics(Shape bounds) {
+        updateClip(bounds, removeScratchGraphics);
         return removeScratchGraphics;
     }
 
-    public Graphics2D getAddScratchGraphics() {
+    public Graphics2D getAddScratchGraphics(Stroke stroke, Shape shape) {
+        return getAddScratchGraphics(getBounds(stroke, shape));
+    }
+
+    public Graphics2D getAddScratchGraphics(Shape bounds) {
+        updateClip(bounds, addScratchGraphics);
         return addScratchGraphics;
     }
 
@@ -88,6 +97,7 @@ public class Scratch {
 
         this.addScratch = addScratch;
         this.addScratchGraphics = this.addScratch.createGraphics();
+        updateClip(new Rectangle(0, 0, addScratch.getWidth(), addScratch.getHeight()), addScratchGraphics);
     }
 
     public ImageLayer getRemoveScratchLayer() {
@@ -122,6 +132,7 @@ public class Scratch {
 
         this.removeScratch = removeScratch;
         this.removeScratchGraphics = this.removeScratch.createGraphics();
+        updateClip(new Rectangle(0, 0, addScratch.getWidth(), addScratch.getHeight()), removeScratchGraphics);
     }
 
     public ImageLayerSet getLayerSet() {
@@ -139,28 +150,34 @@ public class Scratch {
     }
 
     public void updateAddScratchClip(Stroke stroke, Shape shape) {
-        updateClip(stroke, shape, addScratchGraphics);
+        updateClip(getBounds(stroke, shape), addScratchGraphics);
     }
 
     public void updateRemoveScratchClip(Stroke stroke, Shape shape) {
-        updateClip(stroke, shape, removeScratchGraphics);
+        updateClip(getBounds(stroke, shape), removeScratchGraphics);
     }
 
-    private void updateClip(Stroke stroke, Shape shape, Graphics2D context) {
-        Rectangle clip = stroke != null ?
-                stroke.createStrokedShape(shape).getBounds() :
-                shape.getBounds();
-
-        clip = clip.intersection(new Rectangle(0, 0, width, height));
-        Rectangle bounds = context.getClipBounds();
-
-        if (bounds == null) {
-            context.setClip(clip.x, clip.y, clip.width, clip.height);
+    private Rectangle getBounds(Stroke stroke, Shape shape) {
+        if (shape == null) {
+            return new Rectangle();
         }
 
-        else if (!bounds.contains(clip)) {
-            Rectangle union = bounds.union(clip);
-            context.setClip(union.x, union.y, union.width, union.height);
+        return stroke != null ? stroke.createStrokedShape(shape).getBounds() : shape.getBounds();
+    }
+
+    private void updateClip(Shape shape, Graphics2D context) {
+
+        if (shape != null) {
+
+            Rectangle clip = shape.getBounds().intersection(new Rectangle(0, 0, width, height));
+            Rectangle bounds = context.getClipBounds();
+
+            if (bounds == null) {
+                context.setClip(clip.x, clip.y, clip.width, clip.height);
+            } else if (!bounds.contains(clip)) {
+                Rectangle union = bounds.union(clip);
+                context.setClip(union.x, union.y, union.width, union.height);
+            }
         }
     }
 }

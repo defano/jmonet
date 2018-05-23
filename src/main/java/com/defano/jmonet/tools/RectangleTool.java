@@ -19,9 +19,8 @@ public class RectangleTool extends AbstractBoundsTool {
     @Override
     protected void strokeBounds(Scratch scratch, Stroke stroke, Paint paint, Rectangle bounds, boolean isShiftDown) {
         Rectangle rectangle = new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
-        scratch.updateAddScratchClip(stroke, rectangle);
 
-        Graphics2D g = scratch.getAddScratchGraphics();
+        Graphics2D g = scratch.getAddScratchGraphics(stroke, rectangle);
         g.setStroke(stroke);
         g.setPaint(paint);
         g.draw(rectangle);
@@ -30,8 +29,7 @@ public class RectangleTool extends AbstractBoundsTool {
     /** {@inheritDoc} */
     @Override
     protected void fillBounds(Scratch scratch, Paint fill, Rectangle bounds, boolean isShiftDown) {
-        Graphics2D g = scratch.getAddScratchGraphics();
-
+        Graphics2D g = scratch.getAddScratchGraphics(null);
         g.setPaint(fill);
         g.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
     }

@@ -138,9 +138,8 @@ public class TextTool extends PaintTool implements Consumer {
         // Don't commit if user hasn't entered any text
         if (textArea.getText().trim().length() > 0) {
             BufferedImage text = rasterizeText();
-            getScratch().updateAddScratchClip(null, new Rectangle(textLocation.x, textLocation.y, textArea.getWidth(), textArea.getHeight()));
 
-            Graphics g = getCanvas().getScratch().getAddScratchGraphics();
+            Graphics g = getScratch().getAddScratchGraphics(new Rectangle(textLocation.x, textLocation.y, textArea.getWidth(), textArea.getHeight()));
             g.drawImage(text, (int)(textLocation.x / getCanvas().getScale()), (int)(textLocation.y / getCanvas().getScale()), null);
             getCanvas().commit();
         }
@@ -151,7 +150,7 @@ public class TextTool extends PaintTool implements Consumer {
     }
 
     private int getFontAscent() {
-        Graphics g = getCanvas().getScratch().getAddScratchGraphics();
+        Graphics g = getScratch().getAddScratchGraphics(null);
         FontMetrics metrics = g.getFontMetrics(getFont());
 
         return metrics.getAscent();

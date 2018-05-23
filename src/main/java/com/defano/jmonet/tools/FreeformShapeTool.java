@@ -30,9 +30,8 @@ public class FreeformShapeTool extends AbstractPathTool {
     @Override
     protected void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
         path.lineTo(thisPoint.getX(), thisPoint.getY());
-        scratch.updateAddScratchClip(stroke, path);
 
-        Graphics2D g = scratch.getAddScratchGraphics();
+        Graphics2D g = scratch.getAddScratchGraphics(stroke, path);
         g.setStroke(stroke);
         g.setPaint(getStrokePaint());
         g.draw(path);
@@ -42,9 +41,8 @@ public class FreeformShapeTool extends AbstractPathTool {
     @Override
     protected void completePath(Scratch scratch, Stroke stroke, Paint fillPaint) {
         path.closePath();
-        scratch.updateAddScratchClip(stroke, path);
 
-        Graphics2D g = scratch.getAddScratchGraphics();
+        Graphics2D g = scratch.getAddScratchGraphics(stroke, path);
 
         if (getFillPaint().isPresent()) {
             g.setPaint(getFillPaint().get());

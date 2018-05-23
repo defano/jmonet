@@ -24,7 +24,7 @@ public class Tester {
             frame.setSize(size);
 
             // Create a JMonet canvas and add it to the window
-            JMonetCanvas myCanvas = new JMonetCanvas(new Dimension(8000, 8000));
+            JMonetCanvas myCanvas = new JMonetCanvas(new Dimension(1000, 1000));
 //            myCanvas.setScale(2.0f);
 
             frame.getContentPane().add(new JMonetScrollPane(myCanvas));
@@ -32,6 +32,7 @@ public class Tester {
             PaintToolBuilder.create(PaintToolType.PAINTBRUSH)
                     .withStroke(StrokeBuilder.withShape().ofCircle(8).build())
                     .withStrokePaint(Color.RED)
+                    .withFillPaint(Color.BLUE)
                     .makeActiveOnCanvas(myCanvas)
                     .build();
         });

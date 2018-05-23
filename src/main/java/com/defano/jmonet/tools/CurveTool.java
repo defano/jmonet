@@ -20,9 +20,8 @@ public class CurveTool extends AbstractPolylineTool {
     @Override
     protected void strokePolyline(Scratch scratch, Stroke stroke, Paint paint, int[] xPoints, int[] yPoints) {
         Shape curve = renderCurvePath(xPoints, yPoints);
-        scratch.updateAddScratchClip(stroke, curve);
 
-        Graphics2D g = scratch.getAddScratchGraphics();
+        Graphics2D g = scratch.getAddScratchGraphics(stroke, curve);
         g.setPaint(paint);
         g.setStroke(stroke);
         g.draw(curve);
@@ -31,7 +30,7 @@ public class CurveTool extends AbstractPolylineTool {
     /** {@inheritDoc} */
     @Override
     protected void strokePolygon(Scratch scratch, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints) {
-        Graphics2D g = scratch.getAddScratchGraphics();
+        Graphics2D g = scratch.getAddScratchGraphics(null);
         g.setPaint(strokePaint);
         g.setStroke(stroke);
         g.draw(renderCurvePath(xPoints, yPoints));

@@ -219,7 +219,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
         if (hasSelection() && transformBounds != null) {
 
             // Render drag handles on selection bounds
-            Graphics2D g = getCanvas().getScratch().getAddScratchGraphics();
+            Graphics2D g = getCanvas().getScratch().getAddScratchGraphics(null);
             g.setPaint(Color.BLACK);
 
             topLeftHandle = new Rectangle(transformBounds.getTopLeft().x, transformBounds.getTopLeft().y, HANDLE_SIZE, HANDLE_SIZE);

@@ -20,9 +20,8 @@ public class EraserTool extends AbstractPathTool {
     @Override
     protected void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
         Line2D line = new Line2D.Float(initialPoint, initialPoint);
-        scratch.updateRemoveScratchClip(stroke, line);
 
-        Graphics2D g = scratch.getRemoveScratchGraphics();
+        Graphics2D g = scratch.getRemoveScratchGraphics(stroke, line);
         g.setStroke(stroke);
         g.setPaint(getCanvas().getCanvasColor());
         g.draw(line);
@@ -32,9 +31,8 @@ public class EraserTool extends AbstractPathTool {
     @Override
     protected void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
         Line2D line = new Line2D.Float(lastPoint, thisPoint);
-        scratch.updateRemoveScratchClip(stroke, line);
 
-        Graphics2D g = scratch.getRemoveScratchGraphics();
+        Graphics2D g = scratch.getRemoveScratchGraphics(stroke, line);
         g.setStroke(stroke);
         g.setPaint(getCanvas().getCanvasColor());
         g.draw(line);

@@ -27,9 +27,8 @@ public class AirbrushTool extends AbstractPathTool {
     @Override
     protected void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
         Line2D line = new Line2D.Float(lastPoint, thisPoint);
-        scratch.updateAddScratchClip(stroke, line);
 
-        Graphics2D g = scratch.getAddScratchGraphics();
+        Graphics2D g = scratch.getAddScratchGraphics(stroke, line);
         g.setStroke(stroke);
         g.setPaint(fillPaint);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getIntensityObservable().blockingFirst().floatValue()));

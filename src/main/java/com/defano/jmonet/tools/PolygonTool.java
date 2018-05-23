@@ -20,9 +20,8 @@ public class PolygonTool extends AbstractPolylineTool {
     @Override
     protected void strokePolyline(Scratch scratch, Stroke stroke, Paint paint, int[] xPoints, int[] yPoints) {
         Path2D poly = getPolylineShape(xPoints, yPoints, xPoints.length);
-        scratch.updateAddScratchClip(stroke, poly);
 
-        Graphics2D g = scratch.getAddScratchGraphics();
+        Graphics2D g = scratch.getAddScratchGraphics(stroke, poly);
         g.setPaint(paint);
         g.setStroke(stroke);
         g.draw(poly);
@@ -32,9 +31,8 @@ public class PolygonTool extends AbstractPolylineTool {
     @Override
     protected void strokePolygon(Scratch scratch, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints) {
         Path2D polygon = getPolygonShape(xPoints, yPoints, xPoints.length);
-        scratch.updateAddScratchClip(stroke, polygon);
 
-        Graphics2D g = scratch.getAddScratchGraphics();
+        Graphics2D g = scratch.getAddScratchGraphics(stroke, polygon);
         g.setStroke(stroke);
         g.setPaint(strokePaint);
         g.draw(polygon);
@@ -43,7 +41,7 @@ public class PolygonTool extends AbstractPolylineTool {
     /** {@inheritDoc} */
     @Override
     protected void fillPolygon(Scratch scratch, Paint fillPaint, int[] xPoints, int[] yPoints) {
-        Graphics2D g = scratch.getAddScratchGraphics();
+        Graphics2D g = scratch.getAddScratchGraphics(null);
         g.setPaint(fillPaint);
         g.fillPolygon(xPoints, yPoints, xPoints.length);
     }

@@ -1,7 +1,11 @@
 package com.defano.jmonet.canvas.surface;
 
 /**
- * An object which can be scrolled.
+ * An object that can be scrolled within a {@link javax.swing.JScrollPane}.
+ *
+ * This interface allows tools to advise scroll position changes to the {@link javax.swing.JScrollPane} (or other
+ * container) holding the Canvas. This enables tools like the {@link com.defano.jmonet.tools.MagnifierTool} to change
+ * the scroll positioning to match the position of the canvas being "zoomed in" on.
  */
 public interface Scrollable {
 

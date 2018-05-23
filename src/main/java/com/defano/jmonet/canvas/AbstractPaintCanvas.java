@@ -4,7 +4,7 @@ import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.surface.Disposable;
-import com.defano.jmonet.canvas.surface.ScalableSurface;
+import com.defano.jmonet.canvas.surface.PaintSurface;
 import com.defano.jmonet.tools.util.Geometry;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * A scrollable, Swing component that can be painted upon using the paint tools in {@link com.defano.jmonet.tools}. See
  * {@link JMonetCanvas} for a canvas with an undo/redo buffer.
  */
-public abstract class AbstractPaintCanvas extends ScalableSurface implements Disposable, PaintCanvas, ComponentListener {
+public abstract class AbstractPaintCanvas extends PaintSurface implements Disposable, PaintCanvas, ComponentListener {
 
     private final ArrayList<CanvasCommitObserver> observers = new ArrayList<>();
     private final BehaviorSubject<Integer> gridSpacingSubject = BehaviorSubject.createDefault(1);
@@ -67,9 +67,10 @@ public abstract class AbstractPaintCanvas extends ScalableSurface implements Dis
     /** {@inheritDoc} */
     @Override
     public void clearCanvas() {
-        Graphics2D g2 = scratch.getRemoveScratchGraphics();
+        Rectangle clear = new Rectangle(new Point(), getSurfaceDimension());
+        Graphics2D g2 = scratch.getRemoveScratchGraphics(clear);
         g2.setColor(Color.WHITE);
-        g2.fillRect(0, 0, getWidth(), getHeight());
+        g2.fill(clear);
 
         commit(scratch.getLayerSet());
     }

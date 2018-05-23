@@ -21,9 +21,8 @@ public class OvalTool extends AbstractBoundsTool {
     @Override
     protected void strokeBounds(Scratch scratch, Stroke stroke, Paint paint, Rectangle bounds, boolean isShiftDown) {
         Ellipse2D oval = new Ellipse2D.Float(bounds.x, bounds.y, bounds.width, bounds.height);
-        scratch.updateAddScratchClip(stroke, oval);
 
-        Graphics2D g = scratch.getAddScratchGraphics();
+        Graphics2D g = scratch.getAddScratchGraphics(stroke, oval);
         g.setStroke(stroke);
         g.setPaint(paint);
         g.draw(oval);
@@ -32,8 +31,7 @@ public class OvalTool extends AbstractBoundsTool {
     /** {@inheritDoc} */
     @Override
     protected void fillBounds(Scratch scratch, Paint fill, Rectangle bounds, boolean isShiftDown) {
-        Graphics2D g = scratch.getAddScratchGraphics();
-
+        Graphics2D g = scratch.getAddScratchGraphics(null);
         g.setPaint(fill);
         g.fillOval(bounds.x, bounds.y, bounds.width, bounds.height);
     }

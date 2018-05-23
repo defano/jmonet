@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * A component that paints a layered image at scale.
  */
-public abstract class ScalableSurface extends ScrollableSurface implements
+public abstract class PaintSurface extends SurfaceComponent implements
         Disposable, Scalable, ScaledLayeredImage, SwingSurface, ObservableSurface, KeyListener, MouseListener,
         MouseMotionListener, KeyEventDispatcher {
 
@@ -29,7 +29,7 @@ public abstract class ScalableSurface extends ScrollableSurface implements
      *
      * @param surfaceDimensions The size of the surface.
      */
-    public ScalableSurface(Dimension surfaceDimensions) {
+    public PaintSurface(Dimension surfaceDimensions) {
         setOpaque(false);
         setLayout(null);
         setFocusable(true);
@@ -123,14 +123,23 @@ public abstract class ScalableSurface extends ScrollableSurface implements
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        Rectangle clip = g.getClipBounds().intersection(new Rectangle(0, 0, buffer.getWidth(), buffer.getHeight()));
+        Rectangle clipBounds = g.getClipBounds();
+        Rectangle imageBounds = new Rectangle(0, 0, buffer.getWidth(), buffer.getHeight());
+
+        Rectangle clip = clipBounds == null ?
+                imageBounds :
+                imageBounds.intersection(g.getClipBounds());
 
         if (!clip.isEmpty() && isVisible() && buffer != null) {
+
+            // Draw visible portion of this surface's image onto a graphics buffer
             Graphics2D g2d = buffer.createGraphics();
             g2d.setBackground(CLEAR_COLOR);
             g2d.clearRect(clip.x, clip.y, clip.width, clip.height);
             drawOnto(g2d, getScale(), clip);
             g2d.dispose();
+
+            // ... then draw that image on the component's graphics context
             g.drawImage(buffer.getSubimage(clip.x, clip.y, clip.width, clip.height), clip.x, clip.y, null);
         }
         
@@ -284,13 +293,13 @@ public abstract class ScalableSurface extends ScrollableSurface implements
     public boolean dispatchKeyEvent(KeyEvent e) {
         switch (e.getID()) {
             case KeyEvent.KEY_TYPED:
-                ScalableSurface.this.keyTyped(e);
+                PaintSurface.this.keyTyped(e);
                 break;
             case KeyEvent.KEY_PRESSED:
-                ScalableSurface.this.keyPressed(e);
+                PaintSurface.this.keyPressed(e);
                 break;
             case KeyEvent.KEY_RELEASED:
-                ScalableSurface.this.keyReleased(e);
+                PaintSurface.this.keyReleased(e);
                 break;
         }
 
