@@ -1,6 +1,6 @@
 package com.defano.jmonet.canvas.observable;
 
-import com.defano.jmonet.canvas.surface.ScaledLayeredImage;
+import com.defano.jmonet.canvas.layer.ScaledLayeredImage;
 
 import java.awt.*;
 import java.awt.event.*;

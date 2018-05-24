@@ -6,7 +6,6 @@ import com.defano.jmonet.algo.transform.ImageTransform;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Stack;
 
 /**
  * Performs a "flood fill", "seed fill" (sometimes called "spill paint") of the image with a provided paint or texture.

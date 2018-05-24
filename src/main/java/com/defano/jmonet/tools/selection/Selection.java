@@ -88,19 +88,10 @@ public interface Selection {
         Shape mask = getSelectionFrame();
         BufferedImage maskedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
-        int clearPixel = new Color(0, 0, 0, 0).getRGB();
-
-        for (int y = 0; y < image.getRaster().getHeight(); y++) {
-            for (int x = 0; x < image.getRaster().getWidth(); x++) {
-                if (x > image.getWidth() || y > image.getHeight()) continue;
-
-                if (mask.contains(x, y)) {
-                    maskedImage.setRGB(x, y, image.getRGB(x, y));
-                } else {
-                    maskedImage.setRGB(x, y, clearPixel);
-                }
-            }
-        }
+        Graphics2D g = maskedImage.createGraphics();
+        g.setClip(mask);
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
 
         return maskedImage;
     }

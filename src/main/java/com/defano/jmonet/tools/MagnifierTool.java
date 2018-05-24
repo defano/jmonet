@@ -52,12 +52,12 @@ public class MagnifierTool extends PaintTool {
 
         else if (e.isShiftDown()) {
             zoomOut(e.getX(), e.getY());
-            getCanvas().setScrollPosition(pX, pY);
+            getCanvas().getSurfaceScrollController().setScrollPosition(pX, pY);
         }
 
         else {
             zoomIn();
-            getCanvas().setScrollPosition(pX, pY);
+            getCanvas().getSurfaceScrollController().setScrollPosition(pX, pY);
         }
     }
 
@@ -71,7 +71,7 @@ public class MagnifierTool extends PaintTool {
     private void reset() {
         scale = 1.0;
         getCanvas().setScale(scale);
-        getCanvas().setScrollPosition(0, 0);
+        getCanvas().getSurfaceScrollController().setScrollPosition(0, 0);
     }
 
     private void zoomIn() {

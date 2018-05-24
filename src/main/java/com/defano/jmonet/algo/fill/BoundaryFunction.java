@@ -1,6 +1,5 @@
 package com.defano.jmonet.algo.fill;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**

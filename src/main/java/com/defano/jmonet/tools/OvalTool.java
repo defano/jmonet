@@ -5,7 +5,6 @@ import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractBoundsTool;
 
 import java.awt.*;
-import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
 
 /**

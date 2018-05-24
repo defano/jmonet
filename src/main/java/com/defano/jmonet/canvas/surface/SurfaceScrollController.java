@@ -7,7 +7,7 @@ package com.defano.jmonet.canvas.surface;
  * container) holding the Canvas. This enables tools like the {@link com.defano.jmonet.tools.MagnifierTool} to change
  * the scroll positioning to match the position of the canvas being "zoomed in" on.
  */
-public interface Scrollable {
+public interface SurfaceScrollController {
 
     /**
      * Scrolls the canvas so that the center of the viewport is displayed at the specified, relative, offset.
@@ -22,6 +22,6 @@ public interface Scrollable {
     /**
      * Resets the scroll position to the last value specified by {@link #setScrollPosition(double, double)}.
      */
-    void updateScroll();
+    void resetScrollPosition();
 
 }

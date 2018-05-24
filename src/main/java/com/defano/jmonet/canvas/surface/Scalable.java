@@ -39,4 +39,16 @@ public interface Scalable {
         return new Dimension((int) (d.width * getScale()), (int) (d.height * getScale()));
     }
 
+    /**
+     * Converts a points on the rendered canvas to the equivalent point on the canvas' image, taking into account scale,
+     * grids or other complications that may be applied during rendering.
+     *
+     * When a scale factor has been applied, then the input coordinates are divided by the scale factor. When a grid
+     * factor has been applied, the result of de-scaling the input is then rounded to nearest grid spacing factor.
+     *
+     * @param p A point in scaled, surface space
+     * @return The equivalent point in terms of the canvas image.
+     */
+    Point convertViewPointToModel(Point p);
+
 }

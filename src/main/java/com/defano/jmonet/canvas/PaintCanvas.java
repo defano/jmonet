@@ -1,6 +1,7 @@
 package com.defano.jmonet.canvas;
 
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
+import com.defano.jmonet.canvas.layer.ScaledLayeredImage;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.observable.ObservableSurface;
 import com.defano.jmonet.canvas.surface.*;
@@ -13,7 +14,7 @@ import java.awt.image.BufferedImage;
 /**
  * A canvas that can be painted upon by the paint tools.
  */
-public interface PaintCanvas extends Scalable, ScaledLayeredImage, Scrollable, ObservableSurface, SwingSurface {
+public interface PaintCanvas extends Scalable, ScaledLayeredImage, ObservableSurface, SwingSurface {
 
     /**
      * Sets whether the canvas is visible. When invisible, the component hierarchy will be drawn as though this
@@ -135,4 +136,6 @@ public interface PaintCanvas extends Scalable, ScaledLayeredImage, Scrollable, O
      * @return The canvas color.
      */
     Color getCanvasColor();
+
+    SurfaceScrollController getSurfaceScrollController();
 }

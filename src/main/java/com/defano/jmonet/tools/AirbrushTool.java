@@ -6,7 +6,6 @@ import com.defano.jmonet.tools.base.AbstractPathTool;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
-import java.awt.geom.Path2D;
 
 /**
  * A tool that paints translucent textured paint on the canvas.
