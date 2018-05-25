@@ -15,7 +15,12 @@ public abstract class PaintSurface extends Surface implements ScaledLayeredImage
     private final static Color CLEAR_COLOR = new Color(0, 0, 0, 0);
     private final BehaviorSubject<Double> scaleSubject = BehaviorSubject.createDefault(1.0);
     private Dimension surfaceDimensions = new Dimension();
-    private BufferedImage buffer;
+
+    private double scanlineThreadhold = 6.0;
+    private Color scanlineColor = Color.WHITE;
+    private AlphaComposite scanlineComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER);
+
+    public abstract Paint getCanvasBackground();
 
     /**
      * Creates a paint surface with the specified dimensions. Note that this dimension refers to the size of the
@@ -50,8 +55,6 @@ public abstract class PaintSurface extends Surface implements ScaledLayeredImage
         this.surfaceDimensions = new Dimension(surfaceDimensions.width, surfaceDimensions.height);
         Dimension scaledDimension = getScaledDimension(surfaceDimensions);
 
-        buffer = new BufferedImage(scaledDimension.width, scaledDimension.height, BufferedImage.TYPE_INT_ARGB);
-
         setMaximumSize(scaledDimension);
         setPreferredSize(scaledDimension);
         setSize(scaledDimension);
@@ -83,7 +86,6 @@ public abstract class PaintSurface extends Surface implements ScaledLayeredImage
         scaleSubject.onNext(scale);
 
         Dimension scaledDimension = getScaledDimension(surfaceDimensions);
-        buffer = new BufferedImage(scaledDimension.width, scaledDimension.height, BufferedImage.TYPE_INT_ARGB);
 
         getSurfaceScrollController().resetScrollPosition();
         setPreferredSize(scaledDimension);
@@ -97,6 +99,30 @@ public abstract class PaintSurface extends Surface implements ScaledLayeredImage
     @Override
     public Observable<Double> getScaleObservable() {
         return scaleSubject;
+    }
+
+    public double getScanlineThreadhold() {
+        return scanlineThreadhold;
+    }
+
+    public void setScanlineThreadhold(double scanlineThreadhold) {
+        this.scanlineThreadhold = scanlineThreadhold;
+    }
+
+    public Color getScanlineColor() {
+        return scanlineColor;
+    }
+
+    public void setScanlineColor(Color scanlineColor) {
+        this.scanlineColor = scanlineColor;
+    }
+
+    public AlphaComposite getScanlineComposite() {
+        return scanlineComposite;
+    }
+
+    public void setScanlineComposite(AlphaComposite scanlineComposite) {
+        this.scanlineComposite = scanlineComposite;
     }
 
     /**
@@ -116,28 +142,48 @@ public abstract class PaintSurface extends Surface implements ScaledLayeredImage
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
+        Rectangle clip = g.getClipBounds();
 
-        Rectangle clipBounds = g.getClipBounds();
-        Rectangle imageBounds = new Rectangle(0, 0, buffer.getWidth(), buffer.getHeight());
+        if (clip != null && !clip.isEmpty() && isVisible()) {
 
-        Rectangle clip = clipBounds == null ?
-                imageBounds :
-                imageBounds.intersection(g.getClipBounds());
-
-        if (!clip.isEmpty() && isVisible() && buffer != null) {
-
-            // Draw visible portion of this surface's image onto a graphics buffer
+            // Draw visible portion of this surface's image into a buffer
+            BufferedImage buffer = new BufferedImage(clip.width, clip.height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2d = buffer.createGraphics();
             g2d.setBackground(CLEAR_COLOR);
             g2d.clearRect(clip.x, clip.y, clip.width, clip.height);
             drawOnto(g2d, getScale(), clip);
+            paintScanlines(g2d, clip.getSize());
             g2d.dispose();
 
-            // ... then draw that image on the component's graphics context
-            g.drawImage(buffer.getSubimage(clip.x, clip.y, clip.width, clip.height), clip.x, clip.y, null);
+            // Draw the surface background
+            if (getCanvasBackground() != null) {
+                ((Graphics2D) g).setPaint(getCanvasBackground());
+                g.fillRect(clip.x, clip.y, clip.width, clip.height);
+            }
+
+            // Draw the paint image
+            g.drawImage(buffer, clip.x, clip.y, null);
         }
 
         // DO NOT dispose the graphics context in this method.
+    }
+
+    private void paintScanlines(Graphics2D g, Dimension size) {
+        double scale = getScale();
+
+        if (scale > scanlineThreadhold) {
+            g.setPaint(scanlineColor);
+            g.setComposite(scanlineComposite);
+            g.setStroke(new BasicStroke(1));
+
+            for (int scanLine = 0; scanLine < size.height; scanLine += scale) {
+                g.fillRect(0, scanLine, size.width, 1);
+            }
+
+            for (int scanLine = 0; scanLine < size.width; scanLine += scale) {
+                g.fillRect(scanLine, 0, 1, size.height);
+            }
+        }
     }
 
 }

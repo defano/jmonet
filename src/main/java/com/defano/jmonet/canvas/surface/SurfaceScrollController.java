@@ -1,5 +1,8 @@
 package com.defano.jmonet.canvas.surface;
 
+import javax.swing.*;
+import java.awt.*;
+
 /**
  * An object that can be scrolled within a {@link javax.swing.JScrollPane}.
  *
@@ -24,4 +27,11 @@ public interface SurfaceScrollController {
      */
     void resetScrollPosition();
 
+    /**
+     * Gets the visible rectangle of the surface in the scroll pane's viewport. Equivalent to invoking
+     * {@link JViewport#getViewRect()}.
+     *
+     * @return The visible rectangle of the scroll pane's view port.
+     */
+    Rectangle getViewRect();
 }

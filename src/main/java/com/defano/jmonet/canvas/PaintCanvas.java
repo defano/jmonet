@@ -131,11 +131,26 @@ public interface PaintCanvas extends Scalable, ScaledLayeredImage, ObservableSur
     Rectangle getBounds();
 
     /**
-     * Gets the background color of the canvas, typically the panel color specified by the current Swing look-and-feel's
-     * UIManager.
-     * @return The canvas color.
+     * Gets the background color of the canvas, that is, the {@link Paint} which is displayed behind transparent pixels
+     * in the painted image.
+     *
+     * @return The canvas background.
      */
-    Color getCanvasColor();
+    Paint getCanvasBackground();
 
+    /**
+     * Specifies the canvas background paint, that is, the color or pattern displayed behind transparent pixels in the
+     * painted image (like a checkerboard pattern or a solid color).
+     *
+     * @param paint
+     */
+    void setCanvasBackground(Paint paint);
+
+    /**
+     * Gets the delegate responsible for the changing the scroll position of the entity (i.e.,
+     * {@link javax.swing.JScrollPane} that holds this canvas as its viewport.
+     *
+     * @return The current scroll controller
+     */
     SurfaceScrollController getSurfaceScrollController();
 }

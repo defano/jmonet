@@ -1,14 +1,13 @@
 package com.defano.jmonet.canvas;
 
-import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
+import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.surface.PaintSurface;
 import com.defano.jmonet.tools.util.Geometry;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -24,6 +23,7 @@ public abstract class AbstractPaintCanvas extends PaintSurface implements PaintC
     private final ArrayList<CanvasCommitObserver> observers = new ArrayList<>();
     private final BehaviorSubject<Integer> gridSpacingSubject = BehaviorSubject.createDefault(1);
     private final Scratch scratch;
+    private Paint canvasBackground;
 
     public AbstractPaintCanvas(Dimension dimension) {
         super(dimension);
@@ -54,16 +54,20 @@ public abstract class AbstractPaintCanvas extends PaintSurface implements PaintC
         setTransferHandler(null);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ImageLayer[] getImageLayers() {
-        return new ImageLayer[] {
+        return new ImageLayer[]{
                 new ImageLayer(getCanvasImage()),
                 getScratch().getRemoveScratchLayer(),
                 getScratch().getAddScratchLayer()};
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void clearCanvas() {
         Rectangle clear = new Rectangle(new Point(), getSurfaceDimension());
@@ -75,56 +79,77 @@ public abstract class AbstractPaintCanvas extends PaintSurface implements PaintC
     }
 
     @Override
-    public Color getCanvasColor() {
-        Color background = (Color) UIManager.getLookAndFeelDefaults().get("Panel.background");
-        return background == null ? Color.WHITE : background;
+    public Paint getCanvasBackground() {
+        return canvasBackground;
     }
 
-    /** {@inheritDoc} */
+    @Override
+    public void setCanvasBackground(Paint paint) {
+        this.canvasBackground = paint;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Point convertViewPointToModel(Point p) {
-        return new Point(translateX(p.x), translateY(p.y));
+        Point error = getScrollError();
+        return new Point(translateX(p.x - error.x), translateY(p.y - error.y));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Scratch getScratch() {
         return scratch;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void commit() {
         commit(scratch.getLayerSet());
         invalidateCanvas();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setGridSpacing(int grid) {
         this.gridSpacingSubject.onNext(grid);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Observable<Integer> getGridSpacingObservable() {
         return gridSpacingSubject;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setScale(double scale) {
         super.setScale(scale);
         invalidateCanvas();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addCanvasCommitObserver(CanvasCommitObserver observer) {
         observers.add(observer);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean removeCanvasCommitObserver(CanvasCommitObserver observer) {
         return observers.remove(observer);
@@ -136,34 +161,51 @@ public abstract class AbstractPaintCanvas extends PaintSurface implements PaintC
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void invalidateCanvas() {
         repaint();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void componentResized(ComponentEvent e) {
         getSurfaceScrollController().resetScrollPosition();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void componentMoved(ComponentEvent e) {
         // Nothing to do
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void componentShown(ComponentEvent e) {
         // Nothing to do
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void componentHidden(ComponentEvent e) {
         // Nothing to do
+    }
+
+    private Point getScrollError() {
+        Rectangle viewRect = getSurfaceScrollController().getViewRect();
+        double scale = getScale();
+
+        return new Point((int) (viewRect.x % scale), (int) (viewRect.y % scale));
     }
 
     private int translateX(int x) {

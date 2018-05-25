@@ -23,7 +23,7 @@ public class EraserTool extends AbstractPathTool {
 
         Graphics2D g = scratch.getRemoveScratchGraphics(stroke, line);
         g.setStroke(stroke);
-        g.setPaint(getCanvas().getCanvasColor());
+        g.setPaint(getCanvas().getCanvasBackground());
         g.draw(line);
     }
 
@@ -34,7 +34,7 @@ public class EraserTool extends AbstractPathTool {
 
         Graphics2D g = scratch.getRemoveScratchGraphics(stroke, line);
         g.setStroke(stroke);
-        g.setPaint(getCanvas().getCanvasColor());
+        g.setPaint(getCanvas().getCanvasBackground());
         g.draw(line);
     }
 }

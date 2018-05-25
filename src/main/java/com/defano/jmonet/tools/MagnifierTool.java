@@ -2,6 +2,7 @@ package com.defano.jmonet.tools;
 
 
 import com.defano.jmonet.canvas.PaintCanvas;
+import com.defano.jmonet.canvas.surface.SurfaceScrollController;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.builder.PaintTool;
 
@@ -43,6 +44,7 @@ public class MagnifierTool extends PaintTool {
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
 
+        SurfaceScrollController scrollController = getCanvas().getSurfaceScrollController();
         double pX = (double) imageLocation.x / (double) getCanvas().getCanvasImage().getWidth();
         double pY = (double) imageLocation.y / (double) getCanvas().getCanvasImage().getHeight();
 
@@ -52,12 +54,16 @@ public class MagnifierTool extends PaintTool {
 
         else if (e.isShiftDown()) {
             zoomOut(e.getX(), e.getY());
-            getCanvas().getSurfaceScrollController().setScrollPosition(pX, pY);
+            if (scrollController != null) {
+                scrollController.setScrollPosition(pX, pY);
+            }
         }
 
         else {
             zoomIn();
-            getCanvas().getSurfaceScrollController().setScrollPosition(pX, pY);
+            if (scrollController != null) {
+                scrollController.setScrollPosition(pX, pY);
+            }
         }
     }
 
@@ -71,7 +77,10 @@ public class MagnifierTool extends PaintTool {
     private void reset() {
         scale = 1.0;
         getCanvas().setScale(scale);
-        getCanvas().getSurfaceScrollController().setScrollPosition(0, 0);
+
+        if (getCanvas().getSurfaceScrollController() != null) {
+            getCanvas().getSurfaceScrollController().setScrollPosition(0, 0);
+        }
     }
 
     private void zoomIn() {

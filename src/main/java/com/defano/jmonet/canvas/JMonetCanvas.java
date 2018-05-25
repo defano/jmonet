@@ -40,7 +40,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
      */
     public JMonetCanvas(BufferedImage initialImage, int undoBufferDepth) {
         super(new Dimension(initialImage.getWidth(), initialImage.getHeight()));
-        this.maxUndoBufferDepth = undoBufferDepth;
+        this.maxUndoBufferDepth = Math.max(1, undoBufferDepth);
         setSize(initialImage.getWidth(), initialImage.getHeight());
         makePermanent(new ImageLayerSet(new ImageLayer(initialImage)));
     }
@@ -227,7 +227,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
 
         // Creating an image by overlaying ChangeSets is expensive; return cached copy when available
         if (cachedCanvasImageHash != getCanvasImageHash()) {
-            cachedCanvasImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+            cachedCanvasImage = new BufferedImage(getSurfaceDimension().width, getSurfaceDimension().height, BufferedImage.TYPE_INT_ARGB);
 
             if (permanent != null) {
                 overlayImage(permanent, cachedCanvasImage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));

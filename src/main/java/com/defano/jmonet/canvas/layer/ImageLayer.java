@@ -78,8 +78,11 @@ public class ImageLayer {
         // Portion of unscaled draw region that is also within the clipping rectangle
         Rectangle drawBounds = imageBounds.intersection(unscaledClipRgn);
 
+        // Slightly overdraw the image (to prevent clipping on bottom and right-most row/column)
+        drawBounds.setSize(drawBounds.width + 2, drawBounds.height + 2);
+
         g.drawImage(image,
-                (int) (scale * drawBounds.x), (int) (scale * drawBounds.y), (int) (scale * (drawBounds.x + drawBounds.width)), (int) (scale * (drawBounds.y + drawBounds.height)),
+                0, 0, (int)(scale * drawBounds.width), (int)(scale * drawBounds.height),
                 drawBounds.x, drawBounds.y, drawBounds.x + drawBounds.width, drawBounds.y + drawBounds.height,
                 null);
     }

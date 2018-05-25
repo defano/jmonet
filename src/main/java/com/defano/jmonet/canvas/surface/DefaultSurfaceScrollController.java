@@ -2,6 +2,8 @@ package com.defano.jmonet.canvas.surface;
 
 import javax.swing.*;
 
+import java.awt.*;
+
 import static javax.swing.ScrollPaneConstants.*;
 
 /**
@@ -54,6 +56,15 @@ public class DefaultSurfaceScrollController implements SurfaceScrollController {
             scrollPane.setHorizontalScrollBarPolicy(showHorizScroll ? HORIZONTAL_SCROLLBAR_ALWAYS : HORIZONTAL_SCROLLBAR_NEVER);
             scrollPane.setVerticalScrollBarPolicy(showVertScroll ? VERTICAL_SCROLLBAR_ALWAYS : VERTICAL_SCROLLBAR_NEVER);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Rectangle getViewRect() {
+        JScrollPane scrollPane = getScrollPane();
+        return scrollPane == null ? new Rectangle() : scrollPane.getViewport().getViewRect();
     }
 
     /**
