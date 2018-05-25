@@ -56,9 +56,9 @@ public class ImageLayer {
      * @param clip  The clipping rectangle; only the portion of this image bounded by this rectangle will be drawn. When
      *              null, the entire image will be drawn. Note that this rectangle is represented in scaled coordinate
      *              space. This, the rect (10,10), (100,100) when scale is 2.0 refers to the this layer's
-     *             sub image (5,5),(50,50).
+     *              sub image (5,5),(50,50).
      */
-    public void drawOnto(Graphics2D g, Double scale, Rectangle clip) {
+    public void paint(Graphics2D g, Double scale, Rectangle clip) {
         g.setComposite(composite);
 
         if (clip == null) {
@@ -82,7 +82,7 @@ public class ImageLayer {
         drawBounds.setSize(drawBounds.width + 2, drawBounds.height + 2);
 
         g.drawImage(image,
-                0, 0, (int)(scale * drawBounds.width), (int)(scale * drawBounds.height),
+                0, 0, (int) (scale * drawBounds.width), (int) (scale * drawBounds.height),
                 drawBounds.x, drawBounds.y, drawBounds.x + drawBounds.width, drawBounds.y + drawBounds.height,
                 null);
     }

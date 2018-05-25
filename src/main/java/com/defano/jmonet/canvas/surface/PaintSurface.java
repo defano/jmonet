@@ -151,7 +151,7 @@ public abstract class PaintSurface extends Surface implements ScaledLayeredImage
             Graphics2D g2d = buffer.createGraphics();
             g2d.setBackground(CLEAR_COLOR);
             g2d.clearRect(clip.x, clip.y, clip.width, clip.height);
-            drawOnto(g2d, getScale(), clip);
+            paint(g2d, getScale(), clip);
             paintScanlines(g2d, clip.getSize());
             g2d.dispose();
 
@@ -163,6 +163,8 @@ public abstract class PaintSurface extends Surface implements ScaledLayeredImage
 
             // Draw the paint image
             g.drawImage(buffer, clip.x, clip.y, null);
+
+            buffer.flush();
         }
 
         // DO NOT dispose the graphics context in this method.

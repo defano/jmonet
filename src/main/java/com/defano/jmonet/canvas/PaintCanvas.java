@@ -142,7 +142,7 @@ public interface PaintCanvas extends Scalable, ScaledLayeredImage, ObservableSur
      * Specifies the canvas background paint, that is, the color or pattern displayed behind transparent pixels in the
      * painted image (like a checkerboard pattern or a solid color).
      *
-     * @param paint
+     * @param paint The canvas background
      */
     void setCanvasBackground(Paint paint);
 

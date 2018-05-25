@@ -48,6 +48,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     /**
      * Creates a new canvas with a transparent image displayed inside it and a specified undo buffer depth.
      *
+     * @param dimension       The size of the canvas.
      * @param undoBufferDepth The depth of the undo buffer (number of undo operations)
      */
     public JMonetCanvas(Dimension dimension, int undoBufferDepth) {
@@ -65,7 +66,9 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     }
 
     /**
-     * Create a new canvas with a 1x1 transparent image displayed inside of it, with a default-sized undo/redo buffer.
+     * Create a new canvas of a given dimension.
+     *
+     * @param dimension The size of the canvas
      */
     public JMonetCanvas(Dimension dimension) {
         this(dimension, 12);
@@ -299,12 +302,12 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     /**
      * Draws a {@link ImageLayerSet} atop an existing image.
      *
-     * @param layeredImage   The set of changes to be drawn
-     * @param destination The image on which to draw them
+     * @param layeredImage The set of changes to be drawn
+     * @param destination  The image on which to draw them
      */
     private void overlayImage(LayeredImage layeredImage, BufferedImage destination) {
         Graphics2D g2d = (Graphics2D) destination.getGraphics();
-        layeredImage.drawOnto(g2d, null, null);
+        layeredImage.paint(g2d, null, null);
         g2d.dispose();
     }
 
