@@ -46,7 +46,7 @@ public class FillTransform implements StaticImageTransform {
                 if (mask == null || mask.contains(x, y)) {
                     Color c = new Color(transformed.getRGB(x, y), true);
                     if (c.getAlpha() == 0) {
-                        fillFunction.fill(transformed, new Point(x, y), paint);
+                        fillFunction.fill(transformed, x, y, paint);
                     }
                 }
             }

@@ -32,7 +32,8 @@ public class SelectionTool extends AbstractSelectionTool implements Transformabl
         selectionBounds.add(newPoint);
 
         // #24: Disallow constraint if it results in selection outside canvas bounds
-        if (isShiftKeyDown && getCanvas().getBounds().contains(Geometry.square(initialPoint, newPoint))) {
+        Rectangle canvasBounds = new Rectangle(0, 0, getCanvas().getCanvasSize().width, getCanvas().getCanvasSize().height);
+        if (isShiftKeyDown && canvasBounds.contains(Geometry.square(initialPoint, newPoint))) {
             selectionBounds = Geometry.square(initialPoint, newPoint);
         } else {
             selectionBounds = Geometry.rectangle(initialPoint, newPoint);

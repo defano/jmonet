@@ -12,20 +12,16 @@ public class DefaultFillFunction implements FillFunction {
      * {@inheritDoc}
      */
     @Override
-    public void fill(BufferedImage image, Point p, Paint fillPaint) {
-        int rgb = getFillPixel(p.x, p.y, fillPaint);
-        image.setRGB(p.x, p.y, rgb);
-    }
+    public void fill(BufferedImage image, int x, int y, Paint fillPaint) {
 
-    private int getFillPixel(int x, int y, Paint paint) {
-
-        if (paint instanceof Color) {
-            return ((Color) paint).getRGB();
-        } else if (paint instanceof TexturePaint) {
-            BufferedImage texture = ((TexturePaint) paint).getImage();
-            return texture.getRGB(x % texture.getWidth(), y % texture.getHeight());
+        if (fillPaint instanceof Color) {
+            image.setRGB (x, y, ((Color) fillPaint).getRGB());
+        } else if (fillPaint instanceof TexturePaint) {
+            BufferedImage texture = ((TexturePaint) fillPaint).getImage();
+            int rgb = texture.getRGB(x % texture.getWidth(), y % texture.getHeight());
+            image.setRGB (x, y, rgb);
+        } else {
+            throw new IllegalArgumentException("Don't know how to fill with paint " + fillPaint);
         }
-
-        throw new IllegalArgumentException("Don't know how to fill with paint " + paint);
     }
 }

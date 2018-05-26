@@ -1,7 +1,7 @@
 package com.defano.jmonet.algo.transform;
 
 /**
- * A transform that can be applied to an individual pixel, like invert, or adjusting brightness.
+ * A transform that can be applied to an individual pixel, like invert, or brightness adjustment.
  */
 public interface PixelTransform {
 

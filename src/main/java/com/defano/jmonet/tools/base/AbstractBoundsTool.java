@@ -81,7 +81,7 @@ public abstract class AbstractBoundsTool extends PaintTool {
         }
 
         strokeBounds(getScratch(), getStroke(), getStrokePaint(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
-        getCanvas().invalidateCanvas();
+        getCanvas().repaint();
     }
 
     /** {@inheritDoc} */

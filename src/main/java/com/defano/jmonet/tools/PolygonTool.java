@@ -5,6 +5,7 @@ import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractPolylineTool;
 
 import java.awt.*;
+import java.awt.geom.Path2D;
 
 /**
  * Tool to draw outlined or filled irregular polygons on the canvas.
@@ -18,29 +19,50 @@ public class PolygonTool extends AbstractPolylineTool {
     /** {@inheritDoc} */
     @Override
     protected void strokePolyline(Scratch scratch, Stroke stroke, Paint paint, int[] xPoints, int[] yPoints) {
-        Graphics2D g = scratch.getAddScratchGraphics();
+        Path2D poly = getPolylineShape(xPoints, yPoints, xPoints.length);
 
+        Graphics2D g = scratch.getAddScratchGraphics(this, stroke, poly);
         g.setPaint(paint);
         g.setStroke(stroke);
-        g.drawPolyline(xPoints, yPoints, xPoints.length);
+        g.draw(poly);
     }
 
     /** {@inheritDoc} */
     @Override
     protected void strokePolygon(Scratch scratch, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints) {
-        Graphics2D g = scratch.getAddScratchGraphics();
+        Path2D polygon = getPolygonShape(xPoints, yPoints, xPoints.length);
 
+        Graphics2D g = scratch.getAddScratchGraphics(this, stroke, polygon);
         g.setStroke(stroke);
         g.setPaint(strokePaint);
-        g.drawPolygon(xPoints, yPoints, xPoints.length);
+        g.draw(polygon);
     }
 
     /** {@inheritDoc} */
     @Override
     protected void fillPolygon(Scratch scratch, Paint fillPaint, int[] xPoints, int[] yPoints) {
-        Graphics2D g = scratch.getAddScratchGraphics();
-
+        Graphics2D g = scratch.getAddScratchGraphics(this, null);
         g.setPaint(fillPaint);
         g.fillPolygon(xPoints, yPoints, xPoints.length);
+    }
+
+    private Path2D getPolygonShape(int xPoints[], int yPoints[], int points) {
+        Path2D poly = getPolylineShape(xPoints, yPoints, points);
+        poly.closePath();
+        return poly;
+    }
+
+    private Path2D getPolylineShape(int xPoints[], int yPoints[], int points) {
+        Path2D poly = new Path2D.Double();
+
+        if (points > 0) {
+            poly.moveTo(xPoints[0], yPoints[0]);
+
+            for (int index = 1; index < points; index++) {
+                poly.lineTo(xPoints[index], yPoints[index]);
+            }
+        }
+
+        return poly;
     }
 }

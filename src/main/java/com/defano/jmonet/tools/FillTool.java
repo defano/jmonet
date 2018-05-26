@@ -34,7 +34,7 @@ public class FillTool extends PaintTool {
             getScratch().setAddScratch(filled);
 
             getCanvas().commit();
-            getCanvas().invalidateCanvas();
+            getCanvas().repaint();
         }
     }
 

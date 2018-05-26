@@ -58,13 +58,7 @@ public class ImageLayerSet implements LayeredImage {
      */
     @Override
     public ImageLayer[] getImageLayers() {
-        ImageLayer[] layers = new ImageLayer[size()];
-
-        for (int index = 0; index < size(); index++) {
-            layers[index] = new ImageLayer(this.layers.get(index).getImage(), this.layers.get(index).getComposite());
-        }
-
-        return layers;
+        return layers.toArray(new ImageLayer[0]);
     }
 
     /**
@@ -95,7 +89,7 @@ public class ImageLayerSet implements LayeredImage {
      */
     public boolean isRemovingPaint() {
         for (ImageLayer thisLayer : layers) {
-            if (thisLayer.getComposite().getRule() == AlphaComposite.DST_OUT) {
+            if (thisLayer != null && thisLayer.getComposite().getRule() == AlphaComposite.DST_OUT) {
                 return true;
             }
         }
@@ -111,7 +105,7 @@ public class ImageLayerSet implements LayeredImage {
      */
     public boolean isAddingPaint() {
         for (ImageLayer thisLayer : layers) {
-            if (thisLayer.getComposite().getRule() != AlphaComposite.DST_OUT) {
+            if (thisLayer != null && thisLayer.getComposite().getRule() != AlphaComposite.DST_OUT) {
                 return true;
             }
         }

@@ -25,11 +25,12 @@ public class AirbrushTool extends AbstractPathTool {
     /** {@inheritDoc} */
     @Override
     protected void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
-        Graphics2D g = scratch.getAddScratchGraphics();
+        Line2D line = new Line2D.Float(lastPoint, thisPoint);
 
+        Graphics2D g = scratch.getAddScratchGraphics(this, stroke, line);
         g.setStroke(stroke);
         g.setPaint(fillPaint);
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getIntensityObservable().blockingFirst().floatValue()));
-        g.draw(new Line2D.Float(lastPoint, thisPoint));
+        g.draw(line);
     }
 }

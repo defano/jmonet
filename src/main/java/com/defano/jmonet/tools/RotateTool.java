@@ -11,7 +11,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 /**
- * Tool for selecting a bounding box and free-rotating the selected image about its centerpoint.
+ * Tool for selecting a bounding box and free-rotating the selected image about its center-point.
  */
 public class RotateTool extends AbstractSelectionTool {
 
@@ -222,7 +222,7 @@ public class RotateTool extends AbstractSelectionTool {
         super.redrawSelection(includeFrame);
 
         // Draw the drag handle on the selection
-        Graphics2D g = getCanvas().getScratch().getAddScratchGraphics();
+        Graphics2D g = getCanvas().getScratch().getAddScratchGraphics(this, null);
         g.setColor(Color.black);
         g.fill(dragHandle);
         g.dispose();

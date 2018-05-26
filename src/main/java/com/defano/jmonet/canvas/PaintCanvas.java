@@ -1,44 +1,84 @@
 package com.defano.jmonet.canvas;
 
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
+import com.defano.jmonet.canvas.layer.ScaledLayeredImage;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
-import com.defano.jmonet.canvas.observable.ObservableSurface;
 import com.defano.jmonet.canvas.surface.*;
-import io.reactivex.Observable;
-import io.reactivex.subjects.BehaviorSubject;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * A canvas that can be painted upon by the paint tools.
+ * A canvas that can be drawn upon by the paint tools.
  */
-public interface PaintCanvas extends ScaledLayeredImage, Scrollable, ObservableSurface, CompositeSurface {
+public interface PaintCanvas extends PaintSurface, ScaledLayeredImage {
 
     /**
-     * Sets whether the canvas is visible. When invisible, the component hierarchy will be drawn as though this
-     * component does not exist.
-     * @param visible True to make this canvas invisible; false for visible.
+     * Commits the contents of the scratch buffer to the canvas, using the {@link AlphaComposite#SRC_OVER} composite
+     * mode.
      */
-    void setVisible(boolean visible);
+    void commit();
 
     /**
-     * Determines if the canvas is visible.
-     * @return True if visible; false otherwise.
+     * Commits the given {@link ImageLayerSet} to the canvas.
+     *
+     * @param imageLayerSet The {@link ImageLayerSet} to be committed.
      */
-    boolean isVisible();
+    void commit(ImageLayerSet imageLayerSet);
 
     /**
-     * Sets the mouse cursor that is displayed when the mouse is within the bounds of this component.
-     * @param cursor The active cursor to display
+     * Clears the canvas by filling the remove-scratch buffer and committing the change.
      */
-    void setCursor(Cursor cursor);
+    void clearCanvas();
 
     /**
-     * Gets the mouse cursor that is displayed when the mouse is within the bounds of this component.
-     * @return The active cursor
+     * Gets the Scratch buffer associated with this canvas. The scratch buffer provides a mechanism for tools to draw
+     * ephemeral changes (like marching ants, text tool caret, etc.) to the canvas without actually modifying the
+     * underlying image.
+     *
+     * @return The scratch buffer.
      */
-    Cursor getCursor();
+    Scratch getScratch();
+
+    /**
+     * Gets the image that has been painted on this canvas, not including any ephemeral changes that have been made via
+     * the scratch buffer but have not been comitted to the canvas.
+     *
+     * @return The canvas image.
+     */
+    BufferedImage getCanvasImage();
+
+    /**
+     * Gets the (un-scaled) dimensions of the canvas (that is, the size of the image which can be painted). This
+     * dimension is unrelated to the size of the Swing component that displays/encapsulates it.
+     *
+     * @return The un-scaled dimensions of this surface.
+     */
+    Dimension getCanvasSize();
+
+    /**
+     * Specifies the (un-scaled) size of this painting surface. This determines the size of the image that can be
+     * painted, but is unrelated to the size of Swing component that displays/encapsulates it.
+     *
+     * @param surfaceDimensions The dimensions of the painting surface
+     */
+    void setCanvasSize(Dimension surfaceDimensions);
+
+    /**
+     * Gets the background color of the canvas, that is, the {@link Paint} which is displayed behind transparent pixels
+     * in the painted image.
+     *
+     * @return The canvas background.
+     */
+    Paint getCanvasBackground();
+
+    /**
+     * Specifies the canvas background paint, that is, the color or pattern displayed behind transparent pixels in the
+     * painted image (like a checkerboard pattern or a solid color).
+     *
+     * @param paint The canvas background
+     */
+    void setCanvasBackground(Paint paint);
 
     /**
      * Adds an observer to be notified of scratch buffer commits.
@@ -54,93 +94,4 @@ public interface PaintCanvas extends ScaledLayeredImage, Scrollable, ObservableS
      * @return True if the given observer was successfully unregistered; false otherwise.
      */
     boolean removeCanvasCommitObserver(CanvasCommitObserver observer);
-
-    /**
-     * Causes the Swing framework to redraw/refresh the canvas by calling {@link Component#repaint()}.
-     */
-    void invalidateCanvas();
-
-    /**
-     * Commits the contents of the scratch buffer to the canvas, using the {@link AlphaComposite#SRC_OVER} composite
-     * mode.
-     */
-    void commit();
-
-    /**
-     * Commits the given {@link ImageLayerSet} to the canvas.
-     * @param imageLayerSet The {@link ImageLayerSet} to be committed.
-     */
-    void commit(ImageLayerSet imageLayerSet);
-
-    /**
-     * Sets the scale factor of the canvas. Values greater than 1 result in the canvas image appearing enlarged; values
-     * less than 1 result in the canvas image appearing shrunken.
-     *
-     * @param scale The scale factor
-     */
-    void setScale(double scale);
-
-    /**
-     * Gets an observable scale factor.
-     * @return The scale factor {@link BehaviorSubject}
-     */
-    Observable<Double> getScaleObservable();
-
-    /**
-     * Sets a grid spacing on which the mouse coordinates provided to the paint tools will be "snapped to".
-     * @param grid The grid spacing
-     */
-    void setGridSpacing(int grid);
-
-    /**
-     * Gets an observable grid spacing property.
-     * @return The grid spacing {@link BehaviorSubject}
-     */
-    Observable<Integer> getGridSpacingObservable();
-
-    /**
-     * Clears the canvas by filling the scratch buffer with all white pixels, and then committing this change with
-     * a DST_OUT composite mode.
-     */
-    void clearCanvas();
-
-    /**
-     * Gets the "scratch" image associated with this drawable. The "scratch" image is a temporary buffer allowing
-     * tools to draw on the canvas in a way that doesn't affect the underlying graphic.
-     *
-     * @return The scratch buffer image.
-     */
-    Scratch getScratch();
-
-    /**
-     * Gets the image represented by this drawable; not including any ephemeral changes that have been made--but not
-     * committed--to the canvas.
-     *
-     * @return The canvas image.
-     */
-    BufferedImage getCanvasImage();
-
-    /**
-     * Sets the size of the canvas component (i.e., the size of the paintable image not including any scale). As such,
-     * the size of the canvas will not match necessarily match the size of the image returned by
-     * {@link #getCanvasImage()} when the scale factor is a value other than 1.0.
-     *
-     * @param width The desired width of the paintable image
-     * @param height The desired height of the paintable image
-     */
-    void setSize(int width, int height);
-
-    /**
-     * Gets the bounds of the canvas component. This value will not necessarily match the size of the paintable image
-     * when a scale factor other than 1.0 has been applied.
-     * @return The bounds of the canvas component.
-     */
-    Rectangle getBounds();
-
-    /**
-     * Gets the background color of the canvas, typically the panel color specified by the current Swing look-and-feel's
-     * UIManager.
-     * @return The canvas color.
-     */
-    Color getCanvasColor();
 }

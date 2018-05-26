@@ -12,6 +12,9 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 
+/**
+ * A utility for building strokes, both {@link BasicStroke} and {@link ShapeStroke}.
+ */
 public class StrokeBuilder {
 
     /**

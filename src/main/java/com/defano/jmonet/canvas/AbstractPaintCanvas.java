@@ -1,16 +1,13 @@
 package com.defano.jmonet.canvas;
 
-import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
-import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
-import com.defano.jmonet.canvas.surface.AbstractScrollablePaintSurface;
 import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
-import com.defano.jmonet.canvas.surface.PaintSurface;
+import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
+import com.defano.jmonet.canvas.surface.AbstractPaintSurface;
 import com.defano.jmonet.tools.util.Geometry;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -21,158 +18,218 @@ import java.util.ArrayList;
  * A scrollable, Swing component that can be painted upon using the paint tools in {@link com.defano.jmonet.tools}. See
  * {@link JMonetCanvas} for a canvas with an undo/redo buffer.
  */
-public abstract class AbstractPaintCanvas extends AbstractScrollablePaintSurface implements PaintCanvas, ComponentListener {
+public abstract class AbstractPaintCanvas extends AbstractPaintSurface implements PaintCanvas, ComponentListener {
 
-    private final PaintSurface surface = new PaintSurface();
-
-    private final java.util.List<CanvasCommitObserver> observers = new ArrayList<>();
-    private final BehaviorSubject<Double> scaleSubject = BehaviorSubject.createDefault(1.0);
+    private final ArrayList<CanvasCommitObserver> observers = new ArrayList<>();
     private final BehaviorSubject<Integer> gridSpacingSubject = BehaviorSubject.createDefault(1);
+    private final Scratch scratch;
+    private Paint canvasBackground;
 
-    private Scratch scratch = new Scratch();
+    public AbstractPaintCanvas(Dimension dimension) {
+        super(dimension);
+        addComponentListener(this);
+        scratch = new Scratch(dimension.width, dimension.height);
+    }
 
     /**
-     * Creates a new AbstractPaintCanvas with a blank (transparent) initial image displayed in it.
+     * {@inheritDoc}
      */
-    public AbstractPaintCanvas() {
-        this.surface.setPainting(this);
-        setSurface(surface);
+    @Override
+    public void setCanvasSize(Dimension dimension) {
+        super.setSurfaceDimension(dimension);
+
+        if (scratch != null) {
+            scratch.setSize(dimension.width, dimension.height);
+        }
+
+        this.repaint();
     }
 
     /**
      * Marks this component safe for garbage collection; removes registered listeners and components.
      */
     public void dispose() {
-        scaleSubject.onComplete();
+        super.dispose();
+        super.removeComponentListener(this);
+
         gridSpacingSubject.onComplete();
         observers.clear();
-        surface.dispose();
-        surface.removeComponentListener(this);
         setTransferHandler(null);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void setSize(int width, int height) {
-        super.setSize(width, height);
-        surface.setPreferredSize(new Dimension((int) (width * scaleSubject.getValue()), (int) (height * scaleSubject.getValue())));
-        scratch.resize(width, height);
-        surface.addComponentListener(this);
-        invalidateCanvas();
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ImageLayer[] getImageLayers() {
-        return new ImageLayer[] {
+        return new ImageLayer[]{
                 new ImageLayer(getCanvasImage()),
-                new ImageLayer(getScratch().getRemoveScratch(), AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f)),
-                new ImageLayer(getScratch().getAddScratch(), AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f))};
+                getScratch().getRemoveScratchLayer(),
+                getScratch().getAddScratchLayer()};
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void clearCanvas() {
-        Graphics2D g2 = scratch.getRemoveScratchGraphics();
+        Rectangle clear = new Rectangle(new Point(), getCanvasSize());
+        Graphics2D g2 = scratch.getRemoveScratchGraphics(null, clear);
         g2.setColor(Color.WHITE);
-        g2.fillRect(0, 0, getWidth(), getHeight());
+        g2.fill(clear);
 
-        commit(scratch.getChangeSet());
+        commit(scratch.getLayerSet());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Color getCanvasColor() {
-        Color background = (Color) UIManager.getLookAndFeelDefaults().get("Panel.background");
-        return background == null ? Color.WHITE : background;
+    public Paint getCanvasBackground() {
+        return canvasBackground;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setCanvasBackground(Paint paint) {
+        this.canvasBackground = paint;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Point convertViewPointToModel(Point p) {
-        return new Point(translateX(p.x), translateY(p.y));
+        Point error = getScrollError();
+        int gridSpacing = getGridSpacingObservable().blockingFirst();
+        double scale = getScaleObservable().blockingFirst();
+
+        int x = p.x - error.x;
+        x = Geometry.round(x, (int) (gridSpacing * scale));
+        x = (int) (x / scale);
+
+        int y = p.y - error.y;
+        y = Geometry.round(y, (int) (gridSpacing * scale));
+        y = (int) (y / scale);
+
+        return new Point(x, y);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Point convertModelPointToView(Point p) {
+        Point error = getScrollError();
+        double scale = getScaleObservable().blockingFirst();
+
+        int x = (int) (p.x * scale) + error.x;
+        int y = (int) (p.y * scale) + error.y;
+
+        return new Point(x, y);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Scratch getScratch() {
         return scratch;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void commit() {
-        commit(scratch.getChangeSet());
-        invalidateCanvas();
+        commit(scratch.getLayerSet());
+        this.repaint();
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void addComponent(Component component) {
-        surface.addComponent(component);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void removeComponent(Component component) {
-        surface.removeComponent(component);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void addSurfaceInteractionObserver(SurfaceInteractionObserver listener) {
-        surface.addSurfaceInteractionObserver(listener);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean removeSurfaceInteractionObserver(SurfaceInteractionObserver listener) {
-        return surface.removeSurfaceInteractionObserver(listener);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public double getScale() {
-        return scaleSubject.getValue();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Observable<Double> getScaleObservable() {
-        return scaleSubject;
-    }
-
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setGridSpacing(int grid) {
         this.gridSpacingSubject.onNext(grid);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Observable<Integer> getGridSpacingObservable() {
         return gridSpacingSubject;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setScale(double scale) {
-        this.scaleSubject.onNext(scale);
-        surface.setPreferredSize(new Dimension((int) (getWidth() * scale), (int) (getHeight() * scale)));
-        surface.revalidate();
-
-        invalidateCanvas();
+        super.setScale(scale);
+        this.repaint();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addCanvasCommitObserver(CanvasCommitObserver observer) {
         observers.add(observer);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean removeCanvasCommitObserver(CanvasCommitObserver observer) {
         return observers.remove(observer);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void componentResized(ComponentEvent e) {
+        getSurfaceScrollController().resetScrollPosition();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void componentMoved(ComponentEvent e) {
+        // Nothing to do
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void componentShown(ComponentEvent e) {
+        // Nothing to do
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void componentHidden(ComponentEvent e) {
+        // Nothing to do
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Point getScrollError() {
+        Rectangle viewRect = getSurfaceScrollController().getViewRect();
+        double scale = getScale();
+
+        return new Point((int) (viewRect.x % scale), (int) (viewRect.y % scale));
     }
 
     protected void fireCanvasCommitObservers(PaintCanvas canvas, ImageLayerSet imageLayerSet, BufferedImage canvasImage) {
@@ -181,49 +238,4 @@ public abstract class AbstractPaintCanvas extends AbstractScrollablePaintSurface
         }
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public void invalidateCanvas() {
-        repaint();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void componentResized(ComponentEvent e) {
-        updateScroll();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void componentMoved(ComponentEvent e) {
-        // Nothing to do
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void componentShown(ComponentEvent e) {
-        // Nothing to do
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void componentHidden(ComponentEvent e) {
-        // Nothing to do
-    }
-
-    private int translateX(int x) {
-        int gridSpacing = getGridSpacingObservable().blockingFirst();
-        double scale = getScaleObservable().blockingFirst();
-
-        x = Geometry.round(x, (int) (gridSpacing * scale));
-        return (int) (x / scale);
-    }
-
-    private int translateY(int y) {
-        int gridSpacing = getGridSpacingObservable().blockingFirst();
-        double scale = getScaleObservable().blockingFirst();
-
-        y = Geometry.round(y, (int) (gridSpacing * scale));
-        return (int) (y / scale);
-    }
 }

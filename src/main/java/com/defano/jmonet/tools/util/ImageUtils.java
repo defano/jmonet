@@ -46,6 +46,15 @@ public class ImageUtils {
             }
         }
 
+        // Special case: Zero-sized image
+        if (minX == Integer.MAX_VALUE) {
+            minX = 0;
+        }
+
+        if (minY == Integer.MAX_VALUE) {
+            minY = 0;
+        }
+
         return new Rectangle(minX, minY, maxX - minX, maxY - minY);
     }
 }

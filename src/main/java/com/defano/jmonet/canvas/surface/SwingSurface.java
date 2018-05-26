@@ -5,7 +5,7 @@ import java.awt.*;
 /**
  * A surface to which Swing components can be added and removed.
  */
-public interface CompositeSurface {
+public interface SwingSurface {
     /**
      * Adds a component to the surface.
      * @param component The component to be added.

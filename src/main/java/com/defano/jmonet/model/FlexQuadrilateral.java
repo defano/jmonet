@@ -6,7 +6,7 @@ import java.awt.*;
 
 /**
  * Models a mutable, four-sided, simple polygon (quadrilateral) with no restrictions on the length, angle or
- * parallelness, except that the shape's edges cannot cross each other (self-intersecting quadrilaterals are
+ * parallelism, except that the shape's edges cannot cross each other (self-intersecting quadrilaterals are
  * disallowed).
  */
 public class FlexQuadrilateral implements Quadrilateral {

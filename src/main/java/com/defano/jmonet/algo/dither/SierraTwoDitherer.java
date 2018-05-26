@@ -1,5 +1,8 @@
 package com.defano.jmonet.algo.dither;
 
+/**
+ * An implementation of the Sierra-Two (row) dithering algorithm.
+ */
 public class SierraTwoDitherer extends AbstractDitherer {
 
     /**

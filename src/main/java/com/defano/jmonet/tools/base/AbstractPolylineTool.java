@@ -82,7 +82,7 @@ public abstract class AbstractPolylineTool extends PaintTool {
 
         getScratch().clear();
         strokePolyline(getScratch(), getStroke(), getStrokePaint(), xs, ys);
-        getCanvas().invalidateCanvas();
+        getCanvas().repaint();
 
         points.remove(points.size() - 1);
     }

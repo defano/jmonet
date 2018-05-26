@@ -86,7 +86,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         // Make an ARGB copy of the image (input may not have alpha channel)
         BufferedImage argbImage = ImageUtils.argbCopy(image);
 
-        Graphics2D g = getCanvas().getScratch().getAddScratchGraphics();
+        Graphics2D g = getCanvas().getScratch().getAddScratchGraphics(this, new Rectangle(location, new Dimension(image.getWidth(), image.getHeight())));
         g.drawImage(argbImage, location.x, location.y, null);
 
         addPointToSelectionFrame(location.getLocation(), new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()), false);
@@ -151,11 +151,12 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
         // User is defining a new selection rectangle
         else {
-            addPointToSelectionFrame(initialPoint, Geometry.constrainToBounds(imageLocation, getCanvas().getBounds()), e.isShiftDown());
+            Rectangle canvasBounds = new Rectangle(new Point(), getCanvas().getCanvasSize());
+            addPointToSelectionFrame(initialPoint, Geometry.constrainToBounds(imageLocation, canvasBounds), e.isShiftDown());
 
             getScratch().clear();
             drawSelectionFrame();
-            getCanvas().invalidateCanvas();
+            getCanvas().repaint();
         }
     }
 
@@ -268,7 +269,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         resetSelection();
 
         getScratch().clearAdd();
-        getCanvas().invalidateCanvas();
+        getCanvas().repaint();
     }
 
     /**
@@ -345,11 +346,12 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      */
     public void eraseSelectedPixelsFromCanvas() {
         if (hasSelectionFrame()) {
+            Shape selectionFrame = getSelectionFrame();
 
             // Clear image underneath selection
-            Graphics2D g = getCanvas().getScratch().getRemoveScratchGraphics();
+            Graphics2D g = getCanvas().getScratch().getRemoveScratchGraphics(this, selectionFrame);
             g.setColor(Color.WHITE);
-            g.fill(getSelectionFrame());
+            g.fill(selectionFrame);
 
             redrawSelection(true);
         }
@@ -362,8 +364,9 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     public void redrawSelection(boolean includeFrame) {
         getScratch().clearAdd();
 
-        if (hasSelection()) {
-            Graphics2D g = getCanvas().getScratch().getAddScratchGraphics();
+        // Don't draw the selected image when clean, doing so double-paints the selection and adjusts translucency
+        if (hasSelection() && isDirty()) {
+            Graphics2D g = getCanvas().getScratch().getAddScratchGraphics(this, getSelectionFrame());
             g.drawImage(selectedImage.getValue().get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
         }
 
@@ -371,7 +374,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
             drawSelectionFrame();
         }
 
-        getCanvas().invalidateCanvas();
+        getCanvas().repaint();
     }
 
     /**
@@ -391,14 +394,14 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * Renders the selection outline (marching ants) on the canvas.
      */
     protected void drawSelectionFrame() {
-        Graphics2D g = getScratch().getAddScratchGraphics();
+        Shape selectionFrame = getSelectionFrame();
 
+        Graphics2D g = getScratch().getAddScratchGraphics(this, MarchingAnts.getInstance().getMarchingAnts(), selectionFrame);
         g.setColor(Color.WHITE);
-        g.draw(getSelectionFrame());
-
+        g.draw(selectionFrame);
         g.setStroke(MarchingAnts.getInstance().getMarchingAnts());
         g.setColor(Color.BLACK);
-        g.draw(getSelectionFrame());
+        g.draw(selectionFrame);
     }
 
     /**
@@ -421,7 +424,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
             // Re-render the scratch buffer without the selection frame (don't want to commit marching ants to canvas)
             getScratch().clearAdd();
             if (hasSelection()) {
-                Graphics2D g = getCanvas().getScratch().getAddScratchGraphics();
+                Graphics2D g = getCanvas().getScratch().getAddScratchGraphics(this, getSelectionFrame());
                 g.drawImage(selectedImage.getValue().get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
             }
 

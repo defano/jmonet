@@ -4,7 +4,6 @@ import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.layer.LayeredImage;
 import io.reactivex.Observable;
-import io.reactivex.functions.Function;
 import io.reactivex.subjects.BehaviorSubject;
 
 import java.awt.*;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * A paint tools canvas with a built-in undo and redo buffer. Extends the capabilities inherent in {@link AbstractPaintCanvas}.
+ * A paint canvas with a built-in undo and redo buffer.
  */
 public class JMonetCanvas extends AbstractPaintCanvas {
 
@@ -40,19 +39,20 @@ public class JMonetCanvas extends AbstractPaintCanvas {
      * @param undoBufferDepth The depth of the undo buffer (number of undo operations)
      */
     public JMonetCanvas(BufferedImage initialImage, int undoBufferDepth) {
-        super();
-        this.maxUndoBufferDepth = undoBufferDepth;
+        super(new Dimension(initialImage.getWidth(), initialImage.getHeight()));
+        this.maxUndoBufferDepth = Math.max(1, undoBufferDepth);
         setSize(initialImage.getWidth(), initialImage.getHeight());
         makePermanent(new ImageLayerSet(new ImageLayer(initialImage)));
     }
 
     /**
-     * Creates a new canvas with a 1x1 transparent image displayed inside it and a specified undo buffer depth.
+     * Creates a new canvas with a transparent image displayed inside it and a specified undo buffer depth.
      *
+     * @param dimension       The size of the canvas.
      * @param undoBufferDepth The depth of the undo buffer (number of undo operations)
      */
-    public JMonetCanvas(int undoBufferDepth) {
-        this(new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB), undoBufferDepth);
+    public JMonetCanvas(Dimension dimension, int undoBufferDepth) {
+        this(new BufferedImage(dimension.width, dimension.height, BufferedImage.TYPE_INT_ARGB), undoBufferDepth);
     }
 
     /**
@@ -66,10 +66,12 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     }
 
     /**
-     * Create a new canvas with a 1x1 transparent image displayed inside of it, with a default-sized undo/redo buffer.
+     * Create a new canvas of a given dimension.
+     *
+     * @param dimension The size of the canvas
      */
-    public JMonetCanvas() {
-        this(12);
+    public JMonetCanvas(Dimension dimension) {
+        this(dimension, 12);
     }
 
     /**
@@ -85,7 +87,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
 
             undoBufferPointer.onNext(undoBufferPointer.blockingFirst() - 1);
             fireCanvasCommitObservers(this, null, getCanvasImage());
-            invalidateCanvas();
+            this.repaint();
 
             return undid;
         }
@@ -103,7 +105,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
         if (hasRedoableChanges()) {
             undoBufferPointer.onNext(undoBufferPointer.blockingFirst() + 1);
             fireCanvasCommitObservers(this, null, getCanvasImage());
-            invalidateCanvas();
+            this.repaint();
 
             return true;
         }
@@ -217,7 +219,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
         fireCanvasCommitObservers(this, imageLayerSet, getCanvasImage());
 
         getScratch().clear();
-        invalidateCanvas();
+        this.repaint();
     }
 
     /**
@@ -228,7 +230,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
 
         // Creating an image by overlaying ChangeSets is expensive; return cached copy when available
         if (cachedCanvasImageHash != getCanvasImageHash()) {
-            cachedCanvasImage = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+            cachedCanvasImage = new BufferedImage(getCanvasSize().width, getCanvasSize().height, BufferedImage.TYPE_INT_ARGB);
 
             if (permanent != null) {
                 overlayImage(permanent, cachedCanvasImage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
@@ -300,12 +302,12 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     /**
      * Draws a {@link ImageLayerSet} atop an existing image.
      *
-     * @param layeredImage   The set of changes to be drawn
-     * @param destination The image on which to draw them
+     * @param layeredImage The set of changes to be drawn
+     * @param destination  The image on which to draw them
      */
     private void overlayImage(LayeredImage layeredImage, BufferedImage destination) {
         Graphics2D g2d = (Graphics2D) destination.getGraphics();
-        layeredImage.drawOnto(g2d);
+        layeredImage.paint(g2d, null, null);
         g2d.dispose();
     }
 

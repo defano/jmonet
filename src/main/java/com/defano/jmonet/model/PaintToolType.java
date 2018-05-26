@@ -4,7 +4,7 @@ import com.defano.jmonet.tools.*;
 import com.defano.jmonet.tools.builder.PaintTool;
 
 /**
- * An enumeration of paint tools.
+ * An enumeration of paint tools provided by this library.
  */
 public enum PaintToolType {
     ARROW(ArrowTool.class),

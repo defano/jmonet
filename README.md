@@ -6,10 +6,10 @@ An easy-to-use toolkit for incorporating paint tools similar to [MacPaint](https
 
 ## Features
 
-* Standard suite of paint tools providing common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
+* Standard suite of paint tools with common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
 * Paint canvas supports undo and redo operations on all tool changes; plus cut, copy and paste integration with the system clipboard.
-* Includes a variety of image transform tools like scale, rotate, shear, perspective and projection, plus the ability to adjust color depth, transparency and brightness.
-* Painted images are zoomable via the Magnifier tool (displayed within a scrollable pane), and tools can be snapped to a grid.
+* Variety of image transform tools like scale, rotate, shear, perspective and projection, plus the ability to adjust color depth, transparency and brightness.
+* Canvas can be magnified and displayed within a scrollable pane; tools can be snapped to a grid.
 * Lightweight toolkit integrates easily into Swing and JavaFX applications and utilizes [ReactiveX](https://github.com/ReactiveX/RxJava) for observables.
 * Images are backed by a standard Java `BufferedImage` object making it easy to import and export graphics.
 
@@ -117,7 +117,7 @@ public static void main(String[] args) {
         frame.setVisible(true);
 
         // Create a JMonet canvas and add it to the window
-        JMonetCanvas myCanvas = new JMonetCanvas();
+        JMonetCanvas myCanvas = new JMonetCanvas(new Dimension(640, 480));
         frame.getContentPane().add(myCanvas);
     });
 }
@@ -130,7 +130,7 @@ In JavaFX applications:
 public void start(Stage stage) {
 
     // Create a JFX node for our paint canvas
-    JFXPaintCanvasNode myCanvas = new JFXPaintCanvasNode(new JMonetCanvas());
+    JFXPaintCanvasNode myCanvas = new JFXPaintCanvasNode(new JMonetCanvas(new Dimension(640, 480)));
 
     // Create a pane for it
     StackPane pane = new StackPane();
@@ -205,42 +205,6 @@ StrokeBuilder.withBasicStroke()
     .ofWidth(8)
     .withDash(10)
     .build();
-```
-
-### Migrating from older versions
-
-JMonet versions 0.2.0 and later utilize [ReactiveX](https://github.com/ReactiveX/RxJava) for observables instead of the `Provider` classes that were present in earlier versions. Here's what you need to do to upgrade:
-
-1. **Change API signatures:** JMonet APIs ending with `Provider` now end with `Observable`. For example, `JMonetCanvas#getGridSpacingProvider()` is now `JMonetCanvas#getGridSpacingObservable()`.
-
-2. **Use `BehvaiorSubject` in lieu of `Provider`:** RxJava's `BehaviorSubject` is roughly equivalent to JMonet's former `Provider` class:
-
-To create an observable property (that is, one that a paint tool or canvas will respond to dynamically):
-```
-BehaviorSubject<BasicStroke> lineStrokeSubject = BehaviorSubject<>.createDefault(new BasicStroke(1));
-```
-
-To make the paint tool observe changes to it:
-```
-PaintToolBuilder.create(PaintToolType.LINE)
-    .withStrokePaintObservable(lineStrokeSubject)
-    ...
-    .build();
-```
-
-To change an `BehaviorSubject` that's providing an attribute to a tool or canvas:
-```
-lineStrokeSubject.onNext(new BasicStroke(2))
-```
-
-To listen to changes of a provided attribute:
-```
-lineStrokeSubject.subscribe(stroke -> System.out.println("Change: " + stroke.getLineWidth()));
-```
-
-To derive an observable attribute for another attribute:
-```
-Observable<Boolean> isSinglePxStroke = lineStrokeSubject.map(stroke -> stroke.getLineWidth() == 1);
 ```
 
 ## Implement cut, copy and paste
