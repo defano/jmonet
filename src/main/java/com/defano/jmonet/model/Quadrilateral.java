@@ -5,7 +5,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 
 /**
- * A four-sided, simple polygon (quadrilateral) with no restrictions on the length, angle or parallelness, except that
+ * A four-sided, simple polygon (quadrilateral) with no restrictions on the length, angle or parallelism, except that
  * the shape's edges cannot cross each other (self-intersecting quadrilaterals are disallowed).
  */
 public interface Quadrilateral {

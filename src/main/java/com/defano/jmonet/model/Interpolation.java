@@ -1,7 +1,7 @@
 package com.defano.jmonet.model;
 
 /**
- * An enumeration of anti-aliasing rendering modes.
+ * An enumeration of interpolation algorithms.
  */
 public enum Interpolation {
 

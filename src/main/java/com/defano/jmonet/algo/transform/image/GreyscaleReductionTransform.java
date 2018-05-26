@@ -9,7 +9,7 @@ import com.defano.jmonet.algo.transform.StaticImageTransform;
 import java.awt.image.BufferedImage;
 
 /**
- * Converts the current selection to a gray-scale image containing no more than the specified number of gray shades.
+ * Transform an image to a gray-scale containing no more than the specified number of gray shades.
  */
 public class GreyscaleReductionTransform implements StaticImageTransform {
 

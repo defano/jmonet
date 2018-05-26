@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 
 /**
  * Vertically slants (shears) an image by a given angle and applies an x-translation to compensate for the change
- * in position implied by the slant (allow the vertical center-line to remain constant, if desired).
+ * in position implied by the slant (allows the vertical center-line to remain constant, if desired).
  */
 public class SlantTransform implements ImageTransform {
 

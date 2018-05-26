@@ -8,7 +8,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * Performs a "flood fill", "seed fill" (sometimes called "spill paint") of the image with a provided paint or texture.
+ * Performs a "flood fill" (sometimes called "seed fill" or "spill paint") of the image with a provided paint or
+ * texture.
  *
  * Given an origin point in the image, this algorithm iteratively paints every adjacent pixel with the given color or
  * texture until it reaches a boundary pixel.

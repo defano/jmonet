@@ -69,7 +69,7 @@ public class ImageLayer {
             scale = 1.0;
         }
 
-        // Clipping rectangle is in scaled coordinate space; descale
+        // Clipping rectangle is in scaled coordinate space; descale to model coordinates
         Rectangle unscaledClipRgn = new Rectangle((int) (clip.x / scale), (int) (clip.y / scale), (int) (clip.width / scale), (int) (clip.height / scale));
 
         // Unscaled bounding box of where image will be drawn on graphics context
@@ -81,24 +81,45 @@ public class ImageLayer {
         // Slightly overdraw the image (to prevent clipping on bottom and right-most row/column)
         drawBounds.setSize(drawBounds.width + 2, drawBounds.height + 2);
 
+        // Draw source geometry from image into destination geometry of graphics context
         g.drawImage(image,
                 0, 0, (int) (scale * drawBounds.width), (int) (scale * drawBounds.height),
                 drawBounds.x, drawBounds.y, drawBounds.x + drawBounds.width, drawBounds.y + drawBounds.height,
                 null);
     }
 
+    /**
+     * Gets the location of this image layer. Coordinates are relative to the base image this layer is being drawn upon.
+     *
+     * @return The layer's location.
+     */
     public Point getLocation() {
         return location;
     }
 
+    /**
+     * Gets the image associated with this layer.
+     *
+     * @return The layer's image.
+     */
     public BufferedImage getImage() {
         return image;
     }
 
+    /**
+     * Gets the alpha composite mode used to overlay this image on the base.
+     *
+     * @return The overlay alpha mode.
+     */
     public AlphaComposite getComposite() {
         return composite;
     }
 
+    /**
+     * Gets the dimensions of the image represented by this layer.
+     *
+     * @return The image size
+     */
     public Dimension getSize() {
         return new Dimension(image.getWidth(null), image.getHeight(null));
     }

@@ -11,7 +11,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 /**
- * Tool for selecting a bounding box and free-rotating the selected image about its centerpoint.
+ * Tool for selecting a bounding box and free-rotating the selected image about its center-point.
  */
 public class RotateTool extends AbstractSelectionTool {
 

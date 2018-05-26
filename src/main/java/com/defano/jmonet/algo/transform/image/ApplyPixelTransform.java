@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * Applies a pixel transform to every pixel of a given image that's contained within a masking shape.
+ * Applies a {@link PixelTransform} to every pixel of a given image that's contained within a masking shape.
  */
 public class ApplyPixelTransform implements StaticImageTransform {
 

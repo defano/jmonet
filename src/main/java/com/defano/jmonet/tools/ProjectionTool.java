@@ -8,7 +8,7 @@ import com.defano.jmonet.tools.base.AbstractTransformTool;
 import java.awt.*;
 
 /**
- * Tools for performing a homography projective of the image.
+ * Tool for performing a projection of a selected image onto an arbitrary quadrilateral.
  */
 public class ProjectionTool extends AbstractTransformTool {
 
