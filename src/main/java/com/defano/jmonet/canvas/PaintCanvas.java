@@ -16,51 +16,6 @@ import java.awt.image.BufferedImage;
 public interface PaintCanvas extends Surface, ScaledLayeredImage {
 
     /**
-     * Sets whether the canvas is visible. When invisible, the component hierarchy will be drawn as though this
-     * component does not exist.
-     * @param visible True to make this canvas invisible; false for visible.
-     */
-    void setVisible(boolean visible);
-
-    /**
-     * Determines if the canvas is visible.
-     * @return True if visible; false otherwise.
-     */
-    boolean isVisible();
-
-    /**
-     * Sets the mouse cursor that is displayed when the mouse is within the bounds of this component.
-     * @param cursor The active cursor to display
-     */
-    void setCursor(Cursor cursor);
-
-    /**
-     * Gets the mouse cursor that is displayed when the mouse is within the bounds of this component.
-     * @return The active cursor
-     */
-    Cursor getCursor();
-
-    /**
-     * Adds an observer to be notified of scratch buffer commits.
-     *
-     * @param observer The observer to be registered.
-     */
-    void addCanvasCommitObserver(CanvasCommitObserver observer);
-
-    /**
-     * Removes an existing observer.
-     *
-     * @param observer The observer to be removed.
-     * @return True if the given observer was successfully unregistered; false otherwise.
-     */
-    boolean removeCanvasCommitObserver(CanvasCommitObserver observer);
-
-    /**
-     * Causes the canvas to be repainted by Swing.
-     */
-    void repaint();
-
-    /**
      * Commits the contents of the scratch buffer to the canvas, using the {@link AlphaComposite#SRC_OVER} composite
      * mode.
      */
@@ -68,60 +23,44 @@ public interface PaintCanvas extends Surface, ScaledLayeredImage {
 
     /**
      * Commits the given {@link ImageLayerSet} to the canvas.
+     *
      * @param imageLayerSet The {@link ImageLayerSet} to be committed.
      */
     void commit(ImageLayerSet imageLayerSet);
 
     /**
-     * Gets an observable scale factor.
-     * @return The scale factor {@link BehaviorSubject}
-     */
-    Observable<Double> getScaleObservable();
-
-    /**
-     * Sets a grid spacing on which the mouse coordinates provided to the paint tools will be "snapped to".
-     * @param grid The grid spacing
-     */
-    void setGridSpacing(int grid);
-
-    /**
-     * Gets an observable grid spacing property.
-     * @return The grid spacing {@link BehaviorSubject}
-     */
-    Observable<Integer> getGridSpacingObservable();
-
-    /**
-     * Clears the canvas by filling the scratch buffer with all white pixels, and then committing this change with
-     * a DST_OUT composite mode.
+     * Clears the canvas by filling the remove-scratch buffer and committing the change.
      */
     void clearCanvas();
 
     /**
-     * Gets the Scratch object associated with this canvas.
+     * Gets the Scratch buffer associated with this canvas. The scratch buffer provides a mechanism for tools to draw
+     * ephemeral changes (like marching ants, text tool caret, etc.) to the canvas without actually modifying the
+     * underlying image.
      *
      * @return The scratch buffer.
      */
     Scratch getScratch();
 
     /**
-     * Gets the image represented by this drawable; not including any ephemeral changes that have been made--but not
-     * committed--to the canvas.
+     * Gets the image that has been painted on this canvas, not including any ephemeral changes that have been made via
+     * the scratch buffer but have not been comitted to the canvas.
      *
      * @return The canvas image.
      */
     BufferedImage getCanvasImage();
 
     /**
-     * Gets the un-scaled dimensions of the canvas (that is, the size of the image which can be painted). This dimension
-     * is unrelated to the size of the Swing component that displays/encapsulates it.
+     * Gets the (un-scaled) dimensions of the canvas (that is, the size of the image which can be painted). This
+     * dimension is unrelated to the size of the Swing component that displays/encapsulates it.
      *
      * @return The un-scaled dimensions of this surface.
      */
     Dimension getCanvasSize();
 
     /**
-     * Specifies the un-scaled size of this painting surface. This determines the size of the image that can be painted,
-     * but is unrelated to the size of Swing component that displays/encapsulates it.
+     * Specifies the (un-scaled) size of this painting surface. This determines the size of the image that can be
+     * painted, but is unrelated to the size of Swing component that displays/encapsulates it.
      *
      * @param surfaceDimensions The dimensions of the painting surface
      */
@@ -144,11 +83,17 @@ public interface PaintCanvas extends Surface, ScaledLayeredImage {
     void setCanvasBackground(Paint paint);
 
     /**
-     * Gets the delegate responsible for the changing the scroll position of the entity (i.e.,
-     * {@link javax.swing.JScrollPane} that holds this canvas as its viewport.
+     * Adds an observer to be notified of scratch buffer commits.
      *
-     * @return The current scroll controller
+     * @param observer The observer to be registered.
      */
-    SurfaceScrollController getSurfaceScrollController();
+    void addCanvasCommitObserver(CanvasCommitObserver observer);
 
+    /**
+     * Removes an existing observer.
+     *
+     * @param observer The observer to be removed.
+     * @return True if the given observer was successfully unregistered; false otherwise.
+     */
+    boolean removeCanvasCommitObserver(CanvasCommitObserver observer);
 }

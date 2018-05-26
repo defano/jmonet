@@ -7,7 +7,7 @@ import java.awt.*;
 /**
  * An object that has an observable scale factor associated with it.
  */
-public interface Scalable {
+public interface ScalableSurface {
 
     /**
      * Sets the scale factor of the canvas. Values greater than 1 result in the canvas image appearing enlarged; values
