@@ -78,7 +78,11 @@ public class TextTool extends PaintTool implements Consumer {
 
             textModelLocation = new Point(imageLocation.x,imageLocation.y - getFontAscent());
             Point textViewLocation = getCanvas().convertModelPointToView(textModelLocation);
-            Rectangle textBounds = new Rectangle(textViewLocation, new Dimension(getCanvas().getBounds().width - textViewLocation.x, getCanvas().getBounds().height - textViewLocation.y));
+            Dimension scaledSize = new Dimension(
+                    (int)(getCanvas().getCanvasSize().width * getCanvas().getScale()) - textViewLocation.x,
+                    (int)(getCanvas().getCanvasSize().height * getCanvas().getScale()) - textViewLocation.y);
+
+            Rectangle textBounds = new Rectangle(textViewLocation, scaledSize);
 
             addTextArea(textBounds);
             getCanvas().repaint();

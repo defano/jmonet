@@ -151,7 +151,8 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
         // User is defining a new selection rectangle
         else {
-            addPointToSelectionFrame(initialPoint, Geometry.constrainToBounds(imageLocation, getCanvas().getBounds()), e.isShiftDown());
+            Rectangle canvasBounds = new Rectangle(new Point(), getCanvas().getCanvasSize());
+            addPointToSelectionFrame(initialPoint, Geometry.constrainToBounds(imageLocation, canvasBounds), e.isShiftDown());
 
             getScratch().clear();
             drawSelectionFrame();

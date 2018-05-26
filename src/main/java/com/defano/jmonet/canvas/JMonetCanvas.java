@@ -230,7 +230,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
 
         // Creating an image by overlaying ChangeSets is expensive; return cached copy when available
         if (cachedCanvasImageHash != getCanvasImageHash()) {
-            cachedCanvasImage = new BufferedImage(getSurfaceDimension().width, getSurfaceDimension().height, BufferedImage.TYPE_INT_ARGB);
+            cachedCanvasImage = new BufferedImage(getCanvasSize().width, getCanvasSize().height, BufferedImage.TYPE_INT_ARGB);
 
             if (permanent != null) {
                 overlayImage(permanent, cachedCanvasImage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));

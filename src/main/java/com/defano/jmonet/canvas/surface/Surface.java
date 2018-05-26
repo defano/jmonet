@@ -7,5 +7,4 @@ import java.awt.*;
 
 public interface Surface extends Scalable, Disposable, SwingSurface, ObservableSurface, ScrollableSurface {
 
-    Point getScrollError();
 }

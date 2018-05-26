@@ -41,8 +41,6 @@ public class DefaultSurfaceScrollController implements SurfaceScrollController {
     public void resetScrollPosition() {
         JScrollPane scrollPane = getScrollPane();
 
-        System.err.println("Resetting: " + scrollPercentX + "," + scrollPercentY);
-
         if (scrollPane != null) {
             double x = scrollPane.getHorizontalScrollBar().getMaximum() * scrollPercentX - scrollPane.getViewport().getWidth() / 2;
             double y = scrollPane.getVerticalScrollBar().getMaximum() * scrollPercentY - scrollPane.getViewport().getHeight() / 2;
@@ -84,7 +82,6 @@ public class DefaultSurfaceScrollController implements SurfaceScrollController {
             return (JScrollPane) surface.getParent().getParent();
         }
 
-        System.err.println("NULL");
         return null;
     }
 }

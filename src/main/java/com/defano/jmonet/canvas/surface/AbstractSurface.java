@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A transparent, un-focusable, Swing component that dispatches canvas interaction events to registered observers.
+ * A transparent, un-focusable, Swing component whose user interaction events can be observed.
  */
 public abstract class AbstractSurface extends JComponent implements Surface, KeyListener, MouseListener,
         MouseMotionListener, KeyEventDispatcher {

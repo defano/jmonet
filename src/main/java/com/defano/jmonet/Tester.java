@@ -23,22 +23,27 @@ public class Tester {
             frame.setVisible(true);
             frame.setSize(size);
 
+            JPanel panel = new JPanel();
+            panel.setBorder(BorderFactory.createEtchedBorder());
+
             // Create a JMonet canvas and add it to the window
             JMonetCanvas myCanvas = new JMonetCanvas(new Dimension(3000, 3000), 1);
 
 
             myCanvas.setCanvasBackground(BackgroundFactory.makeCheckerboard(16));
 
-            myCanvas.setScale(4.0f);
+            myCanvas.setScale(1.0f);
 //            myCanvas.setCanvasBackground(Color.BLUE);
 //            myCanvas.getCanvasBackground();
 
+            panel.add(myCanvas);
+
             JScrollPane scrollPane = new JScrollPane();
-            scrollPane.setViewportView(myCanvas);
+            scrollPane.setViewportView(panel);
 
             frame.getContentPane().add(scrollPane);
 
-            PaintToolBuilder.create(PaintToolType.PAINTBRUSH)
+            PaintToolBuilder.create(PaintToolType.SELECTION)
                     .withStroke(StrokeBuilder.withShape().ofCircle(8).build())
                     .withStrokePaint(Color.RED)
                     .withFillPaint(Color.BLUE)

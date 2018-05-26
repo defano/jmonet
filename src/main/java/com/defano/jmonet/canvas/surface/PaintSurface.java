@@ -41,7 +41,7 @@ public abstract class PaintSurface extends AbstractSurface implements ScaledLaye
      *
      * @return The un-scaled dimensions of this surface.
      */
-    public Dimension getSurfaceDimension() {
+    public Dimension getCanvasSize() {
         return surfaceDimensions;
     }
 

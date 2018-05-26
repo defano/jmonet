@@ -56,7 +56,7 @@ public interface PaintCanvas extends Surface, ScaledLayeredImage {
     boolean removeCanvasCommitObserver(CanvasCommitObserver observer);
 
     /**
-     * Causes the Swing framework to redraw/refresh the canvas by calling {@link Component#repaint()}.
+     * Causes the canvas to be repainted by Swing.
      */
     void repaint();
 
@@ -97,10 +97,9 @@ public interface PaintCanvas extends Surface, ScaledLayeredImage {
     void clearCanvas();
 
     /**
-     * Gets the "scratch" image associated with this drawable. The "scratch" image is a temporary buffer allowing
-     * tools to draw on the canvas in a way that doesn't affect the underlying graphic.
+     * Gets the Scratch object associated with this canvas.
      *
-     * @return The scratch buffer image.
+     * @return The scratch buffer.
      */
     Scratch getScratch();
 
@@ -113,22 +112,20 @@ public interface PaintCanvas extends Surface, ScaledLayeredImage {
     BufferedImage getCanvasImage();
 
     /**
-     * Sets the size of the canvas component (i.e., the size of the paintable image not including any scale). As such,
-     * the size of the canvas will not match necessarily match the size of the image returned by
-     * {@link #getCanvasImage()} when the scale factor is a value other than 1.0.
+     * Gets the un-scaled dimensions of the canvas (that is, the size of the image which can be painted). This dimension
+     * is unrelated to the size of the Swing component that displays/encapsulates it.
      *
-     * @param width The desired width of the paintable image
-     * @param height The desired height of the paintable image
+     * @return The un-scaled dimensions of this surface.
      */
-    void setSize(int width, int height);
+    Dimension getCanvasSize();
 
     /**
-     * Gets the bounds of the Swing component. This value is not necessarily equal to the size of the image being
-     * painted; see {@link #getSurfaceDimension()}.
+     * Specifies the un-scaled size of this painting surface. This determines the size of the image that can be painted,
+     * but is unrelated to the size of Swing component that displays/encapsulates it.
      *
-     * @return The bounds of the canvas component.
+     * @param surfaceDimensions The dimensions of the painting surface
      */
-    Rectangle getBounds();
+    void setCanvasSize(Dimension surfaceDimensions);
 
     /**
      * Gets the background color of the canvas, that is, the {@link Paint} which is displayed behind transparent pixels
@@ -154,18 +151,4 @@ public interface PaintCanvas extends Surface, ScaledLayeredImage {
      */
     SurfaceScrollController getSurfaceScrollController();
 
-    /**
-     * Gets the un-scaled dimensions of the surface (that is, the size of the image which can be painted on it).
-     *
-     * @return The un-scaled dimensions of this surface.
-     */
-    Dimension getSurfaceDimension();
-
-    /**
-     * Specifies the un-scaled size of this painting surface. This determines the size of the image (document) that will
-     * be painted by a user.
-     *
-     * @param surfaceDimensions The dimensions of the painting surface
-     */
-    void setSurfaceDimension(Dimension surfaceDimensions);
 }
