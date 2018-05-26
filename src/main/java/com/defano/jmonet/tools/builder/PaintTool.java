@@ -105,8 +105,8 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         }
 
         Scratch scratch = getCanvas().getScratch();
-        applyRenderingHints(scratch.getAddScratchGraphics(null));
-        applyRenderingHints(scratch.getRemoveScratchGraphics(null));
+        applyRenderingHints(scratch.getAddScratchGraphics(this, null));
+        applyRenderingHints(scratch.getRemoveScratchGraphics(this, null));
 
         return scratch;
     }

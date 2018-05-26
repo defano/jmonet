@@ -39,7 +39,7 @@ public abstract class AbstractPaintCanvas extends PaintSurface implements PaintC
         super.setSurfaceDimension(dimension);
 
         if (scratch != null) {
-            scratch.resize(dimension.width, dimension.height);
+            scratch.setSize(dimension.width, dimension.height);
         }
 
         this.repaint();
@@ -74,7 +74,7 @@ public abstract class AbstractPaintCanvas extends PaintSurface implements PaintC
     @Override
     public void clearCanvas() {
         Rectangle clear = new Rectangle(new Point(), getCanvasSize());
-        Graphics2D g2 = scratch.getRemoveScratchGraphics(clear);
+        Graphics2D g2 = scratch.getRemoveScratchGraphics(null, clear);
         g2.setColor(Color.WHITE);
         g2.fill(clear);
 

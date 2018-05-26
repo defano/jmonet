@@ -143,7 +143,7 @@ public class TextTool extends PaintTool implements Consumer {
         if (textArea.getText().trim().length() > 0) {
             BufferedImage text = rasterizeText();
 
-            Graphics g = getScratch().getAddScratchGraphics(new Rectangle(textModelLocation.x, textModelLocation.y, textArea.getWidth(), textArea.getHeight()));
+            Graphics g = getScratch().getAddScratchGraphics(this, new Rectangle(textModelLocation.x, textModelLocation.y, textArea.getWidth(), textArea.getHeight()));
             g.drawImage(text, textModelLocation.x, textModelLocation.y, null);
             getCanvas().commit();
         }
@@ -154,7 +154,7 @@ public class TextTool extends PaintTool implements Consumer {
     }
 
     private int getFontAscent() {
-        Graphics g = getScratch().getAddScratchGraphics(null);
+        Graphics g = getScratch().getAddScratchGraphics(this, null);
         FontMetrics metrics = g.getFontMetrics(getFont());
 
         return metrics.getAscent();

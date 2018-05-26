@@ -21,7 +21,7 @@ public class LineTool extends AbstractLineTool {
     protected void drawLine(Scratch scratch, Stroke stroke, Paint paint, int x1, int y1, int x2, int y2) {
         Line2D line = new Line2D.Float(x1, y1, x2, y2);
 
-        Graphics2D g = scratch.getAddScratchGraphics(stroke, line);
+        Graphics2D g = scratch.getAddScratchGraphics(this, stroke, line);
         g.setPaint(paint);
         g.setStroke(stroke);
         g.draw(line);

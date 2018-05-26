@@ -22,7 +22,7 @@ public class RoundRectangleTool extends AbstractBoundsTool {
         int cornerRadius = getCornerRadiusObservable().blockingFirst();
         RoundRectangle2D roundRect = new RoundRectangle2D.Double(bounds.x, bounds.y, bounds.width, bounds.height, cornerRadius, cornerRadius);
 
-        Graphics2D g = scratch.getAddScratchGraphics(stroke, roundRect);
+        Graphics2D g = scratch.getAddScratchGraphics(this, stroke, roundRect);
         g.setPaint(paint);
         g.setStroke(stroke);
         g.draw(roundRect);
@@ -31,7 +31,7 @@ public class RoundRectangleTool extends AbstractBoundsTool {
     /** {@inheritDoc} */
     @Override
     protected void fillBounds(Scratch scratch, Paint fill, Rectangle bounds, boolean isShiftDown) {
-        Graphics2D g = scratch.getAddScratchGraphics(null);
+        Graphics2D g = scratch.getAddScratchGraphics(this, null);
         int cornerRadius = getCornerRadiusObservable().blockingFirst();
 
         g.setPaint(fill);
