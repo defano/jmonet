@@ -4,16 +4,14 @@ import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.layer.ScaledLayeredImage;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.surface.*;
-import io.reactivex.Observable;
-import io.reactivex.subjects.BehaviorSubject;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * A canvas that can be painted upon by the paint tools.
+ * A canvas that can be drawn upon by the paint tools.
  */
-public interface PaintCanvas extends Surface, ScaledLayeredImage {
+public interface PaintCanvas extends PaintSurface, ScaledLayeredImage {
 
     /**
      * Commits the contents of the scratch buffer to the canvas, using the {@link AlphaComposite#SRC_OVER} composite

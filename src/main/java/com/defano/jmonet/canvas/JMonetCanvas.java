@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * A paint canvas with a built-in undo and redo buffer. Extends the capabilities inherent in {@link AbstractPaintCanvas}.
+ * A paint canvas with a built-in undo and redo buffer.
  */
 public class JMonetCanvas extends AbstractPaintCanvas {
 

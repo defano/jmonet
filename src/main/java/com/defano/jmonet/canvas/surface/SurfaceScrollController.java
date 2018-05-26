@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * An object that can be scrolled within a {@link javax.swing.JScrollPane}.
+ * An surface that can be scrolled within a {@link javax.swing.JScrollPane}.
  *
  * This interface allows tools to advise scroll position changes to the {@link javax.swing.JScrollPane} (or other
  * container) holding the Canvas. This enables tools like the {@link com.defano.jmonet.tools.MagnifierTool} to change

@@ -3,7 +3,7 @@ package com.defano.jmonet.canvas.surface;
 import java.awt.*;
 
 /**
- * A surface that Swing components can be added and removed.
+ * A surface to which Swing components can be added and removed.
  */
 public interface SwingSurface {
     /**

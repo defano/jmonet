@@ -3,6 +3,9 @@ package com.defano.jmonet.canvas.surface;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
+/**
+ * A surface that supports a snap-to-grid property.
+ */
 public interface GridSurface {
 
     /**

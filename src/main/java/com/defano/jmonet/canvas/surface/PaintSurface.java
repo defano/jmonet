@@ -1,191 +1,48 @@
 package com.defano.jmonet.canvas.surface;
 
-import com.defano.jmonet.canvas.layer.ScaledLayeredImage;
-import io.reactivex.Observable;
-import io.reactivex.subjects.BehaviorSubject;
+import com.defano.jmonet.canvas.Disposable;
+import com.defano.jmonet.canvas.observable.ObservableSurface;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 /**
- * A surface that paints a layered image.
+ * A component that can be painted and that provides methods for drawing at scale, snap-to-grid behavior, scrolling,
+ * observables, and embedding Swing components.
  */
-public abstract class PaintSurface extends AbstractSurface implements ScaledLayeredImage {
-
-    private final static Color CLEAR_COLOR = new Color(0, 0, 0, 0);
-    private final BehaviorSubject<Double> scaleSubject = BehaviorSubject.createDefault(1.0);
-    private Dimension surfaceDimensions = new Dimension();
-
-    private double scanlineThreadhold = 6.0;
-    private Color scanlineColor = Color.WHITE;
-    private AlphaComposite scanlineComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER);
-
-    public abstract Paint getCanvasBackground();
+public interface PaintSurface extends ScanlineSurface, GridSurface, SwingSurface, ObservableSurface, ScrollableSurface,
+        Disposable {
 
     /**
-     * Creates a paint surface with the specified dimensions. Note that this dimension refers to the size of the
-     * "paintable" space, which is not the same as the size of the Swing component (the surface dimension may be larger,
-     * smaller, or the same size as this Swing component).
+     * Causes the surface to be repainted by Swing.
+     */
+    void repaint();
+
+    /**
+     * Determines if the canvas is visible.
      *
-     * @param surfaceDimensions The size of the paintable surface.
+     * @return True if visible; false otherwise.
      */
-    public PaintSurface(Dimension surfaceDimensions) {
-        super();
-
-        setOpaque(false);
-        setSurfaceDimension(surfaceDimensions);
-    }
+    boolean isVisible();
 
     /**
-     * Gets the un-scaled dimensions of the surface (that is, the size of the image which can be painted on it).
+     * Sets whether the canvas is visible. When invisible, the component hierarchy will be drawn as though this
+     * component does not exist.
      *
-     * @return The un-scaled dimensions of this surface.
+     * @param visible True to make this canvas invisible; false for visible.
      */
-    public Dimension getCanvasSize() {
-        return surfaceDimensions;
-    }
+    void setVisible(boolean visible);
 
     /**
-     * Specifies the un-scaled size of this painting surface. This determines the size of the image (document) that will
-     * be painted by a user.
+     * Gets the mouse cursor that is displayed when the mouse is within the bounds of this component.
      *
-     * @param surfaceDimensions The dimensions of the painting surface
+     * @return The active cursor
      */
-    public void setSurfaceDimension(Dimension surfaceDimensions) {
-        this.surfaceDimensions = new Dimension(surfaceDimensions.width, surfaceDimensions.height);
-        Dimension scaledDimension = getScaledDimension(surfaceDimensions);
-
-        setMaximumSize(scaledDimension);
-        setPreferredSize(scaledDimension);
-        setSize(scaledDimension);
-        invalidate();
-    }
+    Cursor getCursor();
 
     /**
-     * Gets the dimensions of the surface multiplied by the surface's scale factor.
+     * Sets the mouse cursor that is displayed when the mouse is within the bounds of this component.
      *
-     * @return The scaled surface dimensions.
+     * @param cursor The active cursor to display
      */
-    public Dimension getScaledSurfaceDimension() {
-        return getScaledDimension(surfaceDimensions);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public double getScale() {
-        return scaleSubject.getValue();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setScale(double scale) {
-        scaleSubject.onNext(scale);
-
-        Dimension scaledDimension = getScaledDimension(surfaceDimensions);
-
-        getSurfaceScrollController().resetScrollPosition();
-        setPreferredSize(scaledDimension);
-        setMaximumSize(scaledDimension);
-        invalidate();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Observable<Double> getScaleObservable() {
-        return scaleSubject;
-    }
-
-    public double getScanlineThreadhold() {
-        return scanlineThreadhold;
-    }
-
-    public void setScanlineThreadhold(double scanlineThreadhold) {
-        this.scanlineThreadhold = scanlineThreadhold;
-    }
-
-    public Color getScanlineColor() {
-        return scanlineColor;
-    }
-
-    public void setScanlineColor(Color scanlineColor) {
-        this.scanlineColor = scanlineColor;
-    }
-
-    public AlphaComposite getScanlineComposite() {
-        return scanlineComposite;
-    }
-
-    public void setScanlineComposite(AlphaComposite scanlineComposite) {
-        this.scanlineComposite = scanlineComposite;
-    }
-
-    /**
-     * Unregisters listeners and removes all child components making this surface available for garbage collection.
-     */
-    public void dispose() {
-        super.dispose();
-
-        scaleSubject.onComplete();
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(this);
-        removeAll();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Rectangle clip = g.getClipBounds();
-
-        if (clip != null && !clip.isEmpty() && isVisible()) {
-
-            // Draw visible portion of this surface's image into a buffer
-            BufferedImage buffer = new BufferedImage(clip.width, clip.height, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2d = buffer.createGraphics();
-            g2d.setBackground(CLEAR_COLOR);
-            g2d.clearRect(clip.x, clip.y, clip.width, clip.height);
-            paint(g2d, getScale(), clip);
-            paintScanlines(g2d, clip.getSize());
-            g2d.dispose();
-
-            // Draw the surface background
-            if (getCanvasBackground() != null) {
-                ((Graphics2D) g).setPaint(getCanvasBackground());
-                g.fillRect(clip.x, clip.y, clip.width, clip.height);
-            }
-
-            // Draw the paint image
-            g.drawImage(buffer, clip.x, clip.y, null);
-
-            buffer.flush();
-        }
-
-        // DO NOT dispose the graphics context in this method.
-    }
-
-    private void paintScanlines(Graphics2D g, Dimension size) {
-        double scale = getScale();
-
-        if (scale > scanlineThreadhold) {
-            g.setPaint(scanlineColor);
-            g.setComposite(scanlineComposite);
-            g.setStroke(new BasicStroke(1));
-
-            for (int scanLine = 0; scanLine < size.height; scanLine += scale) {
-                g.fillRect(0, scanLine, size.width, 1);
-            }
-
-            for (int scanLine = 0; scanLine < size.width; scanLine += scale) {
-                g.fillRect(scanLine, 0, 1, size.height);
-            }
-        }
-    }
-
+    void setCursor(Cursor cursor);
 }
