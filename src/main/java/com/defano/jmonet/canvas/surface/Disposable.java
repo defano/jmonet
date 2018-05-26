@@ -1,4 +1,4 @@
-package com.defano.jmonet.canvas;
+package com.defano.jmonet.canvas.surface;
 
 /**
  * An object that holds resources/memory that cannot be automatically garbage collected by the VM.

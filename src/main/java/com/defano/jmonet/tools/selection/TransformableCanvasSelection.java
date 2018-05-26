@@ -28,10 +28,16 @@ public interface TransformableCanvasSelection extends MutableSelection {
     default void pickupSelection() {
 
         if (hasSelection()) {
-            Shape selectionBounds = getSelectionFrame();
+            setDirty();
+
+            // Draw current selection without marching ants
             redrawSelection(false);
+
+            // Grab pixels from scratch and canvas that are bounded by the selection
             BufferedImage maskedSelection = crop(getCanvas().render());
 
+            // Resize to smallest bounds for performance
+            Shape selectionBounds = getSelectionFrame();
             BufferedImage trimmedSelection = maskedSelection.getSubimage(
                     Math.max(0, selectionBounds.getBounds().x),
                     Math.max(0, selectionBounds.getBounds().y),
@@ -39,18 +45,11 @@ public interface TransformableCanvasSelection extends MutableSelection {
                     Math.min(selectionBounds.getBounds().height, maskedSelection.getHeight() - selectionBounds.getBounds().y)
             );
 
-            BufferedImage currentSelection = getSelectedImage();
-            BufferedImage newSelection = new BufferedImage(currentSelection.getWidth(), currentSelection.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
-            Graphics2D g2d = (Graphics2D) newSelection.getGraphics();
-            g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
-            g2d.drawImage(trimmedSelection, 0, 0, null);
-            g2d.drawImage(getSelectedImage(), 0, 0, null);
-            g2d.dispose();
-
-            setSelectedImage(newSelection);
-
+            // Update the current selection
+            setSelectedImage(trimmedSelection);
             eraseSelectedPixelsFromCanvas();
+
+            // And redraw once more, this time with ants
             redrawSelection(true);
         }
     }

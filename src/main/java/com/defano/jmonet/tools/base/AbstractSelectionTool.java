@@ -364,7 +364,8 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     public void redrawSelection(boolean includeFrame) {
         getScratch().clearAdd();
 
-        if (hasSelection()) {
+        // Don't draw the selected image when clean, doing so double-paints the selection and adjusts translucency
+        if (hasSelection() && isDirty()) {
             Graphics2D g = getCanvas().getScratch().getAddScratchGraphics(this, getSelectionFrame());
             g.drawImage(selectedImage.getValue().get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
         }
