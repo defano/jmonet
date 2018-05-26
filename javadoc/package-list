@@ -8,6 +8,7 @@ com.defano.jmonet.algo.transform.pixel
 com.defano.jmonet.canvas
 com.defano.jmonet.canvas.layer
 com.defano.jmonet.canvas.observable
+com.defano.jmonet.canvas.paint
 com.defano.jmonet.canvas.surface
 com.defano.jmonet.clipboard
 com.defano.jmonet.model
