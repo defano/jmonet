@@ -62,7 +62,7 @@ public abstract class AbstractPathTool extends PaintTool {
 
         startPath(getScratch(), getStroke(), getStrokePaint(), imageLocation);
         lastPoint = imageLocation;
-        getCanvas().invalidateCanvas();
+        getCanvas().repaint();
     }
 
     /** {@inheritDoc} */
@@ -71,7 +71,7 @@ public abstract class AbstractPathTool extends PaintTool {
         addPoint(getScratch(), getStroke(), getStrokePaint(), lastPoint, imageLocation);
 
         lastPoint = imageLocation;
-        getCanvas().invalidateCanvas();
+        getCanvas().repaint();
     }
 
     /** {@inheritDoc} */

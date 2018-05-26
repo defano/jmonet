@@ -7,7 +7,7 @@ import java.awt.*;
 import static javax.swing.ScrollPaneConstants.*;
 
 /**
- * Provides basic scroll behavior when a {@link Surface} is the viewport of a {@link JScrollPane}.
+ * Provides basic scroll behavior when a {@link AbstractSurface} is the viewport of a {@link JScrollPane}.
  *
  * This default implementation is sufficient for cases when the surface is added to a {@link JScrollPane} as the view
  * port. If the surface (canvas) is embedded is some container with additional components or decorations a custom
@@ -16,10 +16,10 @@ import static javax.swing.ScrollPaneConstants.*;
  */
 public class DefaultSurfaceScrollController implements SurfaceScrollController {
 
-    private final Surface surface;
+    private final AbstractSurface surface;
     private double scrollPercentX, scrollPercentY;
 
-    public DefaultSurfaceScrollController(Surface surface) {
+    public DefaultSurfaceScrollController(AbstractSurface surface) {
         this.surface = surface;
     }
 
@@ -40,6 +40,8 @@ public class DefaultSurfaceScrollController implements SurfaceScrollController {
     @Override
     public void resetScrollPosition() {
         JScrollPane scrollPane = getScrollPane();
+
+        System.err.println("Resetting: " + scrollPercentX + "," + scrollPercentY);
 
         if (scrollPane != null) {
             double x = scrollPane.getHorizontalScrollBar().getMaximum() * scrollPercentX - scrollPane.getViewport().getWidth() / 2;
@@ -82,6 +84,7 @@ public class DefaultSurfaceScrollController implements SurfaceScrollController {
             return (JScrollPane) surface.getParent().getParent();
         }
 
+        System.err.println("NULL");
         return null;
     }
 }

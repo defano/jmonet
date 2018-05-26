@@ -31,6 +31,9 @@ public abstract class AbstractPaintCanvas extends PaintSurface implements PaintC
         scratch = new Scratch(dimension.width, dimension.height);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setSurfaceDimension(Dimension dimension) {
         super.setSurfaceDimension(dimension);
@@ -39,7 +42,7 @@ public abstract class AbstractPaintCanvas extends PaintSurface implements PaintC
             scratch.resize(dimension.width, dimension.height);
         }
 
-        invalidateCanvas();
+        this.repaint();
     }
 
     /**
@@ -78,11 +81,17 @@ public abstract class AbstractPaintCanvas extends PaintSurface implements PaintC
         commit(scratch.getLayerSet());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Paint getCanvasBackground() {
         return canvasBackground;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setCanvasBackground(Paint paint) {
         this.canvasBackground = paint;
@@ -94,7 +103,32 @@ public abstract class AbstractPaintCanvas extends PaintSurface implements PaintC
     @Override
     public Point convertViewPointToModel(Point p) {
         Point error = getScrollError();
-        return new Point(translateX(p.x - error.x), translateY(p.y - error.y));
+        int gridSpacing = getGridSpacingObservable().blockingFirst();
+        double scale = getScaleObservable().blockingFirst();
+
+        int x = p.x - error.x;
+        x = Geometry.round(x, (int) (gridSpacing * scale));
+        x = (int) (x / scale);
+
+        int y = p.y - error.y;
+        y = Geometry.round(y, (int) (gridSpacing * scale));
+        y = (int) (y / scale);
+
+        return new Point(x, y);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Point convertModelPointToView(Point p) {
+        Point error = getScrollError();
+        double scale = getScaleObservable().blockingFirst();
+
+        int x = (int) (p.x * scale) + error.x;
+        int y = (int) (p.y * scale) + error.y;
+
+        return new Point(x, y);
     }
 
     /**
@@ -111,7 +145,7 @@ public abstract class AbstractPaintCanvas extends PaintSurface implements PaintC
     @Override
     public void commit() {
         commit(scratch.getLayerSet());
-        invalidateCanvas();
+        this.repaint();
     }
 
     /**
@@ -136,7 +170,7 @@ public abstract class AbstractPaintCanvas extends PaintSurface implements PaintC
     @Override
     public void setScale(double scale) {
         super.setScale(scale);
-        invalidateCanvas();
+        this.repaint();
     }
 
     /**
@@ -153,20 +187,6 @@ public abstract class AbstractPaintCanvas extends PaintSurface implements PaintC
     @Override
     public boolean removeCanvasCommitObserver(CanvasCommitObserver observer) {
         return observers.remove(observer);
-    }
-
-    protected void fireCanvasCommitObservers(PaintCanvas canvas, ImageLayerSet imageLayerSet, BufferedImage canvasImage) {
-        for (CanvasCommitObserver thisObserver : observers) {
-            thisObserver.onCommit(canvas, imageLayerSet, canvasImage);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void invalidateCanvas() {
-        repaint();
     }
 
     /**
@@ -201,26 +221,21 @@ public abstract class AbstractPaintCanvas extends PaintSurface implements PaintC
         // Nothing to do
     }
 
-    private Point getScrollError() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Point getScrollError() {
         Rectangle viewRect = getSurfaceScrollController().getViewRect();
         double scale = getScale();
 
         return new Point((int) (viewRect.x % scale), (int) (viewRect.y % scale));
     }
 
-    private int translateX(int x) {
-        int gridSpacing = getGridSpacingObservable().blockingFirst();
-        double scale = getScaleObservable().blockingFirst();
-
-        x = Geometry.round(x, (int) (gridSpacing * scale));
-        return (int) (x / scale);
+    protected void fireCanvasCommitObservers(PaintCanvas canvas, ImageLayerSet imageLayerSet, BufferedImage canvasImage) {
+        for (CanvasCommitObserver thisObserver : observers) {
+            thisObserver.onCommit(canvas, imageLayerSet, canvasImage);
+        }
     }
 
-    private int translateY(int y) {
-        int gridSpacing = getGridSpacingObservable().blockingFirst();
-        double scale = getScaleObservable().blockingFirst();
-
-        y = Geometry.round(y, (int) (gridSpacing * scale));
-        return (int) (y / scale);
-    }
 }

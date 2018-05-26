@@ -87,7 +87,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
 
             undoBufferPointer.onNext(undoBufferPointer.blockingFirst() - 1);
             fireCanvasCommitObservers(this, null, getCanvasImage());
-            invalidateCanvas();
+            this.repaint();
 
             return undid;
         }
@@ -105,7 +105,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
         if (hasRedoableChanges()) {
             undoBufferPointer.onNext(undoBufferPointer.blockingFirst() + 1);
             fireCanvasCommitObservers(this, null, getCanvasImage());
-            invalidateCanvas();
+            this.repaint();
 
             return true;
         }
@@ -219,7 +219,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
         fireCanvasCommitObservers(this, imageLayerSet, getCanvasImage());
 
         getScratch().clear();
-        invalidateCanvas();
+        this.repaint();
     }
 
     /**

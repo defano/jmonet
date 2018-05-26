@@ -3,7 +3,6 @@ package com.defano.jmonet.canvas;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.layer.ScaledLayeredImage;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
-import com.defano.jmonet.canvas.observable.ObservableSurface;
 import com.defano.jmonet.canvas.surface.*;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -14,7 +13,7 @@ import java.awt.image.BufferedImage;
 /**
  * A canvas that can be painted upon by the paint tools.
  */
-public interface PaintCanvas extends Scalable, ScaledLayeredImage, ObservableSurface, SwingSurface {
+public interface PaintCanvas extends Surface, ScaledLayeredImage {
 
     /**
      * Sets whether the canvas is visible. When invisible, the component hierarchy will be drawn as though this
@@ -59,7 +58,7 @@ public interface PaintCanvas extends Scalable, ScaledLayeredImage, ObservableSur
     /**
      * Causes the Swing framework to redraw/refresh the canvas by calling {@link Component#repaint()}.
      */
-    void invalidateCanvas();
+    void repaint();
 
     /**
      * Commits the contents of the scratch buffer to the canvas, using the {@link AlphaComposite#SRC_OVER} composite
@@ -124,8 +123,9 @@ public interface PaintCanvas extends Scalable, ScaledLayeredImage, ObservableSur
     void setSize(int width, int height);
 
     /**
-     * Gets the bounds of the canvas component. This value will not necessarily match the size of the paintable image
-     * when a scale factor other than 1.0 has been applied.
+     * Gets the bounds of the Swing component. This value is not necessarily equal to the size of the image being
+     * painted; see {@link #getSurfaceDimension()}.
+     *
      * @return The bounds of the canvas component.
      */
     Rectangle getBounds();
@@ -153,4 +153,19 @@ public interface PaintCanvas extends Scalable, ScaledLayeredImage, ObservableSur
      * @return The current scroll controller
      */
     SurfaceScrollController getSurfaceScrollController();
+
+    /**
+     * Gets the un-scaled dimensions of the surface (that is, the size of the image which can be painted on it).
+     *
+     * @return The un-scaled dimensions of this surface.
+     */
+    Dimension getSurfaceDimension();
+
+    /**
+     * Specifies the un-scaled size of this painting surface. This determines the size of the image (document) that will
+     * be painted by a user.
+     *
+     * @param surfaceDimensions The dimensions of the painting surface
+     */
+    void setSurfaceDimension(Dimension surfaceDimensions);
 }

@@ -58,7 +58,7 @@ public abstract class AbstractLineTool extends PaintTool {
         }
 
         drawLine(getScratch(), getStroke(), getStrokePaint(), initialPoint.x, initialPoint.y, currentLoc.x, currentLoc.y);
-        getCanvas().invalidateCanvas();
+        getCanvas().repaint();
     }
 
     /** {@inheritDoc} */

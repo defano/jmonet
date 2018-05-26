@@ -51,4 +51,6 @@ public interface Scalable {
      */
     Point convertViewPointToModel(Point p);
 
+    Point convertModelPointToView(Point p);
+
 }

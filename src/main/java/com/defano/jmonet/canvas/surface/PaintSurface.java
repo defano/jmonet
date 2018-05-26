@@ -10,7 +10,7 @@ import java.awt.image.BufferedImage;
 /**
  * A surface that paints a layered image.
  */
-public abstract class PaintSurface extends Surface implements ScaledLayeredImage {
+public abstract class PaintSurface extends AbstractSurface implements ScaledLayeredImage {
 
     private final static Color CLEAR_COLOR = new Color(0, 0, 0, 0);
     private final BehaviorSubject<Double> scaleSubject = BehaviorSubject.createDefault(1.0);

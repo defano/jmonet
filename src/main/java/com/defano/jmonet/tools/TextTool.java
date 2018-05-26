@@ -21,7 +21,7 @@ import java.awt.image.BufferedImage;
 public class TextTool extends PaintTool implements Consumer {
 
     private JTextArea textArea;
-    private Point textLocation;
+    private Point textModelLocation;
     private Disposable fontSubscription;
     private Disposable fontColorSubscription;
 
@@ -54,6 +54,12 @@ public class TextTool extends PaintTool implements Consumer {
         textArea.setOpaque(false);
         textArea.setBackground(new Color(0, 0, 0, 0));
         textArea.setForeground(getFontColor());
+        textArea.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                SwingUtilities.invokeLater(TextTool.this::completeEditing);
+            }
+        });
 
         fontSubscription = getFontObservable()
                 .subscribeOn(Schedulers.computation())
@@ -69,12 +75,16 @@ public class TextTool extends PaintTool implements Consumer {
     public void mousePressed(MouseEvent e, Point imageLocation) {
         if (!isEditing()) {
             getScratch().clear();
-            textLocation = new Point((int)(imageLocation.x * getCanvas().getScale()), (int)((imageLocation.y - getFontAscent()) * getCanvas().getScale()));
-            addTextArea(textLocation.x, textLocation.y);
-            getCanvas().invalidateCanvas();
+
+            textModelLocation = new Point(imageLocation.x,imageLocation.y - getFontAscent());
+            Point textViewLocation = getCanvas().convertModelPointToView(textModelLocation);
+            Rectangle textBounds = new Rectangle(textViewLocation, new Dimension(getCanvas().getBounds().width - textViewLocation.x, getCanvas().getBounds().height - textViewLocation.y));
+
+            addTextArea(textBounds);
+            getCanvas().repaint();
+
         } else {
-            commitTextImage();
-            removeTextArea();
+            completeEditing();
         }
     }
 
@@ -92,21 +102,12 @@ public class TextTool extends PaintTool implements Consumer {
         getCanvas().removeComponent(textArea);
     }
 
-    private void addTextArea(int x, int y) {
-        int left = getCanvas().getBounds().x + x;
-        int top = getCanvas().getBounds().y + y;
-
+    private void addTextArea(Rectangle bounds) {
         textArea.setVisible(true);
         textArea.setBorder(new EmptyBorder(0, 0, 0, 0));
         textArea.setText("");
-        textArea.setBounds(left, top, (int)(getCanvas().getBounds().getWidth() * getCanvas().getScale()) - left, (int)(getCanvas().getBounds().getHeight() * getCanvas().getScale()) - top);
+        textArea.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
         textArea.setFont(getScaledFont());
-        textArea.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                TextTool.this.mousePressed(e, new Point(0, 0));
-            }
-        });
 
         getCanvas().addComponent(textArea);
         textArea.requestFocus();
@@ -124,7 +125,6 @@ public class TextTool extends PaintTool implements Consumer {
         BufferedImage image = new BufferedImage(textArea.getWidth(), textArea.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) image.getGraphics();
         applyRenderingHints(g);
-
         textArea.printAll(g);
         g.dispose();
 
@@ -139,8 +139,8 @@ public class TextTool extends PaintTool implements Consumer {
         if (textArea.getText().trim().length() > 0) {
             BufferedImage text = rasterizeText();
 
-            Graphics g = getScratch().getAddScratchGraphics(new Rectangle(textLocation.x, textLocation.y, textArea.getWidth(), textArea.getHeight()));
-            g.drawImage(text, (int)(textLocation.x / getCanvas().getScale()), (int)(textLocation.y / getCanvas().getScale()), null);
+            Graphics g = getScratch().getAddScratchGraphics(new Rectangle(textModelLocation.x, textModelLocation.y, textArea.getWidth(), textArea.getHeight()));
+            g.drawImage(text, textModelLocation.x, textModelLocation.y, null);
             getCanvas().commit();
         }
     }
@@ -154,6 +154,11 @@ public class TextTool extends PaintTool implements Consumer {
         FontMetrics metrics = g.getFontMetrics(getFont());
 
         return metrics.getAscent();
+    }
+
+    private void completeEditing() {
+        commitTextImage();
+        removeTextArea();
     }
 
     @Override

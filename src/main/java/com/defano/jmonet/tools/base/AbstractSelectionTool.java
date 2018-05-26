@@ -155,7 +155,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
 
             getScratch().clear();
             drawSelectionFrame();
-            getCanvas().invalidateCanvas();
+            getCanvas().repaint();
         }
     }
 
@@ -268,7 +268,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         resetSelection();
 
         getScratch().clearAdd();
-        getCanvas().invalidateCanvas();
+        getCanvas().repaint();
     }
 
     /**
@@ -372,7 +372,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
             drawSelectionFrame();
         }
 
-        getCanvas().invalidateCanvas();
+        getCanvas().repaint();
     }
 
     /**
