@@ -6,10 +6,12 @@ import com.defano.jmonet.algo.transform.ImageTransform;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Stack;
 
 /**
  * Performs a "flood fill" (sometimes called "seed fill" or "spill paint") of the image with a provided paint or
- * texture.
+ * texture. Terrible performance on very large fill surfaces.
  *
  * Given an origin point in the image, this algorithm iteratively paints every adjacent pixel with the given color or
  * texture until it reaches a boundary pixel.
@@ -42,41 +44,36 @@ public class FloodFillTransform implements ImageTransform {
     @Override
     public BufferedImage apply(BufferedImage source) {
 
+        ArrayList<Point> fillPixels = new ArrayList<>();
+
         Rectangle bounds = new Rectangle(0, 0, source.getWidth(), source.getHeight());
         BufferedImage transformed = new BufferedImage(source.getWidth(), source.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
-        int depth = 0;
-        final int[] fillPixelsX = new int[source.getWidth() * source.getHeight()];
-        final int[] fillPixelsY = new int[source.getHeight() * source.getHeight()];
-
         // Start by filling origin pixel (i.e., clicked pixel)
-        fillPixelsX[depth] = origin.x;
-        fillPixelsY[depth++] = origin.y;
+        fillPixels.add(origin);
 
-        while (depth != 0) {
-            int thisPixelX = fillPixelsX[--depth];
-            int thisPixelY = fillPixelsY[depth];
+        while (!fillPixels.isEmpty()) {
+
+            Point popped = fillPixels.remove(fillPixels.size() - 1);
+            int thisPixelX = popped.x;
+            int thisPixelY = popped.y;
 
             fill.fill(transformed, thisPixelX, thisPixelY, fillPaint);
 
             if (bounds.contains(thisPixelX + 1, thisPixelY) && boundary.shouldFillPixel(source, transformed, thisPixelX + 1, thisPixelY)) {
-                fillPixelsX[depth] = thisPixelX + 1;
-                fillPixelsY[depth++] = thisPixelY;
+                fillPixels.add(new Point(thisPixelX + 1, thisPixelY));
             }
 
             if (bounds.contains(thisPixelX - 1, thisPixelY) && boundary.shouldFillPixel(source, transformed, thisPixelX - 1, thisPixelY)) {
-                fillPixelsX[depth] = thisPixelX - 1;
-                fillPixelsY[depth++] = thisPixelY;
+                fillPixels.add(new Point(thisPixelX - 1, thisPixelY));
             }
 
             if (bounds.contains(thisPixelX, thisPixelY + 1) && boundary.shouldFillPixel(source, transformed, thisPixelX, thisPixelY + 1)) {
-                fillPixelsX[depth] = thisPixelX;
-                fillPixelsY[depth++] = thisPixelY + 1;
+                fillPixels.add(new Point(thisPixelX, thisPixelY + 1));
             }
 
             if (bounds.contains(thisPixelX, thisPixelY - 1) && boundary.shouldFillPixel(source, transformed, thisPixelX, thisPixelY - 1)) {
-                fillPixelsX[depth] = thisPixelX;
-                fillPixelsY[depth++] = thisPixelY - 1;
+                fillPixels.add(new Point(thisPixelX, thisPixelY - 1));
             }
         }
 
