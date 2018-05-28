@@ -19,7 +19,7 @@ public class MagnifierTool extends PaintTool {
     private Cursor zoomInCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
     private Cursor zoomOutCursor = new Cursor(Cursor.DEFAULT_CURSOR);
     private double magnificationStep = 2;
-    private boolean recenter = false;
+    private boolean recenter = true;
 
     public MagnifierTool() {
         super(PaintToolType.MAGNIFIER);
