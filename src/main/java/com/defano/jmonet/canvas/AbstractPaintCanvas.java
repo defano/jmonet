@@ -9,8 +9,6 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
 import java.awt.*;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -18,7 +16,7 @@ import java.util.ArrayList;
  * A scrollable, Swing component that can be painted upon using the paint tools in {@link com.defano.jmonet.tools}. See
  * {@link JMonetCanvas} for a canvas with an undo/redo buffer.
  */
-public abstract class AbstractPaintCanvas extends AbstractPaintSurface implements PaintCanvas, ComponentListener {
+public abstract class AbstractPaintCanvas extends AbstractPaintSurface implements PaintCanvas {
 
     private final ArrayList<CanvasCommitObserver> observers = new ArrayList<>();
     private final BehaviorSubject<Integer> gridSpacingSubject = BehaviorSubject.createDefault(1);
@@ -27,7 +25,6 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
 
     public AbstractPaintCanvas(Dimension dimension) {
         super(dimension);
-        addComponentListener(this);
         scratch = new Scratch(dimension.width, dimension.height);
     }
 
@@ -42,7 +39,7 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
             scratch.setSize(dimension.width, dimension.height);
         }
 
-        this.repaint();
+        repaint();
     }
 
     /**
@@ -50,7 +47,6 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
      */
     public void dispose() {
         super.dispose();
-        super.removeComponentListener(this);
 
         gridSpacingSubject.onComplete();
         observers.clear();
@@ -145,7 +141,7 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
     @Override
     public void commit() {
         commit(scratch.getLayerSet());
-        this.repaint();
+        repaint();
     }
 
     /**
@@ -170,7 +166,7 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
     @Override
     public void setScale(double scale) {
         super.setScale(scale);
-        this.repaint();
+        repaint();
     }
 
     /**
@@ -193,40 +189,8 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
      * {@inheritDoc}
      */
     @Override
-    public void componentResized(ComponentEvent e) {
-        getSurfaceScrollController().resetScrollPosition();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void componentMoved(ComponentEvent e) {
-        // Nothing to do
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void componentShown(ComponentEvent e) {
-        // Nothing to do
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void componentHidden(ComponentEvent e) {
-        // Nothing to do
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public Point getScrollError() {
-        Rectangle viewRect = getSurfaceScrollController().getViewRect();
+        Rectangle viewRect = getSurfaceScrollController().getScrollRect();
         double scale = getScale();
 
         return new Point((int) (viewRect.x % scale), (int) (viewRect.y % scale));

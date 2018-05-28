@@ -18,7 +18,11 @@ public interface ScalableSurface {
 
     /**
      * Sets the scale factor of the canvas. Values greater than 1 result in the canvas image appearing enlarged; values
-     * less than 1 result in the canvas image appearing shrunken.
+     * less than 1 result in the canvas image appearing shrunken. When enlarging the canvas (scale greater than 1), only
+     * whole values are allowed; the fractional portion of the argument will be rounded to the nearest whole integer.
+     * <p>
+     * Changes to scale attempt to zoom-in or zoom-out on the area currently centered in the viewport (when the surface
+     * is embedded in a {@link javax.swing.JScrollPane} and managed with a {@link SurfaceScrollController}).
      *
      * @param scale The scale factor
      */
@@ -37,12 +41,40 @@ public interface ScalableSurface {
      * @param d The dimension to scale
      * @return A new dimension whose height and width have been multiplied by the scale factor.
      */
-    default Dimension getScaledDimension(Dimension d) {
+    default Dimension scaleDimension(Dimension d) {
         return new Dimension((int) (d.width * getScale()), (int) (d.height * getScale()));
     }
 
     /**
-     * Converts a point on the rasterized surface (view) to the equivalent point within the canvas' image (model),
+     * Scales a point by the current scale factor.
+     *
+     * @param p The point to scale
+     * @return A new point whose x and y coordinate has been multiplied by the scale factor.
+     */
+    default Point scalePoint(Point p) {
+        return new Point(
+                (int) (p.x * getScale()),
+                (int) (p.y * getScale())
+        );
+    }
+
+    /**
+     * Scales a rectangle by the current scale factor.
+     *
+     * @param r The rectangle to scale
+     * @return A new rectangle whose location and dimension has been multiplied by the current scale factor.
+     */
+    default Rectangle scaleRectangle(Rectangle r) {
+        return new Rectangle(
+                (int) (r.x * getScale()),
+                (int) (r.y * getScale()),
+                (int) (r.width * getScale()),
+                (int) (r.height * getScale())
+        );
+    }
+
+    /**
+     * Converts a point on the visible surface (view) to the equivalent point within the surface's image (model),
      * taking into account scale, grid and scroll pane complications as appropriate.
      * <p>
      * When a scale factor has been applied, the input coordinates are divided by the scale factor. When a grid
@@ -58,7 +90,7 @@ public interface ScalableSurface {
     Point convertViewPointToModel(Point p);
 
     /**
-     * Converts a point within the canvas's image (model) to equivalent point in the surface component's coordinate
+     * Converts a point within the surface's image (model) to an equivalent point in the surface component's coordinate
      * space, accounting for scale and scroll error as appropriate.
      * <p>
      * Note that there is no concept of snap-to-grid when converting from model to view (only when converting in the

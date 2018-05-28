@@ -18,8 +18,8 @@ public class MagnifierTool extends PaintTool {
 
     private Cursor zoomInCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
     private Cursor zoomOutCursor = new Cursor(Cursor.DEFAULT_CURSOR);
-    private double scale = 1.0;
-    private final double magnificationStep = 2;
+    private double magnificationStep = 2;
+    private boolean recenter = false;
 
     public MagnifierTool() {
         super(PaintToolType.MAGNIFIER);
@@ -42,11 +42,7 @@ public class MagnifierTool extends PaintTool {
 
     /** {@inheritDoc} */
     @Override
-    public void mousePressed(MouseEvent e, Point imageLocation) {
-
-        SurfaceScrollController scrollController = getCanvas().getSurfaceScrollController();
-        double pX = (double) imageLocation.x / (double) getCanvas().getCanvasImage().getWidth();
-        double pY = (double) imageLocation.y / (double) getCanvas().getCanvasImage().getHeight();
+    public void mousePressed(MouseEvent e, Point clickLoc) {
 
         if (e.isControlDown() || e.isAltDown() || e.isMetaDown()) {
             reset();
@@ -54,16 +50,20 @@ public class MagnifierTool extends PaintTool {
 
         else if (e.isShiftDown()) {
             zoomOut(e.getX(), e.getY());
-            if (scrollController != null) {
-                scrollController.setScrollPosition(pX, pY);
-            }
         }
 
         else {
             zoomIn();
-            if (scrollController != null) {
-                scrollController.setScrollPosition(pX, pY);
-            }
+        }
+
+        SurfaceScrollController scrollController = getCanvas().getSurfaceScrollController();
+        if (recenter && scrollController != null) {
+            Rectangle visibleRect = scrollController.getScrollRect();
+
+            clickLoc = getCanvas().scalePoint(clickLoc);
+            clickLoc.translate(-visibleRect.width / 2, -visibleRect.height / 2);
+
+            scrollController.setScrollPosition(clickLoc);
         }
     }
 
@@ -71,25 +71,22 @@ public class MagnifierTool extends PaintTool {
     @Override
     public void activate(PaintCanvas canvas) {
         super.activate(canvas);
-        this.scale = canvas.getScaleObservable().blockingFirst();
     }
 
     private void reset() {
-        scale = 1.0;
-        getCanvas().setScale(scale);
+        getCanvas().setScale(1.0);
 
         if (getCanvas().getSurfaceScrollController() != null) {
-            getCanvas().getSurfaceScrollController().setScrollPosition(0, 0);
+            getCanvas().getSurfaceScrollController().setScrollPosition(new Point(0, 0));
         }
     }
 
     private void zoomIn() {
-        scale += magnificationStep;
-        getCanvas().setScale(scale);
+        getCanvas().setScale(getCanvas().getScale() + magnificationStep);
     }
 
     private void zoomOut(int x, int y) {
-        scale -= magnificationStep;
+        double scale = getCanvas().getScale() - magnificationStep;
 
         if (scale <= 1.0) {
             reset();
@@ -113,5 +110,21 @@ public class MagnifierTool extends PaintTool {
 
     public void setZoomOutCursor(Cursor zoomOutCursor) {
         this.zoomOutCursor = zoomOutCursor;
+    }
+
+    public double getMagnificationStep() {
+        return magnificationStep;
+    }
+
+    public void setMagnificationStep(double magnificationStep) {
+        this.magnificationStep = magnificationStep;
+    }
+
+    public boolean isRecenter() {
+        return recenter;
+    }
+
+    public void setRecenter(boolean recenter) {
+        this.recenter = recenter;
     }
 }

@@ -70,7 +70,7 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
      */
     public void setSurfaceDimension(Dimension surfaceDimensions) {
         this.surfaceDimensions = new Dimension(surfaceDimensions.width, surfaceDimensions.height);
-        Dimension scaledDimension = getScaledDimension(surfaceDimensions);
+        Dimension scaledDimension = scaleDimension(surfaceDimensions);
 
         setMaximumSize(scaledDimension);
         setPreferredSize(scaledDimension);
@@ -84,7 +84,7 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
      * @return The scaled surface dimensions.
      */
     public Dimension getScaledSurfaceDimension() {
-        return getScaledDimension(surfaceDimensions);
+        return scaleDimension(surfaceDimensions);
     }
 
     /**
@@ -100,14 +100,37 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
      */
     @Override
     public void setScale(double scale) {
+
+        if (scale > 1) {
+            scale = Math.round(scale);
+        }
+
+        double prevScale = 1.0;
+        Rectangle prevScrollRect = new Rectangle();
+        SurfaceScrollController scrollController = getSurfaceScrollController();
+
+        // Save the current scale and scroll position
+        if (scrollController != null) {
+            prevScale = getScale();
+            prevScrollRect = getSurfaceScrollController().getScrollRect();
+        }
+
+        // Change scale
         scaleSubject.onNext(scale);
-
-        Dimension scaledDimension = getScaledDimension(surfaceDimensions);
-
-        getSurfaceScrollController().resetScrollPosition();
+        Dimension scaledDimension = scaleDimension(surfaceDimensions);
         setPreferredSize(scaledDimension);
         setMaximumSize(scaledDimension);
-        invalidate();
+
+        // Modify scroll position to "zoom in" or "zoom out" on the center of the previous scroll view bounds
+        if (scrollController != null) {
+            getSurfaceScrollController().setScrollPosition(new Point(
+                    Math.max(0, (int) ((prevScrollRect.x + prevScrollRect.width / 2) * scale / prevScale - prevScrollRect.width / 2)),
+                    Math.max(0, (int) ((prevScrollRect.y + prevScrollRect.height / 2) * scale / prevScale - prevScrollRect.height / 2))
+            ));
+        }
+
+        revalidate();
+        repaint();
     }
 
     /**
