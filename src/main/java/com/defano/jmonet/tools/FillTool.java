@@ -4,6 +4,7 @@ import com.defano.jmonet.algo.fill.*;
 import com.defano.jmonet.algo.transform.image.FloodFillTransform;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.builder.PaintTool;
+import com.defano.jmonet.tools.util.CursorFactory;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -14,7 +15,7 @@ import java.awt.image.BufferedImage;
  */
 public class FillTool extends PaintTool {
 
-    private Cursor fillCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
+    private Cursor fillCursor = CursorFactory.makeBucketCursor();
     private BoundaryFunction boundaryFunction = new DefaultBoundaryFunction();
     private FillFunction fillFunction = new DefaultFillFunction();
 

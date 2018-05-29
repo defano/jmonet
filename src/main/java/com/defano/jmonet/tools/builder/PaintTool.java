@@ -10,6 +10,7 @@ import com.defano.jmonet.model.PaintToolType;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -24,7 +25,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
 
     private PaintCanvas canvas;
     private final PaintToolType type;
-    private Cursor toolCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
+    private Cursor toolCursor;
     private int constrainedAngle = 15;
 
     private Observable<Stroke> strokeObservable = BehaviorSubject.createDefault(new BasicStroke(2));
@@ -57,7 +58,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     public void activate (PaintCanvas canvas) {
         this.canvas = canvas;
         this.canvas.addSurfaceInteractionObserver(this);
-        this.canvas.setCursor(toolCursor);
+        SwingUtilities.invokeLater(() -> canvas.setCursor(toolCursor));
     }
 
     /**
@@ -67,7 +68,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     public void deactivate() {
         if (canvas != null) {
             canvas.removeSurfaceInteractionObserver(this);
-            canvas.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            SwingUtilities.invokeLater(() -> canvas.setCursor(new Cursor(Cursor.DEFAULT_CURSOR)));
         }
     }
 
@@ -225,7 +226,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         this.toolCursor = toolCursor;
 
         if (this.canvas != null) {
-            this.canvas.setCursor(toolCursor);
+            SwingUtilities.invokeLater(() -> canvas.setCursor(toolCursor));
         }
     }
 

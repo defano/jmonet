@@ -4,6 +4,7 @@ import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractSelectionTool;
 import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
 import com.defano.jmonet.tools.selection.TransformableSelection;
+import com.defano.jmonet.tools.util.CursorFactory;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -18,6 +19,7 @@ public class LassoTool extends AbstractSelectionTool implements TransformableSel
 
     public LassoTool() {
         super(PaintToolType.LASSO);
+        super.setBoundaryCursor(CursorFactory.makeLassoCursor());
     }
 
     /** {@inheritDoc} */

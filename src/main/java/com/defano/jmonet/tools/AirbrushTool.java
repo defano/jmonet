@@ -2,7 +2,7 @@ package com.defano.jmonet.tools;
 
 import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.AbstractPathTool;
+import com.defano.jmonet.tools.base.StrokedCursorPathTool;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
@@ -10,7 +10,7 @@ import java.awt.geom.Line2D;
 /**
  * A tool that paints translucent textured paint on the canvas.
  */
-public class AirbrushTool extends AbstractPathTool {
+public class AirbrushTool extends StrokedCursorPathTool {
 
     public AirbrushTool() {
         super(PaintToolType.AIRBRUSH);
@@ -33,4 +33,5 @@ public class AirbrushTool extends AbstractPathTool {
         g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getIntensityObservable().blockingFirst().floatValue()));
         g.draw(line);
     }
+
 }

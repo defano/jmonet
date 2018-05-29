@@ -3,6 +3,7 @@ package com.defano.jmonet.tools;
 import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.AbstractPathTool;
+import com.defano.jmonet.tools.util.CursorFactory;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
@@ -14,6 +15,7 @@ public class PencilTool extends AbstractPathTool {
 
     public PencilTool() {
         super(PaintToolType.PENCIL);
+        setToolCursor(CursorFactory.makePencilCursor());
     }
 
     /** {@inheritDoc} */

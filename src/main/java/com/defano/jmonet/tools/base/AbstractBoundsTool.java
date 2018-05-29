@@ -22,6 +22,7 @@ public abstract class AbstractBoundsTool extends PaintTool {
 
     public AbstractBoundsTool(PaintToolType type) {
         super(type);
+        setToolCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
     }
 
     /**
