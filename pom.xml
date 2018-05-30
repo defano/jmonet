@@ -35,7 +35,7 @@
     <packaging>jar</packaging>
     <groupId>com.defano.jmonet</groupId>
     <artifactId>jmonet</artifactId>
-    <version>0.2.5</version>
+    <version>0.3.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

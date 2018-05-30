@@ -1,21 +1,21 @@
 # JMonet
 
-An easy-to-use toolkit for incorporating paint tools similar to [MacPaint](https://en.wikipedia.org/wiki/MacPaint) or [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint) into a Java Swing or JavaFX application.
+An easy-to-use toolkit for incorporating paint tools like those found in [MacPaint](https://en.wikipedia.org/wiki/MacPaint) or [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint) into a Java Swing or JavaFX application (does not support Android).
 
 [![Build Status](https://travis-ci.org/defano/jmonet.svg?branch=master)](https://travis-ci.org/defano/jmonet)
 
 ## Features
 
-* Standard suite of paint tools with common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
-* Paint canvas supports undo and redo operations on all tool changes; plus cut, copy and paste integration with the system clipboard.
-* Variety of image transform tools like scale, rotate, shear, perspective and projection, plus the ability to adjust color depth, transparency and brightness.
+* Familiar suite of paint tools supporting common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
+* Includes image transform tools like scale, rotate, shear, perspective and projection, plus the ability to adjust color depth, transparency and brightness.
 * Canvas can be magnified and displayed within a scrollable pane; tools can be snapped to a grid.
+* Paint canvas supports undo and redo, plus cut, copy and paste integration with the system clipboard.
 * Lightweight toolkit integrates easily into Swing and JavaFX applications and utilizes [ReactiveX](https://github.com/ReactiveX/RxJava) for observables.
-* Images are backed by a standard Java `BufferedImage` object making it easy to import and export graphics.
+* Paint and edit 24-bit, true-color images with alpha transparency; images are backed by a standard Java `BufferedImage` object making it easy to import and export graphics.
 
 ## Paint Tools
 
-JMonet provides the following suite of paint tools:
+JMonet provides the following paint tools:
 
 Icon                                  | Tool         | Description
 --------------------------------------|--------------|--------------
@@ -41,7 +41,7 @@ Icon                                  | Tool         | Description
 Icon                                  | Tool         | Description
 --------------------------------------|--------------| -------------------------
 ![Lasso](icons/lasso.png)             | Lasso        | Define a free-form selection boundary ([marching ants](https://en.wikipedia.org/wiki/Marching_ants)) for clearing or moving paint.
-![Selection](icons/selection.png)     | Selection    | Define a selection rectangle ([marching ants](https://en.wikipedia.org/wiki/Marching_ants)) whose underlying graphic can be moved or cleared (press `delete`)
+![Selection](icons/selection.png)     | Selection    | Define a selection rectangle whose underlying graphic can be moved or cleared (press `delete`)
 
 ### Transform tools
 
@@ -84,7 +84,7 @@ JMonet is published to Maven Central; include the library in your Maven project'
 <dependency>
     <groupId>com.defano.jmonet</groupId>
     <artifactId>jmonet</artifactId>
-    <version>0.2.4</version>
+    <version>0.3.0</version>
 </dependency>
 ```
 
@@ -96,7 +96,7 @@ repositories {
 }
 
 dependencies {
-  compile 'com.defano.jmonet:jmonet:0.2.4'
+  compile 'com.defano.jmonet:jmonet:0.3.0'
 }
 ```
 
