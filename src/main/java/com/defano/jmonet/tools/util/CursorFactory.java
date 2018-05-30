@@ -4,6 +4,9 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 
+/**
+ * A utility for creating custom tool cursors.
+ */
 public class CursorFactory {
 
     /**

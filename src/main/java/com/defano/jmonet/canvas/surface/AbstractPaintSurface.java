@@ -23,7 +23,7 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
     private final List<SurfaceInteractionObserver> interactionListeners = new ArrayList<>();
     private Dimension surfaceDimensions = new Dimension();
     private double scanlineThreadhold = 6.0;
-    private Color scanlineColor = Color.WHITE;
+    private Color scanlineColor = new Color(0xF5, 0xF5, 0xF5);
     private AlphaComposite scanlineComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER);
     private SurfaceScrollController surfaceScrollController = new DefaultSurfaceScrollController(this);
 

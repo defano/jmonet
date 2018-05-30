@@ -1,13 +1,8 @@
 package com.defano.jmonet.tools;
 
-import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.AbstractPathTool;
 import com.defano.jmonet.tools.base.StrokedCursorPathTool;
-import com.defano.jmonet.tools.util.CursorFactory;
-import io.reactivex.Observable;
-import io.reactivex.disposables.Disposable;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
