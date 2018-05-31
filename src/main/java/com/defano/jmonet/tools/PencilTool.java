@@ -13,6 +13,8 @@ import java.awt.geom.Line2D;
  */
 public class PencilTool extends AbstractPathTool {
 
+    private boolean isErasing = false;
+
     public PencilTool() {
         super(PaintToolType.PENCIL);
         setToolCursor(CursorFactory.makePencilCursor());
@@ -21,17 +23,25 @@ public class PencilTool extends AbstractPathTool {
     /** {@inheritDoc} */
     @Override
     protected void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
-        // Nothing to do
+        Color pixel = new Color(getCanvas().getCanvasImage().getRGB(initialPoint.x, initialPoint.y), true);
+        isErasing = pixel.getAlpha() >= 128;
+
+        renderStroke(scratch, fillPaint, new Line2D.Float(initialPoint, initialPoint));
     }
 
     /** {@inheritDoc} */
     @Override
     protected void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
-        Line2D line = new Line2D.Float(lastPoint, thisPoint);
-        Graphics2D g = scratch.getAddScratchGraphics(this, new BasicStroke(1), line);
+        renderStroke(scratch, fillPaint, new Line2D.Float(lastPoint, thisPoint));
+    }
+
+    private void renderStroke(Scratch scratch, Paint fillPaint, Line2D stroke) {
+        Graphics2D g = isErasing ?
+                scratch.getRemoveScratchGraphics(this, new BasicStroke(1), stroke) :
+                scratch.getAddScratchGraphics(this, new BasicStroke(1), stroke);
 
         g.setStroke(new BasicStroke(1));
-        g.setPaint(Color.BLACK);
-        g.draw(line);
+        g.setPaint(fillPaint);
+        g.draw(stroke);
     }
 }
