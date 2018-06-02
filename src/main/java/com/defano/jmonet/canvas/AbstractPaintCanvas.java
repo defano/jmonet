@@ -33,13 +33,21 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
      */
     @Override
     public void setCanvasSize(Dimension dimension) {
-        super.setSurfaceDimension(dimension);
+        setSurfaceDimension(dimension);
 
         if (scratch != null) {
             scratch.setSize(dimension.width, dimension.height);
         }
 
         repaint();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Dimension getCanvasSize() {
+        return getSurfaceDimension();
     }
 
     /**

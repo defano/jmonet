@@ -21,7 +21,7 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
     private final static Color CLEAR_COLOR = new Color(0, 0, 0, 0);
     private final BehaviorSubject<Double> scaleSubject = BehaviorSubject.createDefault(1.0);
     private final List<SurfaceInteractionObserver> interactionListeners = new ArrayList<>();
-    private Dimension surfaceDimensions = new Dimension();
+    private Dimension surfaceDimension = new Dimension();
     private double scanlineThreadhold = 6.0;
     private Color scanlineColor = new Color(0xF5, 0xF5, 0xF5);
     private AlphaComposite scanlineComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER);
@@ -32,10 +32,16 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
      * "paintable" space, which is not the same as the size of the Swing component (the surface dimension may be larger,
      * smaller, or the same size as this Swing component).
      *
-     * @param surfaceDimensions The size of the paintable surface.
+     * @param surfaceDimension The size of the paintable surface.
      */
-    public AbstractPaintSurface(Dimension surfaceDimensions) {
+    public AbstractPaintSurface(Dimension surfaceDimension) {
         super();
+
+        Dimension scaledDimension = scaleDimension(surfaceDimension);
+
+        setMaximumSize(scaledDimension);
+        setPreferredSize(scaledDimension);
+        setSize(scaledDimension);
 
         setOpaque(false);
         setLayout(null);
@@ -44,7 +50,7 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
         addMouseListener(this);
         addMouseMotionListener(this);
 
-        setSurfaceDimension(surfaceDimensions);
+        setSurfaceDimension(surfaceDimension);
 
         // Adding a KeyListener to this component won't always work the way the user expects; this is cheating, but
         // it assures paint tools get all key events, regardless of the component hierarchy we may be embedded in.
@@ -54,28 +60,19 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
     public abstract Paint getCanvasBackground();
 
     /**
-     * Gets the un-scaled dimensions of the surface (that is, the size of the image which can be painted on it).
-     *
-     * @return The un-scaled dimensions of this surface.
+     * {@inheritDoc}
      */
-    public Dimension getCanvasSize() {
-        return surfaceDimensions;
+    @Override
+    public void setSurfaceDimension(Dimension surfaceDimensions) {
+        this.surfaceDimension = new Dimension(surfaceDimensions.width, surfaceDimensions.height);
     }
 
     /**
-     * Specifies the un-scaled size of this painting surface. This determines the size of the image (document) that will
-     * be painted by a user.
-     *
-     * @param surfaceDimensions The dimensions of the painting surface
+     * {@inheritDoc}
      */
-    public void setSurfaceDimension(Dimension surfaceDimensions) {
-        this.surfaceDimensions = new Dimension(surfaceDimensions.width, surfaceDimensions.height);
-        Dimension scaledDimension = scaleDimension(surfaceDimensions);
-
-        setMaximumSize(scaledDimension);
-        setPreferredSize(scaledDimension);
-        setSize(scaledDimension);
-        invalidate();
+    @Override
+    public Dimension getSurfaceDimension() {
+        return surfaceDimension;
     }
 
     /**
@@ -84,7 +81,7 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
      * @return The scaled surface dimensions.
      */
     public Dimension getScaledSurfaceDimension() {
-        return scaleDimension(surfaceDimensions);
+        return scaleDimension(surfaceDimension);
     }
 
     /**
@@ -117,13 +114,13 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
 
         // Change scale
         scaleSubject.onNext(scale);
-        Dimension scaledDimension = scaleDimension(surfaceDimensions);
+        Dimension scaledDimension = scaleDimension(surfaceDimension);
         setPreferredSize(scaledDimension);
         setMaximumSize(scaledDimension);
 
         // Modify scroll position to "zoom in" or "zoom out" on the center of the previous scroll view bounds
         if (scrollController != null) {
-            getSurfaceScrollController().setScrollPosition(new Point(
+            scrollController.setScrollPosition(new Point(
                     Math.max(0, (int) ((prevScrollRect.x + prevScrollRect.width / 2) * scale / prevScale - prevScrollRect.width / 2)),
                     Math.max(0, (int) ((prevScrollRect.y + prevScrollRect.height / 2) * scale / prevScale - prevScrollRect.height / 2))
             ));
@@ -208,8 +205,14 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
         super.paintComponent(g);
 
         Rectangle clip = g.getClipBounds();
+        Insets insets = getInsets();
 
         if (clip != null && !clip.isEmpty() && isVisible()) {
+
+            clip.x += insets.left;
+            clip.y += insets.top;
+            clip.width -= insets.left + insets.right;
+            clip.height -= insets.top + insets.bottom;
 
             // Draw visible portion of this surface's image into a buffer
             BufferedImage buffer = new BufferedImage(clip.width, clip.height, BufferedImage.TYPE_INT_ARGB);
@@ -228,8 +231,6 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
 
             // Draw the paint image
             g.drawImage(buffer, clip.x, clip.y, null);
-
-            buffer.flush();
         }
 
         // DO NOT dispose the graphics context in this method.

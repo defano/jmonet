@@ -12,6 +12,22 @@ public interface PaintSurface extends ScanlineSurface, GridSurface, SwingSurface
         Disposable {
 
     /**
+     * Specifies the un-scaled size of this painting surface. This determines the size of the image (document) that can
+     * be painted by a user. This does not specify the size of the Swing component or otherwise adjust layout or
+     * presentation of the canvas.
+     *
+     * @param dimension The dimensions of the painting surface
+     */
+    void setSurfaceDimension(Dimension dimension);
+
+    /**
+     * Gets the un-scaled size of this painting surface (that is, the size of the image being painted).
+     *
+     * @return The dimensions of the image being painted
+     */
+    Dimension getSurfaceDimension();
+
+    /**
      * Causes the surface to be repainted by Swing.
      */
     void repaint();

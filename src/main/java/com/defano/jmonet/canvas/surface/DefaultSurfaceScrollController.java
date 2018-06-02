@@ -34,7 +34,10 @@ public class DefaultSurfaceScrollController implements SurfaceScrollController {
             scrollPane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
             scrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-            scrollPane.getTopLevelAncestor().revalidate();
+            if (scrollPane.getTopLevelAncestor() != null) {
+                scrollPane.getTopLevelAncestor().revalidate();
+            }
+
             scrollPane.revalidate();
             scrollPane.repaint();
         }
