@@ -1,5 +1,7 @@
 package com.defano.jmonet.tools.util;
 
+import com.defano.jmonet.algo.transform.image.ScaleTransform;
+
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
@@ -87,9 +89,10 @@ public class CursorFactory {
      *
      * @param stroke The stroke whose shape should become the cursor
      * @param fill   The paint or texture with which to fill the stroke
+     * @param scale  The scale factor at which to draw the cursor; 1.0 means no scaling
      * @return The filled, stroked cursor
      */
-    public static Cursor makeBrushCursor(Stroke stroke, Paint fill) {
+    public static Cursor makeBrushCursor(Stroke stroke, Paint fill, double scale) {
         Toolkit toolkit = Toolkit.getDefaultToolkit();
         Shape strokedShape = stroke.createStrokedShape(new Line2D.Float(0, 0, 0, 0));
 
@@ -100,8 +103,10 @@ public class CursorFactory {
         g.drawLine(strokedShape.getBounds().width / 2, strokedShape.getBounds().height / 2, strokedShape.getBounds().width / 2, strokedShape.getBounds().height / 2);
         g.dispose();
 
-        Point hotspot = new Point(strokedShape.getBounds().width / 2, strokedShape.getBounds().height / 2 - 1);
-        return toolkit.createCustomCursor(cursorImage, hotspot, stroke.toString());
+        BufferedImage scaledCursor = new ScaleTransform(new Dimension((int)(cursorImage.getWidth() * scale), (int)(cursorImage.getHeight() * scale))).apply(cursorImage);
+
+        Point hotspot = new Point(scaledCursor.getWidth() / 2, scaledCursor.getHeight() / 2 - 1);
+        return toolkit.createCustomCursor(scaledCursor, hotspot, stroke.toString());
     }
 
 }

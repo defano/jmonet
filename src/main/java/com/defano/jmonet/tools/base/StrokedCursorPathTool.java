@@ -12,6 +12,7 @@ public abstract class StrokedCursorPathTool extends AbstractPathTool {
 
     private Disposable subscription;
     private boolean strokeTrackingCursorEnabled = true;
+    private boolean strokeTrackingCursorScaled = true;
 
     public StrokedCursorPathTool(PaintToolType type) {
         super(type);
@@ -28,10 +29,13 @@ public abstract class StrokedCursorPathTool extends AbstractPathTool {
     @Override
     public void activate(PaintCanvas canvas) {
         super.activate(canvas);
-        subscription = Observable.merge(getStrokeObservable(), getStrokePaintObservable()).subscribe(o ->
+        subscription = Observable.merge(getStrokeObservable(), getStrokePaintObservable(), canvas.getScaleObservable()).subscribe(o ->
         {
             if (strokeTrackingCursorEnabled) {
-                setToolCursor(CursorFactory.makeBrushCursor(getStroke(), getStrokePaint()));
+                setToolCursor(CursorFactory.makeBrushCursor(
+                        getStroke(),
+                        getStrokePaint(),
+                        strokeTrackingCursorScaled ? canvas.getScale() : 1.0));
             }
         });
     }
@@ -59,5 +63,26 @@ public abstract class StrokedCursorPathTool extends AbstractPathTool {
      */
     public void setStrokeTrackingCursorEnabled(boolean strokeTrackingCursorEnabled) {
         this.strokeTrackingCursorEnabled = strokeTrackingCursorEnabled;
+    }
+
+    /**
+     * Determines if the stroke-tracking cursor is drawn to match the scale of the canvas. Has no effect if the cursor
+     * is not actively tracking the stroke (See {@link #setStrokeTrackingCursorEnabled(boolean)}).
+     *
+     * @return True if the cursor is being drawn to scale
+     */
+    public boolean isStrokeTrackingCursorScaled() {
+        return strokeTrackingCursorScaled;
+    }
+
+    /**
+     * Sets whether the stroke-tracking cursor is drawn to match the scale of the canvas. Has no effect if the cursor
+     * is not actively tracking the stroke (See {@link #setStrokeTrackingCursorEnabled(boolean)}).
+     *
+     * @param strokeTrackingCursorScaled True to make the size of the cursor reflect the scale of the canvas; false to
+     *                                   draw the cursor without scaling.
+     */
+    public void setStrokeTrackingCursorScaled(boolean strokeTrackingCursorScaled) {
+        this.strokeTrackingCursorScaled = strokeTrackingCursorScaled;
     }
 }
