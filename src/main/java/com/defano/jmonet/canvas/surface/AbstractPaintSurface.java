@@ -205,14 +205,8 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
         super.paintComponent(g);
 
         Rectangle clip = g.getClipBounds();
-        Insets insets = getInsets();
-
+        
         if (clip != null && !clip.isEmpty() && isVisible()) {
-
-            clip.x += insets.left;
-            clip.y += insets.top;
-            clip.width -= insets.left + insets.right;
-            clip.height -= insets.top + insets.bottom;
 
             // Draw visible portion of this surface's image into a buffer
             BufferedImage buffer = new BufferedImage(clip.width, clip.height, BufferedImage.TYPE_INT_ARGB);

@@ -80,39 +80,6 @@ public class ImageLayerSet implements LayeredImage {
         return observers.remove(observer);
     }
 
-    /**
-     * Determines if any layer in this image "removes" paint from the image it is drawn atop (as a result of using the
-     * {@link AlphaComposite#DST_OUT} composite mode. For example, a LayerSet produced by the eraser tool would "remove"
-     * paint.
-     *
-     * @return True if this set of changes removes paint from the source it is drawn atop; false otherwise.
-     */
-    public boolean isRemovingPaint() {
-        for (ImageLayer thisLayer : layers) {
-            if (thisLayer != null && thisLayer.getComposite().getRule() == AlphaComposite.DST_OUT) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Determines if any layer in this images "adds" paint from the image it is drawn atop. For example, a LayerSet
-     * produced by the brush tool would "add" paint.
-     *
-     * @return True if this set of changes adds paint to the source it is drawn atop; false otherwise.
-     */
-    public boolean isAddingPaint() {
-        for (ImageLayer thisLayer : layers) {
-            if (thisLayer != null && thisLayer.getComposite().getRule() != AlphaComposite.DST_OUT) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

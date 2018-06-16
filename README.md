@@ -1,5 +1,7 @@
 # JMonet
 
+[Getting Started](#getting-started) | [Tools](#paint-tools) | [Transforms](#image-transforms) | [Brushes](#creating-complex-brush-shapes) | [Cut, Copy and Paste](#cut,-copy-and-paste) | [FAQs](#frequently-asked-questions)
+
 An easy-to-use toolkit for incorporating paint tools like those found in [MacPaint](https://en.wikipedia.org/wiki/MacPaint) or [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint) into a Java Swing or JavaFX application (does not support Android).
 
 [![Build Status](https://travis-ci.org/defano/jmonet.svg?branch=master)](https://travis-ci.org/defano/jmonet)
@@ -15,12 +17,8 @@ An easy-to-use toolkit for incorporating paint tools like those found in [MacPai
 
 ## Paint Tools
 
-JMonet provides the following paint tools:
-
 Icon                                  | Tool         | Description
 --------------------------------------|--------------|--------------
-![Arrow](icons/arrow.png)             | Arrow        | A no-op tool (does not modify the canvas).
-![Magnifier](icons/magnifier.png)     | Magnifier    | Zoom in (scale the canvas) at the location clicked; hold `shift` to zoom out or `ctrl` to restore normal zoom.
 ![Airbrush](icons/spraypaint.png)     | Airbrush     | Paints translucent color or texture onto the canvas.
 ![Curve](icons/curve.png)             | Curve        | Draws quadratic (Bezier) curves by clicking to specify points on the curve.
 ![Eraser](icons/eraser.png)           | Eraser       | Removes paint from the canvas by restoring affected pixels to their fully-transparent state.
@@ -28,7 +26,7 @@ Icon                                  | Tool         | Description
 ![Line](icons/line.png)               | Line         | Draws straight lines; hold `shift` to restrict lines to 15-degree angles.
 ![Oval](icons/oval.png)               | Oval         | Draws filled or outlined oval shapes; hold `shift` to constrain boundary to circle.
 ![Paintbrush](icons/paintbrush.png)   | Paintbrush   | Draws paint on the canvas (using configurable stroke and color/texture).
-![Pencil](icons/pencil.png)           | Pencil       | Draws a free-form, narrow black path on the canvas.
+![Pencil](icons/pencil.png)           | Pencil       | Draws or erases a free-form, single-pixel path on the canvas.
 ![Polygon](icons/polygon.png)         | Polygon      | Draws filled or outlined irregular polygons by clicking to specify points. Double-click to close the polygon; press `esc` to keep only the lines visible; hold `shift` to restrict line angles to 15 degree multiples.
 ![Freeform](icons/freeform.png)       | Freeform     | Draws a closed, free-form shape on the canvas. Click and drag to draw a path; release the mouse to close the shape.
 ![Rectangle](icons/rectangle.png)     | Rectangle    | Draws filled or stroked rectangles on the canvas; hold `shift` to constrain boundary to a square.
@@ -54,25 +52,12 @@ Icon                                  | Tool         | Description
 ![Perspective](icons/perspective.png) | Perspective  | Define a selection, then use the drag handles to warp the image onto an isosceles trapezoid, providing the effect of the left or right side of the image appearing nearer or farther from the viewer.
 ![Rubber Sheet](icons/distort.png)    | Rubber Sheet | Similar to the projection transform, but utilizes a "rubber sheet" algorithm that preserves relative position over linearity.
 
-### Image transforms
+### Canvas tools
 
-Once a selection has been made, invoke one of the following methods on the `PaintTool` object to transform its selection:
-
-Transform               | Tool Availability             | Description
-------------------------|-------------------------------|-------------------------
-`adjustBrightness`      | Selection and transform tools | Changes the brightness/luminosity of all pixels in the selected image by adding `delta` to each red, green and blue color channel value (a value between 0..255, where 0 is completely dark, 255 is completely light).
-`adjustTransparency`    | Selection and transform tools | Changes the opacity of each pixel in the selected image by adding `delta` the alpha channel (a value between 0..255 where 0 is fully transparent and 255 is fully opaque).
-`removeTranslucency`    | Selection and transform tools | Makes translucent pixels either fully transparent of fully opaque.          
-`applyTransform`        | Selection tools               | Applies an `AffineTransform` or a `PixelTransform` to the selection.
-`fill`                  | Selection and transform tools | Fills any fully-transparent pixels in the selection with a given `Paint`.
-`flipHorizontal`        | Selection tools               | Flips the selection about a vertical axis drawn through the center of the image.
-`flipVertical`          | Selection tools               | Flips the selection about a horizontal axis drawn through the center of the image.
-`invert`                | Selection and transform tools | Inverts the color
-`pickupSelection`       | Selection tools               | "Picks up" the pixels on the canvas that are currently within the bounds of the selection and adds them to the selection. Useful when moving a selection over another region of the canvas.
-`reduceColor`           | Selection and transform tools | Performs a color quantization and dithers the result using a specified dithering algorithm. See the `com.defano.algo.dither` package for available dithering implementations (or implement your own).
-`reduceGreyscale`       | Selection and transform tools | Performs a luminosity quantization and dithers the result using a specified dithering algorithm.
-`rotateLeft`            | Selection tools               | Rotates the selection 90 degrees counter-clockwise.
-`rotateRight`           | Selection tools               | Rotates the selection 90 degrees clockwise.
+Icon                                  | Tool         | Description
+--------------------------------------|--------------| -------------------------
+![Arrow](icons/arrow.png)             | Arrow        | A no-op tool (does not modify the canvas).
+![Magnifier](icons/magnifier.png)     | Magnifier    | Zoom in (scale the canvas) at the location clicked; hold `shift` to zoom out or `ctrl` to restore normal zoom.
 
 ## Getting started
 
@@ -164,7 +149,27 @@ activeTool.deactivate();
 
 There's no technical limitation that prevents multiple tools from being active on the same canvas at the same time, but that's not usually desired behavior in a paint program.
 
-### Creating complex brush shapes
+## Image transforms
+
+Once a selection has been made, invoke one of the following methods on the `PaintTool` object to transform its selection:
+
+Transform               | Tool Availability             | Description
+------------------------|-------------------------------|-------------------------
+`adjustBrightness`      | Selection and transform tools | Changes the brightness/luminosity of all pixels in the selected image by adding `delta` to each red, green and blue color channel value (a value between 0..255, where 0 is completely dark, 255 is completely light).
+`adjustTransparency`    | Selection and transform tools | Changes the opacity of each pixel in the selected image by adding `delta` the alpha channel (a value between 0..255 where 0 is fully transparent and 255 is fully opaque).
+`removeTranslucency`    | Selection and transform tools | Makes translucent pixels either fully transparent of fully opaque.          
+`applyTransform`        | Selection tools               | Applies an `AffineTransform` or a `PixelTransform` to the selection.
+`fill`                  | Selection and transform tools | Fills any fully-transparent pixels in the selection with a given `Paint`.
+`flipHorizontal`        | Selection tools               | Flips the selection about a vertical axis drawn through the center of the image.
+`flipVertical`          | Selection tools               | Flips the selection about a horizontal axis drawn through the center of the image.
+`invert`                | Selection and transform tools | Inverts the color
+`pickupSelection`       | Selection tools               | "Picks up" the pixels on the canvas that are currently within the bounds of the selection and adds them to the selection. Useful when moving a selection over another region of the canvas.
+`reduceColor`           | Selection and transform tools | Performs a color quantization and dithers the result using a specified dithering algorithm. See the `com.defano.algo.dither` package for available dithering implementations (or implement your own).
+`reduceGreyscale`       | Selection and transform tools | Performs a luminosity quantization and dithers the result using a specified dithering algorithm.
+`rotateLeft`            | Selection tools               | Rotates the selection 90 degrees counter-clockwise.
+`rotateRight`           | Selection tools               | Rotates the selection 90 degrees clockwise.
+
+## Creating complex brush shapes
 
 A stroke represents the size and shape of the "pen" used to mark the outline of a shape or path.
 
@@ -207,7 +212,7 @@ StrokeBuilder.withBasicStroke()
     .build();
 ```
 
-## Implement cut, copy and paste
+## Cut, Copy and Paste
 
 JMonet makes it easy to integrate cut, copy and paste functions into your app that utilize the operating system's clipboard so that you can copy and paste graphics from within your own application or between other applications on your system.
 
@@ -295,13 +300,13 @@ The code below provides an implementation that cuts, copies and pastes the activ
 
 If you're not building an app that lets users paint lines and shapes with the mouse, this probably isn't for you.
 
-Java's `Graphics` context does indeed provide routines for stroking and filling primitive shapes, but there's a quite a bit of work involved to map mouse and keyboard events into these calls the way a "paint" app expects. Getting scale, grids, and transforms to work correctly is a bit more complex than merely delegating to `AffineTransform`, too.
+Java's `Graphics` context does indeed provide routines for stroking and filling primitive shapes, but there's a quite a bit of work involved to map mouse and keyboard events into these calls the way a "paint" app expects. Getting selections, scale, grids, and transforms to work correctly is a bit more complex than merely delegating to `AffineTransform`, too.
 
 #### How do I save my artwork?
 
-Get the image from the canvas via the `public BufferedImage getCanvasImage()` method. Then, use Java's `ImageIO` class to save as `gif`, `png` or `jpg`. For more advanced file type support (such as `wbmp`, `bmp`, `pcx`, `pnm`, `raw` or `tiff`), consider the [Java Advanced ImageIO](http://docs.oracle.com/javase/6/docs/technotes/guides/imageio/index.html) library.
+Get the image from the canvas via the `public BufferedImage getCanvasImage()` method. Then, use Java's `ImageIO` class to save as `gif`, `png` or `jpg`. For more advanced file type support (like `wbmp`, `bmp`, `pcx`, `pnm`, `raw` or `tiff`), consider the [Java Advanced ImageIO](http://docs.oracle.com/javase/6/docs/technotes/guides/imageio/index.html) library.
 
-You could also save just the selection defined by a selection tool using `selectionTool.getSelectedImage()`.
+You could also save just the active selection by wiring the `BufferedImage` returned by `selectionTool.getSelectedImage()`.
 
 #### How do I import images from files or elsewhere?
 
@@ -345,7 +350,7 @@ Tool Base                | Description
 
 #### My canvas isn't getting garbage collected. This library has a memory leak.
 
-The canvas registers itself as a listener to global event dispatchers so that you don't have to. Unfortunately, that means it'll never get cleaned up.
+The `JMonetCanvas` registers itself as a listener to global event dispatchers so that you don't have to. Unfortunately, that means it'll never get cleaned up.
 
 When you're done with a canvas, call `.dispose()` on the canvas object to allow the JVM to garbage collect it.
 

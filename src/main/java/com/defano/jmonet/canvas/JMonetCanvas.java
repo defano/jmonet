@@ -3,6 +3,7 @@ package com.defano.jmonet.canvas;
 import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.layer.LayeredImage;
+import com.defano.jmonet.canvas.observable.LayerSetObserver;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -15,7 +16,7 @@ import java.util.Objects;
 /**
  * A paint canvas with a built-in undo and redo buffer.
  */
-public class JMonetCanvas extends AbstractPaintCanvas {
+public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserver {
 
     // Maximum number of allowable undo operations
     private final int maxUndoBufferDepth;
@@ -200,7 +201,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
     public void commit(ImageLayerSet imageLayerSet) {
 
         // Special case: ChangeSet may be modified after it has been committed; listen for this so that we can notify observers of our own
-        imageLayerSet.addLayerSetObserver(modified -> fireCanvasCommitObservers(JMonetCanvas.this, null, getCanvasImage()));
+        imageLayerSet.addLayerSetObserver(this);
 
         // Clear the redo elements from the buffer; can't perform redo after committing a new change
         undoBuffer = undoBuffer.subList(0, undoBufferPointer.blockingFirst() + 1);
@@ -264,6 +265,7 @@ public class JMonetCanvas extends AbstractPaintCanvas {
         }
 
         overlayImage(imageLayerSet, permanent);
+        imageLayerSet.removeLayerSetObserver(this);
     }
 
     /**
@@ -324,5 +326,10 @@ public class JMonetCanvas extends AbstractPaintCanvas {
         } else {
             return Objects.hash(permanent);
         }
+    }
+
+    @Override
+    public void onLayerSetModified(ImageLayerSet modified) {
+        fireCanvasCommitObservers(JMonetCanvas.this, modified, getCanvasImage());
     }
 }
