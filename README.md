@@ -1,6 +1,6 @@
 # JMonet
 
-[Getting Started](#getting-started) | [Tools](#paint-tools) | [Transforms](#image-transforms) | [Brushes](#creating-complex-brush-shapes) | [Cut, Copy and Paste](#cut,-copy-and-paste) | [FAQs](#frequently-asked-questions)
+[Getting Started](#getting-started) | [Tools](#paint-tools) | [Transforms](#image-transforms) | [Brushes](#creating-complex-brush-shapes) | [Cut, Copy and Paste](#cut-copy-and-paste) | [FAQs](#frequently-asked-questions)
 
 An easy-to-use toolkit for incorporating paint tools like those found in [MacPaint](https://en.wikipedia.org/wiki/MacPaint) or [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint) into a Java Swing or JavaFX application (does not support Android).
 
