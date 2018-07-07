@@ -205,7 +205,7 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
         super.paintComponent(g);
 
         Rectangle clip = g.getClipBounds();
-        
+
         if (clip != null && !clip.isEmpty() && isVisible()) {
 
             // Draw visible portion of this surface's image into a buffer

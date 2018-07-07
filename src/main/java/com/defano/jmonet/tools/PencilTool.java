@@ -9,7 +9,7 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 
 /**
- * Tool for drawing a single-pixel, black, free-form path on the canvas.
+ * Tool for drawing or erasing a single-pixel, free-form path on the canvas.
  */
 public class PencilTool extends AbstractPathTool {
 

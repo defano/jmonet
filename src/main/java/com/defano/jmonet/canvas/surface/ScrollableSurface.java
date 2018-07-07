@@ -3,7 +3,7 @@ package com.defano.jmonet.canvas.surface;
 import java.awt.*;
 
 /**
- * A surface needs to control and monitor its scroll position as a viewport view inside of a
+ * A surface that can control and monitor its scroll position as a viewport view inside of a
  * {@link javax.swing.JScrollPane}.
  * <p>
  * Typically, when scrolling a component, the component being scrolled does not need to be aware of its positioning

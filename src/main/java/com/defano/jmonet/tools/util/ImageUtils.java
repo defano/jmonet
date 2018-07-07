@@ -3,6 +3,9 @@ package com.defano.jmonet.tools.util;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * A utility providing image-related routines common to many classes.
+ */
 public class ImageUtils {
 
     /**

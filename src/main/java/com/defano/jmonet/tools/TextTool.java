@@ -98,6 +98,10 @@ public class TextTool extends PaintTool implements Consumer {
         setToolCursor(getToolCursor());
     }
 
+    /**
+     * Determines if the text tool is currently editing an active selection of text.
+     * @return True when an active, mutable selection of text is being edited by the user, false otherwise.
+     */
     public boolean isEditing() {
         return textArea.getParent() != null;
     }

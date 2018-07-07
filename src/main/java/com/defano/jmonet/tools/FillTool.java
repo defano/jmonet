@@ -45,19 +45,39 @@ public class FillTool extends PaintTool {
         setToolCursor(getFillCursor());
     }
 
+    /**
+     * Gets the cursor associated with this tool.
+     * @return The cursor associated with this tool.
+     */
     public Cursor getFillCursor() {
         return fillCursor;
     }
 
+    /**
+     * Sets the cursor associated with this tool.
+     * @param fillCursor The cursor to be displayed when the fill tool is active.
+     */
     public void setFillCursor(Cursor fillCursor) {
         this.fillCursor = fillCursor;
         setToolCursor(fillCursor);
     }
 
+    /**
+     * Gets the function used to detect when paint flooding a region has reached a boundary. See
+     * {@link BoundaryFunction} for details.
+     *
+     * @return The current boundary function in use.
+     */
     public BoundaryFunction getBoundaryFunction() {
         return boundaryFunction;
     }
 
+    /**
+     * Sets the function used to detect when paint flooding a region has reached a boundary. See
+     * {@link BoundaryFunction} for details.
+     *
+     * @param boundaryFunction The boundary function to use.
+     */
     public void setBoundaryFunction(BoundaryFunction boundaryFunction) {
         this.boundaryFunction = boundaryFunction;
 
@@ -66,10 +86,18 @@ public class FillTool extends PaintTool {
         }
     }
 
+    /**
+     * Gets the function used to color the canvas with paint flooding a region. See {@link FillFunction} for details.
+     * @return The fill function being used.
+     */
     public FillFunction getFillFunction() {
         return fillFunction;
     }
 
+    /**
+     * Sets the function used to color the canvas with paint flooding a region. See {@link FillFunction} for details.
+     * @param fillFunction The fill function to use
+     */
     public void setFillFunction(FillFunction fillFunction) {
         this.fillFunction = fillFunction;
 

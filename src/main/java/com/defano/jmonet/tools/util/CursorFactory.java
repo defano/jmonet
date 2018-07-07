@@ -23,7 +23,6 @@ public class CursorFactory {
         return toolkit.createCustomCursor(image, hotspot, "lasso");
     }
 
-
     /**
      * Creates a magnifying glass cursor.
      *

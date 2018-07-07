@@ -81,66 +81,162 @@ public class MagnifierTool extends PaintTool {
         controller.setScrollPosition(point);
     }
 
-    private void zoomIn() {
+    /**
+     * Multiplies the scale of the canvas this tool is currently active on by the value returned from
+     * {@link #getMagnificationStep()}. Does not change the scroll position of the canvas.
+     */
+    public void zoomIn() {
         getCanvas().setScale(Math.min(maximumScale, getCanvas().getScale() * magnificationStep));
     }
 
-    private void zoomOut() {
+    /**
+     * Divides the scale of the canvas this tool is currently active on by the value returned from
+     * {@link #getMagnificationStep()}. Does not change the scroll position of the canvas.
+     */
+    public void zoomOut() {
         getCanvas().setScale(Math.max(minimumScale, getCanvas().getScale() / magnificationStep));
     }
 
+    /**
+     * Gets the cursor displayed when the user presses the control or meta key (indicating they wish to reset the canvas
+     * scale to 1.0).
+     *
+     * @return The reset-zoom cursor.
+     */
     public Cursor getZoomCursor() {
         return zoomCursor;
     }
 
+    /**
+     * Sets the cursor displayed when the user presses the control or meta key (indicating they wish to reset the canvas
+     * scale to 1.0)
+     *
+     * @param zoomCursor The reset-zoom cursor.
+     */
     public void setZoomCursor(Cursor zoomCursor) {
         this.zoomCursor = zoomCursor;
     }
 
+    /**
+     * Gets the cursor displayed when the user is pressing no modifier keys (indicating they wish to zoom-in on the
+     * canvas).
+     *
+     * @return The zoom-in cursor.
+     */
     public Cursor getZoomInCursor() {
         return zoomInCursor;
     }
 
+    /**
+     * Sets the cursor displayed when the user is pressing no modifier keys (indicating they wish to zoom-in on the
+     * canvas).
+     *
+     * @param zoomInCursor The zoom-in cursor.
+     */
     public void setZoomInCursor(Cursor zoomInCursor) {
         this.zoomInCursor = zoomInCursor;
     }
 
+    /**
+     * Gets the cursor that is displayed when the user is pressing the shift key (indicating they wish to zoom out from
+     * the canvas).
+     *
+     * @return The zoom-out cursor.
+     */
     public Cursor getZoomOutCursor() {
         return zoomOutCursor;
     }
 
+    /**
+     * Sets the cursor displayed when the user is pressing the shift key (indicating they wish to zoom out from the
+     * canvas).
+     *
+     * @param zoomOutCursor The zoom-out cursor.
+     */
     public void setZoomOutCursor(Cursor zoomOutCursor) {
         this.zoomOutCursor = zoomOutCursor;
     }
 
+    /**
+     * Gets the value by which the canvas scale factor is multiplied or divided when zooming in or zooming out. For
+     * example, when this value is 2.0, zooming in causes the scale factor to be multiplied by 2 thus scaling the
+     * canvas from its original size to 2x, then 4x, then 8x and so forth.
+     *
+     * @return The zoom in/out scale multiple
+     */
     public double getMagnificationStep() {
         return magnificationStep;
     }
 
+    /**
+     * Sets the value by which the canvas scale factor is multiplied or divided when zooming in or zooming out. For
+     * example, when this value is 2.0, zooming in causes the scale factor to be multiplied by 2 thus scaling the
+     * canvas from its original size to 2x, then 4x, then 8x and so forth.
+     *
+     * @param magnificationStep The zoom in/out scale multiple
+     */
     public void setMagnificationStep(double magnificationStep) {
         this.magnificationStep = magnificationStep;
     }
 
+    /**
+     * Gets whether the canvas scroll position should be updated when zooming in or out to recenter the pixel that was
+     * clicked with the magnifier tool. Has no effect when the active canvas is not embedded in a scroll pane and
+     * managed via a {@link SurfaceScrollController}.
+     *
+     * @return True if the clicked pixel will be centered in the scroll pane when zooming in or out; false otherwise.
+     */
     public boolean isRecenter() {
         return recenter;
     }
 
+    /**
+     * Sets whether the canvas scroll position should be updated when zooming in or out to recenter the pixel that was
+     * clicked with the magnifier tool. Has no effect when the active canvas is not embedded in a scroll pane and
+     * managed via a {@link SurfaceScrollController}.
+     *
+     * @param recenter True to cause the clicked pixel to be centered in the scroll pane when zooming in or out.
+     */
     public void setRecenter(boolean recenter) {
         this.recenter = recenter;
     }
 
+    /**
+     * Gets the minimum allowable scale factor that this tool can adjust the active canvas to. For example, when set
+     * to 1.0 the magnifier tool will not be able to zoom out (shrink the image) past its normal size.
+     *
+     * @return The minimum allowable scale factor this tool will adjust to.
+     */
     public double getMinimumScale() {
         return minimumScale;
     }
 
+    /**
+     * Sets the minimum allowable scale factor that this tool can adjust the active canvas to. For example, when set
+     * to 1.0 the magnifier tool will not be able to zoom out (shrink the image) past its normal size.
+
+     * @param minimumScale The minimum allowable scale factor this tool will adjust to.
+     */
     public void setMinimumScale(double minimumScale) {
         this.minimumScale = minimumScale;
     }
 
+    /**
+     * Gets the maximum allowable scale factor that this tool can adjust the active canvas to. For example, when set
+     * to 32.0 the magnifier tool will not be able to magnify the canvas greater than 32x.
+     *
+     * @return The maximum allowable scale factor this tool will adjust to.
+     */
     public double getMaximumScale() {
         return maximumScale;
     }
 
+    /**
+     * Gets the maximum allowable scale factor that this tool can adjust the active canvas to. For example, when set
+     * to 32.0 the magnifier tool will not be able to magnify the canvas greater than 32x.
+     *
+     * @param maximumScale The maximum allowable scale factor this tool will adjust to.
+     */
     public void setMaximumScale(double maximumScale) {
         this.maximumScale = maximumScale;
     }
