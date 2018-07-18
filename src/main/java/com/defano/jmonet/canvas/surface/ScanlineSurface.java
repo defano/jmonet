@@ -70,11 +70,11 @@ public interface ScanlineSurface extends ScalableSurface {
             g.setComposite(getScanlineComposite());
             g.setStroke(new BasicStroke(1));
 
-            for (int scanLine = 0; scanLine < size.height; scanLine += scale) {
+            for (int scanLine = (int) scale; scanLine < size.height; scanLine += scale) {
                 g.fillRect(0, scanLine, size.width, 1);
             }
 
-            for (int scanLine = 0; scanLine < size.width; scanLine += scale) {
+            for (int scanLine = (int) scale; scanLine < size.width; scanLine += scale) {
                 g.fillRect(scanLine, 0, 1, size.height);
             }
         }
