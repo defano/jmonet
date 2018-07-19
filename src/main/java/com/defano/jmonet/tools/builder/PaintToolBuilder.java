@@ -22,6 +22,7 @@ public class PaintToolBuilder {
     private Observable<Stroke> strokeObservable;
     private Observable<Paint> strokePaintObservable;
     private Observable<Optional<Paint>> fillPaintObservable = BehaviorSubject.createDefault(Optional.empty());
+    private Observable<Optional<Paint>> erasePaintObservable = BehaviorSubject.createDefault(Optional.empty());
     private Observable<Integer> shapeSidesObservable;
     private Observable<Font> fontObservable;
     private Observable<Color> fontColorObservable;
@@ -123,6 +124,7 @@ public class PaintToolBuilder {
 
     /**
      * Specifies the number of sides drawn by the tool. Applies only to the {@link com.defano.jmonet.tools.PolygonTool}.
+     *
      * @param sides The number of sides drawn on a regular polygon
      * @return The PaintToolBuilder
      */
@@ -211,6 +213,31 @@ public class PaintToolBuilder {
      */
     public PaintToolBuilder withFillPaintObservable(Observable<Optional<Paint>> paintProvider) {
         this.fillPaintObservable = paintProvider;
+        return this;
+    }
+
+    /**
+     * Specifies the paint (color) that pixels are changed to when they're erased. Specify null for fully-transparent
+     * (default behavior).
+     *
+     * @param paint The color that erased pixels should become; null means fully transparent.
+     * @return The PaintToolBuilder
+     */
+    public PaintToolBuilder withErasePaint(Paint paint) {
+        this.erasePaintObservable = BehaviorSubject.createDefault(paint == null ? Optional.empty() : Optional.of(paint));
+        return this;
+    }
+
+    /**
+     * Specifies an observable provider of the paint that pixels are changed to when they're erased. Specify null for
+     * fully-transparent (default behavior).
+     *
+     * @param erasePaintObservable Observable providing the color that erased pixels should become; null means fully
+     *                             transparent.
+     * @return The PaintToolBuilder
+     */
+    public PaintToolBuilder withErasePaintObservable(Observable<Optional<Paint>> erasePaintObservable) {
+        this.erasePaintObservable = erasePaintObservable;
         return this;
     }
 
@@ -321,6 +348,7 @@ public class PaintToolBuilder {
 
     /**
      * Creates a paint tool as previously configured.
+     *
      * @return The built paint tool.
      */
     public PaintTool build() {
@@ -333,6 +361,10 @@ public class PaintToolBuilder {
 
         if (strokePaintObservable != null) {
             selectedTool.setStrokePaintObservable(strokePaintObservable);
+        }
+
+        if (erasePaintObservable != null) {
+            selectedTool.setErasePaintObservable(erasePaintObservable);
         }
 
         if (shapeSidesObservable != null) {

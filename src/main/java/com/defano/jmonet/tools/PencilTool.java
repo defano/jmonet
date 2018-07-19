@@ -24,7 +24,12 @@ public class PencilTool extends AbstractPathTool {
     @Override
     protected void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
         Color pixel = new Color(getCanvas().getCanvasImage().getRGB(initialPoint.x, initialPoint.y), true);
-        isErasing = pixel.getAlpha() >= 128;
+
+        if (getErasePaint() == null) {
+            isErasing = pixel.getAlpha() >= 128;
+        } else {
+            isErasing = (pixel.getRed() + pixel.getGreen() + pixel.getBlue()) / 3 <= 128;
+        }
 
         renderStroke(scratch, fillPaint, new Line2D.Float(initialPoint, initialPoint));
     }
@@ -35,13 +40,16 @@ public class PencilTool extends AbstractPathTool {
         renderStroke(scratch, fillPaint, new Line2D.Float(lastPoint, thisPoint));
     }
 
-    private void renderStroke(Scratch scratch, Paint fillPaint, Line2D stroke) {
-        Graphics2D g = isErasing ?
-                scratch.getRemoveScratchGraphics(this, new BasicStroke(1), stroke) :
-                scratch.getAddScratchGraphics(this, new BasicStroke(1), stroke);
+    private void renderStroke(Scratch scratch, Paint fillPaint, Line2D line) {
+        if (isErasing) {
+            erase(scratch, line, new BasicStroke(1));
+        }
 
-        g.setStroke(new BasicStroke(1));
-        g.setPaint(fillPaint);
-        g.draw(stroke);
+        else {
+            Graphics2D g = scratch.getAddScratchGraphics(this, new BasicStroke(1), line);
+            g.setStroke(new BasicStroke(1));
+            g.setPaint(fillPaint);
+            g.draw(line);
+        }
     }
 }

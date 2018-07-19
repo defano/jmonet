@@ -31,6 +31,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     private Observable<Stroke> strokeObservable = BehaviorSubject.createDefault(new BasicStroke(2));
     private Observable<Paint> strokePaintObservable = BehaviorSubject.createDefault(Color.BLACK);
     private Observable<Optional<Paint>> fillPaintObservable = BehaviorSubject.createDefault(Optional.empty());
+    private Observable<Optional<Paint>> erasePaintObservable = BehaviorSubject.createDefault(Optional.empty());
     private Observable<Integer> shapeSidesObservable = BehaviorSubject.createDefault(5);
     private Observable<Font> fontObservable = BehaviorSubject.createDefault(new Font("Courier", Font.PLAIN, 14));
     private Observable<Color> fontColorObservable = BehaviorSubject.createDefault(Color.BLACK);
@@ -144,6 +145,10 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         this.fillPaintObservable = fillPaintObservable;
     }
 
+    void setErasePaintObservable(Observable<Optional<Paint>> erasePaintObservable) {
+        this.erasePaintObservable = erasePaintObservable;
+    }
+
     void setIntensityObservable(Observable<Double> intensityObservable) {
         this.intensityObservable = intensityObservable;
     }
@@ -178,12 +183,20 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         return strokePaintObservable.blockingFirst();
     }
 
+    public Paint getErasePaint() {
+        return erasePaintObservable.blockingFirst().orElse(null);
+    }
+
     public Color getFontColor() {
         return fontColorObservable.blockingFirst();
     }
 
     public Observable<Optional<Paint>> getFillPaintObservable() {
         return fillPaintObservable;
+    }
+
+    public Observable<Optional<Paint>> getErasePaintObservable() {
+        return erasePaintObservable;
     }
 
     public Observable<Stroke> getStrokeObservable() {
@@ -281,6 +294,18 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
                 g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
                 break;
         }
+    }
+
+    protected void erase(Scratch scratch, Shape shape, Stroke stroke) {
+        Paint erasePaint = getErasePaint();
+
+        Graphics2D g = erasePaint == null ?
+                scratch.getRemoveScratchGraphics(this, stroke, shape) :
+                scratch.getAddScratchGraphics(this, stroke, shape);
+
+        g.setStroke(stroke);
+        g.setPaint(erasePaint == null ? getCanvas().getCanvasBackground() : erasePaint);
+        g.draw(shape);
     }
 
     /** {@inheritDoc} */
