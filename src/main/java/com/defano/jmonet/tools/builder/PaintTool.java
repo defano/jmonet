@@ -31,7 +31,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     private Observable<Stroke> strokeObservable = BehaviorSubject.createDefault(new BasicStroke(2));
     private Observable<Paint> strokePaintObservable = BehaviorSubject.createDefault(Color.BLACK);
     private Observable<Optional<Paint>> fillPaintObservable = BehaviorSubject.createDefault(Optional.empty());
-    private Observable<Optional<Paint>> erasePaintObservable = BehaviorSubject.createDefault(Optional.empty());
+    private Observable<Optional<Color>> eraseColorObservable = BehaviorSubject.createDefault(Optional.empty());
     private Observable<Integer> shapeSidesObservable = BehaviorSubject.createDefault(5);
     private Observable<Font> fontObservable = BehaviorSubject.createDefault(new Font("Courier", Font.PLAIN, 14));
     private Observable<Color> fontColorObservable = BehaviorSubject.createDefault(Color.BLACK);
@@ -145,8 +145,8 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         this.fillPaintObservable = fillPaintObservable;
     }
 
-    void setErasePaintObservable(Observable<Optional<Paint>> erasePaintObservable) {
-        this.erasePaintObservable = erasePaintObservable;
+    void setEraseColorObservable(Observable<Optional<Color>> eraseColorObservable) {
+        this.eraseColorObservable = eraseColorObservable;
     }
 
     void setIntensityObservable(Observable<Double> intensityObservable) {
@@ -183,8 +183,8 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         return strokePaintObservable.blockingFirst();
     }
 
-    public Paint getErasePaint() {
-        return erasePaintObservable.blockingFirst().orElse(null);
+    public Color getEraseColor() {
+        return eraseColorObservable.blockingFirst().orElse(null);
     }
 
     public Color getFontColor() {
@@ -195,8 +195,8 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         return fillPaintObservable;
     }
 
-    public Observable<Optional<Paint>> getErasePaintObservable() {
-        return erasePaintObservable;
+    public Observable<Optional<Color>> getEraseColorObservable() {
+        return eraseColorObservable;
     }
 
     public Observable<Stroke> getStrokeObservable() {
@@ -297,7 +297,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     }
 
     protected void erase(Scratch scratch, Shape shape, Stroke stroke) {
-        Paint erasePaint = getErasePaint();
+        Paint erasePaint = getEraseColor();
 
         Graphics2D g = erasePaint == null ?
                 scratch.getRemoveScratchGraphics(this, stroke, shape) :

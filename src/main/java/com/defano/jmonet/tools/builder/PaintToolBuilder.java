@@ -22,7 +22,7 @@ public class PaintToolBuilder {
     private Observable<Stroke> strokeObservable;
     private Observable<Paint> strokePaintObservable;
     private Observable<Optional<Paint>> fillPaintObservable = BehaviorSubject.createDefault(Optional.empty());
-    private Observable<Optional<Paint>> erasePaintObservable = BehaviorSubject.createDefault(Optional.empty());
+    private Observable<Optional<Color>> erasePaintObservable = BehaviorSubject.createDefault(Optional.empty());
     private Observable<Integer> shapeSidesObservable;
     private Observable<Font> fontObservable;
     private Observable<Color> fontColorObservable;
@@ -217,26 +217,38 @@ public class PaintToolBuilder {
     }
 
     /**
-     * Specifies the paint (color) that pixels are changed to when they're erased. Specify null for fully-transparent
-     * (default behavior).
+     * Specifies the color that pixels are changed to when they're erased (via the eraser or pencil tools). Specify null
+     * for fully-transparent (default behavior).
+     * <p>
+     * Note that this color does not affect the color of "void" pixels that are left when selecting a region and moving
+     * or deleting it. Further note that the default boundary behavior associated with
+     * {@link com.defano.jmonet.tools.FillTool} looks for fully transparent pixels, thus, when changing the erase color
+     * to a non-null value, erased pixels will not be filled by this tool (install a custom
+     * {@link com.defano.jmonet.algo.fill.BoundaryFunction} if such behavior is desired).
      *
      * @param paint The color that erased pixels should become; null means fully transparent.
      * @return The PaintToolBuilder
      */
-    public PaintToolBuilder withErasePaint(Paint paint) {
+    public PaintToolBuilder withEraseColor(Color paint) {
         this.erasePaintObservable = BehaviorSubject.createDefault(paint == null ? Optional.empty() : Optional.of(paint));
         return this;
     }
 
     /**
-     * Specifies an observable provider of the paint that pixels are changed to when they're erased. Specify null for
-     * fully-transparent (default behavior).
+     * Specifies an observable provider of the paint that pixels are changed to when they're erased (via the eraser or
+     * pencil tools). Specify {@link Optional#empty()} for fully-transparent (default behavior).
+     * <p>
+     * Note that this color does not affect the color of "void" pixels that are left when selecting a region and moving
+     * or deleting it. Further note that the default boundary behavior associated with
+     * {@link com.defano.jmonet.tools.FillTool} looks for fully transparent pixels, thus, when changing the erase color
+     * to a non-null value, erased pixels will not be filled by this tool (install a custom
+     * {@link com.defano.jmonet.algo.fill.BoundaryFunction} if such behavior is desired).
      *
      * @param erasePaintObservable Observable providing the color that erased pixels should become; null means fully
      *                             transparent.
      * @return The PaintToolBuilder
      */
-    public PaintToolBuilder withErasePaintObservable(Observable<Optional<Paint>> erasePaintObservable) {
+    public PaintToolBuilder withEraseColorObservable(Observable<Optional<Color>> erasePaintObservable) {
         this.erasePaintObservable = erasePaintObservable;
         return this;
     }
@@ -364,7 +376,7 @@ public class PaintToolBuilder {
         }
 
         if (erasePaintObservable != null) {
-            selectedTool.setErasePaintObservable(erasePaintObservable);
+            selectedTool.setEraseColorObservable(erasePaintObservable);
         }
 
         if (shapeSidesObservable != null) {

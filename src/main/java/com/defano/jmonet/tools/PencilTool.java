@@ -25,10 +25,11 @@ public class PencilTool extends AbstractPathTool {
     protected void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
         Color pixel = new Color(getCanvas().getCanvasImage().getRGB(initialPoint.x, initialPoint.y), true);
 
-        if (getErasePaint() == null) {
+        if (getEraseColor() == null) {
             isErasing = pixel.getAlpha() >= 128;
         } else {
-            isErasing = (pixel.getRed() + pixel.getGreen() + pixel.getBlue()) / 3 <= 128;
+            Color eraseColor = getEraseColor();
+            isErasing = eraseColor.getRed() != pixel.getRed() || eraseColor.getBlue() != pixel.getBlue() || eraseColor.getGreen() != pixel.getGreen();
         }
 
         renderStroke(scratch, fillPaint, new Line2D.Float(initialPoint, initialPoint));
