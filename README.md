@@ -4,16 +4,18 @@
 
 An easy-to-use toolkit for incorporating paint tools like those found in [MacPaint](https://en.wikipedia.org/wiki/MacPaint) or [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint) into a Java Swing or JavaFX application (does not support Android).
 
+This project provides the paint capabilities found in [WyldCard](https://github.com/defano/wyldcard) (an open-sourced clone of Apple's HyperCard).
+
 [![Build Status](https://travis-ci.org/defano/jmonet.svg?branch=master)](https://travis-ci.org/defano/jmonet)
 
 ## Features
 
-* Familiar suite of paint tools supporting common modifier-key constraints (e.g., hold shift to snap lines to nearest 15-degree angle).
-* Includes image transform tools like scale, rotate, shear, perspective and projection, plus the ability to adjust color depth, transparency and brightness.
-* Canvas can be magnified and displayed within a scrollable pane; tools can be snapped to a grid.
-* Paint canvas supports undo and redo, plus cut, copy and paste integration with the system clipboard.
-* Lightweight toolkit integrates easily into Swing and JavaFX applications and utilizes [ReactiveX](https://github.com/ReactiveX/RxJava) for observables.
+* Common suite of paint tools with observable attributes for colors and patterns, line sizes, anti-aliasing modes, etc.
+* Includes image transform tools like scale, rotate, flip, shear, perspective and projection, plus the ability to adjust color depth, transparency and brightness.
+* Canvas can be scaled and displayed within a scrollable pane; tools can be snapped to a grid.
+* Supports multi-operation undo and redo, plus cut, copy and paste integration with the system clipboard.
 * Paint and edit 24-bit, true-color images with alpha transparency; images are backed by a standard Java `BufferedImage` object making it easy to import and export graphics.
+* Lightweight toolkit integrates easily into Swing and JavaFX applications and utilizes [ReactiveX](https://github.com/ReactiveX/RxJava) for observables.
 
 ## Paint Tools
 
@@ -69,7 +71,7 @@ JMonet is published to Maven Central; include the library in your Maven project'
 <dependency>
     <groupId>com.defano.jmonet</groupId>
     <artifactId>jmonet</artifactId>
-    <version>0.3.1</version>
+    <version>0.3.2</version>
 </dependency>
 ```
 
@@ -81,7 +83,7 @@ repositories {
 }
 
 dependencies {
-  compile 'com.defano.jmonet:jmonet:0.3.1'
+  compile 'com.defano.jmonet:jmonet:0.3.2'
 }
 ```
 
@@ -133,7 +135,7 @@ public void start(Stage stage) {
 Start painting by making a tool active on the canvas with the `PaintToolBuilder`:
 
 ```
-PaintTool activeTool = PaintToolBuilder.create(PaintToolType.PAINTBRUSH)
+PaintTool paintbrush = PaintToolBuilder.create(PaintToolType.PAINTBRUSH)
     .withStroke(StrokeBuilder.withShape().ofCircle(8).build())
     .withStrokePaint(Color.RED)
     .makeActiveOnCanvas(myCanvas)
@@ -144,30 +146,32 @@ Voila! You're ready to start painting a round, 8-pixel, bright red brushstroke o
 
 ```
 // When you're done painting or ready for a different tool...
-activeTool.deactivate();
+paintbrush.deactivate();
 ```
 
 There's no technical limitation that prevents multiple tools from being active on the same canvas at the same time, but that's not usually desired behavior in a paint program.
 
 ## Image transforms
 
-Once a selection has been made, invoke one of the following methods on the `PaintTool` object to transform its selection:
+The following image transforms may be applied to an image selection (that is, a portion of the canvas selected by the lasso or selection rectangle tool). Once a selection has been made, invoke one of the following methods on the `PaintTool` object to transform its selection:
 
-Transform               | Tool Availability             | Description
-------------------------|-------------------------------|-------------------------
-`adjustBrightness`      | Selection and transform tools | Changes the brightness/luminosity of all pixels in the selected image by adding `delta` to each red, green and blue color channel value (a value between 0..255, where 0 is completely dark, 255 is completely light).
-`adjustTransparency`    | Selection and transform tools | Changes the opacity of each pixel in the selected image by adding `delta` the alpha channel (a value between 0..255 where 0 is fully transparent and 255 is fully opaque).
-`removeTranslucency`    | Selection and transform tools | Makes translucent pixels either fully transparent of fully opaque.          
-`applyTransform`        | Selection tools               | Applies an `AffineTransform` or a `PixelTransform` to the selection.
-`fill`                  | Selection and transform tools | Fills any fully-transparent pixels in the selection with a given `Paint`.
-`flipHorizontal`        | Selection tools               | Flips the selection about a vertical axis drawn through the center of the image.
-`flipVertical`          | Selection tools               | Flips the selection about a horizontal axis drawn through the center of the image.
-`invert`                | Selection and transform tools | Inverts the color
-`pickupSelection`       | Selection tools               | "Picks up" the pixels on the canvas that are currently within the bounds of the selection and adds them to the selection. Useful when moving a selection over another region of the canvas.
-`reduceColor`           | Selection and transform tools | Performs a color quantization and dithers the result using a specified dithering algorithm. See the `com.defano.algo.dither` package for available dithering implementations (or implement your own).
-`reduceGreyscale`       | Selection and transform tools | Performs a luminosity quantization and dithers the result using a specified dithering algorithm.
-`rotateLeft`            | Selection tools               | Rotates the selection 90 degrees counter-clockwise.
-`rotateRight`           | Selection tools               | Rotates the selection 90 degrees clockwise.
+Transform Method        | Description
+------------------------|-------------------------
+`adjustBrightness`      | Changes the brightness/luminosity of all pixels in the selected image by adding `delta` to each red, green and blue color channel value (a value between 0..255, where 0 is completely dark, 255 is completely light).
+`adjustTransparency`    | Changes the opacity of each pixel in the selected image by adding `delta` the alpha channel (a value between 0..255 where 0 is fully transparent and 255 is fully opaque).
+`removeTranslucency`    | Makes translucent pixels either fully transparent of fully opaque.          
+`applyTransform`        | Applies an `AffineTransform` or a `PixelTransform` to the selection.
+`fill`                  | Fills any fully-transparent pixels in the selection with a given `Paint`.
+`flipHorizontal`        | Flips the selection about a vertical axis drawn through the center of the image.
+`flipVertical`          | Flips the selection about a horizontal axis drawn through the center of the image.
+`invert`                | Inverts the color
+`pickupSelection`       | "Picks up" the pixels on the canvas that are currently within the bounds of the selection and adds them to the selection. Useful when moving a selection over another region of the canvas.
+`reduceColor`           | Performs a color quantization and dithers the result using a specified dithering algorithm. See the `com.defano.algo.dither` package for available dithering implementations (or implement your own).
+`reduceGreyscale`       | Performs a luminosity quantization and dithers the result using a specified dithering algorithm.
+`rotateLeft`            | Rotates the selection 90 degrees counter-clockwise.
+`rotateRight`           | Rotates the selection 90 degrees clockwise.
+
+Each of these transforms is implemented as a standalone class in the `com.defano.jmonet.algo.transform` package hierarchy, making it easy to apply these programmatically (offline) to a `BufferedImage` object.
 
 ## Creating complex brush shapes
 
@@ -304,11 +308,11 @@ Java's `Graphics` context does indeed provide routines for stroking and filling 
 
 #### How do I save my artwork?
 
-Get the image from the canvas via the `public BufferedImage getCanvasImage()` method. Then, use Java's `ImageIO` class to save as `gif`, `png` or `jpg`. For more advanced file type support (like `wbmp`, `bmp`, `pcx`, `pnm`, `raw` or `tiff`), consider the [Java Advanced ImageIO](http://docs.oracle.com/javase/6/docs/technotes/guides/imageio/index.html) library.
+Get the image from the canvas via the `public BufferedImage getCanvasImage()` method. Or, grab just the active selection from a selection tool using `selectionTool.getSelectedImage()`.
 
-You could also save just the active selection by wiring the `BufferedImage` returned by `selectionTool.getSelectedImage()`.
+Then, use Java's `ImageIO` class to save as `gif`, `png` or `jpg`. For more advanced file type support (like `wbmp`, `bmp`, `pcx`, `pnm`, `raw` or `tiff`), consider the [Java Advanced ImageIO](http://docs.oracle.com/javase/6/docs/technotes/guides/imageio/index.html) library.
 
-#### How do I import images from files or elsewhere?
+#### How do I import images from files or other apps?
 
 You'll need your image in the form of a Java `BufferedImage` object. Use Java's ImageIO or Advanced ImageIO to [read/deserialize existing files or data](https://docs.oracle.com/javase/tutorial/2d/images/loadimage.html).
 
@@ -316,13 +320,13 @@ Then, you have three options:
 
 1. Create a new canvas from an existing `BufferedImage` object like: `new JMonetCanvas(myImage)`. Best option when opening a file for editing.
 2. Use the selection tool to create a new selection containing your image: `selectionTool.createSelection(myImage, new Point(0,0))`. Best option when pasting an image into to an existing canvas (and you'd like to allow the user to move it into place).
-3. Commit the image to an existing canvas by drawing it onto the scratch buffer and committing the change, like: `myCanvas.setScratchImage(myImage); myCanvas.commit()`. Best option when you want to programmatically overlay an image onto an existing canvas.
+3. Commit the image to an existing canvas directly, like: `myCanvas.commit(new ImageLayerSet(myImage))`. Best option when you want to programmatically overlay an image onto an existing canvas.
 
-Note that in cases 1 and 3, if the imported image does not match the dimensions of the canvas, it will be drawn in the upper-left corner. Resize and translate the image you wish to import first if you'd like it to appear elsewhere.
+Note that in cases 1 and 3, if the imported image does not match the dimensions of the canvas, it will be drawn in the upper-left corner. Translate (and/or resize) the image first if you'd like it to appear elsewhere.
 
 #### If I create a selection using `LassoTool`, can I modify it with a transform tool (like `ProjectionTool`) or do I have to create a new selection from scratch with the transform tool?
 
-You can transfer a selection from one selection tool to another (including transform tools) using the `morphSelection()` method:
+You can transfer a selection from one selection tool to another (including transform tools) using the `morphSelection` method:
 
 ```
 LassoTool currentTool;
@@ -344,7 +348,7 @@ Tool Base                | Description
 `AbstractBoundsTool`     | Click-and-drag to define a rectangular boundary. Examples: Rectangle, Oval, Round Rectangle, Shape tools.
 `AbstractLineTool`       | Click-and-drag to define a line between two points. Example: Line tool.
 `AbstractPathTool`       | Click-and-drag to define a free-form path on the canvas. Examples: Paintbrush, pencil, eraser tools.
-`AbstractPolylineTool`   | Click-click-click-double-click to define segments in a polygon or curve. Examples: Curve, Polygon tools.
+`AbstractPolylineTool`   | Click, click, click, double-click to define segments in a polygon or curve. Examples: Curve, Polygon tools.
 `AbstractSelectionTool`  | Most complex of the tool bases; click-and-drag to define a shape to be drawn with marching ants allowing the user to move or modify the underlying graphic. Examples: Selection, Lasso, Rotate tools.
 `AbstractTransformTool`  | Click-and-drag to select a rectangular boundary drawn with drag handles at each corner which can moved by the user. Example: Slant, projection, perspective and rubber sheet tools.
 

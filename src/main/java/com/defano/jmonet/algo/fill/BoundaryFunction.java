@@ -29,5 +29,5 @@ public interface BoundaryFunction {
      * @return True if the given point in the image should be filled, false otherwise (i.e., the pixel represents a
      * boundary)
      */
-    boolean shouldFillPixel(BufferedImage canvas, BufferedImage scratch, int x, int y);
+    boolean isBoundary(BufferedImage canvas, BufferedImage scratch, int x, int y);
 }

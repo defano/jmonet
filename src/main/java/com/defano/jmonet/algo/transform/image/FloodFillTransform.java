@@ -59,19 +59,19 @@ public class FloodFillTransform implements ImageTransform {
 
             fill.fill(transformed, thisPixelX, thisPixelY, fillPaint);
 
-            if (bounds.contains(thisPixelX + 1, thisPixelY) && boundary.shouldFillPixel(source, transformed, thisPixelX + 1, thisPixelY)) {
+            if (bounds.contains(thisPixelX + 1, thisPixelY) && !boundary.isBoundary(source, transformed, thisPixelX + 1, thisPixelY)) {
                 fillPixels.add(new Point(thisPixelX + 1, thisPixelY));
             }
 
-            if (bounds.contains(thisPixelX - 1, thisPixelY) && boundary.shouldFillPixel(source, transformed, thisPixelX - 1, thisPixelY)) {
+            if (bounds.contains(thisPixelX - 1, thisPixelY) && !boundary.isBoundary(source, transformed, thisPixelX - 1, thisPixelY)) {
                 fillPixels.add(new Point(thisPixelX - 1, thisPixelY));
             }
 
-            if (bounds.contains(thisPixelX, thisPixelY + 1) && boundary.shouldFillPixel(source, transformed, thisPixelX, thisPixelY + 1)) {
+            if (bounds.contains(thisPixelX, thisPixelY + 1) && !boundary.isBoundary(source, transformed, thisPixelX, thisPixelY + 1)) {
                 fillPixels.add(new Point(thisPixelX, thisPixelY + 1));
             }
 
-            if (bounds.contains(thisPixelX, thisPixelY - 1) && boundary.shouldFillPixel(source, transformed, thisPixelX, thisPixelY - 1)) {
+            if (bounds.contains(thisPixelX, thisPixelY - 1) && !boundary.isBoundary(source, transformed, thisPixelX, thisPixelY - 1)) {
                 fillPixels.add(new Point(thisPixelX, thisPixelY - 1));
             }
         }

@@ -3,6 +3,7 @@ package com.defano.jmonet.canvas.layer;
 import com.defano.jmonet.canvas.observable.LayerSetObserver;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -17,9 +18,17 @@ public class ImageLayerSet implements LayeredImage {
     private final List<ImageLayer> layers = new ArrayList<>();
 
     /**
-     * Constructs an empty LayerSet.
+     * Constructs an empty ImageLayerSet.
      */
     public ImageLayerSet() {
+    }
+
+    /**
+     * Constructs an ImageLayerSet containing a single layer of the given image.
+     * @param image The image comprising the single layer of this ImageLayerSet.
+     */
+    public ImageLayerSet(BufferedImage image) {
+        addLayer(new ImageLayer(image));
     }
 
     /**
