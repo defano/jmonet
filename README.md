@@ -6,7 +6,8 @@ An easy-to-use toolkit for incorporating paint tools like those found in [MacPai
 
 This project provides the paint capabilities found in [WyldCard](https://github.com/defano/wyldcard) (an open-sourced clone of Apple's HyperCard).
 
-[![Build Status](https://travis-ci.org/defano/jmonet.svg?branch=master)](https://travis-ci.org/defano/jmonet) [![Sonar Status](https://sonarcloud.io/api/project_badges/measure?project=com.defano.jmonet%3Ajmonet&metric=alert_status)]
+[![Build Status](https://travis-ci.org/defano/jmonet.svg?branch=master)](https://travis-ci.org/defano/jmonet) 
+[![Sonar Status](https://sonarcloud.io/api/project_badges/measure?project=com.defano.jmonet%3Ajmonet&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.defano.jmonet%3Ajmonet)
 
 ## Features
 
