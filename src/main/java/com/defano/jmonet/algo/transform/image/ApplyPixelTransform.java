@@ -1,7 +1,5 @@
 package com.defano.jmonet.algo.transform.image;
 
-import com.defano.jmonet.algo.transform.StaticImageTransform;
-import com.defano.jmonet.algo.transform.PixelTransform;
 import com.defano.jmonet.tools.util.ImageUtils;
 
 import java.awt.*;
@@ -25,6 +23,16 @@ public class ApplyPixelTransform implements StaticImageTransform {
     public ApplyPixelTransform(PixelTransform transform, Shape mask) {
         this.transform = transform;
         this.mask = mask;
+    }
+
+    /**
+     * Creates a transform that applies a {@link PixelTransform} to each pixel in the image.
+     *
+     * @param transform The pixel transform to apply
+     */
+    public ApplyPixelTransform(PixelTransform transform) {
+        this.transform = transform;
+        this.mask = null;
     }
 
     /**

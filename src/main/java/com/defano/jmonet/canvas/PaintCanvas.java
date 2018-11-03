@@ -42,7 +42,7 @@ public interface PaintCanvas extends PaintSurface, ScaledLayeredImage {
 
     /**
      * Gets the image that has been painted on this canvas, not including any ephemeral changes that have been made via
-     * the scratch buffer but have not been comitted to the canvas.
+     * the scratch buffer but have not been committed to the canvas.
      *
      * @return The canvas image.
      */

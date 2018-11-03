@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * Represents an image selection that can be modified.
+ * Represents the state or context of an image selection that can be modified.
  */
 public interface MutableSelection extends Selection {
 

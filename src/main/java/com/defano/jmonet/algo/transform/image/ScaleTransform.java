@@ -1,7 +1,5 @@
 package com.defano.jmonet.algo.transform.image;
 
-import com.defano.jmonet.algo.transform.ImageTransform;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 

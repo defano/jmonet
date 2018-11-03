@@ -35,7 +35,8 @@ public abstract class StrokedCursorPathTool extends AbstractPathTool {
                 setToolCursor(CursorFactory.makeBrushCursor(
                         getStroke(),
                         getStrokePaint(),
-                        strokeTrackingCursorScaled ? canvas.getScale() : 1.0));
+                        strokeTrackingCursorScaled ? canvas.getScale() : 1.0)
+                );
             }
         });
     }

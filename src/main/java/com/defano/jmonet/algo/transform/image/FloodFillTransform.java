@@ -2,7 +2,6 @@ package com.defano.jmonet.algo.transform.image;
 
 import com.defano.jmonet.algo.fill.BoundaryFunction;
 import com.defano.jmonet.algo.fill.FillFunction;
-import com.defano.jmonet.algo.transform.ImageTransform;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

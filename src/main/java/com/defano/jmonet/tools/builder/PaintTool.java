@@ -180,7 +180,11 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     }
 
     public Paint getStrokePaint() {
-        return strokePaintObservable.blockingFirst();
+        try {
+            return strokePaintObservable.blockingFirst();
+        } catch (NullPointerException e) {
+            return Color.BLACK;
+        }
     }
 
     public Color getEraseColor() {

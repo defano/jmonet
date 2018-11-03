@@ -7,12 +7,13 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 /**
- * Represents an image selection.
+ * Represents the state or context of an image selection made by the selection or lasso tools.
  */
 public interface Selection {
 
     /**
      * Gets the canvas on which the selection is being made.
+     *
      * @return The active canvas.
      */
     PaintCanvas getCanvas();
@@ -28,7 +29,7 @@ public interface Selection {
     /**
      * Gets the current selection outline's shape and location, i.e., the path on the canvas where "marching ants" will
      * be drawn.
-     *
+     * <p>
      * Note that the location of the shape's bounds is translated to the selection's location on the canvas. Use
      * {@link #getIdentitySelectionFrame()} for a selection outline located at (0, 0) and suitable for testing whether
      * a pixel in the selected image is within the selection shape's mask.
@@ -39,7 +40,7 @@ public interface Selection {
 
     /**
      * Gets the current selection outline's shape, located at (0, 0).
-     *
+     * <p>
      * This method returns a shape useful for testing whether a pixel in the selected image's raster
      * (see {@link #getSelectedImage()}) is contained within the selection.
      *

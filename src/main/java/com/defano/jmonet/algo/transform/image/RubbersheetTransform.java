@@ -1,7 +1,6 @@
 package com.defano.jmonet.algo.transform.image;
 
 import Jama.Matrix;
-import com.defano.jmonet.algo.transform.ImageTransform;
 import com.defano.jmonet.model.Quadrilateral;
 
 import java.awt.*;

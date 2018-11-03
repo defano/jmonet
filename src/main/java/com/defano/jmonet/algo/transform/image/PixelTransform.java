@@ -1,4 +1,4 @@
-package com.defano.jmonet.algo.transform;
+package com.defano.jmonet.algo.transform.image;
 
 /**
  * A transform that can be applied to an individual pixel, like invert, or brightness adjustment.
