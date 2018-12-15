@@ -34,6 +34,7 @@ public class ProjectionTransform implements ImageTransform {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("DuplicateExpressions")
     @Override
     public BufferedImage apply(BufferedImage input) {
 
@@ -65,7 +66,7 @@ public class ProjectionTransform implements ImageTransform {
         X4 = 0;
         Y4 = imageHeight - 1;
 
-        double M_a[][] =
+        double[][] M_a =
                 {{x1, y1, 1, 0, 0, 0, -x1 * X1, -y1 * X1},
                         {x2, y2, 1, 0, 0, 0, -x2 * X2, -y2 * X2},
                         {x3, y3, 1, 0, 0, 0, -x3 * X3, -y3 * X3},
@@ -76,7 +77,7 @@ public class ProjectionTransform implements ImageTransform {
                         {0, 0, 0, x4, y4, 1, -x4 * Y4, -y4 * Y4}
                 };
 
-        double M_b[][] = {{X1}, {X2}, {X3}, {X4}, {Y1}, {Y2}, {Y3}, {Y4}};
+        double[][] M_b = {{X1}, {X2}, {X3}, {X4}, {Y1}, {Y2}, {Y3}, {Y4}};
 
         Matrix A = new Matrix(M_a);
         Matrix B = new Matrix(M_b);

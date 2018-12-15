@@ -42,7 +42,7 @@ public class StrokeBuilder {
      */
     public static class ShapeStrokeBuilder {
 
-        private ArrayList<Shape> shapes = new ArrayList<>();
+        private final ArrayList<Shape> shapes = new ArrayList<>();
         private int interpolation = 1;
 
         /**
@@ -314,7 +314,7 @@ public class StrokeBuilder {
         private float width = 1;
         private int cap = BasicStroke.CAP_ROUND;
         private int join = BasicStroke.JOIN_ROUND;
-        private ArrayList<Float> dash = new ArrayList<>();
+        private final ArrayList<Float> dash = new ArrayList<>();
         private float dashPhase = 0;
         private float miterLimit = 1;
 

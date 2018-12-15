@@ -26,7 +26,7 @@ public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserve
     private final int maxUndoBufferDepth;
 
     // An internal index into the list of layer sets; moves left and right to denote undo/redo
-    private BehaviorSubject<Integer> undoBufferPointer = BehaviorSubject.createDefault(-1);
+    private final BehaviorSubject<Integer> undoBufferPointer = BehaviorSubject.createDefault(-1);
 
     // Image elements that are no longer undoable; null until the undo depth has been exceeded.
     private BufferedImage permanent;

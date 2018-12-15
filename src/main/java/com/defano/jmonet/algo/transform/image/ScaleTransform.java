@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
  */
 public class ScaleTransform implements ImageTransform {
 
-    private Dimension size;
+    private final Dimension size;
 
     /**
      * Creates a scale transform.

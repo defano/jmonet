@@ -3,6 +3,7 @@ package com.defano.jmonet.algo.dither;
 /**
  * An implementation of the Floyd-Steinberg dithering algorithm.
  */
+@SuppressWarnings("PointlessArithmeticExpression")
 public class FloydSteinbergDitherer extends AbstractDitherer {
 
     /**

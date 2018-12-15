@@ -3,6 +3,7 @@ package com.defano.jmonet.algo.dither;
 /**
  * An implementation of the Sierra-3 dithering algorithm.
  */
+@SuppressWarnings("PointlessArithmeticExpression")
 public class SierraDitherer extends AbstractDitherer {
 
     /**

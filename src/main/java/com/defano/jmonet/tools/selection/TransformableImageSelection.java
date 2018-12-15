@@ -13,7 +13,7 @@ import java.awt.*;
  * Represents a selection in which the pixels of the selected image can be transformed (i.e., change of brightness,
  * opacity, etc.).
  * <p>
- * Differs from {@link TransformableSelection} in that these transforms do no change the selection shape (outline) or
+ * Differs from TransformableSelection in that these transforms do no change the selection shape (outline) or
  * location on the canvas; only the underlying selected image.
  */
 public interface TransformableImageSelection extends MutableSelection, Transformable {
