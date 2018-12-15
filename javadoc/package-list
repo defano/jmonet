@@ -1,7 +1,6 @@
 com.defano.jmonet.algo.dither
 com.defano.jmonet.algo.dither.quant
 com.defano.jmonet.algo.fill
-com.defano.jmonet.algo.transform
 com.defano.jmonet.algo.transform.affine
 com.defano.jmonet.algo.transform.image
 com.defano.jmonet.algo.transform.pixel
