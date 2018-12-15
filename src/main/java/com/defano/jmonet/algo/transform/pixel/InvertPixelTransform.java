@@ -1,6 +1,6 @@
 package com.defano.jmonet.algo.transform.pixel;
 
-import com.defano.jmonet.algo.transform.PixelTransform;
+import com.defano.jmonet.algo.transform.image.PixelTransform;
 
 /**
  * Inverts the color value of each affected pixel.

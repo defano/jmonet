@@ -2,7 +2,6 @@ package com.defano.jmonet.algo.transform.image;
 
 import com.defano.jmonet.algo.fill.DefaultFillFunction;
 import com.defano.jmonet.algo.fill.FillFunction;
-import com.defano.jmonet.algo.transform.StaticImageTransform;
 import com.defano.jmonet.tools.util.ImageUtils;
 
 import java.awt.*;
@@ -21,7 +20,7 @@ public class FillTransform implements StaticImageTransform {
     private final FillFunction fillFunction;
 
     /**
-     * Creates a fill transform.
+     * Creates a fill transform that fills only pixels bounded by mask.
      *
      * @param mask The shape determining which transparent pixels to fill; null to adjust all transparent pixels.
      * @param paint The {@link Paint} with which to fill
@@ -30,6 +29,19 @@ public class FillTransform implements StaticImageTransform {
      */
     public FillTransform(Shape mask, Paint paint, FillFunction fillFunction) {
         this.mask = mask;
+        this.paint = paint;
+        this.fillFunction = fillFunction;
+    }
+
+    /**
+     * Creates a fill transform that fills all pixels in the raster.
+     *
+     * @param paint The {@link Paint} with which to fill
+     * @param fillFunction An function that applies the paint to each affected pixel. Most users should simply supply
+     *                     an instance of {@link DefaultFillFunction}.
+     */
+    public FillTransform(Paint paint, FillFunction fillFunction) {
+        this.mask = null;
         this.paint = paint;
         this.fillFunction = fillFunction;
     }

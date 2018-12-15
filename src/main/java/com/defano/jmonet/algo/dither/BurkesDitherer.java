@@ -3,6 +3,7 @@ package com.defano.jmonet.algo.dither;
 /**
  * An implementation of the Burkes dithering algorithm.
  */
+@SuppressWarnings("PointlessArithmeticExpression")
 public class BurkesDitherer extends AbstractDitherer {
 
     /**

@@ -339,6 +339,26 @@ currentTool.deactivate();             // ... but currentTool is still active.
 
 When morphing a Lasso selection to a transform tool, the selection bounds will become rectangular, but only the pixels originally encircled by the Lasso will be affected by the transform.
 
+#### Does this library support image filters like blur, emboss, or edge tracing?
+
+Support? Absolutely! Provide? No.
+
+Any selection on the canvas, or the entire canvas itself, can be filtered by invoking the `.operate()` method (to apply a `BufferedImageOp` on the canvas object or selection tool). The folks at [JH Labs](http://www.jhlabs.com) produce an outstanding library of image filters that integrate easily with JMonet if you'd rather not author your own. As an example, here's how to use their Solarize filter:
+
+Include the JH Labs filter library (from Maven Central) as a dependency in your project:
+
+```
+dependencies {
+  compile group: 'com.jhlabs', name: 'filters', version: '2.0.235'
+}
+```
+
+Then, apply [one of their filters](http://www.jhlabs.com/ip/filters/index.html) to your canvas or selection (in this example, their `SolarizeFilter` class):
+
+```
+  myCanvas.operate(new SolarizeFilter());
+```
+
 #### Can I create my own tools?
 
 Of course! Tools are typically subclassed from one of the abstract tool classes in the `paint.tools.base` package. These abstract classes handle UI events for the most common tool behaviors:

@@ -1,5 +1,9 @@
 package com.defano.jmonet.canvas;
 
+import com.defano.jmonet.algo.transform.image.ApplyPixelTransform;
+import com.defano.jmonet.algo.transform.image.PixelTransform;
+import com.defano.jmonet.algo.transform.image.StaticImageTransform;
+import com.defano.jmonet.algo.transform.image.Transformable;
 import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.layer.LayeredImage;
@@ -16,13 +20,13 @@ import java.util.Objects;
 /**
  * A paint canvas with a built-in undo and redo buffer.
  */
-public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserver {
+public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserver, Transformable {
 
     // Maximum number of allowable undo operations
     private final int maxUndoBufferDepth;
 
     // An internal index into the list of layer sets; moves left and right to denote undo/redo
-    private BehaviorSubject<Integer> undoBufferPointer = BehaviorSubject.createDefault(-1);
+    private final BehaviorSubject<Integer> undoBufferPointer = BehaviorSubject.createDefault(-1);
 
     // Image elements that are no longer undoable; null until the undo depth has been exceeded.
     private BufferedImage permanent;
@@ -30,7 +34,10 @@ public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserve
     // List of changes as they're committed from the scratch buffer; lower indices are older; higher indices are newer
     private List<ImageLayerSet> undoBuffer = new ArrayList<>();
 
+    // Cached copy of last computed canvas image (don't want to have to merge all layers together at each request)
     private BufferedImage cachedCanvasImage;
+
+    // Hash of cachedCanvasImage (for detecting changes)
     private long cachedCanvasImageHash;
 
     /**
@@ -229,7 +236,7 @@ public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserve
     @Override
     public BufferedImage getCanvasImage() {
 
-        // Creating an image by overlaying ChangeSets is expensive; return cached copy when available
+        // Creating an image by overlaying/merging ChangeSets is expensive; return cached copy when available
         if (cachedCanvasImageHash != getCanvasImageHash()) {
             cachedCanvasImage = new BufferedImage(getCanvasSize().width, getCanvasSize().height, BufferedImage.TYPE_INT_ARGB);
 
@@ -245,6 +252,25 @@ public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserve
         }
 
         return cachedCanvasImage;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void onLayerSetModified(ImageLayerSet modified) {
+        fireCanvasCommitObservers(JMonetCanvas.this, modified, getCanvasImage());
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void transform(StaticImageTransform transform) {
+        BufferedImage canvasImage = getCanvasImage();
+        commit(new ImageLayerSet(transform.apply(canvasImage)));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void transform(PixelTransform transform) {
+        transform(new ApplyPixelTransform(transform));
     }
 
     /**
@@ -326,10 +352,5 @@ public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserve
         } else {
             return Objects.hash(permanent);
         }
-    }
-
-    @Override
-    public void onLayerSetModified(ImageLayerSet modified) {
-        fireCanvasCommitObservers(JMonetCanvas.this, modified, getCanvasImage());
     }
 }

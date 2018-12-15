@@ -145,6 +145,10 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         this.fillPaintObservable = fillPaintObservable;
     }
 
+    /**
+     * Provides an observable color specifying
+     * @param eraseColorObservable The color that erased pixels should be assigned (i.e., white).
+     */
     void setEraseColorObservable(Observable<Optional<Color>> eraseColorObservable) {
         this.eraseColorObservable = eraseColorObservable;
     }
@@ -180,7 +184,11 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
     }
 
     public Paint getStrokePaint() {
-        return strokePaintObservable.blockingFirst();
+        try {
+            return strokePaintObservable.blockingFirst();
+        } catch (NullPointerException e) {
+            return Color.BLACK;
+        }
     }
 
     public Color getEraseColor() {

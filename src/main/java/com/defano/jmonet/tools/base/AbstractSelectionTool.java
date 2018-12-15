@@ -360,6 +360,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
     public void redrawSelection(boolean includeFrame) {
         getScratch().clearAdd();
@@ -418,6 +419,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         dirty = true;
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
     private void commitSelection() {
         if (hasSelection()) {
 

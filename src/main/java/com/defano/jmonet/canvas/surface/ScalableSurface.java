@@ -80,7 +80,7 @@ public interface ScalableSurface {
      * When a scale factor has been applied, the input coordinates are divided by the scale factor. When a grid
      * factor has been applied, the result is rounded to the nearest grid spacing factor. When the surface is being
      * scrolled and a scale greater than or equal to 1.0 is applied, then the scroll error is factored in (see
-     * {@link ScrollableSurface#getScrollError()} for details).
+     * ScrollableSurface#getScrollError for details).
      * <p>
      * See {@link #convertModelPointToView(Point)} for the reverse function.
      *

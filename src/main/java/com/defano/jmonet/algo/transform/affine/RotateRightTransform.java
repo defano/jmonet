@@ -14,9 +14,9 @@ public class RotateRightTransform extends AffineTransform {
      * @param height The height of the shape or image to be rotated
      */
     public RotateRightTransform(int width, int height) {
-        setToTranslation(height / 2, width / 2);
+        setToTranslation(height / 2.0, width / 2.0);
         quadrantRotate(1);
-        translate(-width / 2, -height / 2);
+        translate(-width / 2.0, -height / 2.0);
     }
 
 }

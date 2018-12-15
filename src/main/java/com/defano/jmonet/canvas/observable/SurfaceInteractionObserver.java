@@ -9,6 +9,7 @@ import java.awt.event.*;
  * An observer of mouse and keyboard events taking place on a {@link ScaledLayeredImage}.
  * Converts mouse events to the coordinate space of the image represented by the ScaledLayeredImage.
  */
+@SuppressWarnings("EmptyMethod")
 public interface SurfaceInteractionObserver extends KeyListener {
 
     /**

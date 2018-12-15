@@ -22,7 +22,7 @@ public interface CanvasTransferDelegate {
      * Invoked to delete the current selection as a result of completing a "Cut" command. A typical implementation
      * of this method will delegate to {@link AbstractSelectionTool#deleteSelection()}.
      *
-     * Note that a "Cut" command is comprised of a {@link #copySelection()} and {@link #deleteSelection()}.
+     * Note that a "Cut" command is comprised of a {@link #copySelection()} this method.
      */
     void deleteSelection();
 

@@ -3,6 +3,7 @@ package com.defano.jmonet.algo.dither;
 /**
  * An implementation of Bill Atkinson's dithering algorithm.
  */
+@SuppressWarnings("PointlessArithmeticExpression")
 public class AtkinsonDitherer extends AbstractDitherer {
 
     /**

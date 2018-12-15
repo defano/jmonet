@@ -4,7 +4,6 @@ import com.defano.jmonet.algo.dither.Ditherer;
 import com.defano.jmonet.algo.dither.FloydSteinbergDitherer;
 import com.defano.jmonet.algo.dither.quant.GrayscaleQuantizer;
 import com.defano.jmonet.algo.dither.quant.MonochromaticQuantizer;
-import com.defano.jmonet.algo.transform.StaticImageTransform;
 
 import java.awt.image.BufferedImage;
 

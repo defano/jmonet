@@ -4,7 +4,6 @@ import com.defano.jmonet.algo.dither.Ditherer;
 import com.defano.jmonet.algo.dither.FloydSteinbergDitherer;
 import com.defano.jmonet.algo.dither.quant.ColorReductionQuantizer;
 import com.defano.jmonet.algo.dither.quant.MonochromaticQuantizer;
-import com.defano.jmonet.algo.transform.StaticImageTransform;
 
 import java.awt.image.BufferedImage;
 
@@ -25,7 +24,7 @@ public class ColorReductionTransform implements StaticImageTransform {
      *
      * @param colorDepth The maximum number of unique colors that should appear in the resultant selection image; zero
      *                   produces a black and white (monochrome) image. Note that color depth should be cubic; if
-     *                   the cubed root of colorDepth is not an integer, the cube of the floor of the cubed root
+     *                   the cubed root of colorDepth is not an integer, the the floor of the cubed root
      *                   will be assumed.
      * @param ditherer   The dithering algorithm to use, for example, {@link FloydSteinbergDitherer}.
      */

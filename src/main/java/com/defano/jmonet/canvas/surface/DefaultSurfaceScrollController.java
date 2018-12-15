@@ -7,7 +7,7 @@ import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 
 /**
- * Provides basic scroll behavior when a {@link AbstractPaintSurface} is the viewport of a {@link JScrollPane}.
+ * Provides basic scroll behavior when an AbstractPaintSurface is the viewport of a {@link JScrollPane}.
  * <p>
  * This default implementation is sufficient for cases when the surface is added to a {@link JScrollPane} as the view
  * port. If the surface (canvas) is embedded is some container with additional components or decorations a custom

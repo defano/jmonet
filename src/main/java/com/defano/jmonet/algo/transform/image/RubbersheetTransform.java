@@ -1,7 +1,6 @@
 package com.defano.jmonet.algo.transform.image;
 
 import Jama.Matrix;
-import com.defano.jmonet.algo.transform.ImageTransform;
 import com.defano.jmonet.model.Quadrilateral;
 
 import java.awt.*;
@@ -65,7 +64,7 @@ public class RubbersheetTransform implements ImageTransform {
         X4 = 0;
         Y4 = sourceHeight - 1;
 
-        double M_a[][] =
+        double[][] M_a =
                 {{x1 * y1, x1, y1, 1, 0, 0, 0, 0},
                         {x2 * y2, x2, y2, 1, 0, 0, 0, 0},
                         {x3 * y3, x3, y3, 1, 0, 0, 0, 0},
@@ -76,7 +75,7 @@ public class RubbersheetTransform implements ImageTransform {
                         {0, 0, 0, 0, x4 * y4, x4, y4, 1}
                 };
 
-        double M_b[][] = {{X1}, {X2}, {X3}, {X4}, {Y1}, {Y2}, {Y3}, {Y4}};
+        double[][] M_b = {{X1}, {X2}, {X3}, {X4}, {Y1}, {Y2}, {Y3}, {Y4}};
 
         Matrix A = new Matrix(M_a);
         Matrix B = new Matrix(M_b);

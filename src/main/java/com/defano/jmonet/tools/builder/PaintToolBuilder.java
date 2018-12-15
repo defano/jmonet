@@ -147,7 +147,7 @@ public class PaintToolBuilder {
 
     /**
      * Specifies the stroke to be drawn by the tool. The stroke represents the shape of "pen" used to draw paths, lines,
-     * and brush strokes. Use {@link StrokeBuilder} to create complex strokes.
+     * and brush strokes. Use StrokeBuilder to create complex strokes.
      *
      * @param stroke The stroke to be drawn by this tool
      * @return Ths PaintToolBuilder
@@ -170,7 +170,7 @@ public class PaintToolBuilder {
 
     /**
      * Specifies the paint (color and/or texture) of the stroke drawn by this tool. The stroke represents the shape of
-     * "pen" used to draw paths, lines, and brush strokes. Use {@link StrokeBuilder} to
+     * "pen" used to draw paths, lines, and brush strokes. Use StrokeBuilder to
      * create complex strokes.
      *
      * @param strokePaint The color and/or texture of the stroke drawn by this tool
@@ -224,7 +224,7 @@ public class PaintToolBuilder {
      * or deleting it. Further note that the default boundary behavior associated with
      * {@link com.defano.jmonet.tools.FillTool} looks for fully transparent pixels, thus, when changing the erase color
      * to a non-null value, erased pixels will not be filled by this tool (install a custom
-     * {@link com.defano.jmonet.algo.fill.BoundaryFunction} if such behavior is desired).
+     * BoundaryFunction if such behavior is desired).
      *
      * @param paint The color that erased pixels should become; null means fully transparent.
      * @return The PaintToolBuilder
@@ -242,7 +242,7 @@ public class PaintToolBuilder {
      * or deleting it. Further note that the default boundary behavior associated with
      * {@link com.defano.jmonet.tools.FillTool} looks for fully transparent pixels, thus, when changing the erase color
      * to a non-null value, erased pixels will not be filled by this tool (install a custom
-     * {@link com.defano.jmonet.algo.fill.BoundaryFunction} if such behavior is desired).
+     * BoundaryFunction if such behavior is desired).
      *
      * @param erasePaintObservable Observable providing the color that erased pixels should become; null means fully
      *                             transparent.

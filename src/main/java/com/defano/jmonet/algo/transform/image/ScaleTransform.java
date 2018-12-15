@@ -1,7 +1,5 @@
 package com.defano.jmonet.algo.transform.image;
 
-import com.defano.jmonet.algo.transform.ImageTransform;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -10,7 +8,7 @@ import java.awt.image.BufferedImage;
  */
 public class ScaleTransform implements ImageTransform {
 
-    private Dimension size;
+    private final Dimension size;
 
     /**
      * Creates a scale transform.

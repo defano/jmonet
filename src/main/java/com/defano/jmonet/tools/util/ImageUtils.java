@@ -23,6 +23,19 @@ public class ImageUtils {
     }
 
     /**
+     * Creates a new ARGB BufferedImage of the same dimensions as the given source.
+     * @param src The image whose dimensions should be used to create the new image.
+     * @return A new, empty BufferedImage with the same dimensions as src.
+     */
+    public static BufferedImage newArgbOfSize(BufferedImage src) {
+        return new BufferedImage(
+                src.getWidth(),
+                src.getHeight(),
+                BufferedImage.TYPE_INT_ARGB
+        );
+    }
+
+    /**
      * Calculates the smallest bounding rectangle that completely frames all pixels in the source image that are not
      * fully transparent. This bounding rectangle can be used to retrieve a sub-image
      * ({@link BufferedImage#getSubimage(int, int, int, int)}) that fully encapsulates all visible pixels.

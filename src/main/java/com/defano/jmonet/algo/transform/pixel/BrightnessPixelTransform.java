@@ -1,6 +1,6 @@
 package com.defano.jmonet.algo.transform.pixel;
 
-import com.defano.jmonet.algo.transform.PixelTransform;
+import com.defano.jmonet.algo.transform.image.PixelTransform;
 
 /**
  * Modifies the brightness (luminosity) of each affected pixel by adding/subtracting a delta value to each color channel

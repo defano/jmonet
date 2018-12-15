@@ -9,6 +9,7 @@ import java.awt.*;
  * Scan lines are typically visible only once the scale factor of an image exceeds some threshold (as rendering
  * scanlines with without scaling results in all scan lines and no image pixels).
  */
+@SuppressWarnings("SpellCheckingInspection")
 public interface ScanlineSurface extends ScalableSurface {
 
     /**

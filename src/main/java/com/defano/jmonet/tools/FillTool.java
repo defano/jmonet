@@ -64,7 +64,7 @@ public class FillTool extends PaintTool {
 
     /**
      * Gets the function used to detect when paint flooding a region has reached a boundary. See
-     * {@link BoundaryFunction} for details.
+     * BoundaryFunction for details.
      *
      * @return The current boundary function in use.
      */
@@ -74,7 +74,7 @@ public class FillTool extends PaintTool {
 
     /**
      * Sets the function used to detect when paint flooding a region has reached a boundary. See
-     * {@link BoundaryFunction} for details.
+     * BoundaryFunction for details.
      *
      * @param boundaryFunction The boundary function to use.
      */
