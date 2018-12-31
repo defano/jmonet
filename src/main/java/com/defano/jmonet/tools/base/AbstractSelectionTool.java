@@ -292,7 +292,12 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * ants). Has the effect of the user pressing 'delete' when an active selection exists.
      */
     public void deleteSelection() {
-        eraseSelectedPixelsFromCanvas();
+
+        // Delete pixels from canvas only if selection is clean (when dirty, pixels have already been picked up)
+        if (!isDirty()) {
+            eraseSelectedPixelsFromCanvas();
+        }
+
         abortSelection();
         getCanvas().commit();
     }
