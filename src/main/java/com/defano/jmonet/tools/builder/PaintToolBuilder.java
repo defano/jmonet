@@ -4,6 +4,7 @@ import com.defano.jmonet.canvas.JFXPaintCanvasNode;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.Interpolation;
 import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.tools.TextTool;
 import com.defano.jmonet.tools.base.Tool;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -54,7 +55,7 @@ public class PaintToolBuilder {
 
     /**
      * Makes the newly built tool active on the given canvas. The tool can be activated manually (instead of via this
-     * method by invoking {@link PaintTool#activate(PaintCanvas)}).
+     * method by invoking {@link Tool#activate(PaintCanvas)}).
      *
      * @param jfxPaintCanvasNode The JavaFX canvas on which to activate the tool
      * @return The PaintToolBuilder
@@ -66,7 +67,7 @@ public class PaintToolBuilder {
 
     /**
      * Makes the newly built tool active on the given canvas. The tool can be activated manually (instead of via this
-     * method by invoking {@link PaintTool#activate(PaintCanvas)}).
+     * method by invoking {@link Tool#activate(PaintCanvas)}).
      *
      * @param canvas The Swing canvas on which to activate the tool
      * @return The PaintToolBuilder
@@ -77,7 +78,7 @@ public class PaintToolBuilder {
     }
 
     /**
-     * Specifies the font painted by the tool. Applies only to the {@link com.defano.jmonet.tools.TextTool}.
+     * Specifies the font painted by the tool. Applies only to the {@link TextTool}.
      *
      * @param font The font to paint
      * @return The PaintToolBuilder
@@ -89,7 +90,7 @@ public class PaintToolBuilder {
 
     /**
      * Specifies an observable provider of the font painted by the tool. Applies only to the
-     * {@link com.defano.jmonet.tools.TextTool}.
+     * {@link TextTool}.
      *
      * @param fontProvider The font to paint
      * @return The PaintToolBuilder
@@ -100,7 +101,7 @@ public class PaintToolBuilder {
     }
 
     /**
-     * Specifies the color of text painted by the tool. Applies only to the {@link com.defano.jmonet.tools.TextTool}).
+     * Specifies the color of text painted by the tool. Applies only to the {@link TextTool}).
      *
      * @param color The text color
      * @return The PaintToolBuilder
@@ -112,7 +113,7 @@ public class PaintToolBuilder {
 
     /**
      * Specifies an observable provider of the color of the text painted by the tool. Applies only to the
-     * {@link com.defano.jmonet.tools.TextTool}.
+     * {@link TextTool}.
      *
      * @param colorProvider The color of the text to paint
      * @return The PaintToolBuilder

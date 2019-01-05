@@ -2,7 +2,6 @@ package com.defano.jmonet.model;
 
 import com.defano.jmonet.tools.*;
 import com.defano.jmonet.tools.base.Tool;
-import com.defano.jmonet.tools.builder.PaintTool;
 
 /**
  * An enumeration of paint tools provided by this library.
@@ -40,8 +39,8 @@ public enum PaintToolType {
     }
 
     /**
-     * Creates a new instance of this type of {@link PaintTool}.
-     * @return A new {@link PaintTool}.
+     * Creates a new instance of this type of {@link Tool}.
+     * @return A new {@link Tool}.
      */
     public Tool getToolInstance() {
         try {
