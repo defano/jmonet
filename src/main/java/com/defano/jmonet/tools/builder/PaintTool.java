@@ -7,6 +7,7 @@ import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.model.Interpolation;
 import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.tools.base.Tool;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -21,7 +22,7 @@ import java.util.Optional;
  * A base tool class holding common attribute providers (like stroke, fill and font), plus empty, template methods for
  * keyboard and mouse events.
  */
-public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCommitObserver {
+public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCommitObserver, Tool {
 
     private PaintCanvas canvas;
     private final PaintToolType type;
@@ -107,8 +108,8 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         }
 
         Scratch scratch = getCanvas().getScratch();
-        applyRenderingHints(scratch.getAddScratchGraphics(this, null));
-        applyRenderingHints(scratch.getRemoveScratchGraphics(this, null));
+        applyRenderingHints(scratch.getAddScratchGraphics((Tool)this, null));
+        applyRenderingHints(scratch.getRemoveScratchGraphics((Tool)this, null));
 
         return scratch;
     }
@@ -304,7 +305,7 @@ public abstract class PaintTool implements SurfaceInteractionObserver, CanvasCom
         }
     }
 
-    protected void erase(Scratch scratch, Shape shape, Stroke stroke) {
+    public void erase(Scratch scratch, Shape shape, Stroke stroke) {
         Paint erasePaint = getEraseColor();
 
         Graphics2D g = erasePaint == null ?

@@ -1,9 +1,10 @@
 package com.defano.jmonet.tools;
 
 
+import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.canvas.surface.SurfaceScrollController;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.builder.PaintTool;
+import com.defano.jmonet.tools.base.BasicTool;
 import com.defano.jmonet.tools.util.CursorFactory;
 
 import javax.swing.*;
@@ -15,7 +16,7 @@ import java.awt.event.MouseEvent;
  * Tool that changes the scale factor of the canvas and adjusts the scroll position to re-center the scaled image
  * in the scrollable viewport.
  */
-public class MagnifierTool extends PaintTool {
+public class MagnifierTool extends BasicTool implements SurfaceInteractionObserver {
 
     private Cursor zoomCursor = CursorFactory.makeZoomCursor();
     private Cursor zoomInCursor = CursorFactory.makeZoomInCursor();
@@ -31,11 +32,14 @@ public class MagnifierTool extends PaintTool {
         SwingUtilities.invokeLater(() -> setToolCursor(zoomInCursor));
     }
 
+    @Override
+    public SurfaceInteractionObserver getSurfaceInteractionObserver() {
+        return this;
+    }
+
     /** {@inheritDoc} */
     @Override
     public void keyPressed(KeyEvent e) {
-        super.keyPressed(e);
-
         if (e.isMetaDown() || e.isControlDown() || e.isAltDown()) {
             setToolCursor(zoomCursor);
         } else if (e.isShiftDown()) {
@@ -48,7 +52,6 @@ public class MagnifierTool extends PaintTool {
     /** {@inheritDoc} */
     @Override
     public void keyReleased(KeyEvent e) {
-        super.keyReleased(e);
         setToolCursor(e.isShiftDown() ? zoomOutCursor : zoomInCursor);
     }
 

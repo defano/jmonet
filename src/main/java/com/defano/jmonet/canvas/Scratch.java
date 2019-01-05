@@ -2,7 +2,7 @@ package com.defano.jmonet.canvas;
 
 import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
-import com.defano.jmonet.tools.builder.PaintTool;
+import com.defano.jmonet.tools.base.Tool;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -112,7 +112,7 @@ public class Scratch {
      *               modified.
      * @return The remove-scratch buffer ready for use.
      */
-    public Graphics2D getRemoveScratchGraphics(PaintTool tool, Stroke stroke, Shape shape) {
+    public Graphics2D getRemoveScratchGraphics(Tool tool, Stroke stroke, Shape shape) {
         return getRemoveScratchGraphics(tool, getBounds(stroke, shape));
     }
 
@@ -130,7 +130,7 @@ public class Scratch {
      *               modified.
      * @return The remove-scratch buffer ready for use.
      */
-    public Graphics2D getRemoveScratchGraphics(PaintTool tool, Shape bounds) {
+    public Graphics2D getRemoveScratchGraphics(Tool tool, Shape bounds) {
         setClip(bounds, removeScratchGraphics);
 
         if (tool != null) {
@@ -155,7 +155,7 @@ public class Scratch {
      *               modified.
      * @return The remove-scratch buffer ready for use.
      */
-    public Graphics2D getAddScratchGraphics(PaintTool tool, Stroke stroke, Shape shape) {
+    public Graphics2D getAddScratchGraphics(Tool tool, Stroke stroke, Shape shape) {
         return getAddScratchGraphics(tool, getBounds(stroke, shape));
     }
 
@@ -173,7 +173,7 @@ public class Scratch {
      *               modified.
      * @return The remove-scratch buffer ready for use.
      */
-    public Graphics2D getAddScratchGraphics(PaintTool tool, Shape bounds) {
+    public Graphics2D getAddScratchGraphics(Tool tool, Shape bounds) {
         setClip(bounds, addScratchGraphics);
 
         if (tool != null) {

@@ -2,7 +2,8 @@ package com.defano.jmonet.tools;
 
 import com.defano.jmonet.algo.transform.image.ApplyAffineTransform;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.AbstractSelectionTool;
+import com.defano.jmonet.tools.base.SelectionTool;
+import com.defano.jmonet.tools.base.SelectionToolDelegate;
 import com.defano.jmonet.tools.util.Geometry;
 
 import java.awt.*;
@@ -13,7 +14,7 @@ import java.awt.image.BufferedImage;
 /**
  * Tool for selecting a bounding box and free-rotating the selected image about its center-point.
  */
-public class RotateTool extends AbstractSelectionTool {
+public class RotateTool extends SelectionTool implements SelectionToolDelegate {
 
     private Point centerpoint;                  // Point around which image rotates
     private Point dragLocation;                 // Location of the drag handle
@@ -29,6 +30,7 @@ public class RotateTool extends AbstractSelectionTool {
 
     public RotateTool() {
         super(PaintToolType.ROTATE);
+        setSelectionToolDelegate(this);
     }
 
     /**
@@ -83,7 +85,7 @@ public class RotateTool extends AbstractSelectionTool {
             double degrees = Geometry.angle(centerpoint.x, centerpoint.y, dragLocation.x, dragLocation.y);
 
             if (e.isShiftDown()) {
-                degrees = Geometry.round(degrees, getConstrainedAngle());
+                degrees = Geometry.round(degrees, getToolAttributes().getConstrainedAngle());
             }
 
             double angle = Math.toRadians(degrees);
@@ -124,7 +126,7 @@ public class RotateTool extends AbstractSelectionTool {
      * {@inheritDoc}
      */
     @Override
-    protected void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
+    public void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         int handleSize = 8;
 
         Rectangle selectionRectangle = new Rectangle(initialPoint);

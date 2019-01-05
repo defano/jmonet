@@ -2,8 +2,9 @@ package com.defano.jmonet.tools;
 
 import com.defano.jmonet.algo.fill.*;
 import com.defano.jmonet.algo.transform.image.FloodFillTransform;
+import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.builder.PaintTool;
+import com.defano.jmonet.tools.base.BasicTool;
 import com.defano.jmonet.tools.util.CursorFactory;
 
 import java.awt.*;
@@ -13,7 +14,7 @@ import java.awt.image.BufferedImage;
 /**
  * Tool that performs a flood-fill of all transparent pixels.
  */
-public class FillTool extends PaintTool {
+public class FillTool extends BasicTool implements SurfaceInteractionObserver {
 
     private Cursor fillCursor = CursorFactory.makeBucketCursor();
     private BoundaryFunction boundaryFunction = new DefaultBoundaryFunction();
@@ -28,10 +29,10 @@ public class FillTool extends PaintTool {
     public void mousePressed(MouseEvent e, Point imageLocation) {
 
         // Nothing to do if no fill paint is specified
-        if (getFillPaint().isPresent()) {
+        if (getToolAttributes().getFillPaint().isPresent()) {
             getScratch().clear();
 
-            BufferedImage filled = new FloodFillTransform(getFillPaint().get(), imageLocation, fillFunction, boundaryFunction).apply(getCanvas().getCanvasImage());
+            BufferedImage filled = new FloodFillTransform(getToolAttributes().getFillPaint().get(), imageLocation, fillFunction, boundaryFunction).apply(getCanvas().getCanvasImage());
             getScratch().setAddScratch(filled);
 
             getCanvas().commit();
@@ -106,4 +107,8 @@ public class FillTool extends PaintTool {
         }
     }
 
+    @Override
+    public SurfaceInteractionObserver getSurfaceInteractionObserver() {
+        return this;
+    }
 }

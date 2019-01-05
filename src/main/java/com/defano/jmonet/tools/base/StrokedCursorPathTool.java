@@ -8,7 +8,7 @@ import io.reactivex.disposables.Disposable;
 
 import java.awt.*;
 
-public abstract class StrokedCursorPathTool extends AbstractPathTool {
+public abstract class StrokedCursorPathTool extends PathTool {
 
     private Disposable subscription;
     private boolean strokeTrackingCursorEnabled = true;
@@ -29,12 +29,12 @@ public abstract class StrokedCursorPathTool extends AbstractPathTool {
     @Override
     public void activate(PaintCanvas canvas) {
         super.activate(canvas);
-        subscription = Observable.merge(getStrokeObservable(), getStrokePaintObservable(), canvas.getScaleObservable()).subscribe(o ->
+        subscription = Observable.merge(getToolAttributes().getStrokeObservable(), getToolAttributes().getStrokePaintObservable(), canvas.getScaleObservable()).subscribe(o ->
         {
             if (strokeTrackingCursorEnabled) {
                 setToolCursor(CursorFactory.makeBrushCursor(
-                        getStroke(),
-                        getStrokePaint(),
+                        getToolAttributes().getStroke(),
+                        getToolAttributes().getStrokePaint(),
                         strokeTrackingCursorScaled ? canvas.getScale() : 1.0)
                 );
             }

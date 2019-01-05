@@ -1,5 +1,6 @@
 package com.defano.jmonet.tools.base;
 
+import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.model.FlexQuadrilateral;
 import com.defano.jmonet.model.PaintToolType;
 
@@ -7,14 +8,11 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-/**
- * Mouse and keyboard handler for tools that define a bounding box with flexible corners that can be dragged into
- * a desired position and shape.
- */
-public abstract class AbstractTransformTool extends AbstractSelectionTool {
+public abstract class TransformTool extends SelectionTool implements SurfaceInteractionObserver, SelectionToolDelegate {
 
     private final static int HANDLE_SIZE = 8;
 
+    private TransformToolDelegate transformToolDelegate;
     private BufferedImage originalImage;
     private Rectangle selectionBounds;
     private FlexQuadrilateral transformBounds;
@@ -22,52 +20,9 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     private Rectangle topLeftHandle, topRightHandle, bottomRightHandle, bottomLeftHandle;
     private boolean dragTopLeft, dragTopRight, dragBottomRight, dragBottomLeft;
 
-    /**
-     * Invoked to indicate that the user has dragged/moved the top-left handle of the transform quadrilateral to a
-     * new position.
-     *
-     * @param quadrilateral The quadrilateral representing the transform bounds.
-     * @param newPosition The new location of the affected drag handle.
-     * @param isShiftDown True to indicate user is holding shift down; implementers may optionally use this flag
-     *                    to constrain drag movement or apply some other feature of the transform.
-     */
-    protected abstract void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown);
-
-    /**
-     * Invoked to indicate that the user has dragged/moved the top-right handle of the transform quadrilateral to a
-     * new position.
-     *
-     * @param quadrilateral The quadrilateral representing the transform bounds.
-     * @param newPosition The new location of the affected drag handle.
-     * @param isShiftDown True to indicate user is holding shift down; implementers may optionally use this flag
-     *                    to constrain drag movement or apply some other feature of the transform.
-     */
-    protected abstract void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown);
-
-    /**
-     * Invoked to indicate that the user has dragged/moved the bottom-left handle of the transform quadrilateral to a
-     * new position.
-     *
-     * @param quadrilateral The quadrilateral representing the transform bounds.
-     * @param newPosition The new location of the affected drag handle.
-     * @param isShiftDown True to indicate user is holding shift down; implementers may optionally use this flag
-     *                    to constrain drag movement or apply some other feature of the transform.
-     */
-    protected abstract void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown);
-
-    /**
-     * Invoked to indicate that the user has dragged/moved the bottom-right handle of the transform quadrilateral to a
-     * new position.
-     *
-     * @param quadrilateral The quadrilateral representing the transform bounds.
-     * @param newPosition The new location of the affected drag handle.
-     * @param isShiftDown True to indicate user is holding shift down; implementers may optionally use this flag
-     *                    to constrain drag movement or apply some other feature of the transform.
-     */
-    protected abstract void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown);
-
-    public AbstractTransformTool(PaintToolType type) {
+    public TransformTool(PaintToolType type) {
         super(type);
+        super.setSelectionToolDelegate(this);
     }
 
     /** {@inheritDoc} */
@@ -103,6 +58,9 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
     /** {@inheritDoc} */
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
+        if (transformToolDelegate == null) {
+            throw new IllegalStateException("Transform tool delegate not set.");
+        }
 
         // Selection exists, see if we're dragging a handle
         if (hasSelection()) {
@@ -112,16 +70,16 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
             }
 
             if (dragTopLeft) {
-                moveTopLeft(transformBounds, imageLocation, e.isShiftDown());
+                transformToolDelegate.moveTopLeft(transformBounds, imageLocation, e.isShiftDown());
                 redrawSelection(true);
             } else if (dragTopRight) {
-                moveTopRight(transformBounds, imageLocation, e.isShiftDown());
+                transformToolDelegate.moveTopRight(transformBounds, imageLocation, e.isShiftDown());
                 redrawSelection(true);
             } else if (dragBottomLeft) {
-                moveBottomLeft(transformBounds, imageLocation, e.isShiftDown());
+                transformToolDelegate.moveBottomLeft(transformBounds, imageLocation, e.isShiftDown());
                 redrawSelection(true);
             } else if (dragBottomRight) {
-                moveBottomRight(transformBounds, imageLocation, e.isShiftDown());
+                transformToolDelegate.moveBottomRight(transformBounds, imageLocation, e.isShiftDown());
                 redrawSelection(true);
             } else {
                 super.mouseDragged(e, imageLocation);
@@ -152,7 +110,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
+    public void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         selectionBounds = new Rectangle(initialPoint);
         selectionBounds.add(newPoint);
 
@@ -168,7 +126,7 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void closeSelectionFrame(Point finalPoint) {
+    public void closeSelectionFrame(Point finalPoint) {
         transformBounds = new FlexQuadrilateral(selectionBounds);
     }
 
@@ -234,4 +192,11 @@ public abstract class AbstractTransformTool extends AbstractSelectionTool {
         }
     }
 
+    protected TransformToolDelegate getTransformToolDelegate() {
+        return transformToolDelegate;
+    }
+
+    protected void setTransformToolDelegate(TransformToolDelegate transformToolDelegate) {
+        this.transformToolDelegate = transformToolDelegate;
+    }
 }

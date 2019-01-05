@@ -1,10 +1,12 @@
 package com.defano.jmonet.tools.base;
 
-import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.PaintCanvas;
+import com.defano.jmonet.canvas.layer.ImageLayerSet;
+import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
+import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.tools.PerspectiveTool;
 import com.defano.jmonet.tools.RotateTool;
-import com.defano.jmonet.tools.builder.PaintTool;
 import com.defano.jmonet.tools.selection.MutableSelection;
 import com.defano.jmonet.tools.util.Geometry;
 import com.defano.jmonet.tools.util.ImageUtils;
@@ -19,13 +21,11 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
 
-/**
- * Mouse and keyboard handler for drawing selections (free-form or bounded) on the canvas.
- */
-public abstract class AbstractSelectionTool extends PaintTool implements MarchingAntsObserver, MutableSelection {
+public abstract class SelectionTool extends BasicTool implements CanvasCommitObserver, MarchingAntsObserver, MutableSelection, SurfaceInteractionObserver {
 
     private final BehaviorSubject<Optional<BufferedImage>> selectedImage = BehaviorSubject.createDefault(Optional.empty());
 
+    private SelectionToolDelegate selectionToolDelegate;
     private Point initialPoint, lastPoint;
     private Cursor movementCursor = Cursor.getDefaultCursor();
     private Cursor boundaryCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
@@ -33,26 +33,9 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
     private boolean isMovingSelection = false;
     private boolean dirty = false;
 
-    public AbstractSelectionTool(PaintToolType type) {
+    public SelectionTool(PaintToolType type) {
         super(type);
     }
-
-    /**
-     * Invoked to indicate that the user has defined a new point on the selection path.
-     *
-     * @param initialPoint   The first point defined by the user (i.e., where the mouse was initially pressed)
-     * @param newPoint       A new point to append to the selection path (i.e., where the mouse is now)
-     * @param isShiftKeyDown When true, indicates user is holding the shift key down
-     */
-    protected abstract void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown);
-
-    /**
-     * Invoked to indicate that the given point should be considered the last point in the selection path, and the
-     * path shape should be closed.
-     *
-     * @param finalPoint The final point on the selection path.
-     */
-    protected abstract void closeSelectionFrame(Point finalPoint);
 
     /**
      * Creates a selection bounded by the given rectangle. Equivalent to the user clicking and dragging from the top-
@@ -65,9 +48,9 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
             completeSelection();
         }
 
-        addPointToSelectionFrame(bounds.getLocation(), new Point(bounds.x + bounds.width, bounds.y + bounds.height), false);
+        selectionToolDelegate.addPointToSelectionFrame(bounds.getLocation(), new Point(bounds.x + bounds.width, bounds.y + bounds.height), false);
         getSelectionFromCanvas();
-        closeSelectionFrame(new Point(bounds.x + bounds.width, bounds.y + bounds.height));
+        selectionToolDelegate.closeSelectionFrame(new Point(bounds.x + bounds.width, bounds.y + bounds.height));
     }
 
     /**
@@ -89,8 +72,8 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         Graphics2D g = getCanvas().getScratch().getAddScratchGraphics(this, new Rectangle(location, new Dimension(image.getWidth(), image.getHeight())));
         g.drawImage(argbImage, location.x, location.y, null);
 
-        addPointToSelectionFrame(location.getLocation(), new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()), false);
-        closeSelectionFrame(new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()));
+        selectionToolDelegate.addPointToSelectionFrame(location.getLocation(), new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()), false);
+        selectionToolDelegate.closeSelectionFrame(new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()));
         selectedImage.onNext(Optional.of(argbImage));
 
         // Don't call setDirty(), doing so will remove underlying pixels from the canvas
@@ -152,7 +135,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         // User is defining a new selection rectangle
         else {
             Rectangle canvasBounds = new Rectangle(new Point(), getCanvas().getCanvasSize());
-            addPointToSelectionFrame(initialPoint, Geometry.constrainToBounds(imageLocation, canvasBounds), e.isShiftDown());
+            selectionToolDelegate.addPointToSelectionFrame(initialPoint, Geometry.constrainToBounds(imageLocation, canvasBounds), e.isShiftDown());
 
             getScratch().clear();
             drawSelectionFrame();
@@ -168,7 +151,7 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
         // User released mouse after defining a selection
         if (!hasSelection() && hasSelectionFrame()) {
             getSelectionFromCanvas();
-            closeSelectionFrame(imageLocation);
+            selectionToolDelegate.closeSelectionFrame(imageLocation);
         }
     }
 
@@ -203,11 +186,11 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      * the caller will want to deactivate this tool immediately after calling this method.
      * <p>
      * For example, this allows the user to draw a selection with the lasso tool and then transform it with a transform
-     * tool (i.e., {@link com.defano.jmonet.tools.PerspectiveTool} without having to redefine the selection bounds.
+     * tool (i.e., {@link PerspectiveTool} without having to redefine the selection bounds.
      *
      * @param to The tool that the current selection should be transferred to.
      */
-    public void morphSelection(AbstractSelectionTool to) {
+    public void morphSelection(SelectionTool to) {
 
         if (hasSelection()) {
 
@@ -549,5 +532,18 @@ public abstract class AbstractSelectionTool extends PaintTool implements Marchin
      */
     public void setBoundaryCursor(Cursor boundaryCursor) {
         this.boundaryCursor = boundaryCursor;
+    }
+
+    @Override
+    public SurfaceInteractionObserver getSurfaceInteractionObserver() {
+        return this;
+    }
+
+    protected SelectionToolDelegate getSelectionToolDelegate() {
+        return selectionToolDelegate;
+    }
+
+    protected void setSelectionToolDelegate(SelectionToolDelegate selectionToolDelegate) {
+        this.selectionToolDelegate = selectionToolDelegate;
     }
 }

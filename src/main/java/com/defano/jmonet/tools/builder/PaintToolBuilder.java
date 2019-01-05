@@ -4,7 +4,7 @@ import com.defano.jmonet.canvas.JFXPaintCanvasNode;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.Interpolation;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.AbstractBoundsTool;
+import com.defano.jmonet.tools.base.Tool;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -315,7 +315,7 @@ public class PaintToolBuilder {
 
     /**
      * Specifies whether the tool should draw a single shape, or a trace of multiple shapes as the mouse is dragged.
-     * Affects tools extending {@link AbstractBoundsTool}.
+     * Affects tools extending {@link com.defano.jmonet.tools.base.BoundsTool}.
      *
      * @param drawMultiple True to draw multiple shapes; false to draw just one.
      * @return The PaintToolBuilder
@@ -363,57 +363,60 @@ public class PaintToolBuilder {
      *
      * @return The built paint tool.
      */
-    public PaintTool build() {
+    public Tool build() {
 
-        PaintTool selectedTool = type.getToolInstance();
+        Tool selectedTool = type.getToolInstance();
+        DefaultToolAttributes toolAttributes = new DefaultToolAttributes();
 
         if (strokeObservable != null) {
-            selectedTool.setStrokeObservable(strokeObservable);
+            toolAttributes.setStrokeObservable(strokeObservable);
         }
 
         if (strokePaintObservable != null) {
-            selectedTool.setStrokePaintObservable(strokePaintObservable);
+            toolAttributes.setStrokePaintObservable(strokePaintObservable);
         }
 
         if (erasePaintObservable != null) {
-            selectedTool.setEraseColorObservable(erasePaintObservable);
+            toolAttributes.setEraseColorObservable(erasePaintObservable);
         }
 
         if (shapeSidesObservable != null) {
-            selectedTool.setShapeSidesObservable(shapeSidesObservable);
+            toolAttributes.setShapeSidesObservable(shapeSidesObservable);
         }
 
         if (fontObservable != null) {
-            selectedTool.setFontObservable(fontObservable);
+            toolAttributes.setFontObservable(fontObservable);
         }
 
         if (fillPaintObservable != null) {
-            selectedTool.setFillPaintObservable(fillPaintObservable);
+            toolAttributes.setFillPaintObservable(fillPaintObservable);
         }
 
         if (fontColorObservable != null) {
-            selectedTool.setFontColorObservable(fontColorObservable);
+            toolAttributes.setFontColorObservable(fontColorObservable);
         }
 
         if (intensityObservable != null) {
-            selectedTool.setIntensityObservable(intensityObservable);
+            toolAttributes.setIntensityObservable(intensityObservable);
         }
 
         if (drawMultipleObservable != null) {
-            selectedTool.setDrawMultipleObservable(drawMultipleObservable);
+            toolAttributes.setDrawMultipleObservable(drawMultipleObservable);
         }
 
         if (drawCenteredObservable != null) {
-            selectedTool.setDrawCenteredObservable(drawCenteredObservable);
+            toolAttributes.setDrawCenteredObservable(drawCenteredObservable);
         }
 
         if (cornerRadiusObservable != null) {
-            selectedTool.setCornerRadiusObservable(cornerRadiusObservable);
+            toolAttributes.setCornerRadiusObservable(cornerRadiusObservable);
         }
 
         if (antiAliasingObservable != null) {
             selectedTool.setAntiAliasingObservable(antiAliasingObservable);
         }
+
+        selectedTool.setToolAttributes(toolAttributes);
 
         if (canvas != null) {
             selectedTool.activate(canvas);

@@ -2,8 +2,9 @@ package com.defano.jmonet.tools;
 
 
 import com.defano.jmonet.canvas.PaintCanvas;
+import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.builder.PaintTool;
+import com.defano.jmonet.tools.base.BasicTool;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
@@ -18,7 +19,7 @@ import java.awt.image.BufferedImage;
 /**
  * Tool for drawing rasterized text on the canvas.
  */
-public class TextTool extends PaintTool implements Consumer {
+public class TextTool extends BasicTool implements Consumer, SurfaceInteractionObserver {
 
     private JTextArea textArea;
     private Point textModelLocation;
@@ -28,6 +29,11 @@ public class TextTool extends PaintTool implements Consumer {
     public TextTool() {
         super(PaintToolType.TEXT);
         setToolCursor(new Cursor(Cursor.TEXT_CURSOR));
+    }
+
+    @Override
+    public SurfaceInteractionObserver getSurfaceInteractionObserver() {
+        return this;
     }
 
     /** {@inheritDoc} */
@@ -53,7 +59,7 @@ public class TextTool extends PaintTool implements Consumer {
         textArea.setVisible(true);
         textArea.setOpaque(false);
         textArea.setBackground(new Color(0, 0, 0, 0));
-        textArea.setForeground(getFontColor());
+        textArea.setForeground(getToolAttributes().getFontColor());
         textArea.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -61,11 +67,11 @@ public class TextTool extends PaintTool implements Consumer {
             }
         });
 
-        fontSubscription = getFontObservable()
+        fontSubscription = getToolAttributes().getFontObservable()
                 .subscribeOn(Schedulers.computation())
                 .subscribe(font -> textArea.setFont(font));
 
-        fontColorSubscription = getFontColorObservable()
+        fontColorSubscription = getToolAttributes().getFontColorObservable()
                 .subscribeOn(Schedulers.computation())
                 .subscribe(color -> textArea.setForeground(color));
     }
@@ -128,7 +134,7 @@ public class TextTool extends PaintTool implements Consumer {
         textArea.setSelectionEnd(0);
 
         textArea.getCaret().setVisible(false);
-        textArea.setFont(getFont());
+        textArea.setFont(getToolAttributes().getFont());
 
         BufferedImage image = new BufferedImage(textArea.getWidth(), textArea.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) image.getGraphics();
@@ -154,12 +160,12 @@ public class TextTool extends PaintTool implements Consumer {
     }
 
     private Font getScaledFont() {
-        return new Font(getFont().getFamily(), getFont().getStyle(), (int) (getFont().getSize() * getCanvas().getScaleObservable().blockingFirst()));
+        return new Font(getToolAttributes().getFont().getFamily(), getToolAttributes().getFont().getStyle(), (int) (getToolAttributes().getFont().getSize() * getCanvas().getScaleObservable().blockingFirst()));
     }
 
     private int getFontAscent() {
         Graphics g = getScratch().getAddScratchGraphics(this, null);
-        FontMetrics metrics = g.getFontMetrics(getFont());
+        FontMetrics metrics = g.getFontMetrics(getToolAttributes().getFont());
 
         return metrics.getAscent();
     }

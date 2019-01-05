@@ -2,7 +2,8 @@ package com.defano.jmonet.tools;
 
 import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.AbstractPolylineTool;
+import com.defano.jmonet.tools.base.PolylineTool;
+import com.defano.jmonet.tools.base.PolylineToolDelegate;
 
 import java.awt.*;
 import java.awt.geom.Path2D;
@@ -10,15 +11,16 @@ import java.awt.geom.Path2D;
 /**
  * A tool for drawing quadratic (Bezier) curves on the canvas.
  */
-public class CurveTool extends AbstractPolylineTool {
+public class CurveTool extends PolylineTool implements PolylineToolDelegate {
 
     public CurveTool() {
         super(PaintToolType.CURVE);
+        setPolylineToolDelegate(this);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void strokePolyline(Scratch scratch, Stroke stroke, Paint paint, int[] xPoints, int[] yPoints) {
+    public void strokePolyline(Scratch scratch, Stroke stroke, Paint paint, int[] xPoints, int[] yPoints) {
         Shape curve = renderCurvePath(xPoints, yPoints);
 
         Graphics2D g = scratch.getAddScratchGraphics(this, stroke, curve);
@@ -29,7 +31,7 @@ public class CurveTool extends AbstractPolylineTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void strokePolygon(Scratch scratch, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints) {
+    public void strokePolygon(Scratch scratch, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints) {
         Graphics2D g = scratch.getAddScratchGraphics(this, null);
         g.setPaint(strokePaint);
         g.setStroke(stroke);
@@ -38,8 +40,8 @@ public class CurveTool extends AbstractPolylineTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void fillPolygon(Scratch scratch, Paint fillPaint, int[] xPoints, int[] yPoints) {
-        // Not fillable
+    public void fillPolygon(Scratch scratch, Paint fillPaint, int[] xPoints, int[] yPoints) {
+        // Not fillable; nothing to do
     }
 
     private Shape renderCurvePath(int[] xPoints, int[] yPoints) {

@@ -1,7 +1,8 @@
 package com.defano.jmonet.tools;
 
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.AbstractSelectionTool;
+import com.defano.jmonet.tools.base.SelectionTool;
+import com.defano.jmonet.tools.base.SelectionToolDelegate;
 import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
 import com.defano.jmonet.tools.selection.TransformableSelection;
 import com.defano.jmonet.tools.util.Geometry;
@@ -11,12 +12,13 @@ import java.awt.*;
 /**
  * A tool for drawing a rectangular selection on the canvas.
  */
-public class SelectionTool extends AbstractSelectionTool implements TransformableSelection, TransformableCanvasSelection {
+public class MarqueeTool extends SelectionTool implements SelectionToolDelegate, TransformableSelection, TransformableCanvasSelection {
 
     private Rectangle selectionBounds;
 
-    public SelectionTool() {
+    public MarqueeTool() {
         super(PaintToolType.SELECTION);
+        setSelectionToolDelegate(this);
     }
 
     /** {@inheritDoc} */
@@ -27,7 +29,7 @@ public class SelectionTool extends AbstractSelectionTool implements Transformabl
 
     /** {@inheritDoc} */
     @Override
-    protected void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
+    public void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         selectionBounds = new Rectangle(initialPoint);
         selectionBounds.add(newPoint);
 
@@ -42,7 +44,7 @@ public class SelectionTool extends AbstractSelectionTool implements Transformabl
 
     /** {@inheritDoc} */
     @Override
-    protected void closeSelectionFrame(Point finalPoint) {
+    public void closeSelectionFrame(Point finalPoint) {
         // Nothing to do
     }
 

@@ -2,6 +2,7 @@ package com.defano.jmonet.tools;
 
 import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.tools.base.PathToolDelegate;
 import com.defano.jmonet.tools.base.StrokedCursorPathTool;
 
 import java.awt.*;
@@ -10,28 +11,34 @@ import java.awt.geom.Line2D;
 /**
  * A tool that paints translucent textured paint on the canvas.
  */
-public class AirbrushTool extends StrokedCursorPathTool {
+public class AirbrushTool extends StrokedCursorPathTool implements PathToolDelegate {
 
     public AirbrushTool() {
         super(PaintToolType.AIRBRUSH);
+        setPathToolDelegate(this);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
+    public void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
         // Nothing to do
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
+    public void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
         Line2D line = new Line2D.Float(lastPoint, thisPoint);
 
         Graphics2D g = scratch.getAddScratchGraphics(this, stroke, line);
         g.setStroke(stroke);
         g.setPaint(fillPaint);
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, getIntensityObservable().blockingFirst().floatValue()));
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) getToolAttributes().getIntensity()));
         g.draw(line);
+    }
+
+    @Override
+    public void completePath(Scratch scratch, Stroke stroke, Paint fillPaint) {
+        // Nothing to do
     }
 
 }

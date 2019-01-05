@@ -1,7 +1,8 @@
 package com.defano.jmonet.tools;
 
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.AbstractSelectionTool;
+import com.defano.jmonet.tools.base.SelectionTool;
+import com.defano.jmonet.tools.base.SelectionToolDelegate;
 import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
 import com.defano.jmonet.tools.selection.TransformableSelection;
 import com.defano.jmonet.tools.util.CursorFactory;
@@ -13,13 +14,14 @@ import java.awt.geom.Path2D;
 /**
  * Selection tool allowing the user to draw a free-form selection path on the canvas.
  */
-public class LassoTool extends AbstractSelectionTool implements TransformableSelection, TransformableCanvasSelection {
+public class LassoTool extends SelectionTool implements SelectionToolDelegate, TransformableSelection, TransformableCanvasSelection {
 
     private Path2D selectionBounds;
 
     public LassoTool() {
         super(PaintToolType.LASSO);
         super.setBoundaryCursor(CursorFactory.makeLassoCursor());
+        super.setSelectionToolDelegate(this);
     }
 
     /** {@inheritDoc} */
@@ -36,7 +38,7 @@ public class LassoTool extends AbstractSelectionTool implements TransformableSel
 
     /** {@inheritDoc} */
     @Override
-    protected void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
+    public void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         if (selectionBounds == null) {
             selectionBounds = new Path2D.Double();
             selectionBounds.moveTo(initialPoint.getX(), initialPoint.getY());
@@ -47,7 +49,7 @@ public class LassoTool extends AbstractSelectionTool implements TransformableSel
 
     /** {@inheritDoc} */
     @Override
-    protected void closeSelectionFrame(Point finalPoint) {
+    public void closeSelectionFrame(Point finalPoint) {
         selectionBounds.closePath();
     }
 
