@@ -15,6 +15,7 @@ import java.util.Optional;
 /**
  * A utility for building paint tools.
  */
+@SuppressWarnings("unused")
 public class PaintToolBuilder {
 
     private final PaintToolType type;
@@ -367,7 +368,7 @@ public class PaintToolBuilder {
     public Tool build() {
 
         Tool selectedTool = type.getToolInstance();
-        DefaultToolAttributes toolAttributes = new DefaultToolAttributes();
+        ToolAttributes toolAttributes = selectedTool.getToolAttributes();
 
         if (strokeObservable != null) {
             toolAttributes.setStrokeObservable(strokeObservable);
@@ -414,10 +415,8 @@ public class PaintToolBuilder {
         }
 
         if (antiAliasingObservable != null) {
-            selectedTool.setAntiAliasingObservable(antiAliasingObservable);
+            toolAttributes.setAntiAliasingObservable(antiAliasingObservable);
         }
-
-        selectedTool.setToolAttributes(toolAttributes);
 
         if (canvas != null) {
             selectedTool.activate(canvas);

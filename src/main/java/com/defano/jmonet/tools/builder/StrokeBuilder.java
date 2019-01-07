@@ -40,6 +40,7 @@ public class StrokeBuilder {
     /**
      * Builds strokes in which every point on the stroked shape's line is stamped with a shape.
      */
+    @SuppressWarnings("unused")
     public static class ShapeStrokeBuilder {
 
         private final ArrayList<Shape> shapes = new ArrayList<>();
@@ -309,6 +310,7 @@ public class StrokeBuilder {
     /**
      * Builds {@link BasicStroke} objects.
      */
+    @SuppressWarnings("unused")
     public static class BasicStrokeBuilder {
 
         private float width = 1;

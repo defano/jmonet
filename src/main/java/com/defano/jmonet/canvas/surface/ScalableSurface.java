@@ -73,6 +73,20 @@ public interface ScalableSurface {
         );
     }
 
+    default Rectangle convertViewRectToModel(Rectangle r) {
+        Point topLeft = convertViewPointToModel(r.getLocation());
+        Point bottomRight = convertViewPointToModel(new Point(r.x + r.width, r.y + r.height));
+
+        return new Rectangle(topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
+    }
+
+    default Rectangle convertModelRectToView(Rectangle r) {
+        Point topLeft = convertModelPointToView(r.getLocation());
+        Point bottomRight = convertModelPointToView(new Point(r.x + r.width, r.y + r.height));
+
+        return new Rectangle(topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
+    }
+
     /**
      * Converts a point on the visible surface (view) to the equivalent point within the surface's image (model),
      * taking into account scale, grid and scroll pane complications as appropriate.

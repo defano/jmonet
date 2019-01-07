@@ -2,12 +2,10 @@ package com.defano.jmonet.tools.base;
 
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.Scratch;
-import com.defano.jmonet.model.Interpolation;
+import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.builder.DefaultToolAttributes;
 import com.defano.jmonet.tools.builder.ToolAttributes;
-import io.reactivex.Observable;
-import io.reactivex.subjects.BehaviorSubject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,18 +13,21 @@ import java.awt.*;
 public abstract class BasicTool implements Tool {
 
     private final PaintToolType toolType;
+    private final ToolAttributes toolAttributes = new DefaultToolAttributes();
 
     private PaintCanvas canvas;
     private Cursor toolCursor;
-    private Observable<Interpolation> antiAliasingObservable = BehaviorSubject.createDefault(Interpolation.BILINEAR);
-    private ToolAttributes toolAttributes = new DefaultToolAttributes();
 
     public BasicTool(PaintToolType toolType) {
         this.toolType = toolType;
     }
 
+    protected abstract SurfaceInteractionObserver getSurfaceInteractionObserver();
+
+    /** {@inheritDoc} */
     @Override
     public void activate(PaintCanvas canvas) {
+        deactivate();
         this.canvas = canvas;
 
         if (getSurfaceInteractionObserver() != null) {
@@ -36,6 +37,7 @@ public abstract class BasicTool implements Tool {
         SwingUtilities.invokeLater(() -> canvas.setCursor(getToolCursor()));
     }
 
+    /** {@inheritDoc} */
     @Override
     public void deactivate() {
         if (canvas != null) {
@@ -48,11 +50,13 @@ public abstract class BasicTool implements Tool {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public Cursor getToolCursor() {
         return toolCursor;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setToolCursor(Cursor toolCursor) {
         this.toolCursor = toolCursor;
@@ -61,6 +65,7 @@ public abstract class BasicTool implements Tool {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public PaintCanvas getCanvas() {
         return canvas;
@@ -78,6 +83,7 @@ public abstract class BasicTool implements Tool {
         g.draw(shape);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Scratch getScratch() {
         if (getCanvas() == null) {
@@ -91,9 +97,10 @@ public abstract class BasicTool implements Tool {
         return scratch;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void applyRenderingHints(Graphics2D g2d) {
-        switch (getInterpolation()) {
+        switch (getToolAttributes().getAntiAliasing()) {
             case NONE:
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
                 g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
@@ -121,31 +128,15 @@ public abstract class BasicTool implements Tool {
         }
     }
 
-    public Observable<Interpolation> getAntiAliasingObservable() {
-        return antiAliasingObservable;
-    }
-
-    public void setAntiAliasingObservable(Observable<Interpolation> antiAliasingObservable) {
-        this.antiAliasingObservable = antiAliasingObservable;
-    }
-
-    @Override
-    public Interpolation getInterpolation() {
-        return antiAliasingObservable.blockingFirst();
-    }
-
+    /** {@inheritDoc} */
     @Override
     public PaintToolType getToolType() {
         return toolType;
     }
 
+    /** {@inheritDoc} */
     @Override
     public ToolAttributes getToolAttributes() {
         return toolAttributes;
-    }
-
-    @Override
-    public void setToolAttributes(ToolAttributes attributes) {
-        this.toolAttributes = attributes;
     }
 }

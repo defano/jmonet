@@ -20,6 +20,7 @@ import java.util.Objects;
 /**
  * A paint canvas with a built-in undo and redo buffer.
  */
+@SuppressWarnings("unused")
 public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserver, Transformable {
 
     // Maximum number of allowable undo operations

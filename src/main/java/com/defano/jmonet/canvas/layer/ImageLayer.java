@@ -61,12 +61,12 @@ public class ImageLayer {
     public void paint(Graphics2D g, Double scale, Rectangle clip) {
         g.setComposite(composite);
 
-        if (clip == null) {
-            clip = new Rectangle(0, 0, image.getWidth(), image.getHeight());
-        }
-
         if (scale == null) {
             scale = 1.0;
+        }
+
+        if (clip == null) {
+            clip = new Rectangle(0, 0, (int) ((location.x  + image.getWidth()) * scale), (int) ((location.y + image.getHeight()) * scale));
         }
 
         // Clipping rectangle is in scaled coordinate space; descale to model coordinates
@@ -78,13 +78,19 @@ public class ImageLayer {
         // Portion of unscaled draw region that is also within the clipping rectangle
         Rectangle drawBounds = imageBounds.intersection(unscaledClipRgn);
 
-        // Slightly overdraw the image (to prevent clipping on bottom and right-most row/column)
-        drawBounds.setSize(drawBounds.width + 2, drawBounds.height + 2);
+        int dx1 = (int) (location.x * scale);
+        int dy1 = (int) (location.y * scale);
+        int dx2 = dx1 + (int) (scale * drawBounds.width);
+        int dy2 = dy1 + (int) (scale * drawBounds.height);
 
-        // Draw source geometry from image into destination geometry of graphics context
+        int x1 = (int) (clip.x / scale) + location.x;
+        int y1 = (int) (clip.y / scale) + location.y;
+        int x2 = x1 + (int) (clip.width / scale);
+        int y2 = y1 + (int) (clip.height / scale);
+
         g.drawImage(image,
-                0, 0, (int) (scale * drawBounds.width), (int) (scale * drawBounds.height),
-                drawBounds.x, drawBounds.y, drawBounds.x + drawBounds.width, drawBounds.y + drawBounds.height,
+                dx1, dy1, dx2, dy2,
+                x1, y1, x2, y2,
                 null);
     }
 

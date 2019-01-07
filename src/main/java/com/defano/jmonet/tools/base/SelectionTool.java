@@ -543,7 +543,7 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
         return selectionToolDelegate;
     }
 
-    protected void setSelectionToolDelegate(SelectionToolDelegate selectionToolDelegate) {
+    public void setSelectionToolDelegate(SelectionToolDelegate selectionToolDelegate) {
         this.selectionToolDelegate = selectionToolDelegate;
     }
 }

@@ -38,13 +38,13 @@ public class BoundsTool extends BasicTool implements SurfaceInteractionObserver 
 
         currentPoint = imageLocation;
 
-        if (!getToolAttributes().getDrawMultipleObservable().blockingFirst()) {
+        if (!getToolAttributes().isDrawMultiple()) {
             getScratch().clear();
         }
 
         Point originPoint = new Point(initialPoint);
 
-        if (getToolAttributes().getDrawCenteredObservable().blockingFirst()) {
+        if (getToolAttributes().isDrawCentered()) {
             int height = currentPoint.y - initialPoint.y;
             int width = currentPoint.x - initialPoint.x;
 

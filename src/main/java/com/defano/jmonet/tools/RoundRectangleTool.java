@@ -21,7 +21,7 @@ public class RoundRectangleTool extends BoundsTool implements BoundsToolDelegate
     /** {@inheritDoc} */
     @Override
     public void strokeBounds(Scratch scratch, Stroke stroke, Paint paint, Rectangle bounds, boolean isShiftDown) {
-        int cornerRadius = getToolAttributes().getCornerRadiusObservable().blockingFirst();
+        int cornerRadius = getToolAttributes().getCornerRadius();
         RoundRectangle2D roundRect = new RoundRectangle2D.Double(bounds.x, bounds.y, bounds.width, bounds.height, cornerRadius, cornerRadius);
 
         Graphics2D g = scratch.getAddScratchGraphics(this, stroke, roundRect);
@@ -34,7 +34,7 @@ public class RoundRectangleTool extends BoundsTool implements BoundsToolDelegate
     @Override
     public void fillBounds(Scratch scratch, Paint fill, Rectangle bounds, boolean isShiftDown) {
         Graphics2D g = scratch.getAddScratchGraphics(this, null);
-        int cornerRadius = getToolAttributes().getCornerRadiusObservable().blockingFirst();
+        int cornerRadius = getToolAttributes().getCornerRadius();
 
         g.setPaint(fill);
         g.fillRoundRect(bounds.x, bounds.y, bounds.width, bounds.height, cornerRadius, cornerRadius);

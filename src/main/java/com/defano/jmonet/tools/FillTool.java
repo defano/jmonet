@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 /**
  * Tool that performs a flood-fill of all transparent pixels.
  */
+@SuppressWarnings("unused")
 public class FillTool extends BasicTool implements SurfaceInteractionObserver {
 
     private Cursor fillCursor = CursorFactory.makeBucketCursor();
