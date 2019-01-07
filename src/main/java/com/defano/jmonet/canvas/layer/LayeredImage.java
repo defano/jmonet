@@ -25,7 +25,7 @@ public interface LayeredImage {
         BufferedImage rendering = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D g = rendering.createGraphics();
-        paint(g, null, null);
+        paint(g, 1.0, null);
         g.dispose();
 
         return rendering;
@@ -55,7 +55,7 @@ public interface LayeredImage {
         int height = 0, width = 0;
 
         for (ImageLayer thisLayer : getImageLayers()) {
-            Dimension layerDimension = thisLayer.getSize();
+            Dimension layerDimension = thisLayer.getDisplayedSize();
             height = Math.max(height, layerDimension.height);
             width = Math.max(width, layerDimension.width);
         }

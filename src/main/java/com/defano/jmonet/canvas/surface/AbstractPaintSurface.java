@@ -205,10 +205,9 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
         super.paintComponent(g);
 
         Rectangle clip = g.getClipBounds();
-
         if (clip != null && !clip.isEmpty() && isVisible()) {
 
-            // Draw visible portion of this surface's image into a buffer
+            // Draw visible portion of this surface's image into a buffer (does not modify this graphics context)
             BufferedImage buffer = new BufferedImage(clip.width, clip.height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2d = buffer.createGraphics();
             g2d.setBackground(CLEAR_COLOR);
@@ -224,7 +223,7 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
             }
 
             // Draw the paint image
-            g.drawImage(buffer, clip.x, clip.y, null);
+            g.drawImage(buffer, clip.x, clip.y, clip.width, clip.height, null);
         }
 
         // DO NOT dispose the graphics context in this method.

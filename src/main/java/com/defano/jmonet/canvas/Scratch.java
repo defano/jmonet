@@ -131,7 +131,7 @@ public class Scratch {
      * @return The remove-scratch buffer ready for use.
      */
     public Graphics2D getRemoveScratchGraphics(Tool tool, Shape bounds) {
-        setClip(bounds, removeScratchGraphics);
+        updateClip(bounds, removeScratchGraphics);
 
         if (tool != null) {
             tool.applyRenderingHints(removeScratchGraphics);
@@ -174,7 +174,7 @@ public class Scratch {
      * @return The remove-scratch buffer ready for use.
      */
     public Graphics2D getAddScratchGraphics(Tool tool, Shape bounds) {
-        setClip(bounds, addScratchGraphics);
+        updateClip(bounds, addScratchGraphics);
 
         if (tool != null) {
             tool.applyRenderingHints(addScratchGraphics);
@@ -196,7 +196,7 @@ public class Scratch {
 
         this.addScratch = addScratch;
         this.addScratchGraphics = this.addScratch.createGraphics();
-        setClip(new Rectangle(0, 0, addScratch.getWidth(), addScratch.getHeight()), addScratchGraphics);
+        this.addScratchGraphics.setClip(null);
     }
 
     /**
@@ -212,7 +212,7 @@ public class Scratch {
 
         this.removeScratch = removeScratch;
         this.removeScratchGraphics = this.removeScratch.createGraphics();
-        setClip(new Rectangle(0, 0, addScratch.getWidth(), addScratch.getHeight()), removeScratchGraphics);
+        this.removeScratchGraphics.setClip(null);
     }
 
     /**
@@ -221,13 +221,16 @@ public class Scratch {
      * @return The remove-scratch, as a {@link ImageLayer}
      */
     public ImageLayer getRemoveScratchLayer() {
+
         Rectangle minBounds = removeScratchGraphics.getClipBounds();
         if (minBounds == null || minBounds.isEmpty()) {
             return null;
         }
 
-        BufferedImage subimage = removeScratch.getSubimage(minBounds.x, minBounds.y, minBounds.width, minBounds.height);
-        return new ImageLayer(minBounds.getLocation(), subimage, AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
+        return new ImageLayer(
+                minBounds.getLocation(),
+                removeScratch.getSubimage(minBounds.x, minBounds.y, minBounds.width, minBounds.height),
+                AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
     }
 
     /**
@@ -236,14 +239,16 @@ public class Scratch {
      * @return The add-scratch, as a {@link ImageLayer}
      */
     public ImageLayer getAddScratchLayer() {
-        Rectangle minBounds = addScratchGraphics.getClipBounds();
 
+        Rectangle minBounds = addScratchGraphics.getClipBounds();
         if (minBounds == null || minBounds.isEmpty()) {
             return null;
         }
 
-        BufferedImage subimage = addScratch.getSubimage(minBounds.x, minBounds.y, minBounds.width, minBounds.height);
-        return new ImageLayer(minBounds.getLocation(), subimage, AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
+        return new ImageLayer(
+                minBounds.getLocation(),
+                addScratch.getSubimage(minBounds.x, minBounds.y, minBounds.width, minBounds.height),
+                AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
 
     /**
@@ -287,17 +292,14 @@ public class Scratch {
      * @param shape   The shape representing the bounds to be added to the existing region
      * @param context The graphics context whose clipping region should be set.
      */
-    private void setClip(Shape shape, Graphics2D context) {
-
+    private void updateClip(Shape shape, Graphics2D context) {
         if (shape != null) {
-            Rectangle clip = shape.getBounds().intersection(new Rectangle(0, 0, width, height));
-            Rectangle bounds = context.getClipBounds();
+            Rectangle scratch = new Rectangle(0, 0, width, height);
 
-            if (bounds == null) {
-                context.setClip(clip.x, clip.y, clip.width, clip.height);
-            } else if (!bounds.contains(clip)) {
-                Rectangle union = bounds.union(clip);
-                context.setClip(union.x, union.y, union.width, union.height);
+            if (context.getClipBounds() == null || context.getClipBounds().isEmpty()) {
+                context.setClip(scratch.intersection(shape.getBounds()));
+            } else {
+                context.setClip(scratch.intersection(context.getClipBounds().union(shape.getBounds())));
             }
         }
     }

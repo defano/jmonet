@@ -23,7 +23,7 @@ public class Tester {
             frame.setVisible(true);
 
             // Create a JMonet canvas and add it to the window
-            JMonetCanvas myCanvas = new JMonetCanvas(new Dimension(40, 40));
+            JMonetCanvas myCanvas = new JMonetCanvas(new Dimension(100, 100));
 
             JScrollPane scroll = new JScrollPane();
             scroll.setPreferredSize(new Dimension(300, 300));
@@ -36,7 +36,7 @@ public class Tester {
             frame.getContentPane().add(scroll);
 
 
-            BufferedImage img = new BufferedImage(10, 10, BufferedImage.TYPE_4BYTE_ABGR);
+            BufferedImage img = new BufferedImage(6, 4, BufferedImage.TYPE_4BYTE_ABGR);
             Graphics2D g = img.createGraphics();
             g.setColor(Color.BLUE);
             g.fillRect(0, 0, 40, 40);

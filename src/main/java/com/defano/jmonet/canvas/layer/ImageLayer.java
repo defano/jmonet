@@ -48,7 +48,8 @@ public class ImageLayer {
     }
 
     /**
-     * Draws the visible portion of this image layer onto a graphics context at scale.
+     * Draws this image layer onto a graphics context at scale, clipped to a subimage as requested. This image is
+     * always drawn at the origin (0,0) of the graphics context, offset by this layer's location.
      *
      * @param g     The graphics context on which to draw.
      * @param scale The scale at which to draw the image (1.0 or null means no scaling). When null, no scaling will be
@@ -58,40 +59,37 @@ public class ImageLayer {
      *              space. This, the rect (10,10), (100,100) when scale is 2.0 refers to the this layer's
      *              sub image (5,5),(50,50).
      */
-    public void paint(Graphics2D g, Double scale, Rectangle clip) {
+    public void paint(Graphics2D g, double scale, Rectangle clip) {
         g.setComposite(composite);
 
-        if (scale == null) {
-            scale = 1.0;
-        }
-
+        // When a clipping region is not specified, draw the entire image layer
         if (clip == null) {
             clip = new Rectangle(0, 0, (int) ((location.x  + image.getWidth()) * scale), (int) ((location.y + image.getHeight()) * scale));
         }
 
         // Clipping rectangle is in scaled coordinate space; descale to model coordinates
-        Rectangle unscaledClipRgn = new Rectangle((int) (clip.x / scale), (int) (clip.y / scale), (int) (clip.width / scale), (int) (clip.height / scale));
+        Rectangle unscaledClip = new Rectangle(
+                (int) (clip.x / scale),
+                (int) (clip.y / scale),
+                (int) (clip.width / scale),
+                (int) (clip.height / scale));
 
-        // Unscaled bounding box of where image will be drawn on graphics context
-        Rectangle imageBounds = new Rectangle(location.x, location.y, image.getWidth(), image.getHeight());
-
-        // Portion of unscaled draw region that is also within the clipping rectangle
-        Rectangle drawBounds = imageBounds.intersection(unscaledClipRgn);
-
+        // Scaled bounding box that this ImageLayer will be draw into on the graphics context
         int dx1 = (int) (location.x * scale);
         int dy1 = (int) (location.y * scale);
-        int dx2 = dx1 + (int) (scale * drawBounds.width);
-        int dy2 = dy1 + (int) (scale * drawBounds.height);
+        int dx2 = dx1 + clip.width;
+        int dy2 = dy1 + clip.height;
 
-        int x1 = (int) (clip.x / scale) + location.x;
-        int y1 = (int) (clip.y / scale) + location.y;
-        int x2 = x1 + (int) (clip.width / scale);
-        int y2 = y1 + (int) (clip.height / scale);
+        System.err.println("Location: " + location + " Rendering: " + dx1 + "," + dy1 + "," + dx2 + "," + dy2 + " clip: " + unscaledClip);
 
-        g.drawImage(image,
-                dx1, dy1, dx2, dy2,
-                x1, y1, x2, y2,
-                null);
+        // Unscaled bounding box describing a subimage (of this.image) that will be projected into scaled coordinates of
+        // the graphics context
+        int x1 = unscaledClip.x;
+        int y1 = unscaledClip.y;
+        int x2 = x1 + unscaledClip.width;
+        int y2 = y1 + unscaledClip.height;
+
+        g.drawImage(image, dx1, dy1, dx2, dy2, x1, y1, x2, y2, null);
     }
 
     /**
@@ -126,7 +124,20 @@ public class ImageLayer {
      *
      * @return The image size
      */
-    public Dimension getSize() {
-        return new Dimension(image.getWidth(null), image.getHeight(null));
+    public Dimension getDisplayedSize() {
+        return new Dimension(location.x + image.getWidth(), location.y + image.getHeight());
+    }
+
+    public Dimension getStoredSize() {
+        return new Dimension(image.getWidth(), image.getHeight());
+    }
+
+    @Override
+    public String toString() {
+        return "ImageLayer{" +
+                "location=" + location +
+                ", display-size=" + getDisplayedSize() +
+                ", storage-size=" + getStoredSize() +
+                '}';
     }
 }

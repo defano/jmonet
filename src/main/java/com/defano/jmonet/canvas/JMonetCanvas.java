@@ -336,7 +336,7 @@ public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserve
      */
     private void overlayImage(LayeredImage layeredImage, BufferedImage destination) {
         Graphics2D g2d = (Graphics2D) destination.getGraphics();
-        layeredImage.paint(g2d, null, null);
+        layeredImage.paint(g2d, 1.0, null);
         g2d.dispose();
     }
 
