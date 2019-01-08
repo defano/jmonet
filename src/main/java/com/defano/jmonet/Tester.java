@@ -3,8 +3,12 @@ package com.defano.jmonet;
 import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
+import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.tools.FillTool;
 import com.defano.jmonet.tools.PencilTool;
 import com.defano.jmonet.tools.base.Tool;
+import com.defano.jmonet.tools.builder.PaintToolBuilder;
+import com.defano.jmonet.tools.builder.StrokeBuilder;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,14 +27,14 @@ public class Tester {
             frame.setVisible(true);
 
             // Create a JMonet canvas and add it to the window
-            JMonetCanvas myCanvas = new JMonetCanvas(new Dimension(100, 100));
+            JMonetCanvas myCanvas = new JMonetCanvas(new Dimension(400, 400));
 
             JScrollPane scroll = new JScrollPane();
-            scroll.setPreferredSize(new Dimension(300, 300));
+//            scroll.setPreferredSize(new Dimension(300, 300));
             scroll.setViewportView(myCanvas);
 
 //            myCanvas.setBorder(BorderFactory.createLineBorder(Color.BLUE));
-            myCanvas.setScale(10);
+            myCanvas.setScale(1);
 //            myCanvas.setScanlineScaleThreadhold(100);
 
             frame.getContentPane().add(scroll);
@@ -42,18 +46,15 @@ public class Tester {
             g.fillRect(0, 0, 40, 40);
             g.dispose();
 
-            myCanvas.commit(new ImageLayerSet(new ImageLayer(new Point(10, 10), img, AlphaComposite.SrcOver)));
+            myCanvas.commit(new ImageLayerSet(new ImageLayer(new Point(40, 40), img, AlphaComposite.SrcOver)));
 
-            Tool t = new PencilTool();
-            t.activate(myCanvas);
-
-//            DefaultToolAttributes activeTool = PaintToolBuilder.create(PaintToolType.PAINTBRUSH)
-//                    .withStroke(StrokeBuilder.withShape().ofCircle(8).build())
-//                    .withFillPaint(Color.BLUE)
-//                    .withStrokePaint(Color.RED)
-//                    .withEraseColor(null)
-//                    .makeActiveOnCanvas(myCanvas)
-//                    .build();
+            Tool activeTool = PaintToolBuilder.create(PaintToolType.FILL)
+                    .withStroke(StrokeBuilder.withShape().ofCircle(8).build())
+                    .withFillPaint(Color.BLUE)
+                    .withStrokePaint(Color.RED)
+                    .withEraseColor(null)
+                    .makeActiveOnCanvas(myCanvas)
+                    .build();
 
         });
     }

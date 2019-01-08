@@ -34,7 +34,7 @@ public class FillTool extends BasicTool implements SurfaceInteractionObserver {
             getScratch().clear();
 
             BufferedImage filled = new FloodFillTransform(getToolAttributes().getFillPaint().get(), imageLocation, fillFunction, boundaryFunction).apply(getCanvas().getCanvasImage());
-            getScratch().setAddScratch(filled);
+            getScratch().setAddScratch(filled, new Rectangle(getCanvas().getCanvasSize()));
 
             getCanvas().commit();
             getCanvas().repaint();

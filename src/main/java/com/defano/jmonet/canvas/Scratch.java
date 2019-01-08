@@ -22,12 +22,20 @@ import java.awt.image.BufferedImage;
  * {@link AlphaComposite#DST_OUT}.
  * <p>
  * The dimension of the scratch buffer always matches the dimension of the canvas, but for performance, the scratch
- * buffer uses clipping regions to paint only the portion of the buffer that the tool has modified.
+ * buffer manages clipping regions to paint only the portion of the buffer that the tool has modified.
  */
 public class Scratch {
 
+    // Region of the addScratch and removeScratch that have been dirtied by tools
+    private Rectangle addClip, removeClip;
+
+    // Dimension of the scratch buffer
     private int width, height;
+
+    // Scratch buffer data
     private BufferedImage addScratch, removeScratch;
+
+    // Graphics context created from the buffers
     private Graphics2D addScratchGraphics, removeScratchGraphics;
 
     /**
@@ -55,13 +63,13 @@ public class Scratch {
         BufferedImage newAddScratch = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics newAddScratchGraphics = newAddScratch.getGraphics();
         newAddScratchGraphics.drawImage(addScratch, 0, 0, null);
-        setAddScratch(newAddScratch);
+        setAddScratch(newAddScratch, null);
         newAddScratchGraphics.dispose();
 
         BufferedImage newRemoveScratch = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics newRemoveScratchGraphics = newRemoveScratch.getGraphics();
         newRemoveScratchGraphics.drawImage(removeScratch, 0, 0, null);
-        setRemoveScratch(newRemoveScratch);
+        setRemoveScratch(newRemoveScratch, null);
         newRemoveScratchGraphics.dispose();
     }
 
@@ -72,6 +80,10 @@ public class Scratch {
      */
     public Dimension getSize() {
         return new Dimension(this.width, this.height);
+    }
+
+    public Rectangle getBounds() {
+        return new Rectangle(0, 0, this.width, this.height);
     }
 
     /**
@@ -87,14 +99,14 @@ public class Scratch {
      * Clears the remove-scratch buffer, restoring it to its original, unmodified (fully transparent) state.
      */
     public void clearRemove() {
-        setRemoveScratch(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB));
+        setRemoveScratch(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB), null);
     }
 
     /**
      * Clears the add-scratch buffer, restoring it to its original, unmodified (fully transparent) state.
      */
     public void clearAdd() {
-        setAddScratch(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB));
+        setAddScratch(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB), null);
     }
 
     /**
@@ -113,7 +125,7 @@ public class Scratch {
      * @return The remove-scratch buffer ready for use.
      */
     public Graphics2D getRemoveScratchGraphics(Tool tool, Stroke stroke, Shape shape) {
-        return getRemoveScratchGraphics(tool, getBounds(stroke, shape));
+        return getRemoveScratchGraphics(tool, getShapeBounds(stroke, shape));
     }
 
     /**
@@ -131,7 +143,7 @@ public class Scratch {
      * @return The remove-scratch buffer ready for use.
      */
     public Graphics2D getRemoveScratchGraphics(Tool tool, Shape bounds) {
-        updateClip(bounds, removeScratchGraphics);
+        removeClip = updateClip(bounds, removeClip);
 
         if (tool != null) {
             tool.applyRenderingHints(removeScratchGraphics);
@@ -156,7 +168,7 @@ public class Scratch {
      * @return The remove-scratch buffer ready for use.
      */
     public Graphics2D getAddScratchGraphics(Tool tool, Stroke stroke, Shape shape) {
-        return getAddScratchGraphics(tool, getBounds(stroke, shape));
+        return getAddScratchGraphics(tool, getShapeBounds(stroke, shape));
     }
 
     /**
@@ -174,7 +186,7 @@ public class Scratch {
      * @return The remove-scratch buffer ready for use.
      */
     public Graphics2D getAddScratchGraphics(Tool tool, Shape bounds) {
-        updateClip(bounds, addScratchGraphics);
+        addClip = updateClip(bounds, addClip);
 
         if (tool != null) {
             tool.applyRenderingHints(addScratchGraphics);
@@ -185,18 +197,20 @@ public class Scratch {
 
     /**
      * Replaces the current add-scratch buffer with a provided image. Set the buffer's clipping region to the bounds
-     * of the image.
+     * provided.
      *
      * @param addScratch The new add-scratch image.
+     * @param clip The dirty region of the new buffer; null means no area is dirty, whereas a rectangle whose dimensions
+     *             equal those of the image means the entire buffer is dirty.
      */
-    public void setAddScratch(BufferedImage addScratch) {
+    public void setAddScratch(BufferedImage addScratch, Rectangle clip) {
         if (addScratchGraphics != null) {
             addScratchGraphics.dispose();
         }
 
         this.addScratch = addScratch;
         this.addScratchGraphics = this.addScratch.createGraphics();
-        this.addScratchGraphics.setClip(null);
+        this.addClip = clip;
     }
 
     /**
@@ -204,15 +218,17 @@ public class Scratch {
      * of the image.
      *
      * @param removeScratch The new remove-scratch image.
+     * @param clip The dirty region of the new buffer; null means no area is dirty, whereas a rectangle whose dimensions
+     *             equal those of the image means the entire buffer is dirty.
      */
-    public void setRemoveScratch(BufferedImage removeScratch) {
+    public void setRemoveScratch(BufferedImage removeScratch, Rectangle clip) {
         if (removeScratchGraphics != null) {
             removeScratchGraphics.dispose();
         }
 
         this.removeScratch = removeScratch;
         this.removeScratchGraphics = this.removeScratch.createGraphics();
-        this.removeScratchGraphics.setClip(null);
+        this.removeClip = clip;
     }
 
     /**
@@ -222,14 +238,13 @@ public class Scratch {
      */
     public ImageLayer getRemoveScratchLayer() {
 
-        Rectangle minBounds = removeScratchGraphics.getClipBounds();
-        if (minBounds == null || minBounds.isEmpty()) {
+        if (removeClip == null || removeClip.isEmpty()) {
             return null;
         }
 
         return new ImageLayer(
-                minBounds.getLocation(),
-                removeScratch.getSubimage(minBounds.x, minBounds.y, minBounds.width, minBounds.height),
+                removeClip.getLocation(),
+                removeScratch.getSubimage(removeClip.x, removeClip.y, removeClip.width, removeClip.height),
                 AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
     }
 
@@ -240,14 +255,13 @@ public class Scratch {
      */
     public ImageLayer getAddScratchLayer() {
 
-        Rectangle minBounds = addScratchGraphics.getClipBounds();
-        if (minBounds == null || minBounds.isEmpty()) {
+        if (addClip == null || addClip.isEmpty()) {
             return null;
         }
 
         return new ImageLayer(
-                minBounds.getLocation(),
-                addScratch.getSubimage(minBounds.x, minBounds.y, minBounds.width, minBounds.height),
+                addClip.getLocation(),
+                addScratch.getSubimage(addClip.x, addClip.y, addClip.width, addClip.height),
                 AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
 
@@ -259,11 +273,11 @@ public class Scratch {
     public ImageLayerSet getLayerSet() {
         ImageLayerSet imageLayerSet = new ImageLayerSet();
 
-        if (removeScratchGraphics.getClipBounds() != null) {
+        if (removeClip != null) {
             imageLayerSet.addLayer(getRemoveScratchLayer());
         }
 
-        if (addScratchGraphics.getClipBounds() != null) {
+        if (addClip != null) {
             imageLayerSet.addLayer(getAddScratchLayer());
         }
 
@@ -277,7 +291,7 @@ public class Scratch {
      * @param shape  The shape to be stroked and bounds calculated.
      * @return The smallest rectangle that encloses the stroked shape.
      */
-    private Rectangle getBounds(Stroke stroke, Shape shape) {
+    private Rectangle getShapeBounds(Stroke stroke, Shape shape) {
         if (shape == null) {
             return new Rectangle();
         }
@@ -290,17 +304,17 @@ public class Scratch {
      * shape.
      *
      * @param shape   The shape representing the bounds to be added to the existing region
-     * @param context The graphics context whose clipping region should be set.
+     * @param clip The graphics context whose clipping region should be set.
      */
-    private void updateClip(Shape shape, Graphics2D context) {
+    private Rectangle updateClip(Shape shape, Rectangle clip) {
         if (shape != null) {
-            Rectangle scratch = new Rectangle(0, 0, width, height);
-
-            if (context.getClipBounds() == null || context.getClipBounds().isEmpty()) {
-                context.setClip(scratch.intersection(shape.getBounds()));
+            if (clip == null || clip.isEmpty()) {
+                clip = getBounds().intersection(shape.getBounds());
             } else {
-                context.setClip(scratch.intersection(context.getClipBounds().union(shape.getBounds())));
+                clip = getBounds().intersection(clip.union(shape.getBounds()));
             }
         }
+
+        return clip;
     }
 }
