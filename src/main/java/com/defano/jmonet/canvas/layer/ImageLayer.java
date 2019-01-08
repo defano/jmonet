@@ -67,27 +67,17 @@ public class ImageLayer {
             clip = new Rectangle(0, 0, (int) ((location.x  + image.getWidth()) * scale), (int) ((location.y + image.getHeight()) * scale));
         }
 
-        // Clipping rectangle is in scaled coordinate space; descale to model coordinates
-        Rectangle unscaledClip = new Rectangle(
-                (int) (clip.x / scale),
-                (int) (clip.y / scale),
-                (int) (clip.width / scale),
-                (int) (clip.height / scale));
+        // Rectangle onto which this image will be projected in the graphics context
+        int dx1 = 0;
+        int dy1 = 0;
+        int dx2 = clip.width;
+        int dy2 = clip.height;
 
-        // Scaled bounding box that this ImageLayer will be draw into on the graphics context
-        int dx1 = (int) (location.x * scale);
-        int dy1 = (int) (location.y * scale);
-        int dx2 = dx1 + clip.width;
-        int dy2 = dy1 + clip.height;
-
-        System.err.println("Location: " + location + " Rendering: " + dx1 + "," + dy1 + "," + dx2 + "," + dy2 + " clip: " + unscaledClip);
-
-        // Unscaled bounding box describing a subimage (of this.image) that will be projected into scaled coordinates of
-        // the graphics context
-        int x1 = unscaledClip.x;
-        int y1 = unscaledClip.y;
-        int x2 = x1 + unscaledClip.width;
-        int y2 = y1 + unscaledClip.height;
+        // Rectangle defining the subimage of this layer that will be rendered
+        int x1 = (int) (clip.x /scale) - location.x;
+        int y1 = (int) (clip.y / scale) - location.y;
+        int x2 = x1 + (int) (clip.width / scale);
+        int y2 = y1 + (int) (clip.height / scale);
 
         g.drawImage(image, dx1, dy1, dx2, dy2, x1, y1, x2, y2, null);
     }
