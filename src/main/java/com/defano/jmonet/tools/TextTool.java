@@ -39,8 +39,14 @@ public class TextTool extends BasicTool implements Consumer, SurfaceInteractionO
     /** {@inheritDoc} */
     @Override
     public void deactivate() {
-        fontSubscription.dispose();
-        fontColorSubscription.dispose();
+
+        if (fontSubscription != null) {
+            fontSubscription.dispose();
+        }
+
+        if (fontColorSubscription != null) {
+            fontColorSubscription.dispose();
+        }
 
         if (isEditing()) {
             commitTextImage();
@@ -109,7 +115,7 @@ public class TextTool extends BasicTool implements Consumer, SurfaceInteractionO
      * @return True when an active, mutable selection of text is being edited by the user, false otherwise.
      */
     public boolean isEditing() {
-        return textArea.getParent() != null;
+        return textArea != null && textArea.getParent() != null;
     }
 
     private void removeTextArea() {

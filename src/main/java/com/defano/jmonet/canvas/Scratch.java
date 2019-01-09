@@ -22,12 +22,12 @@ import java.awt.image.BufferedImage;
  * {@link AlphaComposite#DST_OUT}.
  * <p>
  * The dimension of the scratch buffer always matches the dimension of the canvas, but for performance, the scratch
- * buffer manages clipping regions to paint only the portion of the buffer that the tool has modified.
+ * buffer manages a dirty region to paint only the portion of the buffer that the tool has modified.
  */
 public class Scratch {
 
-    // Region of the addScratch and removeScratch that have been dirtied by tools
-    private Rectangle addClip, removeClip;
+    // Region of the addScratch and removeScratch that have been dirtied by tools (null implies no changes)
+    private Rectangle addScratchDirtyRgn, removeScratchDirtyRgn;
 
     // Dimension of the scratch buffer
     private int width, height;
@@ -82,6 +82,12 @@ public class Scratch {
         return new Dimension(this.width, this.height);
     }
 
+    /**
+     * Gets the bounds (location and dimension) of the scratch buffer. Note the buffer is always located at the orgin
+     * (0,0).
+     *
+     * @return The bounding rectangle of the scratch buffer.
+     */
     public Rectangle getBounds() {
         return new Rectangle(0, 0, this.width, this.height);
     }
@@ -143,7 +149,7 @@ public class Scratch {
      * @return The remove-scratch buffer ready for use.
      */
     public Graphics2D getRemoveScratchGraphics(Tool tool, Shape bounds) {
-        removeClip = updateClip(bounds, removeClip);
+        removeScratchDirtyRgn = updateDirtiedRgn(bounds, removeScratchDirtyRgn);
 
         if (tool != null) {
             tool.applyRenderingHints(removeScratchGraphics);
@@ -186,7 +192,7 @@ public class Scratch {
      * @return The remove-scratch buffer ready for use.
      */
     public Graphics2D getAddScratchGraphics(Tool tool, Shape bounds) {
-        addClip = updateClip(bounds, addClip);
+        addScratchDirtyRgn = updateDirtiedRgn(bounds, addScratchDirtyRgn);
 
         if (tool != null) {
             tool.applyRenderingHints(addScratchGraphics);
@@ -200,17 +206,17 @@ public class Scratch {
      * provided.
      *
      * @param addScratch The new add-scratch image.
-     * @param clip The dirty region of the new buffer; null means no area is dirty, whereas a rectangle whose dimensions
+     * @param dirtyRgn The dirty region of the new buffer; null means no area is dirty, whereas a rectangle whose dimensions
      *             equal those of the image means the entire buffer is dirty.
      */
-    public void setAddScratch(BufferedImage addScratch, Rectangle clip) {
+    public void setAddScratch(BufferedImage addScratch, Rectangle dirtyRgn) {
         if (addScratchGraphics != null) {
             addScratchGraphics.dispose();
         }
 
         this.addScratch = addScratch;
         this.addScratchGraphics = this.addScratch.createGraphics();
-        this.addClip = clip;
+        this.addScratchDirtyRgn = dirtyRgn;
     }
 
     /**
@@ -218,17 +224,17 @@ public class Scratch {
      * of the image.
      *
      * @param removeScratch The new remove-scratch image.
-     * @param clip The dirty region of the new buffer; null means no area is dirty, whereas a rectangle whose dimensions
+     * @param dirtyRgn The dirty region of the new buffer; null means no area is dirty, whereas a rectangle whose dimensions
      *             equal those of the image means the entire buffer is dirty.
      */
-    public void setRemoveScratch(BufferedImage removeScratch, Rectangle clip) {
+    public void setRemoveScratch(BufferedImage removeScratch, Rectangle dirtyRgn) {
         if (removeScratchGraphics != null) {
             removeScratchGraphics.dispose();
         }
 
         this.removeScratch = removeScratch;
         this.removeScratchGraphics = this.removeScratch.createGraphics();
-        this.removeClip = clip;
+        this.removeScratchDirtyRgn = dirtyRgn;
     }
 
     /**
@@ -238,13 +244,13 @@ public class Scratch {
      */
     public ImageLayer getRemoveScratchLayer() {
 
-        if (removeClip == null || removeClip.isEmpty()) {
+        if (removeScratchDirtyRgn == null || removeScratchDirtyRgn.isEmpty()) {
             return null;
         }
 
         return new ImageLayer(
-                removeClip.getLocation(),
-                removeScratch.getSubimage(removeClip.x, removeClip.y, removeClip.width, removeClip.height),
+                removeScratchDirtyRgn.getLocation(),
+                removeScratch.getSubimage(removeScratchDirtyRgn.x, removeScratchDirtyRgn.y, removeScratchDirtyRgn.width, removeScratchDirtyRgn.height),
                 AlphaComposite.getInstance(AlphaComposite.DST_OUT, 1.0f));
     }
 
@@ -255,13 +261,13 @@ public class Scratch {
      */
     public ImageLayer getAddScratchLayer() {
 
-        if (addClip == null || addClip.isEmpty()) {
+        if (addScratchDirtyRgn == null || addScratchDirtyRgn.isEmpty()) {
             return null;
         }
 
         return new ImageLayer(
-                addClip.getLocation(),
-                addScratch.getSubimage(addClip.x, addClip.y, addClip.width, addClip.height),
+                addScratchDirtyRgn.getLocation(),
+                addScratch.getSubimage(addScratchDirtyRgn.x, addScratchDirtyRgn.y, addScratchDirtyRgn.width, addScratchDirtyRgn.height),
                 AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
     }
 
@@ -273,15 +279,31 @@ public class Scratch {
     public ImageLayerSet getLayerSet() {
         ImageLayerSet imageLayerSet = new ImageLayerSet();
 
-        if (removeClip != null) {
+        if (removeScratchDirtyRgn != null) {
             imageLayerSet.addLayer(getRemoveScratchLayer());
         }
 
-        if (addClip != null) {
+        if (addScratchDirtyRgn != null) {
             imageLayerSet.addLayer(getAddScratchLayer());
         }
 
         return imageLayerSet;
+    }
+
+    /**
+     * Gets a rectangle identifying a sub-region of the scratch buffer that has been modified and needs to be repainted.
+     * @return The region of the scratch buffer that has been marked as dirty by tools.
+     */
+    public Rectangle getDirtyRegion() {
+        if (addScratchDirtyRgn == null) {
+            return removeScratchDirtyRgn;
+        }
+
+        if (removeScratchDirtyRgn == null) {
+            return addScratchDirtyRgn;
+        }
+
+        return addScratchDirtyRgn.union(removeScratchDirtyRgn);
     }
 
     /**
@@ -300,21 +322,22 @@ public class Scratch {
     }
 
     /**
-     * Sets the scratch buffer's clipping region to union of the existing clipping region and the bounds of the given
-     * shape.
+     * Returns the union of the bounds of the given shape with a given dirty region rectangle, intersected by the bounds
+     * of this buffer.
      *
      * @param shape   The shape representing the bounds to be added to the existing region
-     * @param clip The graphics context whose clipping region should be set.
+     * @param dirtyRgn A rectangle identifying a region of the scratch buffer that has been dirtied
+     * @return A union of the previously dirtied region and the newly dirtied region
      */
-    private Rectangle updateClip(Shape shape, Rectangle clip) {
+    private Rectangle updateDirtiedRgn(Shape shape, Rectangle dirtyRgn) {
         if (shape != null) {
-            if (clip == null || clip.isEmpty()) {
-                clip = getBounds().intersection(shape.getBounds());
+            if (dirtyRgn == null || dirtyRgn.isEmpty()) {
+                dirtyRgn = getBounds().intersection(shape.getBounds());
             } else {
-                clip = getBounds().intersection(clip.union(shape.getBounds()));
+                dirtyRgn = getBounds().intersection(dirtyRgn.union(shape.getBounds()));
             }
         }
 
-        return clip;
+        return dirtyRgn;
     }
 }

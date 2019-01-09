@@ -9,7 +9,7 @@ import java.awt.*;
  * Scan lines are typically visible only once the scale factor of an image exceeds some threshold (as rendering
  * scanlines with without scaling results in all scan lines and no image pixels).
  */
-@SuppressWarnings("SpellCheckingInspection")
+@SuppressWarnings({"SpellCheckingInspection", "unused"})
 public interface ScanlineSurface extends ScalableSurface {
 
     /**
@@ -58,15 +58,23 @@ public interface ScanlineSurface extends ScalableSurface {
     void setScanlineComposite(AlphaComposite scanlineComposite);
 
     /**
+     * Determines if scanlines are presently being rendered (based on the current scale and scanline threshold)
+     * @return True if scanlines are visible; false otherwise
+     */
+    default boolean isScanlinesVisible() {
+        return getScale() > getScanlineScaleThreadhold();
+    }
+
+    /**
      * Paints scanlines on the given graphics context.
      *
      * @param g    The graphics context
      * @param size The size of region onto which scanlines should extend
      */
     default void paintScanlines(Graphics2D g, Dimension size) {
-        double scale = getScale();
+        if (isScanlinesVisible()) {
+            double scale = getScale();
 
-        if (scale > getScanlineScaleThreadhold()) {
             g.setPaint(getScanlineColor());
             g.setComposite(getScanlineComposite());
             g.setStroke(new BasicStroke(1));

@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A surface that paints a layered image.
+ * A JComponent that renders a {@link com.defano.jmonet.canvas.layer.LayeredImage} when painted, and that registers
+ * itself as a listener of mouse and key events and delegates interesting events to a set of
+ * {@link SurfaceInteractionObserver} objects.
  */
 public abstract class AbstractPaintSurface extends JComponent implements PaintSurface, KeyListener, MouseListener,
         MouseMotionListener, KeyEventDispatcher, ScaledLayeredImage {
@@ -128,6 +130,28 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
 
         revalidate();
         repaint();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void repaint(Rectangle r) {
+
+        // Sub-region repainting not available when scanlines are rendered; must repaint entire surface
+        if (r == null || isScanlinesVisible()) {
+            super.repaint();
+        }
+
+        // When calculating sub-region, need to take scale into account
+        else {
+            double scale = getScale();
+            super.repaint(
+                    (int)(r.x * scale),
+                    (int)(r.y * scale),
+                    (int)(r.width * scale),
+                    (int)(r.height * scale));
+        }
     }
 
     /**

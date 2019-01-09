@@ -176,7 +176,10 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
         // Need to remove selection frame when tool is no longer active
         completeSelection();
 
-        getCanvas().removeCanvasCommitObserver(this);
+        if (getCanvas() != null) {
+            getCanvas().removeCanvasCommitObserver(this);
+        }
+
         MarchingAnts.getInstance().removeObserver(this);
     }
 

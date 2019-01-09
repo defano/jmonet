@@ -67,17 +67,24 @@ public class ImageLayer {
             clip = new Rectangle(0, 0, (int) ((location.x  + image.getWidth()) * scale), (int) ((location.y + image.getHeight()) * scale));
         }
 
-        // Rectangle onto which this image will be projected in the graphics context
-        int dx1 = 0;
-        int dy1 = 0;
-        int dx2 = clip.width;
-        int dy2 = clip.height;
+        Rectangle unscaledClip = new Rectangle (
+                (int) (clip.x / scale),
+                (int) (clip.y / scale),
+                (int) (clip.width / scale),
+                (int) (clip.height / scale)
+        );
 
-        // Rectangle defining the subimage of this layer that will be rendered
-        int x1 = (int) (clip.x /scale) - location.x;
-        int y1 = (int) (clip.y / scale) - location.y;
-        int x2 = x1 + (int) (clip.width / scale);
-        int y2 = y1 + (int) (clip.height / scale);
+        // Rectangle defining the sub-image of this layer that will be rendered
+        int x1 = Math.max(0, unscaledClip.x - location.x);
+        int y1 = Math.max(0, unscaledClip.y - location.y);
+        int x2 = x1 + Math.min(image.getWidth(), unscaledClip.width);
+        int y2 = y1 + Math.min(image.getHeight(), unscaledClip.height);
+
+        // Rectangle onto which this image will be projected in the graphics context
+        int dx1 = (int)(scale * Math.max(0, location.x - unscaledClip.x));
+        int dy1 = (int)(scale * Math.max(0, location.y - unscaledClip.y));
+        int dx2 = dx1 + (int)(Math.min(image.getWidth(), unscaledClip.width) * scale);
+        int dy2 = dy1 + (int)(Math.min(image.getHeight(), unscaledClip.height) * scale);
 
         g.drawImage(image, dx1, dy1, dx2, dy2, x1, y1, x2, y2, null);
     }
@@ -126,8 +133,8 @@ public class ImageLayer {
     public String toString() {
         return "ImageLayer{" +
                 "location=" + location +
-                ", display-size=" + getDisplayedSize() +
-                ", storage-size=" + getStoredSize() +
+                ", displayedSize=" + getDisplayedSize() +
+                ", storedSize=" + getStoredSize() +
                 '}';
     }
 }

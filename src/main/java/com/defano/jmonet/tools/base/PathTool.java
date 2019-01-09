@@ -34,7 +34,7 @@ public class PathTool extends BasicTool implements SurfaceInteractionObserver {
         delegate.startPath(getScratch(), getToolAttributes().getStroke(), getToolAttributes().getStrokePaint(), imageLocation);
         lastPoint = imageLocation;
 
-        getCanvas().repaint();
+        getCanvas().repaint(getScratch().getDirtyRegion());
     }
 
     /** {@inheritDoc} */
@@ -47,7 +47,8 @@ public class PathTool extends BasicTool implements SurfaceInteractionObserver {
         delegate.addPoint(getScratch(), getToolAttributes().getStroke(), getToolAttributes().getStrokePaint(), lastPoint, imageLocation);
         lastPoint = imageLocation;
 
-        getCanvas().repaint();
+        // While mouse is down, only repaint the modified area of the canvas
+        getCanvas().repaint(getScratch().getDirtyRegion());
     }
 
     /** {@inheritDoc} */

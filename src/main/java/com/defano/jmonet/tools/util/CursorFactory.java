@@ -102,9 +102,12 @@ public class CursorFactory {
         g.drawLine(strokedShape.getBounds().width / 2, strokedShape.getBounds().height / 2, strokedShape.getBounds().width / 2, strokedShape.getBounds().height / 2);
         g.dispose();
 
-        BufferedImage scaledCursor = new ScaleTransform(new Dimension((int)(cursorImage.getWidth() * scale), (int)(cursorImage.getHeight() * scale))).apply(cursorImage);
+        BufferedImage scaledCursor = new ScaleTransform(new Dimension(
+                Math.max(1, (int)(cursorImage.getWidth() * scale)),
+                Math.max(1, (int)(cursorImage.getHeight() * scale)))
+        ).apply(cursorImage);
 
-        Point hotspot = new Point(scaledCursor.getWidth() / 2, scaledCursor.getHeight() / 2 - 1);
+        Point hotspot = new Point(scaledCursor.getWidth() / 2, scaledCursor.getHeight() / 2);
         return toolkit.createCustomCursor(scaledCursor, hotspot, stroke.toString());
     }
 

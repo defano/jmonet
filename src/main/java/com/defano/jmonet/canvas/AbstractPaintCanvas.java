@@ -204,8 +204,6 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
         return new Point((int) (viewRect.x % scale), (int) (viewRect.y % scale));
     }
 
-
-
     protected void fireCanvasCommitObservers(PaintCanvas canvas, ImageLayerSet imageLayerSet, BufferedImage canvasImage) {
         for (CanvasCommitObserver thisObserver : observers) {
             thisObserver.onCommit(canvas, imageLayerSet, canvasImage);

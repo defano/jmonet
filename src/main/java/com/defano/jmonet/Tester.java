@@ -27,14 +27,14 @@ public class Tester {
             frame.setVisible(true);
 
             // Create a JMonet canvas and add it to the window
-            JMonetCanvas myCanvas = new JMonetCanvas(new Dimension(400, 400));
+            JMonetCanvas myCanvas = new JMonetCanvas(new Dimension(1000, 1000));
 
             JScrollPane scroll = new JScrollPane();
 //            scroll.setPreferredSize(new Dimension(300, 300));
             scroll.setViewportView(myCanvas);
 
 //            myCanvas.setBorder(BorderFactory.createLineBorder(Color.BLUE));
-            myCanvas.setScale(1);
+            myCanvas.setScale(.25);
 //            myCanvas.setScanlineScaleThreadhold(100);
 
             frame.getContentPane().add(scroll);
@@ -46,9 +46,9 @@ public class Tester {
             g.fillRect(0, 0, 40, 40);
             g.dispose();
 
-            myCanvas.commit(new ImageLayerSet(new ImageLayer(new Point(40, 40), img, AlphaComposite.SrcOver)));
+            myCanvas.commit(new ImageLayerSet(new ImageLayer(new Point(5, 5), img, AlphaComposite.SrcOver)));
 
-            Tool activeTool = PaintToolBuilder.create(PaintToolType.FILL)
+            Tool activeTool = PaintToolBuilder.create(PaintToolType.MAGNIFIER)
                     .withStroke(StrokeBuilder.withShape().ofCircle(8).build())
                     .withFillPaint(Color.BLUE)
                     .withStrokePaint(Color.RED)
