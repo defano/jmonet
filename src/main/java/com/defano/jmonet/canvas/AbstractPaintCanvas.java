@@ -4,6 +4,7 @@ import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.surface.AbstractPaintSurface;
+import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.tools.util.Geometry;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -78,7 +79,7 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
     @Override
     public void clearCanvas() {
         Rectangle clear = new Rectangle(new Point(), getCanvasSize());
-        Graphics2D g2 = scratch.getRemoveScratchGraphics(null, clear);
+        GraphicsContext g2 = scratch.getRemoveScratchGraphics(null, clear);
         g2.setColor(Color.WHITE);
         g2.fill(clear);
 

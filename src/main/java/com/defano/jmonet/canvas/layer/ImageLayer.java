@@ -48,16 +48,17 @@ public class ImageLayer {
     }
 
     /**
-     * Draws this image layer onto a graphics context at scale, clipped to a subimage as requested. This image is
-     * always drawn at the origin (0,0) of the graphics context, offset by this layer's location.
+     * Draws this image layer onto a graphics context at scale, painting only the pixels bound by a clipping rectangle.
+     *
+     * Note that the coordinates and bounds of the clipping rectangle are specified in scaled coordinates; that is,
+     * the clipping rectangle is specified in terms of the graphics context, not this image layer's buffer. Only pixels
+     * bound by the clipping rectangle should be painted on the graphics context. This may result in some or none of
+     * this layer being rendered depending on its size and location.
      *
      * @param g     The graphics context on which to draw.
-     * @param scale The scale at which to draw the image (1.0 or null means no scaling). When null, no scaling will be
-     *              provided.
-     * @param clip  The clipping rectangle; only the portion of this image bounded by this rectangle will be drawn. When
-     *              null, the entire image will be drawn. Note that this rectangle is represented in scaled coordinate
-     *              space. This, the rect (10,10), (100,100) when scale is 2.0 refers to the this layer's
-     *              sub image (5,5),(50,50).
+     * @param scale The scale at which to draw the image; 1.0 means no scaling.
+     * @param clip  The clipping rectangle, represented in scaled coordinates. Only the portion of this image bounded by
+     *              this rectangle will be drawn. When null, the entire image will be drawn.
      */
     public void paint(Graphics2D g, double scale, Rectangle clip) {
         g.setComposite(composite);
@@ -74,13 +75,13 @@ public class ImageLayer {
                 (int) (clip.height / scale)
         );
 
-        // Rectangle defining the sub-image of this layer that will be rendered
+        // Source: Rectangle defining the portion of this ImageLayer that will be painted
         int x1 = Math.max(0, unscaledClip.x - location.x);
         int y1 = Math.max(0, unscaledClip.y - location.y);
         int x2 = x1 + Math.min(image.getWidth(), unscaledClip.width);
         int y2 = y1 + Math.min(image.getHeight(), unscaledClip.height);
 
-        // Rectangle onto which this image will be projected in the graphics context
+        // Destination: Bounds of the graphics context that will be painted.
         int dx1 = (int)(scale * Math.max(0, location.x - unscaledClip.x));
         int dy1 = (int)(scale * Math.max(0, location.y - unscaledClip.y));
         int dx2 = dx1 + (int)(Math.min(image.getWidth(), unscaledClip.width) * scale);

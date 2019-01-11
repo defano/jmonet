@@ -1,6 +1,7 @@
 package com.defano.jmonet.tools;
 
 import com.defano.jmonet.canvas.Scratch;
+import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PolylineTool;
 import com.defano.jmonet.tools.base.PolylineToolDelegate;
@@ -23,7 +24,7 @@ public class CurveTool extends PolylineTool implements PolylineToolDelegate {
     public void strokePolyline(Scratch scratch, Stroke stroke, Paint paint, int[] xPoints, int[] yPoints) {
         Shape curve = renderCurvePath(xPoints, yPoints);
 
-        Graphics2D g = scratch.getAddScratchGraphics(this, stroke, curve);
+        GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, curve);
         g.setPaint(paint);
         g.setStroke(stroke);
         g.draw(curve);
@@ -32,7 +33,7 @@ public class CurveTool extends PolylineTool implements PolylineToolDelegate {
     /** {@inheritDoc} */
     @Override
     public void strokePolygon(Scratch scratch, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints) {
-        Graphics2D g = scratch.getAddScratchGraphics(this, null);
+        GraphicsContext g = scratch.getAddScratchGraphics(this, null);
         g.setPaint(strokePaint);
         g.setStroke(stroke);
         g.draw(renderCurvePath(xPoints, yPoints));

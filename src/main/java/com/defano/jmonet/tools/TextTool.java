@@ -3,6 +3,7 @@ package com.defano.jmonet.tools;
 
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
+import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.BasicTool;
 import io.reactivex.disposables.Disposable;
@@ -159,7 +160,7 @@ public class TextTool extends BasicTool implements Consumer, SurfaceInteractionO
         if (textArea.getText().trim().length() > 0) {
             BufferedImage text = rasterizeText();
 
-            Graphics g = getScratch().getAddScratchGraphics(this, new Rectangle(textModelLocation.x, textModelLocation.y, textArea.getWidth(), textArea.getHeight()));
+            GraphicsContext g = getScratch().getAddScratchGraphics(this, new Rectangle(textModelLocation.x, textModelLocation.y, textArea.getWidth(), textArea.getHeight()));
             g.drawImage(text, textModelLocation.x, textModelLocation.y, null);
             getCanvas().commit();
         }
@@ -170,7 +171,7 @@ public class TextTool extends BasicTool implements Consumer, SurfaceInteractionO
     }
 
     private int getFontAscent() {
-        Graphics g = getScratch().getAddScratchGraphics(this, null);
+        GraphicsContext g = getScratch().getAddScratchGraphics(this, null);
         FontMetrics metrics = g.getFontMetrics(getToolAttributes().getFont());
 
         return metrics.getAscent();

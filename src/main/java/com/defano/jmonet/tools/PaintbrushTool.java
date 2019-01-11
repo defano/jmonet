@@ -1,6 +1,7 @@
 package com.defano.jmonet.tools;
 
 import com.defano.jmonet.canvas.Scratch;
+import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PathToolDelegate;
 import com.defano.jmonet.tools.base.StrokedCursorPathTool;
@@ -23,10 +24,11 @@ public class PaintbrushTool extends StrokedCursorPathTool implements PathToolDel
     public void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
         Line2D line = new Line2D.Float(initialPoint, initialPoint);
 
-        Graphics2D g = scratch.getAddScratchGraphics(this, stroke, line);
+        GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, line);
         g.setStroke(stroke);
         g.setPaint(fillPaint);
         g.draw(line);
+
     }
 
     /** {@inheritDoc} */
@@ -34,7 +36,7 @@ public class PaintbrushTool extends StrokedCursorPathTool implements PathToolDel
     public void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
         Line2D line = new Line2D.Float(lastPoint, thisPoint);
 
-        Graphics2D g = scratch.getAddScratchGraphics(this, stroke, line);
+        GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, line);
         g.setStroke(stroke);
         g.setPaint(fillPaint);
         g.draw(line);

@@ -1,6 +1,7 @@
 package com.defano.jmonet.tools;
 
 import com.defano.jmonet.canvas.Scratch;
+import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PolylineTool;
 import com.defano.jmonet.tools.base.PolylineToolDelegate;
@@ -23,7 +24,7 @@ public class PolygonTool extends PolylineTool implements PolylineToolDelegate {
     public void strokePolyline(Scratch scratch, Stroke stroke, Paint paint, int[] xPoints, int[] yPoints) {
         Path2D poly = getPolylineShape(xPoints, yPoints, xPoints.length);
 
-        Graphics2D g = scratch.getAddScratchGraphics(this, stroke, poly);
+        GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, poly);
         g.setPaint(paint);
         g.setStroke(stroke);
         g.draw(poly);
@@ -34,7 +35,7 @@ public class PolygonTool extends PolylineTool implements PolylineToolDelegate {
     public void strokePolygon(Scratch scratch, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints) {
         Path2D polygon = getPolygonShape(xPoints, yPoints, xPoints.length);
 
-        Graphics2D g = scratch.getAddScratchGraphics(this, stroke, polygon);
+        GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, polygon);
         g.setStroke(stroke);
         g.setPaint(strokePaint);
         g.draw(polygon);
@@ -43,7 +44,7 @@ public class PolygonTool extends PolylineTool implements PolylineToolDelegate {
     /** {@inheritDoc} */
     @Override
     public void fillPolygon(Scratch scratch, Paint fillPaint, int[] xPoints, int[] yPoints) {
-        Graphics2D g = scratch.getAddScratchGraphics(this, null);
+        GraphicsContext g = scratch.getAddScratchGraphics(this, null);
         g.setPaint(fillPaint);
         g.fillPolygon(xPoints, yPoints, xPoints.length);
     }

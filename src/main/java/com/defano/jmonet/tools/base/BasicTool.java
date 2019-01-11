@@ -3,6 +3,7 @@ package com.defano.jmonet.tools.base;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
+import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.builder.DefaultToolAttributes;
 import com.defano.jmonet.tools.builder.ToolAttributes;
@@ -74,7 +75,7 @@ public abstract class BasicTool implements Tool {
     public void erase(Scratch scratch, Shape shape, Stroke stroke) {
         Paint erasePaint = toolAttributes.getEraseColor();
 
-        Graphics2D g = erasePaint == null ?
+        GraphicsContext g = erasePaint == null ?
                 scratch.getRemoveScratchGraphics(this, stroke, shape) :
                 scratch.getAddScratchGraphics(this, stroke, shape);
 
@@ -91,8 +92,8 @@ public abstract class BasicTool implements Tool {
         }
 
         Scratch scratch = getCanvas().getScratch();
-        applyRenderingHints(scratch.getAddScratchGraphics(this, null));
-        applyRenderingHints(scratch.getRemoveScratchGraphics(this, null));
+        applyRenderingHints(scratch.getAddScratchGraphics(this, null).getGraphics());
+        applyRenderingHints(scratch.getRemoveScratchGraphics(this, null).getGraphics());
 
         return scratch;
     }

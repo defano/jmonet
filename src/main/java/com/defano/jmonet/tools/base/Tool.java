@@ -2,11 +2,8 @@ package com.defano.jmonet.tools.base;
 
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.Scratch;
-import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
-import com.defano.jmonet.model.Interpolation;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.builder.ToolAttributes;
-import io.reactivex.Observable;
 
 import java.awt.*;
 

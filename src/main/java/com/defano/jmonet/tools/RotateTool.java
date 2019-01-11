@@ -1,6 +1,7 @@
 package com.defano.jmonet.tools;
 
 import com.defano.jmonet.algo.transform.image.ApplyAffineTransform;
+import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.SelectionTool;
 import com.defano.jmonet.tools.base.SelectionToolDelegate;
@@ -224,7 +225,7 @@ public class RotateTool extends SelectionTool implements SelectionToolDelegate {
         super.redrawSelection(includeFrame);
 
         // Draw the drag handle on the selection
-        Graphics2D g = getCanvas().getScratch().getAddScratchGraphics(this, null);
+        GraphicsContext g = getCanvas().getScratch().getAddScratchGraphics(this, null);
         g.setColor(Color.black);
         g.fill(dragHandle);
         g.dispose();

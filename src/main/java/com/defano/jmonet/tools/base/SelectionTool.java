@@ -4,6 +4,7 @@ import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
+import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.PerspectiveTool;
 import com.defano.jmonet.tools.RotateTool;
@@ -69,7 +70,7 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
         // Make an ARGB copy of the image (input may not have alpha channel)
         BufferedImage argbImage = ImageUtils.argbCopy(image);
 
-        Graphics2D g = getCanvas().getScratch().getAddScratchGraphics(this, new Rectangle(location, new Dimension(image.getWidth(), image.getHeight())));
+        GraphicsContext g = getCanvas().getScratch().getAddScratchGraphics(this, new Rectangle(location, new Dimension(image.getWidth(), image.getHeight())));
         g.drawImage(argbImage, location.x, location.y, null);
 
         selectionToolDelegate.addPointToSelectionFrame(location.getLocation(), new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()), false);
@@ -340,7 +341,7 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
             Shape selectionFrame = getSelectionFrame();
 
             // Clear image underneath selection
-            Graphics2D g = getCanvas().getScratch().getRemoveScratchGraphics(this, selectionFrame);
+            GraphicsContext g = getCanvas().getScratch().getRemoveScratchGraphics(this, selectionFrame);
             g.setColor(Color.WHITE);
             g.fill(selectionFrame);
 
@@ -358,7 +359,7 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
 
         // Don't draw the selected image when clean, doing so double-paints the selection and adjusts translucency
         if (hasSelection() && isDirty()) {
-            Graphics2D g = getCanvas().getScratch().getAddScratchGraphics(this, getSelectionFrame());
+            GraphicsContext g = getCanvas().getScratch().getAddScratchGraphics(this, getSelectionFrame());
             g.drawImage(selectedImage.getValue().get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
         }
 
@@ -388,7 +389,7 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
     protected void drawSelectionFrame() {
         Shape selectionFrame = getSelectionFrame();
 
-        Graphics2D g = getScratch().getAddScratchGraphics(this, MarchingAnts.getInstance().getMarchingAnts(), selectionFrame);
+        GraphicsContext g = getScratch().getAddScratchGraphics(this, MarchingAnts.getInstance().getMarchingAnts(), selectionFrame);
         g.setColor(Color.WHITE);
         g.draw(selectionFrame);
         g.setStroke(MarchingAnts.getInstance().getMarchingAnts());
@@ -417,7 +418,7 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
             // Re-render the scratch buffer without the selection frame (don't want to commit marching ants to canvas)
             getScratch().clearAdd();
             if (hasSelection()) {
-                Graphics2D g = getCanvas().getScratch().getAddScratchGraphics(this, getSelectionFrame());
+                GraphicsContext g = getCanvas().getScratch().getAddScratchGraphics(this, getSelectionFrame());
                 g.drawImage(selectedImage.getValue().get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
             }
 

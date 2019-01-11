@@ -4,8 +4,6 @@ import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.FillTool;
-import com.defano.jmonet.tools.PencilTool;
 import com.defano.jmonet.tools.base.Tool;
 import com.defano.jmonet.tools.builder.PaintToolBuilder;
 import com.defano.jmonet.tools.builder.StrokeBuilder;
@@ -17,6 +15,7 @@ import java.awt.image.BufferedImage;
 public class Tester {
 
     public static void main(String[] args) {
+
         javax.swing.SwingUtilities.invokeLater(() -> {
 
             // Create and show Swing frame
@@ -34,7 +33,7 @@ public class Tester {
             scroll.setViewportView(myCanvas);
 
 //            myCanvas.setBorder(BorderFactory.createLineBorder(Color.BLUE));
-            myCanvas.setScale(.25);
+            myCanvas.setScale(1);
 //            myCanvas.setScanlineScaleThreadhold(100);
 
             frame.getContentPane().add(scroll);
@@ -48,7 +47,7 @@ public class Tester {
 
             myCanvas.commit(new ImageLayerSet(new ImageLayer(new Point(5, 5), img, AlphaComposite.SrcOver)));
 
-            Tool activeTool = PaintToolBuilder.create(PaintToolType.MAGNIFIER)
+            Tool activeTool = PaintToolBuilder.create(PaintToolType.PAINTBRUSH)
                     .withStroke(StrokeBuilder.withShape().ofCircle(8).build())
                     .withFillPaint(Color.BLUE)
                     .withStrokePaint(Color.RED)
@@ -57,6 +56,20 @@ public class Tester {
                     .build();
 
         });
+    }
+
+    public interface  MyInt {
+        String a();
+    }
+
+    public static class MyClass {
+        public String a() {
+            return "A";
+        }
+
+        public String b() {
+            return "B";
+        }
     }
 
 }

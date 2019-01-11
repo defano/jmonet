@@ -2,6 +2,8 @@ package com.defano.jmonet.canvas;
 
 import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
+import com.defano.jmonet.context.AwtGraphicsContext;
+import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.tools.base.Tool;
 
 import java.awt.*;
@@ -36,7 +38,7 @@ public class Scratch {
     private BufferedImage addScratch, removeScratch;
 
     // Graphics context created from the buffers
-    private Graphics2D addScratchGraphics, removeScratchGraphics;
+    private GraphicsContext addScratchGraphics, removeScratchGraphics;
 
     /**
      * Creates a scratch unbound to any tool with a given dimension.
@@ -130,7 +132,7 @@ public class Scratch {
      *               modified.
      * @return The remove-scratch buffer ready for use.
      */
-    public Graphics2D getRemoveScratchGraphics(Tool tool, Stroke stroke, Shape shape) {
+    public GraphicsContext getRemoveScratchGraphics(Tool tool, Stroke stroke, Shape shape) {
         return getRemoveScratchGraphics(tool, getShapeBounds(stroke, shape));
     }
 
@@ -148,11 +150,11 @@ public class Scratch {
      *               modified.
      * @return The remove-scratch buffer ready for use.
      */
-    public Graphics2D getRemoveScratchGraphics(Tool tool, Shape bounds) {
+    public GraphicsContext getRemoveScratchGraphics(Tool tool, Shape bounds) {
         removeScratchDirtyRgn = updateDirtiedRgn(bounds, removeScratchDirtyRgn);
 
         if (tool != null) {
-            tool.applyRenderingHints(removeScratchGraphics);
+            tool.applyRenderingHints(removeScratchGraphics.getGraphics());
         }
 
         return removeScratchGraphics;
@@ -173,7 +175,7 @@ public class Scratch {
      *               modified.
      * @return The remove-scratch buffer ready for use.
      */
-    public Graphics2D getAddScratchGraphics(Tool tool, Stroke stroke, Shape shape) {
+    public GraphicsContext getAddScratchGraphics(Tool tool, Stroke stroke, Shape shape) {
         return getAddScratchGraphics(tool, getShapeBounds(stroke, shape));
     }
 
@@ -191,11 +193,11 @@ public class Scratch {
      *               modified.
      * @return The remove-scratch buffer ready for use.
      */
-    public Graphics2D getAddScratchGraphics(Tool tool, Shape bounds) {
+    public GraphicsContext getAddScratchGraphics(Tool tool, Shape bounds) {
         addScratchDirtyRgn = updateDirtiedRgn(bounds, addScratchDirtyRgn);
 
         if (tool != null) {
-            tool.applyRenderingHints(addScratchGraphics);
+            tool.applyRenderingHints(addScratchGraphics.getGraphics());
         }
 
         return addScratchGraphics;
@@ -215,7 +217,7 @@ public class Scratch {
         }
 
         this.addScratch = addScratch;
-        this.addScratchGraphics = this.addScratch.createGraphics();
+        this.addScratchGraphics = new AwtGraphicsContext(this.addScratch.createGraphics());
         this.addScratchDirtyRgn = dirtyRgn;
     }
 
@@ -233,7 +235,7 @@ public class Scratch {
         }
 
         this.removeScratch = removeScratch;
-        this.removeScratchGraphics = this.removeScratch.createGraphics();
+        this.removeScratchGraphics = new AwtGraphicsContext(this.removeScratch.createGraphics());
         this.removeScratchDirtyRgn = dirtyRgn;
     }
 

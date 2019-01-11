@@ -2,6 +2,7 @@ package com.defano.jmonet.tools.base;
 
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.model.FlexQuadrilateral;
+import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 
 import java.awt.*;
@@ -177,7 +178,7 @@ public abstract class TransformTool extends SelectionTool implements SurfaceInte
         if (hasSelection() && transformBounds != null) {
 
             // Render drag handles on selection bounds
-            Graphics2D g = getCanvas().getScratch().getAddScratchGraphics(this, null);
+            GraphicsContext g = getCanvas().getScratch().getAddScratchGraphics(this, null);
             g.setPaint(Color.BLACK);
 
             topLeftHandle = new Rectangle(transformBounds.getTopLeft().x, transformBounds.getTopLeft().y, HANDLE_SIZE, HANDLE_SIZE);

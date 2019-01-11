@@ -1,6 +1,7 @@
 package com.defano.jmonet.tools;
 
 import com.defano.jmonet.canvas.Scratch;
+import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PathTool;
 import com.defano.jmonet.tools.base.PathToolDelegate;
@@ -33,7 +34,7 @@ public class FreeformShapeTool extends PathTool implements PathToolDelegate {
     public void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
         path.lineTo(thisPoint.getX(), thisPoint.getY());
 
-        Graphics2D g = scratch.getAddScratchGraphics(this, stroke, path);
+        GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, path);
         g.setStroke(stroke);
         g.setPaint(getToolAttributes().getStrokePaint());
         g.draw(path);
@@ -44,7 +45,7 @@ public class FreeformShapeTool extends PathTool implements PathToolDelegate {
     public void completePath(Scratch scratch, Stroke stroke, Paint fillPaint) {
         path.closePath();
 
-        Graphics2D g = scratch.getAddScratchGraphics(this, stroke, path);
+        GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, path);
 
         if (getToolAttributes().getFillPaint().isPresent()) {
             g.setPaint(getToolAttributes().getFillPaint().get());

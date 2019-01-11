@@ -1,6 +1,7 @@
 package com.defano.jmonet.tools;
 
 import com.defano.jmonet.canvas.Scratch;
+import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PathTool;
 import com.defano.jmonet.tools.base.PathToolDelegate;
@@ -54,7 +55,7 @@ public class PencilTool extends PathTool implements PathToolDelegate {
         }
 
         else {
-            Graphics2D g = scratch.getAddScratchGraphics(this, new BasicStroke(1), line);
+            GraphicsContext g = scratch.getAddScratchGraphics(this, new BasicStroke(1), line);
             g.setStroke(new BasicStroke(1));
             g.setPaint(fillPaint);
             g.draw(line);
