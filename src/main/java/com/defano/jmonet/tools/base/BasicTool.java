@@ -5,8 +5,8 @@ import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.builder.DefaultToolAttributes;
-import com.defano.jmonet.tools.builder.ToolAttributes;
+import com.defano.jmonet.tools.attributes.RxToolAttributes;
+import com.defano.jmonet.tools.attributes.ToolAttributes;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +14,7 @@ import java.awt.*;
 public abstract class BasicTool implements Tool {
 
     private final PaintToolType toolType;
-    private final ToolAttributes toolAttributes = new DefaultToolAttributes();
+    private final ToolAttributes toolAttributes = new RxToolAttributes();
 
     private PaintCanvas canvas;
     private Cursor toolCursor;
@@ -70,18 +70,6 @@ public abstract class BasicTool implements Tool {
     @Override
     public PaintCanvas getCanvas() {
         return canvas;
-    }
-
-    public void erase(Scratch scratch, Shape shape, Stroke stroke) {
-        Paint erasePaint = toolAttributes.getEraseColor();
-
-        GraphicsContext g = erasePaint == null ?
-                scratch.getRemoveScratchGraphics(this, stroke, shape) :
-                scratch.getAddScratchGraphics(this, stroke, shape);
-
-        g.setStroke(stroke);
-        g.setPaint(erasePaint == null ? getCanvas().getCanvasBackground() : erasePaint);
-        g.draw(shape);
     }
 
     /** {@inheritDoc} */

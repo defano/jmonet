@@ -1,6 +1,6 @@
 package com.defano.jmonet.tools.util;
 
-import com.defano.jmonet.algo.transform.image.ScaleTransform;
+import com.defano.jmonet.transform.image.ScaleTransform;
 
 import java.awt.*;
 import java.awt.geom.Line2D;

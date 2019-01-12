@@ -6,13 +6,11 @@ import org.mockito.Mockito;
 
 import java.awt.*;
 
-public class RectangleToolTest extends MockitoToolTest {
-
-    private RectangleTool rectangleToolUnderTest;
+public class RectangleToolTest extends MockitoToolTest<RectangleTool> {
 
     @BeforeEach
     public void setUp() {
-        rectangleToolUnderTest = new RectangleTool();
+        initialize(new RectangleTool());
     }
 
     @Test
@@ -21,7 +19,7 @@ public class RectangleToolTest extends MockitoToolTest {
         Paint fill = Color.black;
         Stroke stroke = new BasicStroke(1);
 
-        rectangleToolUnderTest.strokeBounds(mockScratch, stroke, fill, bounds, false);
+        uut.strokeBounds(mockScratch, stroke, fill, bounds, false);
 
         Mockito.verify(mockAddScratchGraphics).setStroke(stroke);
         Mockito.verify(mockAddScratchGraphics).setPaint(fill);
@@ -33,7 +31,7 @@ public class RectangleToolTest extends MockitoToolTest {
         Rectangle bounds = new Rectangle(1, 2, 3, 4);
         Paint fill = Color.black;
 
-        rectangleToolUnderTest.fillBounds(mockScratch, fill, bounds, false);
+        uut.fillBounds(mockScratch, fill, bounds, false);
 
         Mockito.verify(mockAddScratchGraphics).setPaint(fill);
         Mockito.verify(mockAddScratchGraphics).fillRect(bounds.x, bounds.y, bounds.width, bounds.height);

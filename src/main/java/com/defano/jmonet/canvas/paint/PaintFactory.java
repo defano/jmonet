@@ -15,6 +15,7 @@ public class PaintFactory {
      *
      * @return Paint matching the panel background color.
      */
+    @SuppressWarnings("unused")
     public static Paint makePanelColor() {
         Color panel = (Color) UIManager.getLookAndFeelDefaults().get("Panel.background");
         return panel == null ? Color.WHITE : panel;
@@ -25,6 +26,7 @@ public class PaintFactory {
      *
      * @return Fully transparent paint.
      */
+    @SuppressWarnings("unused")
     public static Paint makeTransparent() {
         return new Color(0, 0, 0, 0);
     }
@@ -36,6 +38,7 @@ public class PaintFactory {
      * @param checkSize The square dimension of the checks, in pixels.
      * @return Checkerboard paint
      */
+    @SuppressWarnings("unused")
     public static Paint makeCheckerboard(int checkSize) {
         return makeCheckerboard(checkSize, Color.WHITE, Color.LIGHT_GRAY);
     }

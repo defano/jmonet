@@ -1,6 +1,5 @@
 package com.defano.jmonet;
 
-import com.defano.jmonet.algo.fill.BoundaryFunction;
 import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
@@ -27,7 +26,8 @@ public class Tester {
             frame.setVisible(true);
 
             // Create a JMonet canvas and add it to the window
-            JMonetCanvas myCanvas = new JMonetCanvas(new Dimension(1000, 1000));
+            JMonetCanvas myCanvas = new JMonetCanvas(new Dimension(600, 600));
+//            myCanvas.setCanvasBackground(PaintFactory.makeCheckerboard(15, Color.WHITE, Color.GRAY));
 
             JScrollPane scroll = new JScrollPane();
 //            scroll.setPreferredSize(new Dimension(300, 300));
@@ -39,11 +39,10 @@ public class Tester {
 
             frame.getContentPane().add(scroll);
 
-
-            BufferedImage img = new BufferedImage(6, 4, BufferedImage.TYPE_4BYTE_ABGR);
+            BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_4BYTE_ABGR);
             Graphics2D g = img.createGraphics();
             g.setColor(Color.BLUE);
-            g.fillRect(0, 0, 40, 40);
+            g.fillRect(0, 0, 100, 100);
             g.dispose();
 
             myCanvas.commit(new ImageLayerSet(new ImageLayer(new Point(5, 5), img, AlphaComposite.SrcOver)));
@@ -52,7 +51,7 @@ public class Tester {
                     .withStroke(StrokeBuilder.withShape().ofCircle(8).build())
                     .withFillPaint(Color.BLUE)
                     .withStrokePaint(Color.RED)
-                    .withEraseColor(null)
+//                    .withEraseColor(Color.YELLOW)
                     .makeActiveOnCanvas(myCanvas)
                     .build();
 

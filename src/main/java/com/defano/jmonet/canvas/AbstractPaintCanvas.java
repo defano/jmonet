@@ -108,7 +108,7 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
     @Override
     public Point convertViewPointToModel(Point p) {
         Point error = getScrollError();
-        int gridSpacing = getGridSpacingObservable().blockingFirst();
+        int gridSpacing = getGridSpacing();
         double scale = getScaleObservable().blockingFirst();
 
         int x = p.x - error.x;
@@ -165,8 +165,8 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
      * {@inheritDoc}
      */
     @Override
-    public Observable<Integer> getGridSpacingObservable() {
-        return gridSpacingSubject;
+    public int getGridSpacing() {
+        return gridSpacingSubject.blockingFirst();
     }
 
     /**

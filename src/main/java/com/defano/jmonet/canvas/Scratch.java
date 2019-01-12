@@ -293,6 +293,26 @@ public class Scratch {
     }
 
     /**
+     * A convenience method to erase paint from all pixels bounded by a given shape and stroke, taking into account
+     * canvas background and erase color.
+     *
+     * @param tool The tool that is erasing
+     * @param shape The shape to be erased
+     * @param stroke The stroke of the shape being erased
+     */
+    public void erase(Tool tool, Shape shape, Stroke stroke) {
+        Paint erasePaint = tool.getToolAttributes().getEraseColor();
+
+        GraphicsContext g = erasePaint == null ?
+                getRemoveScratchGraphics(tool, stroke, shape) :
+                getAddScratchGraphics(tool, stroke, shape);
+
+        g.setStroke(stroke);
+        g.setPaint(erasePaint == null ? tool.getCanvas().getCanvasBackground() : erasePaint);
+        g.draw(shape);
+    }
+
+    /**
      * Gets a rectangle identifying a sub-region of the scratch buffer that has been modified and needs to be repainted.
      * @return The region of the scratch buffer that has been marked as dirty by tools.
      */

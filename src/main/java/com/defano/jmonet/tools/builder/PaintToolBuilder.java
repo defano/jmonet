@@ -1,9 +1,7 @@
 package com.defano.jmonet.tools.builder;
 
-import com.defano.jmonet.algo.fill.BoundaryFunction;
-import com.defano.jmonet.algo.fill.DefaultBoundaryFunction;
-import com.defano.jmonet.algo.fill.DefaultFillFunction;
-import com.defano.jmonet.algo.fill.FillFunction;
+import com.defano.jmonet.tools.attributes.BoundaryFunction;
+import com.defano.jmonet.tools.attributes.FillFunction;
 import com.defano.jmonet.canvas.JFXPaintCanvasNode;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.Interpolation;
@@ -12,8 +10,8 @@ import com.defano.jmonet.tools.AirbrushTool;
 import com.defano.jmonet.tools.FillTool;
 import com.defano.jmonet.tools.PolygonTool;
 import com.defano.jmonet.tools.TextTool;
-import com.defano.jmonet.tools.base.DefaultMarkPredicate;
-import com.defano.jmonet.tools.base.MarkPredicate;
+import com.defano.jmonet.tools.attributes.ToolAttributes;
+import com.defano.jmonet.tools.attributes.MarkPredicate;
 import com.defano.jmonet.tools.base.Tool;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -46,6 +44,11 @@ public class PaintToolBuilder {
     private Observable<Boolean> drawCenteredObservable;
     private Observable<Integer> cornerRadiusObservable;
     private Observable<Interpolation> antiAliasingObservable;
+    private Observable<Integer> constrainedAngleObservable;
+    private Observable<Double> minimumScaleObservable;
+    private Observable<Double> maximumScaleObservable;
+    private Observable<Double> magnificationStepObservable;
+    private Observable<Boolean> recenterOnMagnifyObservable;
 
     /**
      * Constructs a builder for the specified tool type. Use {@link #create(PaintToolType)} to retrieve an instance
@@ -98,8 +101,7 @@ public class PaintToolBuilder {
      * @return The PaintToolBuilder
      */
     public PaintToolBuilder withFont(Font font) {
-        this.fontObservable = BehaviorSubject.createDefault(font);
-        return this;
+        return withFontObservable(BehaviorSubject.createDefault(font));
     }
 
     /**
@@ -121,8 +123,7 @@ public class PaintToolBuilder {
      * @return The PaintToolBuilder
      */
     public PaintToolBuilder withFontColor(Color color) {
-        this.fontColorObservable = BehaviorSubject.createDefault(color);
-        return this;
+        return withFontColorObservable(BehaviorSubject.createDefault(color));
     }
 
     /**
@@ -144,8 +145,7 @@ public class PaintToolBuilder {
      * @return The PaintToolBuilder
      */
     public PaintToolBuilder withShapeSides(int sides) {
-        this.shapeSidesObservable = BehaviorSubject.createDefault(sides);
-        return this;
+        return withShapeSidesObservable(BehaviorSubject.createDefault(sides));
     }
 
     /**
@@ -168,8 +168,7 @@ public class PaintToolBuilder {
      * @return Ths PaintToolBuilder
      */
     public PaintToolBuilder withStroke(Stroke stroke) {
-        this.strokeObservable = BehaviorSubject.createDefault(stroke);
-        return this;
+        return withStrokeObservable(BehaviorSubject.createDefault(stroke));
     }
 
     /**
@@ -192,8 +191,7 @@ public class PaintToolBuilder {
      * @return The PaintToolBuilder
      */
     public PaintToolBuilder withStrokePaint(Paint strokePaint) {
-        this.strokePaintObservable = BehaviorSubject.createDefault(strokePaint);
-        return this;
+        return withStrokePaintObservable(BehaviorSubject.createDefault(strokePaint));
     }
 
     /**
@@ -215,8 +213,7 @@ public class PaintToolBuilder {
      * @return The PaintToolBuilder
      */
     public PaintToolBuilder withFillPaint(Paint paint) {
-        this.fillPaintObservable = BehaviorSubject.createDefault(paint == null ? Optional.empty() : Optional.of(paint));
-        return this;
+        return withFillPaintObservable(BehaviorSubject.createDefault(paint == null ? Optional.empty() : Optional.of(paint)));
     }
 
     /**
@@ -245,8 +242,9 @@ public class PaintToolBuilder {
      * @return The PaintToolBuilder
      */
     public PaintToolBuilder withEraseColor(Color paint) {
-        this.erasePaintObservable = BehaviorSubject.createDefault(paint == null ? Optional.empty() : Optional.of(paint));
-        return this;
+        return withEraseColorObservable(
+                BehaviorSubject.createDefault(paint == null ? Optional.empty() : Optional.of(paint))
+        );
     }
 
     /**
@@ -277,8 +275,7 @@ public class PaintToolBuilder {
      * @return The PaintToolBuilder
      */
     public PaintToolBuilder withIntensity(double intensity) {
-        this.intensityObservable = BehaviorSubject.createDefault(intensity);
-        return this;
+        return withIntensityObservable(BehaviorSubject.createDefault(intensity));
     }
 
     /**
@@ -312,8 +309,7 @@ public class PaintToolBuilder {
      * @return The PaintToolBuilder
      */
     public PaintToolBuilder withDrawCentered(boolean drawCentered) {
-        this.drawCenteredObservable = BehaviorSubject.createDefault(drawCentered);
-        return this;
+        return withDrawCenteredObservable(BehaviorSubject.createDefault(drawCentered));
     }
 
     /**
@@ -336,8 +332,7 @@ public class PaintToolBuilder {
      * @return The PaintToolBuilder
      */
     public PaintToolBuilder withDrawMultiple(boolean drawMultiple) {
-        this.drawMultipleObservable = BehaviorSubject.createDefault(drawMultiple);
-        return this;
+        return withDrawMultipleObservable(BehaviorSubject.createDefault(drawMultiple));
     }
 
     /**
@@ -347,7 +342,17 @@ public class PaintToolBuilder {
      * @return The PaintToolBuilder
      */
     public PaintToolBuilder withCornerRadius(int cornerRadius) {
-        this.cornerRadiusObservable = BehaviorSubject.createDefault(cornerRadius);
+        return withCornerRadiusObservable(BehaviorSubject.createDefault(cornerRadius));
+    }
+
+    /**
+     * Specifies the height and width of the corner used for round rectangles.
+     *
+     * @param observable An observable of the height and width of the corner radius
+     * @return The PaintToolBuilder
+     */
+    public PaintToolBuilder withCornerRadiusObservable(Observable<Integer> observable) {
+        this.cornerRadiusObservable = observable;
         return this;
     }
 
@@ -358,8 +363,7 @@ public class PaintToolBuilder {
      * @return The PaintToolBuilder
      */
     public PaintToolBuilder withAntiAliasing(Interpolation mode) {
-        this.antiAliasingObservable = BehaviorSubject.createDefault(mode);
-        return this;
+        return withAntiAliasingObservable(BehaviorSubject.createDefault(mode));
     }
 
     /**
@@ -371,6 +375,51 @@ public class PaintToolBuilder {
     public PaintToolBuilder withAntiAliasingObservable(Observable<Interpolation> observable) {
         this.antiAliasingObservable = observable;
         return this;
+    }
+
+    public PaintToolBuilder withConstrainedAngleObservable(Observable<Integer> observable) {
+        this.constrainedAngleObservable = observable;
+        return this;
+    }
+
+    public PaintToolBuilder withConstrainedAngle(int angle) {
+        return withConstrainedAngleObservable(BehaviorSubject.createDefault(angle));
+    }
+
+    public PaintToolBuilder withMaximumScaleObservable(Observable<Double> observable) {
+        this.maximumScaleObservable = observable;
+        return this;
+    }
+
+    public PaintToolBuilder withMaximumScale(double maximumScale) {
+        return withMaximumScaleObservable(BehaviorSubject.createDefault(maximumScale));
+    }
+
+    public PaintToolBuilder withMinimumScaleObservable(Observable<Double> observable) {
+        this.minimumScaleObservable = observable;
+        return this;
+    }
+
+    public PaintToolBuilder withMinimumScale(double minimumScale) {
+        return withMinimumScaleObservable(BehaviorSubject.createDefault(minimumScale));
+    }
+
+    public PaintToolBuilder withMagnificationStepObservable(Observable<Double> observable) {
+        this.magnificationStepObservable = observable;
+        return this;
+    }
+
+    public PaintToolBuilder withMagnificationStep(double magnificationStep) {
+        return withMagnificationStepObservable(BehaviorSubject.createDefault(magnificationStep));
+    }
+
+    public PaintToolBuilder withRecenterOnMagnifyObservable(Observable<Boolean> observable) {
+        this.recenterOnMagnifyObservable = observable;
+        return this;
+    }
+
+    public PaintToolBuilder withRecenterOnMagnify(boolean recenterOnMagnify) {
+        return withRecenterOnMagnifyObservable(BehaviorSubject.createDefault(recenterOnMagnify));
     }
 
     /**
@@ -465,6 +514,26 @@ public class PaintToolBuilder {
 
         if (antiAliasingObservable != null) {
             toolAttributes.setAntiAliasingObservable(antiAliasingObservable);
+        }
+
+        if (constrainedAngleObservable != null) {
+            toolAttributes.setConstrainedAngleObservable(constrainedAngleObservable);
+        }
+
+        if (maximumScaleObservable != null) {
+            toolAttributes.setMaximumScaleObservable(maximumScaleObservable);
+        }
+
+        if (minimumScaleObservable != null) {
+            toolAttributes.setMinimumScaleObservable(minimumScaleObservable);
+        }
+
+        if (magnificationStepObservable != null) {
+            toolAttributes.setMagnificationStepObservable(magnificationStepObservable);
+        }
+
+        if (recenterOnMagnifyObservable != null) {
+            toolAttributes.setRecenterOnMagnifyObservable(recenterOnMagnifyObservable);
         }
 
         if (markPredicate != null) {

@@ -16,10 +16,10 @@ public interface GridSurface {
     void setGridSpacing(int grid);
 
     /**
-     * Gets an observable grid spacing property.
+     * Gets the grid spacing property.
      *
-     * @return The grid spacing {@link BehaviorSubject}
+     * @return The grid spacing
      */
-    Observable<Integer> getGridSpacingObservable();
+    int getGridSpacing();
 
 }

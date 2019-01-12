@@ -85,6 +85,7 @@ public class ImageLayerSet implements LayeredImage {
      * @param observer The observer to remove.
      * @return True if the observer exists and was removed; false otherwise.
      */
+    @SuppressWarnings("UnusedReturnValue")
     public boolean removeLayerSetObserver(LayerSetObserver observer) {
         return observers.remove(observer);
     }

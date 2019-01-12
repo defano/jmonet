@@ -1,9 +1,9 @@
 package com.defano.jmonet.canvas;
 
-import com.defano.jmonet.algo.transform.image.ApplyPixelTransform;
-import com.defano.jmonet.algo.transform.image.PixelTransform;
-import com.defano.jmonet.algo.transform.image.StaticImageTransform;
-import com.defano.jmonet.algo.transform.image.Transformable;
+import com.defano.jmonet.transform.image.ApplyPixelTransform;
+import com.defano.jmonet.transform.image.PixelTransform;
+import com.defano.jmonet.transform.image.StaticImageTransform;
+import com.defano.jmonet.transform.image.Transformable;
 import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.layer.LayeredImage;

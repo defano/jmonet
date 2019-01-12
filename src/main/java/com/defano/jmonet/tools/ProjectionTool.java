@@ -1,6 +1,6 @@
 package com.defano.jmonet.tools;
 
-import com.defano.jmonet.algo.transform.image.ProjectionTransform;
+import com.defano.jmonet.transform.image.ProjectionTransform;
 import com.defano.jmonet.model.FlexQuadrilateral;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.TransformTool;

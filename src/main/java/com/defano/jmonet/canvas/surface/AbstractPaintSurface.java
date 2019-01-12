@@ -13,16 +13,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A JComponent that renders a {@link com.defano.jmonet.canvas.layer.LayeredImage} when painted, and that registers
- * itself as a listener of mouse and key events and delegates interesting events to a set of
+ * A JComponent that renders a {@code LayeredImage} when painted, and that registers
+ * itself as a listener of mouse and key events delegating interesting events to a set of
  * {@link SurfaceInteractionObserver} objects.
  */
 public abstract class AbstractPaintSurface extends JComponent implements PaintSurface, KeyListener, MouseListener,
         MouseMotionListener, KeyEventDispatcher, ScaledLayeredImage {
 
     private final static Color CLEAR_COLOR = new Color(0, 0, 0, 0);
+
     private final BehaviorSubject<Double> scaleSubject = BehaviorSubject.createDefault(1.0);
     private final List<SurfaceInteractionObserver> interactionListeners = new ArrayList<>();
+
     private Dimension surfaceDimension = new Dimension();
     private double scanlineThreadhold = 6.0;
     private Color scanlineColor = new Color(0xF5, 0xF5, 0xF5);

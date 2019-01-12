@@ -1,6 +1,6 @@
 package com.defano.jmonet.tools;
 
-import com.defano.jmonet.algo.transform.image.ApplyAffineTransform;
+import com.defano.jmonet.transform.image.ApplyAffineTransform;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.SelectionTool;

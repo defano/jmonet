@@ -1,11 +1,10 @@
 package com.defano.jmonet.tools;
 
-import com.defano.jmonet.algo.fill.*;
-import com.defano.jmonet.algo.transform.image.FloodFillTransform;
+import com.defano.jmonet.transform.image.FloodFillTransform;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.BasicTool;
-import com.defano.jmonet.tools.builder.ToolAttributes;
+import com.defano.jmonet.tools.attributes.ToolAttributes;
 import com.defano.jmonet.tools.util.CursorFactory;
 
 import java.awt.*;

@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * A layer in a layered image.
+ * An image layer comprising a portion of a {@link LayeredImage}.
  */
 public class ImageLayer {
 
@@ -29,6 +29,7 @@ public class ImageLayer {
      * @param image     The image comprising this layer
      * @param composite The composite mode this layer is drawn with
      */
+    @SuppressWarnings("unused")
     public ImageLayer(BufferedImage image, AlphaComposite composite) {
         this(new Point(0, 0), image, composite);
     }

@@ -3,11 +3,9 @@ package com.defano.jmonet.tools;
 import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.DefaultMarkPredicate;
-import com.defano.jmonet.tools.base.MarkPredicate;
 import com.defano.jmonet.tools.base.PathTool;
 import com.defano.jmonet.tools.base.PathToolDelegate;
-import com.defano.jmonet.tools.builder.ToolAttributes;
+import com.defano.jmonet.tools.attributes.ToolAttributes;
 import com.defano.jmonet.tools.util.CursorFactory;
 
 import java.awt.*;
@@ -18,6 +16,7 @@ import java.awt.geom.Line2D;
  */
 public class PencilTool extends PathTool implements PathToolDelegate {
 
+    // Flag indicating whether pencil is operating in eraser mode
     private boolean isErasing = false;
 
     public PencilTool() {
@@ -52,7 +51,7 @@ public class PencilTool extends PathTool implements PathToolDelegate {
 
     private void renderStroke(Scratch scratch, Paint fillPaint, Line2D line) {
         if (isErasing) {
-            erase(scratch, line, new BasicStroke(1));
+            scratch.erase(this, line, new BasicStroke(1));
         }
 
         else {
