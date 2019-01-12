@@ -17,9 +17,8 @@ import java.util.Map;
  * A proxy/adapter to {@link Graphics2D} used to improve testability. Provides access to all methods in a wrapped
  * {@link Graphics2D} object (including inherited methods from {@link Graphics}).
  */
+@SuppressWarnings({"unused", "CStyleArrayDeclaration"})
 public interface GraphicsContext {
-
-    Graphics2D getGraphics();
 
     /**
      * Strokes the outline of a <code>Shape</code> using the settings of the

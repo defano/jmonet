@@ -1,6 +1,12 @@
 package com.defano.jmonet.tools.builder;
 
+import com.defano.jmonet.algo.fill.BoundaryFunction;
+import com.defano.jmonet.algo.fill.DefaultBoundaryFunction;
+import com.defano.jmonet.algo.fill.DefaultFillFunction;
+import com.defano.jmonet.algo.fill.FillFunction;
 import com.defano.jmonet.model.Interpolation;
+import com.defano.jmonet.tools.base.DefaultMarkPredicate;
+import com.defano.jmonet.tools.base.MarkPredicate;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -10,6 +16,12 @@ import java.util.Optional;
 @SuppressWarnings("unused")
 public class DefaultToolAttributes implements ToolAttributes {
 
+    // Non-observable attributes
+    private MarkPredicate markPredicate = new DefaultMarkPredicate();
+    private FillFunction fillFunction = new DefaultFillFunction();
+    private BoundaryFunction boundaryFunction = new DefaultBoundaryFunction();
+
+    // Observable attributes
     private Observable<Interpolation> antiAliasingObservable = BehaviorSubject.createDefault(Interpolation.NONE);
     private Observable<Integer> constrainedAngleObservable = BehaviorSubject.createDefault(15);
     private Observable<Stroke> strokeObservable = BehaviorSubject.createDefault(new BasicStroke(2));
@@ -188,4 +200,45 @@ public class DefaultToolAttributes implements ToolAttributes {
         return antiAliasingObservable;
     }
 
+    @Override
+    public MarkPredicate getMarkPredicate() {
+        return markPredicate;
+    }
+
+    @Override
+    public void setMarkPredicate(MarkPredicate markPredicate) {
+        if (markPredicate == null) {
+            throw new IllegalArgumentException("Mark predicate cannot be null.");
+        }
+
+        this.markPredicate = markPredicate;
+    }
+
+    @Override
+    public BoundaryFunction getBoundaryFunction() {
+        return boundaryFunction;
+    }
+
+    @Override
+    public void setBoundaryFunction(BoundaryFunction boundaryFunction) {
+        if (fillFunction == null) {
+            throw new IllegalArgumentException("Boundary function cannot be null.");
+        }
+
+        this.boundaryFunction = boundaryFunction;
+    }
+
+    @Override
+    public FillFunction getFillFunction() {
+        return fillFunction;
+    }
+
+    @Override
+    public void setFillFunction(FillFunction fillFunction) {
+        if (fillFunction == null) {
+            throw new IllegalArgumentException("Fill function cannot be null.");
+        }
+
+        this.fillFunction = fillFunction;
+    }
 }

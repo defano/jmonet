@@ -3,6 +3,7 @@ package com.defano.jmonet.tools;
 
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
+import com.defano.jmonet.context.AwtGraphicsContext;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.BasicTool;
@@ -145,7 +146,7 @@ public class TextTool extends BasicTool implements Consumer, SurfaceInteractionO
 
         BufferedImage image = new BufferedImage(textArea.getWidth(), textArea.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) image.getGraphics();
-        applyRenderingHints(g);
+        applyRenderingHints(new AwtGraphicsContext(g));
         textArea.printAll(g);
         g.dispose();
 

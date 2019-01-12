@@ -26,11 +26,6 @@ public class AwtGraphicsContext implements GraphicsContext {
     }
 
     @Override
-    public Graphics2D getGraphics() {
-        return g;
-    }
-
-    @Override
     public void draw(Shape s) {
         g.draw(s);
     }

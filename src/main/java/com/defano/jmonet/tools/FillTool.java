@@ -5,6 +5,7 @@ import com.defano.jmonet.algo.transform.image.FloodFillTransform;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.BasicTool;
+import com.defano.jmonet.tools.builder.ToolAttributes;
 import com.defano.jmonet.tools.util.CursorFactory;
 
 import java.awt.*;
@@ -18,8 +19,6 @@ import java.awt.image.BufferedImage;
 public class FillTool extends BasicTool implements SurfaceInteractionObserver {
 
     private Cursor fillCursor = CursorFactory.makeBucketCursor();
-    private BoundaryFunction boundaryFunction = new DefaultBoundaryFunction();
-    private FillFunction fillFunction = new DefaultFillFunction();
 
     public FillTool() {
         super(PaintToolType.FILL);
@@ -28,12 +27,13 @@ public class FillTool extends BasicTool implements SurfaceInteractionObserver {
     /** {@inheritDoc} */
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
+        ToolAttributes attributes = getToolAttributes();
 
         // Nothing to do if no fill paint is specified
-        if (getToolAttributes().getFillPaint().isPresent()) {
+        if (attributes.getFillPaint().isPresent()) {
             getScratch().clear();
 
-            BufferedImage filled = new FloodFillTransform(getToolAttributes().getFillPaint().get(), imageLocation, fillFunction, boundaryFunction).apply(getCanvas().getCanvasImage());
+            BufferedImage filled = new FloodFillTransform(getToolAttributes().getFillPaint().get(), imageLocation, attributes.getFillFunction(), attributes.getBoundaryFunction()).apply(getCanvas().getCanvasImage());
             getScratch().setAddScratch(filled, new Rectangle(getCanvas().getCanvasSize()));
 
             getCanvas().commit();
@@ -62,50 +62,6 @@ public class FillTool extends BasicTool implements SurfaceInteractionObserver {
     public void setFillCursor(Cursor fillCursor) {
         this.fillCursor = fillCursor;
         setToolCursor(fillCursor);
-    }
-
-    /**
-     * Gets the function used to detect when paint flooding a region has reached a boundary. See
-     * BoundaryFunction for details.
-     *
-     * @return The current boundary function in use.
-     */
-    public BoundaryFunction getBoundaryFunction() {
-        return boundaryFunction;
-    }
-
-    /**
-     * Sets the function used to detect when paint flooding a region has reached a boundary. See
-     * BoundaryFunction for details.
-     *
-     * @param boundaryFunction The boundary function to use.
-     */
-    public void setBoundaryFunction(BoundaryFunction boundaryFunction) {
-        this.boundaryFunction = boundaryFunction;
-
-        if (boundaryFunction == null) {
-            this.boundaryFunction = new DefaultBoundaryFunction();
-        }
-    }
-
-    /**
-     * Gets the function used to color the canvas with paint flooding a region. See {@link FillFunction} for details.
-     * @return The fill function being used.
-     */
-    public FillFunction getFillFunction() {
-        return fillFunction;
-    }
-
-    /**
-     * Sets the function used to color the canvas with paint flooding a region. See {@link FillFunction} for details.
-     * @param fillFunction The fill function to use
-     */
-    public void setFillFunction(FillFunction fillFunction) {
-        this.fillFunction = fillFunction;
-
-        if (fillFunction == null) {
-            this.fillFunction = new DefaultFillFunction();
-        }
     }
 
     @Override

@@ -3,8 +3,11 @@ package com.defano.jmonet.tools;
 import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.tools.base.DefaultMarkPredicate;
+import com.defano.jmonet.tools.base.MarkPredicate;
 import com.defano.jmonet.tools.base.PathTool;
 import com.defano.jmonet.tools.base.PathToolDelegate;
+import com.defano.jmonet.tools.builder.ToolAttributes;
 import com.defano.jmonet.tools.util.CursorFactory;
 
 import java.awt.*;
@@ -26,14 +29,12 @@ public class PencilTool extends PathTool implements PathToolDelegate {
     /** {@inheritDoc} */
     @Override
     public void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
+        ToolAttributes attributes = getToolAttributes();
+
         Color pixel = new Color(getCanvas().getCanvasImage().getRGB(initialPoint.x, initialPoint.y), true);
 
-        if (getToolAttributes().getEraseColor() == null) {
-            isErasing = pixel.getAlpha() >= 128;
-        } else {
-            Color eraseColor = getToolAttributes().getEraseColor();
-            isErasing = eraseColor.getRed() != pixel.getRed() || eraseColor.getBlue() != pixel.getBlue() || eraseColor.getGreen() != pixel.getGreen();
-        }
+        // Pencil erases when user begins stoke over a "marked" pixel, otherwise pencil marks canvas
+        isErasing = attributes.getMarkPredicate().isMarked(pixel, attributes.getEraseColor());
 
         renderStroke(scratch, fillPaint, new Line2D.Float(initialPoint, initialPoint));
     }
@@ -61,4 +62,5 @@ public class PencilTool extends PathTool implements PathToolDelegate {
             g.draw(line);
         }
     }
+
 }

@@ -154,7 +154,7 @@ public class Scratch {
         removeScratchDirtyRgn = updateDirtiedRgn(bounds, removeScratchDirtyRgn);
 
         if (tool != null) {
-            tool.applyRenderingHints(removeScratchGraphics.getGraphics());
+            tool.applyRenderingHints(removeScratchGraphics);
         }
 
         return removeScratchGraphics;
@@ -197,7 +197,7 @@ public class Scratch {
         addScratchDirtyRgn = updateDirtiedRgn(bounds, addScratchDirtyRgn);
 
         if (tool != null) {
-            tool.applyRenderingHints(addScratchGraphics.getGraphics());
+            tool.applyRenderingHints(addScratchGraphics);
         }
 
         return addScratchGraphics;

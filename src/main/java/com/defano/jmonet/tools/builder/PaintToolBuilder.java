@@ -1,10 +1,19 @@
 package com.defano.jmonet.tools.builder;
 
+import com.defano.jmonet.algo.fill.BoundaryFunction;
+import com.defano.jmonet.algo.fill.DefaultBoundaryFunction;
+import com.defano.jmonet.algo.fill.DefaultFillFunction;
+import com.defano.jmonet.algo.fill.FillFunction;
 import com.defano.jmonet.canvas.JFXPaintCanvasNode;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.Interpolation;
 import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.tools.AirbrushTool;
+import com.defano.jmonet.tools.FillTool;
+import com.defano.jmonet.tools.PolygonTool;
 import com.defano.jmonet.tools.TextTool;
+import com.defano.jmonet.tools.base.DefaultMarkPredicate;
+import com.defano.jmonet.tools.base.MarkPredicate;
 import com.defano.jmonet.tools.base.Tool;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
@@ -21,6 +30,10 @@ public class PaintToolBuilder {
     private final PaintToolType type;
 
     private PaintCanvas canvas;
+    private MarkPredicate markPredicate;
+    private FillFunction fillFunction;
+    private BoundaryFunction boundaryFunction;
+
     private Observable<Stroke> strokeObservable;
     private Observable<Paint> strokePaintObservable;
     private Observable<Optional<Paint>> fillPaintObservable = BehaviorSubject.createDefault(Optional.empty());
@@ -125,7 +138,7 @@ public class PaintToolBuilder {
     }
 
     /**
-     * Specifies the number of sides drawn by the tool. Applies only to the {@link com.defano.jmonet.tools.PolygonTool}.
+     * Specifies the number of sides drawn by the tool. Applies only to the {@link PolygonTool}.
      *
      * @param sides The number of sides drawn on a regular polygon
      * @return The PaintToolBuilder
@@ -137,7 +150,7 @@ public class PaintToolBuilder {
 
     /**
      * Specifies an observable provider of the number of sides drawn by the tool. Applies only to the
-     * {@link com.defano.jmonet.tools.PolygonTool}.
+     * {@link PolygonTool}.
      *
      * @param shapeSidesProvider The number of sides drawn on a regular polygon
      * @return The PaintToolBuilder
@@ -224,7 +237,7 @@ public class PaintToolBuilder {
      * <p>
      * Note that this color does not affect the color of "void" pixels that are left when selecting a region and moving
      * or deleting it. Further note that the default boundary behavior associated with
-     * {@link com.defano.jmonet.tools.FillTool} looks for fully transparent pixels, thus, when changing the erase color
+     * {@link FillTool} looks for fully transparent pixels, thus, when changing the erase color
      * to a non-null value, erased pixels will not be filled by this tool (install a custom
      * BoundaryFunction if such behavior is desired).
      *
@@ -242,7 +255,7 @@ public class PaintToolBuilder {
      * <p>
      * Note that this color does not affect the color of "void" pixels that are left when selecting a region and moving
      * or deleting it. Further note that the default boundary behavior associated with
-     * {@link com.defano.jmonet.tools.FillTool} looks for fully transparent pixels, thus, when changing the erase color
+     * {@link FillTool} looks for fully transparent pixels, thus, when changing the erase color
      * to a non-null value, erased pixels will not be filled by this tool (install a custom
      * BoundaryFunction if such behavior is desired).
      *
@@ -257,7 +270,7 @@ public class PaintToolBuilder {
 
     /**
      * Specifies the intensity with which the tool paints. Used only by the
-     * {@link com.defano.jmonet.tools.AirbrushTool}.
+     * {@link AirbrushTool}.
      *
      * @param intensity A value between 0.0 and 1.0 where 0 is no intensity (tool produces no paint) and 1.0 is full
      *                  intensity.
@@ -361,6 +374,42 @@ public class PaintToolBuilder {
     }
 
     /**
+     * Specifies the predicate function used to determine if a canvas pixel is considered "marked," not blank (for
+     * example, used in determining if the pencil tool should mark or erase). See {@link MarkPredicate} for details.
+     *
+     * @param markPredicate The mark predicate function
+     * @return The PaintToolBuilder
+     */
+    public PaintToolBuilder withMarkPredicate(MarkPredicate markPredicate) {
+        this.markPredicate = markPredicate;
+        return this;
+    }
+
+    /**
+     * Specifies the function used to color the canvas with paint flooding a region. See {@link FillFunction} for
+     * details.
+     *
+     * @param fillFunction The fill function to use
+     * @return The PaintToolBuilder
+     */
+    public PaintToolBuilder withFillFunction(FillFunction fillFunction) {
+        this.fillFunction = fillFunction;
+        return this;
+    }
+
+    /**
+     * Specifies the function used to detect when paint flooding a region has reached a boundary. See
+     * {@link BoundaryFunction} for details.
+     *
+     * @param boundaryFunction The boundary function to use.
+     * @return The PaintToolBuilder
+     */
+    public PaintToolBuilder withBoundaryFunction(BoundaryFunction boundaryFunction) {
+        this.boundaryFunction = boundaryFunction;
+        return this;
+    }
+
+    /**
      * Creates a paint tool as previously configured.
      *
      * @return The built paint tool.
@@ -416,6 +465,18 @@ public class PaintToolBuilder {
 
         if (antiAliasingObservable != null) {
             toolAttributes.setAntiAliasingObservable(antiAliasingObservable);
+        }
+
+        if (markPredicate != null) {
+            toolAttributes.setMarkPredicate(markPredicate);
+        }
+
+        if (fillFunction != null) {
+            toolAttributes.setFillFunction(fillFunction);
+        }
+
+        if (boundaryFunction != null) {
+            toolAttributes.setBoundaryFunction(boundaryFunction);
         }
 
         if (canvas != null) {

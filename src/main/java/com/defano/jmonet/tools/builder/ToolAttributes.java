@@ -1,6 +1,9 @@
 package com.defano.jmonet.tools.builder;
 
+import com.defano.jmonet.algo.fill.BoundaryFunction;
+import com.defano.jmonet.algo.fill.FillFunction;
 import com.defano.jmonet.model.Interpolation;
+import com.defano.jmonet.tools.base.MarkPredicate;
 
 import java.awt.*;
 import java.util.Optional;
@@ -121,4 +124,48 @@ public interface ToolAttributes extends ObservableToolAttributes {
     default Interpolation getAntiAliasing() {
         return getAntiAliasingObservable().blockingFirst();
     }
+
+    /**
+     * Gets the predicate function used to determine if a canvas pixel is considered "marked," not blank (for example,
+     * used in determining if the pencil tool should mark or erase).
+     *
+     * @return The current mark predicate function
+     */
+    MarkPredicate getMarkPredicate();
+
+    /**
+     * Sets the predicate function used to determine if a canvas pixel is considered "marked," not blank (for example,
+     * used in determining if the pencil tool should mark or erase).
+     *
+     * @param markPredicate The mark predicate function
+     */
+    void setMarkPredicate(MarkPredicate markPredicate);
+
+    /**
+     * Gets the function used to detect when paint flooding a region has reached a boundary. See
+     * BoundaryFunction for details.
+     *
+     * @return The current boundary function in use.
+     */
+    BoundaryFunction getBoundaryFunction();
+
+    /**
+     * Sets the function used to detect when paint flooding a region has reached a boundary. See
+     * BoundaryFunction for details.
+     *
+     * @param boundaryFunction The boundary function to use.
+     */
+    void setBoundaryFunction(BoundaryFunction boundaryFunction);
+
+    /**
+     * Gets the function used to color the canvas with paint flooding a region. See {@link FillFunction} for details.
+     * @return The fill function being used.
+     */
+    FillFunction getFillFunction();
+
+    /**
+     * Sets the function used to color the canvas with paint flooding a region. See {@link FillFunction} for details.
+     * @param fillFunction The fill function to use
+     */
+    void setFillFunction(FillFunction fillFunction);
 }

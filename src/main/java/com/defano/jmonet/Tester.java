@@ -1,5 +1,6 @@
 package com.defano.jmonet;
 
+import com.defano.jmonet.algo.fill.BoundaryFunction;
 import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
@@ -47,7 +48,7 @@ public class Tester {
 
             myCanvas.commit(new ImageLayerSet(new ImageLayer(new Point(5, 5), img, AlphaComposite.SrcOver)));
 
-            Tool activeTool = PaintToolBuilder.create(PaintToolType.PAINTBRUSH)
+            Tool activeTool = PaintToolBuilder.create(PaintToolType.PENCIL)
                     .withStroke(StrokeBuilder.withShape().ofCircle(8).build())
                     .withFillPaint(Color.BLUE)
                     .withStrokePaint(Color.RED)
