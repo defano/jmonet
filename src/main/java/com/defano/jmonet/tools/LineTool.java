@@ -4,7 +4,6 @@ import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.LinearTool;
-import com.defano.jmonet.tools.base.LineToolDelegate;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
@@ -12,11 +11,10 @@ import java.awt.geom.Line2D;
 /**
  * Tool that draws straight lines on the canvas.
  */
-public class LineTool extends LinearTool implements LineToolDelegate {
+public class LineTool extends LinearTool {
 
     public LineTool() {
         super(PaintToolType.LINE);
-        setLineToolDelegate(this);
     }
 
     /** {@inheritDoc} */

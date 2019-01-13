@@ -3,7 +3,6 @@ package com.defano.jmonet.tools;
 import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.PathToolDelegate;
 import com.defano.jmonet.tools.base.StrokedCursorPathTool;
 
 import java.awt.*;
@@ -12,11 +11,10 @@ import java.awt.geom.Line2D;
 /**
  * Tool for drawing free-form, textured paths on the canvas.
  */
-public class PaintbrushTool extends StrokedCursorPathTool implements PathToolDelegate {
+public class PaintbrushTool extends StrokedCursorPathTool {
 
     public PaintbrushTool() {
         super(PaintToolType.PAINTBRUSH);
-        setPathToolDelegate(this);
     }
 
     /** {@inheritDoc} */

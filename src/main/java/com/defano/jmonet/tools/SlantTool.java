@@ -4,7 +4,6 @@ import com.defano.jmonet.transform.image.SlantTransform;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.model.FlexQuadrilateral;
 import com.defano.jmonet.tools.base.TransformTool;
-import com.defano.jmonet.tools.base.TransformToolDelegate;
 import com.defano.jmonet.tools.util.Geometry;
 
 import java.awt.*;
@@ -12,11 +11,10 @@ import java.awt.*;
 /**
  * Tool for drawing a rectangular selection boundary with drag-handles to shear/slant the image from the top or bottom.
  */
-public class SlantTool extends TransformTool implements TransformToolDelegate {
+public class SlantTool extends TransformTool {
 
     public SlantTool() {
         super(PaintToolType.SLANT);
-        setTransformToolDelegate(this);
     }
 
     /** {@inheritDoc} */

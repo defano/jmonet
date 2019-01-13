@@ -4,18 +4,16 @@ import com.defano.jmonet.transform.image.ProjectionTransform;
 import com.defano.jmonet.model.FlexQuadrilateral;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.TransformTool;
-import com.defano.jmonet.tools.base.TransformToolDelegate;
 
 import java.awt.*;
 
 /**
  * Tool for making either the left or right side appear closer/further away than the other.
  */
-public class PerspectiveTool extends TransformTool implements TransformToolDelegate {
+public class PerspectiveTool extends TransformTool {
 
     public PerspectiveTool() {
         super(PaintToolType.PERSPECTIVE);
-        setTransformToolDelegate(this);
     }
 
     /** {@inheritDoc} */

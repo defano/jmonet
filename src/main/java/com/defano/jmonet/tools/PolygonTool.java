@@ -4,7 +4,6 @@ import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PolylineTool;
-import com.defano.jmonet.tools.base.PolylineToolDelegate;
 
 import java.awt.*;
 import java.awt.geom.Path2D;
@@ -12,11 +11,10 @@ import java.awt.geom.Path2D;
 /**
  * Tool to draw outlined or filled irregular polygons on the canvas.
  */
-public class PolygonTool extends PolylineTool implements PolylineToolDelegate {
+public class PolygonTool extends PolylineTool {
 
     public PolygonTool() {
         super(PaintToolType.POLYGON);
-        setPolylineToolDelegate(this);
     }
 
     /** {@inheritDoc} */

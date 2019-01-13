@@ -26,7 +26,6 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
 
     private final BehaviorSubject<Optional<BufferedImage>> selectedImage = BehaviorSubject.createDefault(Optional.empty());
 
-    private SelectionToolDelegate selectionToolDelegate;
     private Point initialPoint, lastPoint;
     private Cursor movementCursor = Cursor.getDefaultCursor();
     private Cursor boundaryCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
@@ -39,6 +38,23 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
     }
 
     /**
+     * Invoked to indicate that the user has defined a new point on the selection path.
+     *
+     * @param initialPoint   The first point defined by the user (i.e., where the mouse was initially pressed)
+     * @param newPoint       A new point to append to the selection path (i.e., where the mouse is now)
+     * @param isShiftKeyDown When true, indicates user is holding the shift key down
+     */
+    public abstract void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown);
+
+    /**
+     * Invoked to indicate that the given point should be considered the last point in the selection path, and the
+     * path shape should be closed.
+     *
+     * @param finalPoint The final point on the selection path.
+     */
+    public abstract void closeSelectionFrame(Point finalPoint);
+
+    /**
      * Creates a selection bounded by the given rectangle. Equivalent to the user clicking and dragging from the top-
      * left to the bottom-right of bounds.
      *
@@ -49,9 +65,9 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
             completeSelection();
         }
 
-        selectionToolDelegate.addPointToSelectionFrame(bounds.getLocation(), new Point(bounds.x + bounds.width, bounds.y + bounds.height), false);
+        addPointToSelectionFrame(bounds.getLocation(), new Point(bounds.x + bounds.width, bounds.y + bounds.height), false);
         getSelectionFromCanvas();
-        selectionToolDelegate.closeSelectionFrame(new Point(bounds.x + bounds.width, bounds.y + bounds.height));
+        closeSelectionFrame(new Point(bounds.x + bounds.width, bounds.y + bounds.height));
     }
 
     /**
@@ -73,8 +89,8 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
         GraphicsContext g = getCanvas().getScratch().getAddScratchGraphics(this, new Rectangle(location, new Dimension(image.getWidth(), image.getHeight())));
         g.drawImage(argbImage, location.x, location.y, null);
 
-        selectionToolDelegate.addPointToSelectionFrame(location.getLocation(), new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()), false);
-        selectionToolDelegate.closeSelectionFrame(new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()));
+        addPointToSelectionFrame(location.getLocation(), new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()), false);
+        closeSelectionFrame(new Point(location.x + argbImage.getWidth(), location.y + argbImage.getHeight()));
         selectedImage.onNext(Optional.of(argbImage));
 
         // Don't call setDirty(), doing so will remove underlying pixels from the canvas
@@ -136,7 +152,7 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
         // User is defining a new selection rectangle
         else {
             Rectangle canvasBounds = new Rectangle(new Point(), getCanvas().getCanvasSize());
-            selectionToolDelegate.addPointToSelectionFrame(initialPoint, Geometry.constrainToBounds(imageLocation, canvasBounds), e.isShiftDown());
+            addPointToSelectionFrame(initialPoint, Geometry.constrainToBounds(imageLocation, canvasBounds), e.isShiftDown());
 
             getScratch().clear();
             drawSelectionFrame();
@@ -152,7 +168,7 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
         // User released mouse after defining a selection
         if (!hasSelection() && hasSelectionFrame()) {
             getSelectionFromCanvas();
-            selectionToolDelegate.closeSelectionFrame(imageLocation);
+            closeSelectionFrame(imageLocation);
         }
     }
 
@@ -541,13 +557,5 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
     @Override
     public SurfaceInteractionObserver getSurfaceInteractionObserver() {
         return this;
-    }
-
-    protected SelectionToolDelegate getSelectionToolDelegate() {
-        return selectionToolDelegate;
-    }
-
-    public void setSelectionToolDelegate(SelectionToolDelegate selectionToolDelegate) {
-        this.selectionToolDelegate = selectionToolDelegate;
     }
 }

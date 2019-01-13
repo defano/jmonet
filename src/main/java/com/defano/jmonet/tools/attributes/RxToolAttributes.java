@@ -7,7 +7,6 @@ import io.reactivex.subjects.BehaviorSubject;
 import java.awt.*;
 import java.util.Optional;
 
-@SuppressWarnings("unused")
 public class RxToolAttributes implements ObservableToolAttributes, ToolAttributes {
 
     // Non-observable attributes

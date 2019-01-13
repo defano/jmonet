@@ -4,7 +4,6 @@ import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.tools.base.Tool;
-import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.Mockito;

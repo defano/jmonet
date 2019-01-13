@@ -4,18 +4,16 @@ import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.BoundsTool;
-import com.defano.jmonet.tools.base.BoundsToolDelegate;
 
 import java.awt.*;
 
 /**
  * Draws outlined or filled rectangles/squares on the canvas.
  */
-public class RectangleTool extends BoundsTool implements BoundsToolDelegate {
+public class RectangleTool extends BoundsTool {
 
     public RectangleTool() {
         super(PaintToolType.RECTANGLE);
-        setBoundsToolDelegate(this);
     }
 
     /** {@inheritDoc} */

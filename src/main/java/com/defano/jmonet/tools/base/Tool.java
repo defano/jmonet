@@ -2,7 +2,6 @@ package com.defano.jmonet.tools.base;
 
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.Scratch;
-import com.defano.jmonet.canvas.surface.Disposable;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.attributes.ToolAttributes;

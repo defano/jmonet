@@ -4,7 +4,6 @@ import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PathTool;
-import com.defano.jmonet.tools.base.PathToolDelegate;
 
 import java.awt.*;
 import java.awt.geom.Path2D;
@@ -13,13 +12,12 @@ import java.awt.geom.Path2D;
  * Tool allowing user to draw a free-form path (like a paintbrush) that is closed upon completion
  * and can thusly be filled with paint.
  */
-public class FreeformShapeTool extends PathTool implements PathToolDelegate {
+public class FreeformShapeTool extends PathTool {
 
     private Path2D path;
 
     public FreeformShapeTool() {
         super(PaintToolType.FREEFORM);
-        setPathToolDelegate(this);
     }
 
     /** {@inheritDoc} */

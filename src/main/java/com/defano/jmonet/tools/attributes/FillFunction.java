@@ -9,7 +9,7 @@ import java.awt.image.BufferedImage;
 public interface FillFunction {
 
     /**
-     * Fills a single pixel in a image with a given paint or texture.
+     * Fills a single pixel in an image with a given paint or texture.
      *
      * @param image     The image whose pixel should be filled.
      * @param x         The x coordinate of the point / pixel to fill
@@ -21,8 +21,7 @@ public interface FillFunction {
             image.setRGB (x, y, ((Color) fillPaint).getRGB());
         } else if (fillPaint instanceof TexturePaint) {
             BufferedImage texture = ((TexturePaint) fillPaint).getImage();
-            int rgb = texture.getRGB(x % texture.getWidth(), y % texture.getHeight());
-            image.setRGB (x, y, rgb);
+            image.setRGB (x, y, texture.getRGB(x % texture.getWidth(), y % texture.getHeight()));
         } else {
             throw new IllegalArgumentException("Don't know how to fill using this kind of paint: " + fillPaint);
         }

@@ -9,11 +9,10 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-public abstract class TransformTool extends SelectionTool implements SurfaceInteractionObserver, SelectionToolDelegate {
+public abstract class TransformTool extends SelectionTool implements SurfaceInteractionObserver {
 
     private final static int HANDLE_SIZE = 8;
 
-    private TransformToolDelegate transformToolDelegate;
     private BufferedImage originalImage;
     private Rectangle selectionBounds;
     private FlexQuadrilateral transformBounds;
@@ -23,8 +22,51 @@ public abstract class TransformTool extends SelectionTool implements SurfaceInte
 
     public TransformTool(PaintToolType type) {
         super(type);
-        super.setSelectionToolDelegate(this);
     }
+
+    /**
+     * Invoked to indicate that the user has dragged/moved the top-left handle of the transform quadrilateral to a
+     * new position.
+     *
+     * @param quadrilateral The quadrilateral representing the transform bounds.
+     * @param newPosition The new location of the affected drag handle.
+     * @param isShiftDown True to indicate user is holding shift down; implementers may optionally use this flag
+     *                    to constrain drag movement or apply some other feature of the transform.
+     */
+    public abstract void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown);
+
+    /**
+     * Invoked to indicate that the user has dragged/moved the top-right handle of the transform quadrilateral to a
+     * new position.
+     *
+     * @param quadrilateral The quadrilateral representing the transform bounds.
+     * @param newPosition The new location of the affected drag handle.
+     * @param isShiftDown True to indicate user is holding shift down; implementers may optionally use this flag
+     *                    to constrain drag movement or apply some other feature of the transform.
+     */
+    public abstract void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown);
+
+    /**
+     * Invoked to indicate that the user has dragged/moved the bottom-left handle of the transform quadrilateral to a
+     * new position.
+     *
+     * @param quadrilateral The quadrilateral representing the transform bounds.
+     * @param newPosition The new location of the affected drag handle.
+     * @param isShiftDown True to indicate user is holding shift down; implementers may optionally use this flag
+     *                    to constrain drag movement or apply some other feature of the transform.
+     */
+    public abstract void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown);
+
+    /**
+     * Invoked to indicate that the user has dragged/moved the bottom-right handle of the transform quadrilateral to a
+     * new position.
+     *
+     * @param quadrilateral The quadrilateral representing the transform bounds.
+     * @param newPosition The new location of the affected drag handle.
+     * @param isShiftDown True to indicate user is holding shift down; implementers may optionally use this flag
+     *                    to constrain drag movement or apply some other feature of the transform.
+     */
+    public abstract void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown);
 
     /** {@inheritDoc} */
     @Override
@@ -59,10 +101,6 @@ public abstract class TransformTool extends SelectionTool implements SurfaceInte
     /** {@inheritDoc} */
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
-        if (transformToolDelegate == null) {
-            throw new IllegalStateException("Transform tool delegate not set.");
-        }
-
         // Selection exists, see if we're dragging a handle
         if (hasSelection()) {
 
@@ -71,16 +109,16 @@ public abstract class TransformTool extends SelectionTool implements SurfaceInte
             }
 
             if (dragTopLeft) {
-                transformToolDelegate.moveTopLeft(transformBounds, imageLocation, e.isShiftDown());
+                moveTopLeft(transformBounds, imageLocation, e.isShiftDown());
                 redrawSelection(true);
             } else if (dragTopRight) {
-                transformToolDelegate.moveTopRight(transformBounds, imageLocation, e.isShiftDown());
+                moveTopRight(transformBounds, imageLocation, e.isShiftDown());
                 redrawSelection(true);
             } else if (dragBottomLeft) {
-                transformToolDelegate.moveBottomLeft(transformBounds, imageLocation, e.isShiftDown());
+                moveBottomLeft(transformBounds, imageLocation, e.isShiftDown());
                 redrawSelection(true);
             } else if (dragBottomRight) {
-                transformToolDelegate.moveBottomRight(transformBounds, imageLocation, e.isShiftDown());
+                moveBottomRight(transformBounds, imageLocation, e.isShiftDown());
                 redrawSelection(true);
             } else {
                 super.mouseDragged(e, imageLocation);
@@ -191,13 +229,5 @@ public abstract class TransformTool extends SelectionTool implements SurfaceInte
             g.fill(bottomRightHandle);
             g.fill(bottomLeftHandle);
         }
-    }
-
-    protected TransformToolDelegate getTransformToolDelegate() {
-        return transformToolDelegate;
-    }
-
-    protected void setTransformToolDelegate(TransformToolDelegate transformToolDelegate) {
-        this.transformToolDelegate = transformToolDelegate;
     }
 }

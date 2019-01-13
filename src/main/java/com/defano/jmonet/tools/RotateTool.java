@@ -1,11 +1,10 @@
 package com.defano.jmonet.tools;
 
-import com.defano.jmonet.transform.image.ApplyAffineTransform;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.SelectionTool;
-import com.defano.jmonet.tools.base.SelectionToolDelegate;
 import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.transform.image.ApplyAffineTransform;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -15,7 +14,7 @@ import java.awt.image.BufferedImage;
 /**
  * Tool for selecting a bounding box and free-rotating the selected image about its center-point.
  */
-public class RotateTool extends SelectionTool implements SelectionToolDelegate {
+public class RotateTool extends SelectionTool {
 
     private Point centerpoint;                  // Point around which image rotates
     private Point dragLocation;                 // Location of the drag handle
@@ -31,7 +30,6 @@ public class RotateTool extends SelectionTool implements SelectionToolDelegate {
 
     public RotateTool() {
         super(PaintToolType.ROTATE);
-        setSelectionToolDelegate(this);
     }
 
     /**

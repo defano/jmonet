@@ -4,7 +4,6 @@ import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.BoundsTool;
-import com.defano.jmonet.tools.base.BoundsToolDelegate;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -12,11 +11,10 @@ import java.awt.geom.Ellipse2D;
 /**
  * Tool for drawing outlined or filled ovals/circles on the canvas.
  */
-public class OvalTool extends BoundsTool implements BoundsToolDelegate {
+public class OvalTool extends BoundsTool {
 
     public OvalTool() {
         super(PaintToolType.OVAL);
-        setBoundsToolDelegate(this);
     }
 
     /** {@inheritDoc} */

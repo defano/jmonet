@@ -4,7 +4,6 @@ import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.BoundsTool;
-import com.defano.jmonet.tools.base.BoundsToolDelegate;
 import com.defano.jmonet.tools.util.Geometry;
 
 import java.awt.*;
@@ -13,11 +12,10 @@ import java.awt.*;
  * Tool for drawing regular polygons ("shapes") based on a configurable number of sides. For example, triangles,
  * squares, pentagons, hexagons, etc.
  */
-public class ShapeTool extends BoundsTool implements BoundsToolDelegate {
+public class ShapeTool extends BoundsTool {
 
     public ShapeTool() {
         super(PaintToolType.SHAPE);
-        setBoundsToolDelegate(this);
     }
 
     /** {@inheritDoc} */

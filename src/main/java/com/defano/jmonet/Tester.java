@@ -6,7 +6,6 @@ import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.Tool;
 import com.defano.jmonet.tools.builder.PaintToolBuilder;
-import com.defano.jmonet.tools.builder.StrokeBuilder;
 
 import javax.swing.*;
 import java.awt.*;
@@ -47,8 +46,11 @@ public class Tester {
 
             myCanvas.commit(new ImageLayerSet(new ImageLayer(new Point(5, 5), img, AlphaComposite.SrcOver)));
 
-            Tool activeTool = PaintToolBuilder.create(PaintToolType.PENCIL)
-                    .withStroke(StrokeBuilder.withShape().ofCircle(8).build())
+            Tool activeTool = PaintToolBuilder.create(PaintToolType.PAINTBRUSH)
+                    .withShapeSides(100)
+                    .withCornerRadius(20)
+                    .withConstrainedAngle(45)
+//                    .withStroke(StrokeBuilder.withShape().ofCircle(8).build())
                     .withFillPaint(Color.BLUE)
                     .withStrokePaint(Color.RED)
 //                    .withEraseColor(Color.YELLOW)

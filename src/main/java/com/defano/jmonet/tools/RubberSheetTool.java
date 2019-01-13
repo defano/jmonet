@@ -4,18 +4,16 @@ import com.defano.jmonet.transform.image.RubbersheetTransform;
 import com.defano.jmonet.model.FlexQuadrilateral;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.TransformTool;
-import com.defano.jmonet.tools.base.TransformToolDelegate;
 
 import java.awt.*;
 
 /**
  * Tool for performing a rubber sheet projection of the image.
  */
-public class RubberSheetTool extends TransformTool implements TransformToolDelegate {
+public class RubberSheetTool extends TransformTool {
 
     public RubberSheetTool() {
         super(PaintToolType.RUBBERSHEET);
-        setTransformToolDelegate(this);
     }
 
     /** {@inheritDoc} */

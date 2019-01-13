@@ -4,7 +4,6 @@ import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PolylineTool;
-import com.defano.jmonet.tools.base.PolylineToolDelegate;
 
 import java.awt.*;
 import java.awt.geom.Path2D;
@@ -12,11 +11,10 @@ import java.awt.geom.Path2D;
 /**
  * A tool for drawing quadratic (Bezier) curves on the canvas.
  */
-public class CurveTool extends PolylineTool implements PolylineToolDelegate {
+public class CurveTool extends PolylineTool {
 
     public CurveTool() {
         super(PaintToolType.CURVE);
-        setPolylineToolDelegate(this);
     }
 
     /** {@inheritDoc} */
