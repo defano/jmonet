@@ -11,7 +11,7 @@ import com.defano.jmonet.tools.attributes.ToolAttributes;
 import javax.swing.*;
 import java.awt.*;
 
-public abstract class BasicTool implements Tool {
+public abstract class BasicTool implements Tool, SurfaceInteractionObserver {
 
     private final PaintToolType toolType;
     private final ToolAttributes toolAttributes = new RxToolAttributes();
@@ -23,17 +23,12 @@ public abstract class BasicTool implements Tool {
         this.toolType = toolType;
     }
 
-    protected abstract SurfaceInteractionObserver getSurfaceInteractionObserver();
-
     /** {@inheritDoc} */
     @Override
     public void activate(PaintCanvas canvas) {
         deactivate();
         this.canvas = canvas;
-
-        if (getSurfaceInteractionObserver() != null) {
-            this.canvas.addSurfaceInteractionObserver(getSurfaceInteractionObserver());
-        }
+        this.canvas.addSurfaceInteractionObserver(this);
 
         SwingUtilities.invokeLater(() -> canvas.setCursor(getToolCursor()));
     }
@@ -43,10 +38,7 @@ public abstract class BasicTool implements Tool {
     public void deactivate() {
         if (canvas != null) {
 
-            if (getSurfaceInteractionObserver() != null) {
-                canvas.removeSurfaceInteractionObserver(getSurfaceInteractionObserver());
-            }
-
+            canvas.removeSurfaceInteractionObserver(this);
             SwingUtilities.invokeLater(() -> canvas.setCursor(new Cursor(Cursor.DEFAULT_CURSOR)));
         }
     }

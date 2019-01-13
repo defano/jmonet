@@ -16,8 +16,4 @@ public class ArrowTool extends BasicTool {
         setToolCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
 
-    @Override
-    public SurfaceInteractionObserver getSurfaceInteractionObserver() {
-        return null;
-    }
 }

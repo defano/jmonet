@@ -271,7 +271,7 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
         dirty = false;
         resetSelection();
 
-        getScratch().clearAdd();
+        getScratch().clearAddScratch();
         getCanvas().repaint();
     }
 
@@ -371,7 +371,7 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
     public void redrawSelection(boolean includeFrame) {
-        getScratch().clearAdd();
+        getScratch().clearAddScratch();
 
         // Don't draw the selected image when clean, doing so double-paints the selection and adjusts translucency
         if (hasSelection() && isDirty()) {
@@ -432,7 +432,7 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
         if (hasSelection()) {
 
             // Re-render the scratch buffer without the selection frame (don't want to commit marching ants to canvas)
-            getScratch().clearAdd();
+            getScratch().clearAddScratch();
             if (hasSelection()) {
                 GraphicsContext g = getCanvas().getScratch().getAddScratchGraphics(this, getSelectionFrame());
                 g.drawImage(selectedImage.getValue().get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
@@ -532,6 +532,7 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
      *
      * @param movementCursor The movement cursor
      */
+    @SuppressWarnings("unused")
     public void setMovementCursor(Cursor movementCursor) {
         this.movementCursor = movementCursor;
     }
@@ -554,8 +555,4 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
         this.boundaryCursor = boundaryCursor;
     }
 
-    @Override
-    public SurfaceInteractionObserver getSurfaceInteractionObserver() {
-        return this;
-    }
 }

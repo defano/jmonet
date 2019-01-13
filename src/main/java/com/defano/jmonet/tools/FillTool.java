@@ -63,8 +63,4 @@ public class FillTool extends BasicTool implements SurfaceInteractionObserver {
         setToolCursor(fillCursor);
     }
 
-    @Override
-    public SurfaceInteractionObserver getSurfaceInteractionObserver() {
-        return this;
-    }
 }

@@ -20,6 +20,7 @@ public class ShapeStroke extends StampStroke {
      *
      * @param shape      The shape of the brush
      */
+    @SuppressWarnings("unused")
     public ShapeStroke(Shape shape) {
         this.shapes.add(shape);
     }

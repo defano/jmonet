@@ -99,21 +99,21 @@ public class Scratch {
      * transparent) state.
      */
     public void clear() {
-        clearAdd();
-        clearRemove();
+        clearAddScratch();
+        clearRemoveScratch();
     }
 
     /**
      * Clears the remove-scratch buffer, restoring it to its original, unmodified (fully transparent) state.
      */
-    public void clearRemove() {
+    public void clearRemoveScratch() {
         setRemoveScratch(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB), null);
     }
 
     /**
      * Clears the add-scratch buffer, restoring it to its original, unmodified (fully transparent) state.
      */
-    public void clearAdd() {
+    public void clearAddScratch() {
         setAddScratch(new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB), null);
     }
 

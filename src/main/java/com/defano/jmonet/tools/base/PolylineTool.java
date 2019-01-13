@@ -142,8 +142,4 @@ public abstract class PolylineTool extends BasicTool implements SurfaceInteracti
         }
     }
 
-    @Override
-    public SurfaceInteractionObserver getSurfaceInteractionObserver() {
-        return this;
-    }
 }

@@ -13,11 +13,6 @@ public abstract class BoundsTool extends BasicTool implements SurfaceInteraction
     private Point initialPoint;
     private Point currentPoint;
 
-    @Override
-    public SurfaceInteractionObserver getSurfaceInteractionObserver() {
-        return this;
-    }
-
     public BoundsTool(PaintToolType type) {
         super(type);
         setToolCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));

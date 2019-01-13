@@ -28,11 +28,6 @@ public class MagnifierTool extends BasicTool implements SurfaceInteractionObserv
         SwingUtilities.invokeLater(() -> setToolCursor(zoomInCursor));
     }
 
-    @Override
-    public SurfaceInteractionObserver getSurfaceInteractionObserver() {
-        return this;
-    }
-
     /** {@inheritDoc} */
     @Override
     public void keyPressed(KeyEvent e) {

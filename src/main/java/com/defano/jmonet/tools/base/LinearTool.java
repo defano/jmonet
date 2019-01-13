@@ -63,8 +63,4 @@ public abstract class LinearTool extends BasicTool implements SurfaceInteraction
         getCanvas().commit();
     }
 
-    @Override
-    public SurfaceInteractionObserver getSurfaceInteractionObserver() {
-        return this;
-    }
 }

@@ -33,11 +33,6 @@ public class TextTool extends BasicTool implements Consumer, SurfaceInteractionO
         setToolCursor(new Cursor(Cursor.TEXT_CURSOR));
     }
 
-    @Override
-    public SurfaceInteractionObserver getSurfaceInteractionObserver() {
-        return this;
-    }
-
     /** {@inheritDoc} */
     @Override
     public void deactivate() {

@@ -80,8 +80,4 @@ public abstract class PathTool extends BasicTool implements SurfaceInteractionOb
         getCanvas().commit(getScratch().getLayerSet());
     }
 
-    @Override
-    public SurfaceInteractionObserver getSurfaceInteractionObserver() {
-        return this;
-    }
 }
