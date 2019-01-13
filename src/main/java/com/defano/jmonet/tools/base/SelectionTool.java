@@ -406,10 +406,10 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
         Shape selectionFrame = getSelectionFrame();
 
         GraphicsContext g = getScratch().getAddScratchGraphics(this, MarchingAnts.getInstance().getMarchingAnts(), selectionFrame);
-        g.setColor(Color.WHITE);
+        g.setColor(MarchingAnts.getInstance().getPathColor());
         g.draw(selectionFrame);
         g.setStroke(MarchingAnts.getInstance().getMarchingAnts());
-        g.setColor(Color.BLACK);
+        g.setColor(MarchingAnts.getInstance().getAntColor());
         g.draw(selectionFrame);
     }
 
