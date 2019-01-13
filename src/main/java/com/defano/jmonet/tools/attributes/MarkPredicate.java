@@ -9,6 +9,14 @@ import java.awt.*;
  */
 public interface MarkPredicate {
 
+    /**
+     * Determines if a pixel of a given color is considered to be a mark on the canvas in contrast to an "erase color"
+     * that may optionally define the color that erased pixels are changed to.
+     *
+     * @param pixel A non-null value, indicating the present color value of the pixel being queried.
+     * @param eraseColor An nullable value, indicating the present erase color in the context of this query.
+     * @return True if this pixel should be treated as a mark; false otherwise.
+     */
     default boolean isMarked(Color pixel, Color eraseColor) {
         if (eraseColor == null) {
             return pixel.getAlpha() >= 128;
