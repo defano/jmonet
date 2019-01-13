@@ -14,8 +14,8 @@ import java.awt.*;
 public abstract class BasicTool implements Tool, SurfaceInteractionObserver {
 
     private final PaintToolType toolType;
-    private final ToolAttributes toolAttributes = new RxToolAttributes();
 
+    private ToolAttributes toolAttributes = new RxToolAttributes();
     private PaintCanvas canvas;
     private Cursor toolCursor;
 
@@ -121,4 +121,9 @@ public abstract class BasicTool implements Tool, SurfaceInteractionObserver {
     public ToolAttributes getToolAttributes() {
         return toolAttributes;
     }
+
+    protected void setToolAttributes(ToolAttributes toolAttributes) {
+        this.toolAttributes = toolAttributes;
+    }
+
 }

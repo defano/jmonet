@@ -1,8 +1,11 @@
-package com.defano.jmonet.tools;
+package com.defano.jmonet.tools.base;
 
 import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.context.GraphicsContext;
+import com.defano.jmonet.tools.ShapeMatcher;
+import com.defano.jmonet.tools.attributes.ToolAttributes;
+import com.defano.jmonet.tools.base.BasicTool;
 import com.defano.jmonet.tools.base.Tool;
 import org.mockito.Answers;
 import org.mockito.Mock;
@@ -14,7 +17,7 @@ import java.awt.image.BufferedImage;
 
 import static org.mockito.Matchers.*;
 
-public class MockitoToolTest<T extends Tool> {
+public class MockitoToolTest<T extends BasicTool> {
 
     protected T uut;
 
@@ -23,11 +26,13 @@ public class MockitoToolTest<T extends Tool> {
     @Mock(answer=Answers.RETURNS_DEEP_STUBS) protected GraphicsContext mockRemoveScratchGraphics;
     @Mock(answer=Answers.RETURNS_DEEP_STUBS) protected JMonetCanvas mockCanvas;
     @Mock(answer=Answers.RETURNS_DEEP_STUBS) protected BufferedImage mockCanvasImage;
+    @Mock(answer=Answers.RETURNS_DEEP_STUBS) protected ToolAttributes mockToolAttributes;
 
     public void initialize(T uut) {
         MockitoAnnotations.initMocks(this);
 
         this.uut = uut;
+        this.uut.setToolAttributes(mockToolAttributes);
         this.uut.activate(mockCanvas);
 
         Mockito.when(mockCanvas.getCanvasImage()).thenReturn(mockCanvasImage);
