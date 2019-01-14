@@ -6,7 +6,7 @@ import com.defano.jmonet.canvas.surface.SurfaceScrollController;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.attributes.ToolAttributes;
 import com.defano.jmonet.tools.base.BasicTool;
-import com.defano.jmonet.tools.util.CursorFactory;
+import com.defano.jmonet.tools.cursors.CursorFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,9 +23,18 @@ public class MagnifierTool extends BasicTool implements SurfaceInteractionObserv
     private Cursor zoomInCursor = CursorFactory.makeZoomInCursor();
     private Cursor zoomOutCursor = CursorFactory.makeZoomOutCursor();
 
-    public MagnifierTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    MagnifierTool() {
         super(PaintToolType.MAGNIFIER);
         SwingUtilities.invokeLater(() -> setToolCursor(zoomInCursor));
+    }
+
+    @Override
+    public Cursor getDefaultCursor() {
+        return zoomInCursor;
     }
 
     /** {@inheritDoc} */

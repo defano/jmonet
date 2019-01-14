@@ -14,7 +14,11 @@ import java.awt.*;
  */
 public class ShapeTool extends BoundsTool {
 
-    public ShapeTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    ShapeTool() {
         super(PaintToolType.SHAPE);
     }
 

@@ -13,7 +13,11 @@ import java.awt.geom.Path2D;
  */
 public class CurveTool extends PolylineTool {
 
-    public CurveTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    CurveTool() {
         super(PaintToolType.CURVE);
     }
 
@@ -31,7 +35,9 @@ public class CurveTool extends PolylineTool {
     /** {@inheritDoc} */
     @Override
     public void strokePolygon(Scratch scratch, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints) {
-        GraphicsContext g = scratch.getAddScratchGraphics(this, null);
+        Shape curve = renderCurvePath(xPoints, yPoints);
+
+        GraphicsContext g = scratch.getAddScratchGraphics(this, curve);
         g.setPaint(strokePaint);
         g.setStroke(stroke);
         g.draw(renderCurvePath(xPoints, yPoints));

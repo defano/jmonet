@@ -1,6 +1,7 @@
 package com.defano.jmonet.tools;
 
 import com.defano.jmonet.tools.base.MockitoToolTest;
+import com.defano.jmonet.tools.cursors.CursorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -9,12 +10,18 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
 
 public class AirbrushToolTest extends MockitoToolTest<AirbrushTool> {
 
     @BeforeEach
     public void setUp() {
         initialize(new AirbrushTool());
+    }
+
+    @Test
+    public void testDefaultCursor() {
+        Mockito.verify(mockCursorManager).setToolCursor(argThat(matchesCursor(new Cursor(Cursor.CROSSHAIR_CURSOR))), eq(mockCanvas));
     }
 
     @Test

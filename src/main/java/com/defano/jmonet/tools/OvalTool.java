@@ -13,7 +13,11 @@ import java.awt.geom.Ellipse2D;
  */
 public class OvalTool extends BoundsTool {
 
-    public OvalTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    OvalTool() {
         super(PaintToolType.OVAL);
     }
 

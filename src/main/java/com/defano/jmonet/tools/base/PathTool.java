@@ -13,7 +13,6 @@ public abstract class PathTool extends BasicTool implements SurfaceInteractionOb
 
     public PathTool(PaintToolType type) {
         super(type);
-        setToolCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
     }
 
     /**
@@ -45,6 +44,12 @@ public abstract class PathTool extends BasicTool implements SurfaceInteractionOb
      * @param fillPaint The paint with which to draw
      */
     public abstract void completePath(Scratch scratch, Stroke stroke, Paint fillPaint);
+
+    /** {@inheritDoc} */
+    @Override
+    public Cursor getDefaultCursor() {
+        return new Cursor(Cursor.CROSSHAIR_CURSOR);
+    }
 
     /** {@inheritDoc} */
     @Override

@@ -16,7 +16,11 @@ public class FreeformShapeTool extends PathTool {
 
     private Path2D path;
 
-    public FreeformShapeTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    FreeformShapeTool() {
         super(PaintToolType.FREEFORM);
     }
 

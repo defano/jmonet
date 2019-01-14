@@ -12,20 +12,24 @@ import java.awt.geom.Line2D;
  */
 public class EraserTool extends StrokedCursorPathTool {
 
-    public EraserTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    EraserTool() {
         super(PaintToolType.ERASER);
     }
 
     /** {@inheritDoc} */
     @Override
     public void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
-        getScratch().erase(this, new Line2D.Float(initialPoint, initialPoint), stroke);
+        scratch.erase(this, new Line2D.Float(initialPoint, initialPoint), stroke);
     }
 
     /** {@inheritDoc} */
     @Override
     public void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
-        getScratch().erase(this, new Line2D.Float(lastPoint, thisPoint), stroke);
+        scratch.erase(this, new Line2D.Float(lastPoint, thisPoint), stroke);
     }
 
     @Override

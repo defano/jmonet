@@ -21,4 +21,5 @@ public interface ObservableSurface {
      */
     @SuppressWarnings("UnusedReturnValue")
     boolean removeSurfaceInteractionObserver(SurfaceInteractionObserver listener);
+
 }

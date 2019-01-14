@@ -6,12 +6,21 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.awt.*;
+import java.awt.geom.Line2D;
+
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
 
 public class RectangleToolTest extends MockitoToolTest<RectangleTool> {
 
     @BeforeEach
     public void setUp() {
         initialize(new RectangleTool());
+    }
+
+    @Test
+    public void testDefaultCursor() {
+        Mockito.verify(mockCursorManager).setToolCursor(argThat(matchesCursor(new Cursor(Cursor.CROSSHAIR_CURSOR))), eq(mockCanvas));
     }
 
     @Test
@@ -22,6 +31,7 @@ public class RectangleToolTest extends MockitoToolTest<RectangleTool> {
 
         uut.strokeBounds(mockScratch, stroke, fill, bounds, false);
 
+        Mockito.verify(mockScratch).getAddScratchGraphics(eq(uut), eq(stroke), argThat(matchesShape(bounds)));
         Mockito.verify(mockAddScratchGraphics).setStroke(stroke);
         Mockito.verify(mockAddScratchGraphics).setPaint(fill);
         Mockito.verify(mockAddScratchGraphics).draw(bounds);
@@ -34,7 +44,8 @@ public class RectangleToolTest extends MockitoToolTest<RectangleTool> {
 
         uut.fillBounds(mockScratch, fill, bounds, false);
 
+        Mockito.verify(mockScratch).getAddScratchGraphics(eq(uut), argThat(matchesShape(bounds)));
         Mockito.verify(mockAddScratchGraphics).setPaint(fill);
-        Mockito.verify(mockAddScratchGraphics).fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+        Mockito.verify(mockAddScratchGraphics).fill(bounds);
     }
 }

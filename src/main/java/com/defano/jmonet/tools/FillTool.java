@@ -1,26 +1,36 @@
 package com.defano.jmonet.tools;
 
-import com.defano.jmonet.transform.image.FloodFillTransform;
-import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.BasicTool;
 import com.defano.jmonet.tools.attributes.ToolAttributes;
-import com.defano.jmonet.tools.util.CursorFactory;
+import com.defano.jmonet.tools.base.BasicTool;
+import com.defano.jmonet.tools.builder.PaintToolBuilder;
+import com.defano.jmonet.tools.cursors.CursorFactory;
+import com.defano.jmonet.transform.image.FloodFillTransform;
+import com.google.inject.Inject;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
 
 /**
  * Tool that performs a flood-fill of all transparent pixels.
  */
 @SuppressWarnings("unused")
-public class FillTool extends BasicTool implements SurfaceInteractionObserver {
+public class FillTool extends BasicTool {
 
-    private Cursor fillCursor = CursorFactory.makeBucketCursor();
+    @Inject
+    private FloodFillTransform floodFill;
 
-    public FillTool() {
+    /**
+     * Tool must be constructed via {@link PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    FillTool() {
         super(PaintToolType.FILL);
+    }
+
+    @Override
+    public Cursor getDefaultCursor() {
+        return CursorFactory.makeBucketCursor();
     }
 
     /** {@inheritDoc} */
@@ -32,35 +42,16 @@ public class FillTool extends BasicTool implements SurfaceInteractionObserver {
         if (attributes.getFillPaint().isPresent()) {
             getScratch().clear();
 
-            BufferedImage filled = new FloodFillTransform(getToolAttributes().getFillPaint().get(), imageLocation, attributes.getFillFunction(), attributes.getBoundaryFunction()).apply(getCanvas().getCanvasImage());
-            getScratch().setAddScratch(filled, new Rectangle(getCanvas().getCanvasSize()));
+            floodFill.setFillPaint(attributes.getFillPaint().get());
+            floodFill.setOrigin(imageLocation);
+            floodFill.setFill(attributes.getFillFunction());
+            floodFill.setBoundaryFunction(attributes.getBoundaryFunction());
+
+            getScratch().setAddScratch(floodFill.apply(getCanvas().getCanvasImage()), new Rectangle(getCanvas().getCanvasSize()));
 
             getCanvas().commit();
             getCanvas().repaint();
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void mouseMoved(MouseEvent e, Point imageLocation) {
-        setToolCursor(getFillCursor());
-    }
-
-    /**
-     * Gets the cursor associated with this tool.
-     * @return The cursor associated with this tool.
-     */
-    public Cursor getFillCursor() {
-        return fillCursor;
-    }
-
-    /**
-     * Sets the cursor associated with this tool.
-     * @param fillCursor The cursor to be displayed when the fill tool is active.
-     */
-    public void setFillCursor(Cursor fillCursor) {
-        this.fillCursor = fillCursor;
-        setToolCursor(fillCursor);
     }
 
 }

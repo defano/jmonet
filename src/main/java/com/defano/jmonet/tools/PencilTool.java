@@ -5,7 +5,7 @@ import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PathTool;
 import com.defano.jmonet.tools.attributes.ToolAttributes;
-import com.defano.jmonet.tools.util.CursorFactory;
+import com.defano.jmonet.tools.cursors.CursorFactory;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
@@ -18,9 +18,17 @@ public class PencilTool extends PathTool {
     // Flag indicating whether pencil is operating in eraser mode
     private boolean isErasing = false;
 
-    public PencilTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    PencilTool() {
         super(PaintToolType.PENCIL);
-        setToolCursor(CursorFactory.makePencilCursor());
+    }
+
+    @Override
+    public Cursor getDefaultCursor() {
+        return CursorFactory.makePencilCursor();
     }
 
     /** {@inheritDoc} */

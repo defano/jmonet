@@ -15,7 +15,6 @@ public abstract class BoundsTool extends BasicTool implements SurfaceInteraction
 
     public BoundsTool(PaintToolType type) {
         super(type);
-        setToolCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
     }
 
     /**
@@ -40,6 +39,12 @@ public abstract class BoundsTool extends BasicTool implements SurfaceInteraction
      *                    constrain the bounds or otherwise modify the tool behavior.
      */
     public abstract void fillBounds(Scratch scratch, Paint fill, Rectangle bounds, boolean isShiftDown);
+
+    /** {@inheritDoc} */
+    @Override
+    public Cursor getDefaultCursor() {
+        return new Cursor(Cursor.CROSSHAIR_CURSOR);
+    }
 
     /** {@inheritDoc} */
     @Override

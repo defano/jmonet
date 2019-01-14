@@ -46,7 +46,7 @@ public class Tester {
 
             myCanvas.commit(new ImageLayerSet(new ImageLayer(new Point(5, 5), img, AlphaComposite.SrcOver)));
 
-            Tool activeTool = PaintToolBuilder.create(PaintToolType.PAINTBRUSH)
+            Tool activeTool = PaintToolBuilder.create(PaintToolType.FILL)
                     .withShapeSides(100)
                     .withCornerRadius(20)
                     .withConstrainedAngle(45)

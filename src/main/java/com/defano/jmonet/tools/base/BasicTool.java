@@ -5,23 +5,29 @@ import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.attributes.RxToolAttributes;
 import com.defano.jmonet.tools.attributes.ToolAttributes;
+import com.defano.jmonet.tools.cursors.CursorManager;
+import com.google.inject.Inject;
 
-import javax.swing.*;
 import java.awt.*;
 
 public abstract class BasicTool implements Tool, SurfaceInteractionObserver {
 
     private final PaintToolType toolType;
-
-    private ToolAttributes toolAttributes = new RxToolAttributes();
     private PaintCanvas canvas;
-    private Cursor toolCursor;
+
+    @Inject private ToolAttributes toolAttributes;
+    @Inject private CursorManager cursorManager;
 
     public BasicTool(PaintToolType toolType) {
         this.toolType = toolType;
     }
+
+    /**
+     * Gets the cursor that should be initially displayed when activating this tool.
+     * @return The default cursor.
+     */
+    public abstract Cursor getDefaultCursor();
 
     /** {@inheritDoc} */
     @Override
@@ -30,31 +36,28 @@ public abstract class BasicTool implements Tool, SurfaceInteractionObserver {
         this.canvas = canvas;
         this.canvas.addSurfaceInteractionObserver(this);
 
-        SwingUtilities.invokeLater(() -> canvas.setCursor(getToolCursor()));
+        setToolCursor(getDefaultCursor());
     }
 
     /** {@inheritDoc} */
     @Override
     public void deactivate() {
         if (canvas != null) {
-
             canvas.removeSurfaceInteractionObserver(this);
-            SwingUtilities.invokeLater(() -> canvas.setCursor(new Cursor(Cursor.DEFAULT_CURSOR)));
         }
     }
 
     /** {@inheritDoc} */
     @Override
     public Cursor getToolCursor() {
-        return toolCursor;
+        return cursorManager == null ? null : cursorManager.getToolCursor();
     }
 
     /** {@inheritDoc} */
     @Override
     public void setToolCursor(Cursor toolCursor) {
-        this.toolCursor = toolCursor;
-        if (this.canvas != null) {
-            SwingUtilities.invokeLater(() -> canvas.setCursor(toolCursor));
+        if (cursorManager != null) {
+            cursorManager.setToolCursor(toolCursor, canvas);
         }
     }
 
@@ -121,9 +124,4 @@ public abstract class BasicTool implements Tool, SurfaceInteractionObserver {
     public ToolAttributes getToolAttributes() {
         return toolAttributes;
     }
-
-    protected void setToolAttributes(ToolAttributes toolAttributes) {
-        this.toolAttributes = toolAttributes;
-    }
-
 }

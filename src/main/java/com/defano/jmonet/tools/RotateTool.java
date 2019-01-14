@@ -28,7 +28,11 @@ public class RotateTool extends SelectionTool {
 
     private boolean rotating = false;           // Drag-rotate in progress
 
-    public RotateTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    RotateTool() {
         super(PaintToolType.ROTATE);
     }
 

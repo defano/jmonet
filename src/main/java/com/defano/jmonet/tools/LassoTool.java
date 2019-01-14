@@ -4,7 +4,7 @@ import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.SelectionTool;
 import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
 import com.defano.jmonet.tools.selection.TransformableSelection;
-import com.defano.jmonet.tools.util.CursorFactory;
+import com.defano.jmonet.tools.cursors.CursorFactory;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -17,7 +17,11 @@ public class LassoTool extends SelectionTool implements TransformableSelection, 
 
     private Path2D selectionBounds;
 
-    public LassoTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    LassoTool() {
         super(PaintToolType.LASSO);
         super.setBoundaryCursor(CursorFactory.makeLassoCursor());
     }

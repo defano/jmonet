@@ -14,7 +14,6 @@ public abstract class LinearTool extends BasicTool implements SurfaceInteraction
 
     public LinearTool(PaintToolType type) {
         super(type);
-        setToolCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
     }
 
     /**
@@ -29,6 +28,11 @@ public abstract class LinearTool extends BasicTool implements SurfaceInteraction
      * @param y2 Second y coordinate of the line
      */
     public abstract void drawLine(Scratch scratch, Stroke stroke, Paint paint, int x1, int y1, int x2, int y2);
+
+    @Override
+    public Cursor getDefaultCursor() {
+        return new Cursor(Cursor.CROSSHAIR_CURSOR);
+    }
 
     /** {@inheritDoc} */
     @Override

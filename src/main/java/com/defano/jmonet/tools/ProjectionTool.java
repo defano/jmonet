@@ -12,7 +12,11 @@ import java.awt.*;
  */
 public class ProjectionTool extends TransformTool {
 
-    public ProjectionTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    ProjectionTool() {
         super(PaintToolType.PROJECTION);
     }
 

@@ -55,6 +55,14 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
     public abstract void closeSelectionFrame(Point finalPoint);
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Cursor getDefaultCursor() {
+        return new Cursor(Cursor.CROSSHAIR_CURSOR);
+    }
+
+    /**
      * Creates a selection bounded by the given rectangle. Equivalent to the user clicking and dragging from the top-
      * left to the bottom-right of bounds.
      *

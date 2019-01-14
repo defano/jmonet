@@ -30,7 +30,11 @@ public class TextTool extends BasicTool implements Consumer, SurfaceInteractionO
 
     public TextTool() {
         super(PaintToolType.TEXT);
-        setToolCursor(new Cursor(Cursor.TEXT_CURSOR));
+    }
+
+    @Override
+    public Cursor getDefaultCursor() {
+        return new Cursor(Cursor.TEXT_CURSOR);
     }
 
     /** {@inheritDoc} */

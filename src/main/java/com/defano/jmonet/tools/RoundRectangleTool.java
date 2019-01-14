@@ -13,7 +13,11 @@ import java.awt.geom.RoundRectangle2D;
  */
 public class RoundRectangleTool extends BoundsTool {
 
-    public RoundRectangleTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    RoundRectangleTool() {
         super(PaintToolType.ROUND_RECTANGLE);
     }
 

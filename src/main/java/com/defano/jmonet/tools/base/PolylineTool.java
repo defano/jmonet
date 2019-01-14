@@ -18,7 +18,6 @@ public abstract class PolylineTool extends BasicTool implements SurfaceInteracti
 
     public PolylineTool(PaintToolType toolType) {
         super(toolType);
-        setToolCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
     }
 
     /**
@@ -52,6 +51,12 @@ public abstract class PolylineTool extends BasicTool implements SurfaceInteracti
      * @param yPoints An array of y points, see {@link Graphics2D#fillPolygon(int[], int[], int)} (int[], int[], int)}
      */
     public abstract void fillPolygon(Scratch scratch, Paint fillPaint, int[] xPoints, int[] yPoints);
+
+    /** {@inheritDoc} */
+    @Override
+    public Cursor getDefaultCursor() {
+        return new Cursor(Cursor.CROSSHAIR_CURSOR);
+    }
 
     /** {@inheritDoc} */
     @Override

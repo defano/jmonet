@@ -12,7 +12,11 @@ import java.awt.*;
  */
 public class RubberSheetTool extends TransformTool {
 
-    public RubberSheetTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    RubberSheetTool() {
         super(PaintToolType.RUBBERSHEET);
     }
 

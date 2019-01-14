@@ -1,4 +1,4 @@
-package com.defano.jmonet.tools.util;
+package com.defano.jmonet.tools.cursors;
 
 import com.defano.jmonet.transform.image.ScaleTransform;
 

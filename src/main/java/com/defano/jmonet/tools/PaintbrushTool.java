@@ -13,7 +13,11 @@ import java.awt.geom.Line2D;
  */
 public class PaintbrushTool extends StrokedCursorPathTool {
 
-    public PaintbrushTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    PaintbrushTool() {
         super(PaintToolType.PAINTBRUSH);
     }
 

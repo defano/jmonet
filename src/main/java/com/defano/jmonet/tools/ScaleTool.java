@@ -14,7 +14,11 @@ import java.awt.geom.Rectangle2D;
  */
 public class ScaleTool extends TransformTool {
 
-    public ScaleTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    ScaleTool() {
         super(PaintToolType.SCALE);
     }
 

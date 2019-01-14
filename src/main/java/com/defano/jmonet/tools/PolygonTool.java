@@ -13,7 +13,11 @@ import java.awt.geom.Path2D;
  */
 public class PolygonTool extends PolylineTool {
 
-    public PolygonTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    PolygonTool() {
         super(PaintToolType.POLYGON);
     }
 

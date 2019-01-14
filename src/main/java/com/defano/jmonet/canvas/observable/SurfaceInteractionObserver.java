@@ -12,6 +12,10 @@ import java.awt.event.*;
 @SuppressWarnings({"EmptyMethod", "unused"})
 public interface SurfaceInteractionObserver extends KeyListener {
 
+    default Cursor getDefaultCursor() {
+        return new Cursor(Cursor.DEFAULT_CURSOR);
+    }
+
     /**
      * Invoked when the mouse button has been clicked (pressed
      * and released) on the canvas.

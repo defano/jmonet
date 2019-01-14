@@ -13,7 +13,11 @@ import java.awt.geom.Line2D;
  */
 public class LineTool extends LinearTool {
 
-    public LineTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    LineTool() {
         super(PaintToolType.LINE);
     }
 

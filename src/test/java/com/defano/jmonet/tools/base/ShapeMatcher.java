@@ -1,4 +1,4 @@
-package com.defano.jmonet.tools;
+package com.defano.jmonet.tools.base;
 
 import org.mockito.ArgumentMatcher;
 
@@ -7,7 +7,7 @@ import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShapeMatcher extends ArgumentMatcher<Shape> {
+public class ShapeMatcher<T extends Shape> extends ArgumentMatcher<T> {
 
     private final Shape s1;
     private final double precision;

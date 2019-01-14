@@ -15,7 +15,11 @@ public class MarqueeTool extends SelectionTool implements TransformableSelection
 
     private Rectangle selectionBounds;
 
-    public MarqueeTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    MarqueeTool() {
         super(PaintToolType.SELECTION);
     }
 

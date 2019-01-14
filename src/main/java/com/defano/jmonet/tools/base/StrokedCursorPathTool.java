@@ -2,7 +2,7 @@ package com.defano.jmonet.tools.base;
 
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.util.CursorFactory;
+import com.defano.jmonet.tools.cursors.CursorFactory;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 

@@ -14,27 +14,13 @@ import java.util.ArrayList;
  * Given an origin point in the image, this algorithm iteratively paints every adjacent pixel with the given color or
  * texture until it reaches a boundary pixel.
  */
+@SuppressWarnings("unused")
 public class FloodFillTransform implements ImageTransform {
 
-    private final BoundaryFunction boundary;
-    private final FillFunction fill;
-    private final Point origin;
-    private final Paint fillPaint;
-
-    /**
-     * Creates a flood-fill transform.
-     *
-     * @param fillPaint The color or texture to flood-fill the image with
-     * @param origin The seed or origin point in the image where the flooding should begin
-     * @param fill A function that applies the fill paint to pixels identified for painting
-     * @param boundary A function that determines which pixels in the image "enclose" the paint
-     */
-    public FloodFillTransform(Paint fillPaint, Point origin, FillFunction fill, BoundaryFunction boundary) {
-        this.fillPaint = fillPaint;
-        this.origin = origin;
-        this.fill = fill;
-        this.boundary = boundary;
-    }
+    private BoundaryFunction boundaryFunction;
+    private FillFunction fill;
+    private Point origin;
+    private Paint fillPaint;
 
     /**
      * {@inheritDoc}
@@ -58,23 +44,55 @@ public class FloodFillTransform implements ImageTransform {
 
             fill.fill(transformed, thisPixelX, thisPixelY, fillPaint);
 
-            if (bounds.contains(thisPixelX + 1, thisPixelY) && !boundary.isBoundary(source, transformed, thisPixelX + 1, thisPixelY)) {
+            if (bounds.contains(thisPixelX + 1, thisPixelY) && !boundaryFunction.isBoundary(source, transformed, thisPixelX + 1, thisPixelY)) {
                 fillPixels.add(new Point(thisPixelX + 1, thisPixelY));
             }
 
-            if (bounds.contains(thisPixelX - 1, thisPixelY) && !boundary.isBoundary(source, transformed, thisPixelX - 1, thisPixelY)) {
+            if (bounds.contains(thisPixelX - 1, thisPixelY) && !boundaryFunction.isBoundary(source, transformed, thisPixelX - 1, thisPixelY)) {
                 fillPixels.add(new Point(thisPixelX - 1, thisPixelY));
             }
 
-            if (bounds.contains(thisPixelX, thisPixelY + 1) && !boundary.isBoundary(source, transformed, thisPixelX, thisPixelY + 1)) {
+            if (bounds.contains(thisPixelX, thisPixelY + 1) && !boundaryFunction.isBoundary(source, transformed, thisPixelX, thisPixelY + 1)) {
                 fillPixels.add(new Point(thisPixelX, thisPixelY + 1));
             }
 
-            if (bounds.contains(thisPixelX, thisPixelY - 1) && !boundary.isBoundary(source, transformed, thisPixelX, thisPixelY - 1)) {
+            if (bounds.contains(thisPixelX, thisPixelY - 1) && !boundaryFunction.isBoundary(source, transformed, thisPixelX, thisPixelY - 1)) {
                 fillPixels.add(new Point(thisPixelX, thisPixelY - 1));
             }
         }
 
         return transformed;
+    }
+
+    public BoundaryFunction getBoundaryFunction() {
+        return boundaryFunction;
+    }
+
+    public void setBoundaryFunction(BoundaryFunction boundaryFunction) {
+        this.boundaryFunction = boundaryFunction;
+    }
+
+    public FillFunction getFill() {
+        return fill;
+    }
+
+    public void setFill(FillFunction fill) {
+        this.fill = fill;
+    }
+
+    public Point getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(Point origin) {
+        this.origin = origin;
+    }
+
+    public Paint getFillPaint() {
+        return fillPaint;
+    }
+
+    public void setFillPaint(Paint fillPaint) {
+        this.fillPaint = fillPaint;
     }
 }

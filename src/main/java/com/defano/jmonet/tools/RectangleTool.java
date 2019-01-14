@@ -12,7 +12,11 @@ import java.awt.*;
  */
 public class RectangleTool extends BoundsTool {
 
-    public RectangleTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    RectangleTool() {
         super(PaintToolType.RECTANGLE);
     }
 
@@ -30,8 +34,10 @@ public class RectangleTool extends BoundsTool {
     /** {@inheritDoc} */
     @Override
     public void fillBounds(Scratch scratch, Paint fill, Rectangle bounds, boolean isShiftDown) {
-        GraphicsContext g = scratch.getAddScratchGraphics(this, null);
+        Rectangle rectangle = new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height);
+
+        GraphicsContext g = scratch.getAddScratchGraphics(this, rectangle);
         g.setPaint(fill);
-        g.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+        g.fill(rectangle);
     }
 }

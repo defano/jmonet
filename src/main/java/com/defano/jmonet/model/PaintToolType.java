@@ -38,16 +38,8 @@ public enum PaintToolType {
         this.toolClass = clazz;
     }
 
-    /**
-     * Creates a new instance of this type of {@link Tool}.
-     * @return A new {@link Tool}.
-     */
-    public Tool getToolInstance() {
-        try {
-            return toolClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new IllegalStateException("Failed to instantiate PaintTool.", e);
-        }
+    public Class<? extends Tool> getToolClass() {
+        return toolClass;
     }
 
     /**

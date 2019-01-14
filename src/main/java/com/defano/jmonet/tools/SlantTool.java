@@ -13,7 +13,11 @@ import java.awt.*;
  */
 public class SlantTool extends TransformTool {
 
-    public SlantTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    SlantTool() {
         super(PaintToolType.SLANT);
     }
 

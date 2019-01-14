@@ -12,7 +12,11 @@ import java.awt.*;
  */
 public class PerspectiveTool extends TransformTool {
 
-    public PerspectiveTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    PerspectiveTool() {
         super(PaintToolType.PERSPECTIVE);
     }
 

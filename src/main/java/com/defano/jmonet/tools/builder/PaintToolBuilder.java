@@ -1,7 +1,6 @@
 package com.defano.jmonet.tools.builder;
 
-import com.defano.jmonet.tools.attributes.BoundaryFunction;
-import com.defano.jmonet.tools.attributes.FillFunction;
+import com.defano.jmonet.tools.attributes.*;
 import com.defano.jmonet.canvas.JFXPaintCanvasNode;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.Interpolation;
@@ -10,9 +9,12 @@ import com.defano.jmonet.tools.AirbrushTool;
 import com.defano.jmonet.tools.FillTool;
 import com.defano.jmonet.tools.PolygonTool;
 import com.defano.jmonet.tools.TextTool;
-import com.defano.jmonet.tools.attributes.ToolAttributes;
-import com.defano.jmonet.tools.attributes.MarkPredicate;
+import com.defano.jmonet.tools.cursors.CursorManager;
+import com.defano.jmonet.tools.cursors.SwingCursorManager;
 import com.defano.jmonet.tools.base.Tool;
+import com.defano.jmonet.transform.image.FloodFillTransform;
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -465,7 +467,7 @@ public class PaintToolBuilder {
      */
     public Tool build() {
 
-        Tool selectedTool = type.getToolInstance();
+        Tool selectedTool = Guice.createInjector(new ToolAssembly()).getInstance(type.getToolClass());
         ToolAttributes toolAttributes = selectedTool.getToolAttributes();
 
         if (strokeObservable != null) {
@@ -553,5 +555,14 @@ public class PaintToolBuilder {
         }
 
         return selectedTool;
+    }
+
+    private static class ToolAssembly extends AbstractModule {
+
+        @Override
+        protected void configure() {
+            bind(ToolAttributes.class).to(RxToolAttributes.class);
+            bind(CursorManager.class).to(SwingCursorManager.class);
+        }
     }
 }

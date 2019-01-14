@@ -268,7 +268,15 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
      */
     @Override
     public boolean removeSurfaceInteractionObserver(SurfaceInteractionObserver listener) {
-        return interactionListeners.remove(listener);
+        boolean removed = interactionListeners.remove(listener);
+
+        Cursor nextCursor = interactionListeners.isEmpty() ?
+                Cursor.getDefaultCursor() :
+                interactionListeners.get(interactionListeners.size() - 1).getDefaultCursor();
+
+        SwingUtilities.invokeLater(() -> setCursor(nextCursor));
+
+        return removed;
     }
 
     /**
