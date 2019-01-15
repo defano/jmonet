@@ -29,7 +29,6 @@ public class MockitoToolTest<T extends BasicTool> {
     @Mock(answer=Answers.RETURNS_DEEP_STUBS) protected CursorManager mockCursorManager;
     @Mock(answer=Answers.RETURNS_DEEP_STUBS) protected FloodFillTransform mockFloodFillTransform;
 
-
     public void initialize(T uut) {
         MockitoAnnotations.initMocks(this);
 
@@ -51,7 +50,7 @@ public class MockitoToolTest<T extends BasicTool> {
     }
 
     public static <T extends Shape> ShapeMatcher<T> matchesShape(T t) {
-        return new ShapeMatcher(t);
+        return new ShapeMatcher<>(t);
     }
 
     public static CursorMatcher matchesCursor(Cursor c) {

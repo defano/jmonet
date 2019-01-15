@@ -18,6 +18,7 @@ public interface CursorManager {
      * Sets the default mouse cursor used when painting with this tool.
      *
      * @param toolCursor The default mouse cursor.
+     * @param canvas The canvas on which the cursor should be active.
      */
     void setToolCursor(Cursor toolCursor, PaintCanvas canvas);
 
