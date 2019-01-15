@@ -54,10 +54,10 @@ public abstract class LinearTool extends BasicTool implements SurfaceInteraction
         Point currentLoc = imageLocation;
 
         if (e.isShiftDown()) {
-            currentLoc = Geometry.line(initialPoint, currentLoc, getToolAttributes().getConstrainedAngle());
+            currentLoc = Geometry.line(initialPoint, currentLoc, getAttributes().getConstrainedAngle());
         }
 
-        drawLine(getScratch(), getToolAttributes().getStroke(), getToolAttributes().getStrokePaint(), initialPoint.x, initialPoint.y, currentLoc.x, currentLoc.y);
+        drawLine(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), initialPoint.x, initialPoint.y, currentLoc.x, currentLoc.y);
         getCanvas().repaint();
     }
 

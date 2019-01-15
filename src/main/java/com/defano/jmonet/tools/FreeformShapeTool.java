@@ -4,6 +4,7 @@ import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PathTool;
+import com.defano.jmonet.tools.builder.PaintToolBuilder;
 
 import java.awt.*;
 import java.awt.geom.Path2D;
@@ -17,7 +18,7 @@ public class FreeformShapeTool extends PathTool {
     private Path2D path;
 
     /**
-     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * Tool must be constructed via {@link PaintToolBuilder} to handle dependency
      * injection.
      */
     FreeformShapeTool() {
@@ -38,7 +39,7 @@ public class FreeformShapeTool extends PathTool {
 
         GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, path);
         g.setStroke(stroke);
-        g.setPaint(getToolAttributes().getStrokePaint());
+        g.setPaint(getAttributes().getStrokePaint());
         g.draw(path);
     }
 
@@ -49,13 +50,13 @@ public class FreeformShapeTool extends PathTool {
 
         GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, path);
 
-        if (getToolAttributes().getFillPaint().isPresent()) {
-            g.setPaint(getToolAttributes().getFillPaint().get());
+        if (getAttributes().getFillPaint().isPresent()) {
+            g.setPaint(getAttributes().getFillPaint().get());
             g.fill(path);
         }
 
         g.setStroke(stroke);
-        g.setPaint(getToolAttributes().getStrokePaint());
+        g.setPaint(getAttributes().getStrokePaint());
         g.draw(path);
     }
 }

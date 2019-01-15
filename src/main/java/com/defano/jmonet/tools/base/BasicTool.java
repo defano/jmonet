@@ -3,7 +3,7 @@ package com.defano.jmonet.tools.base;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
-import com.defano.jmonet.context.GraphicsContext;
+import com.defano.jmonet.model.Interpolation;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.attributes.ToolAttributes;
 import com.defano.jmonet.tools.cursors.CursorManager;
@@ -49,6 +49,12 @@ public abstract class BasicTool implements Tool, SurfaceInteractionObserver {
 
     /** {@inheritDoc} */
     @Override
+    public boolean isActive() {
+        return canvas != null;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Cursor getToolCursor() {
         return cursorManager == null ? null : cursorManager.getToolCursor();
     }
@@ -64,64 +70,34 @@ public abstract class BasicTool implements Tool, SurfaceInteractionObserver {
     /** {@inheritDoc} */
     @Override
     public PaintCanvas getCanvas() {
+        if (canvas == null) {
+            throw new IllegalStateException("Tool is not active on a canvas. Please call activate() first or use the makeActiveOnCanvas() builder option.");
+        }
+
         return canvas;
     }
 
     /** {@inheritDoc} */
     @Override
     public Scratch getScratch() {
-        if (getCanvas() == null) {
-            throw new IllegalStateException("Tool is not active on a canvas.");
-        }
-
         Scratch scratch = getCanvas().getScratch();
-        applyRenderingHints(scratch.getAddScratchGraphics(this, null));
-        applyRenderingHints(scratch.getRemoveScratchGraphics(this, null));
+
+        Interpolation antialiasing = getAttributes().getAntiAliasing();
+        scratch.getAddScratchGraphics(this, null).setAntialiasingMode(antialiasing);
+        scratch.getRemoveScratchGraphics(this, null).setAntialiasingMode(antialiasing);
 
         return scratch;
     }
 
-    /** {@inheritDoc}
-     * @param g*/
-    @Override
-    public void applyRenderingHints(GraphicsContext g) {
-        switch (getToolAttributes().getAntiAliasing()) {
-            case NONE:
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-                g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-                break;
-            case DEFAULT:
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_DEFAULT);
-                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-                g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT);
-                break;
-            case NEAREST_NEIGHBOR:
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-                g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                break;
-            case BICUBIC:
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-                g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                break;
-            case BILINEAR:
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-                g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                break;
-        }
-    }
-
     /** {@inheritDoc} */
     @Override
-    public PaintToolType getToolType() {
+    public PaintToolType getPaintToolType() {
         return toolType;
     }
 
     /** {@inheritDoc} */
     @Override
-    public ToolAttributes getToolAttributes() {
+    public ToolAttributes getAttributes() {
         return toolAttributes;
     }
 }

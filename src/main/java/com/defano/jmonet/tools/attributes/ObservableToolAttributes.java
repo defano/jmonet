@@ -58,4 +58,7 @@ public interface ObservableToolAttributes {
 
     void setRecenterOnMagnifyObservable(Observable<Boolean> observable);
     Observable<Boolean> getRecenterOnMagnifyObservable();
+
+    void setPathInterpolationObservable(Observable<Boolean> observable);
+    Observable<Boolean> getPathInterpolationObservable();
 }

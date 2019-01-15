@@ -34,7 +34,7 @@ public class PencilTool extends PathTool {
     /** {@inheritDoc} */
     @Override
     public void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
-        ToolAttributes attributes = getToolAttributes();
+        ToolAttributes attributes = getAttributes();
 
         Color pixel = new Color(getCanvas().getCanvasImage().getRGB(initialPoint.x, initialPoint.y), true);
 

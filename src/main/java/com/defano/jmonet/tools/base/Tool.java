@@ -2,7 +2,6 @@ package com.defano.jmonet.tools.base;
 
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.canvas.Scratch;
-import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.attributes.ToolAttributes;
 
@@ -14,7 +13,8 @@ public interface Tool {
      * <p>
      * A paint tool does not "paint" on the canvas until it is activated. Typically, only one tool is active on
      * a canvas at any given time, but there is no technical limitation preventing multiple tools from being active
-     * at once. A single tool may not be active on multiple canvasses at the same time.
+     * at once. While a canvas may have multiple active tools drawing on it, a tool can only be active on a single
+     * canvas.
      * <p>
      * Use {@link #deactivate()} to stop this tool from painting on the canvas.
      *
@@ -27,6 +27,8 @@ public interface Tool {
      * are un-subscribed making the tool available for garbage collection.
      */
     void deactivate();
+
+    boolean isActive();
 
     /**
      * Gets the default mouse cursor used when painting with this tool. Note that specific tools may provide methods
@@ -44,7 +46,8 @@ public interface Tool {
     void setToolCursor(Cursor toolCursor);
 
     /**
-     * Gets the canvas on which this tool is currently painting, or null, if not active.
+     * Gets the canvas on which this tool is currently painting, or null, if the tool has not been activated (via a
+     * call to {@link #activate(PaintCanvas)}).
      *
      * @return The canvas this tool is painting on, or null
      */
@@ -63,15 +66,13 @@ public interface Tool {
      *
      * @return The tool type.
      */
-    PaintToolType getToolType();
+    PaintToolType getPaintToolType();
 
     /**
      * Gets the set of tool attributes bound to this tool (like paint color, fill mode, line size, etc.)
      *
      * @return The set of observable tool attributes.
      */
-    ToolAttributes getToolAttributes();
-
-    void applyRenderingHints(GraphicsContext g);
+    ToolAttributes getAttributes();
 
 }

@@ -70,7 +70,7 @@ public abstract class PolylineTool extends BasicTool implements SurfaceInteracti
 
         if (e.isShiftDown()) {
             Point lastPoint = points.get(points.size() - 1);
-            currentPoint = Geometry.line(lastPoint, e.getPoint(), getToolAttributes().getConstrainedAngle());
+            currentPoint = Geometry.line(lastPoint, e.getPoint(), getAttributes().getConstrainedAngle());
             points.add(currentPoint);
         } else {
             currentPoint = imageLocation;
@@ -81,7 +81,7 @@ public abstract class PolylineTool extends BasicTool implements SurfaceInteracti
         int[] ys = points.stream().mapToInt(i -> i.y).toArray();
 
         getScratch().clear();
-        strokePolyline(getScratch(), getToolAttributes().getStroke(), getToolAttributes().getStrokePaint(), xs, ys);
+        strokePolyline(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), xs, ys);
         getCanvas().repaint();
 
         points.remove(points.size() - 1);
@@ -116,11 +116,11 @@ public abstract class PolylineTool extends BasicTool implements SurfaceInteracti
         points.clear();
         currentPoint = null;
 
-        if (getToolAttributes().getFillPaint().isPresent()) {
-            fillPolygon(getScratch(), getToolAttributes().getFillPaint().get(), xs, ys);
+        if (getAttributes().getFillPaint().isPresent()) {
+            fillPolygon(getScratch(), getAttributes().getFillPaint().get(), xs, ys);
         }
 
-        strokePolygon(getScratch(), getToolAttributes().getStroke(), getToolAttributes().getStrokePaint(), xs, ys);
+        strokePolygon(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), xs, ys);
         getCanvas().commit();
     }
 
@@ -133,7 +133,7 @@ public abstract class PolylineTool extends BasicTool implements SurfaceInteracti
         points.clear();
         currentPoint = null;
 
-        strokePolyline(getScratch(), getToolAttributes().getStroke(), getToolAttributes().getStrokePaint(), xs, ys);
+        strokePolyline(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), xs, ys);
         getCanvas().commit();
     }
 

@@ -5,6 +5,7 @@ import java.awt.*;
 /**
  * A model of a quadrilateral with fixed dimensions.
  */
+@SuppressWarnings("unused")
 public class FixedQuadrilateral implements Quadrilateral {
 
     private final Point topLeft, topRight, bottomLeft, bottomRight;

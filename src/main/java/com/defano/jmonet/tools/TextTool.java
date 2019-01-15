@@ -66,7 +66,7 @@ public class TextTool extends BasicTool implements Consumer, SurfaceInteractionO
         textArea.setVisible(true);
         textArea.setOpaque(false);
         textArea.setBackground(new Color(0, 0, 0, 0));
-        textArea.setForeground(getToolAttributes().getFontColor());
+        textArea.setForeground(getAttributes().getFontColor());
         textArea.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -74,11 +74,11 @@ public class TextTool extends BasicTool implements Consumer, SurfaceInteractionO
             }
         });
 
-        fontSubscription = getToolAttributes().getFontObservable()
+        fontSubscription = getAttributes().getFontObservable()
                 .subscribeOn(Schedulers.computation())
                 .subscribe(font -> textArea.setFont(font));
 
-        fontColorSubscription = getToolAttributes().getFontColorObservable()
+        fontColorSubscription = getAttributes().getFontColorObservable()
                 .subscribeOn(Schedulers.computation())
                 .subscribe(color -> textArea.setForeground(color));
     }
@@ -141,11 +141,11 @@ public class TextTool extends BasicTool implements Consumer, SurfaceInteractionO
         textArea.setSelectionEnd(0);
 
         textArea.getCaret().setVisible(false);
-        textArea.setFont(getToolAttributes().getFont());
+        textArea.setFont(getAttributes().getFont());
 
         BufferedImage image = new BufferedImage(textArea.getWidth(), textArea.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = (Graphics2D) image.getGraphics();
-        applyRenderingHints(new AwtGraphicsContext(g));
+        new AwtGraphicsContext(g).setAntialiasingMode(getAttributes().getAntiAliasing());
         textArea.printAll(g);
         g.dispose();
 
@@ -167,12 +167,12 @@ public class TextTool extends BasicTool implements Consumer, SurfaceInteractionO
     }
 
     private Font getScaledFont() {
-        return new Font(getToolAttributes().getFont().getFamily(), getToolAttributes().getFont().getStyle(), (int) (getToolAttributes().getFont().getSize() * getCanvas().getScaleObservable().blockingFirst()));
+        return new Font(getAttributes().getFont().getFamily(), getAttributes().getFont().getStyle(), (int) (getAttributes().getFont().getSize() * getCanvas().getScaleObservable().blockingFirst()));
     }
 
     private int getFontAscent() {
         GraphicsContext g = getScratch().getAddScratchGraphics(this, null);
-        FontMetrics metrics = g.getFontMetrics(getToolAttributes().getFont());
+        FontMetrics metrics = g.getFontMetrics(getAttributes().getFont());
 
         return metrics.getAscent();
     }

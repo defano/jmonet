@@ -32,6 +32,7 @@ public class RxToolAttributes implements ObservableToolAttributes, ToolAttribute
     private Observable<Double> maximumScaleObservable = BehaviorSubject.createDefault(32.0);
     private Observable<Double> magnificationStepObservable = BehaviorSubject.createDefault(2.0);
     private Observable<Boolean> recenterOnMagnifyObservable = BehaviorSubject.createDefault(true);
+    private Observable<Boolean> pathInterpolationObservable = BehaviorSubject.createDefault(true);
 
     @Override
     public void setMinimumScaleObservable(Observable<Double> observable) {
@@ -161,6 +162,12 @@ public class RxToolAttributes implements ObservableToolAttributes, ToolAttribute
 
     /** {@inheritDoc} */
     @Override
+    public void setPathInterpolationObservable(Observable<Boolean> observable) {
+        this.pathInterpolationObservable = observable;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public Observable<Optional<Paint>> getFillPaintObservable() {
         return fillPaintObservable;
     }
@@ -235,6 +242,12 @@ public class RxToolAttributes implements ObservableToolAttributes, ToolAttribute
     @Override
     public Observable<Interpolation> getAntiAliasingObservable() {
         return antiAliasingObservable;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Observable<Boolean> getPathInterpolationObservable() {
+        return pathInterpolationObservable;
     }
 
     /** {@inheritDoc} */

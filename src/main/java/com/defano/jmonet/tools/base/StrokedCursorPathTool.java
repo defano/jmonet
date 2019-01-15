@@ -30,12 +30,12 @@ public abstract class StrokedCursorPathTool extends PathTool {
     @Override
     public void activate(PaintCanvas canvas) {
         super.activate(canvas);
-        subscription = Observable.merge(getToolAttributes().getStrokeObservable(), getToolAttributes().getStrokePaintObservable(), canvas.getScaleObservable()).subscribe(o ->
+        subscription = Observable.merge(getAttributes().getStrokeObservable(), getAttributes().getStrokePaintObservable(), canvas.getScaleObservable()).subscribe(o ->
         {
             if (strokeTrackingCursorEnabled) {
                 setToolCursor(CursorFactory.makeBrushCursor(
-                        getToolAttributes().getStroke(),
-                        getToolAttributes().getStrokePaint(),
+                        getAttributes().getStroke(),
+                        getAttributes().getStrokePaint(),
                         strokeTrackingCursorScaled ? canvas.getScale() : 1.0)
                 );
             }

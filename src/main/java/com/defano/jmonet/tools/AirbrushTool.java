@@ -4,6 +4,7 @@ import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.StrokedCursorPathTool;
+import com.defano.jmonet.tools.util.Geometry;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
@@ -35,8 +36,17 @@ public class AirbrushTool extends StrokedCursorPathTool {
         GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, line);
         g.setStroke(stroke);
         g.setPaint(fillPaint);
-        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) getToolAttributes().getIntensity()));
-        g.draw(line);
+
+        if (getAttributes().isPathInterpolated()) {
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) getAttributes().getIntensity() / 10.0f));
+            for (Point p : Geometry.linearInterpolation(lastPoint, thisPoint, 1)) {
+                g.draw(new Line2D.Float(p, p));
+            }
+        } else {
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) getAttributes().getIntensity()));
+            g.draw(line);
+        }
+
     }
 
     @Override

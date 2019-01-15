@@ -1,5 +1,7 @@
 package com.defano.jmonet.context;
 
+import com.defano.jmonet.model.Interpolation;
+
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
@@ -19,6 +21,14 @@ import java.util.Map;
  */
 @SuppressWarnings({"unused", "CStyleArrayDeclaration"})
 public interface GraphicsContext {
+
+    /**
+     * Applies the antialiasing interpolation mode to this graphics context. See {@link Interpolation} for details
+     * about the different modes.
+     *
+     * @param mode The antialiasing interpolation mode.
+     */
+    void setAntialiasingMode(Interpolation mode);
 
     /**
      * Strokes the outline of a <code>Shape</code> using the settings of the
@@ -1707,17 +1717,6 @@ public interface GraphicsContext {
      * @see java.awt.Graphics#create
      */
     void dispose();
-
-    /**
-     * Returns the bounding rectangle of the current clipping area.
-     *
-     * @return the bounding rectangle of the current clipping area
-     * or <code>null</code> if no clip is set.
-     * @deprecated As of JDK version 1.1,
-     * replaced by <code>getClipBounds()</code>.
-     */
-    @Deprecated
-    Rectangle getClipRect();
 
     /**
      * Returns true if the specified rectangular area might intersect

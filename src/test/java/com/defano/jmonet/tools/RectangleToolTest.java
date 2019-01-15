@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.awt.*;
-import java.awt.geom.Line2D;
 
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;

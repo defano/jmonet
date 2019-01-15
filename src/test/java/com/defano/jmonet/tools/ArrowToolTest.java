@@ -7,7 +7,6 @@ import org.mockito.Mockito;
 
 import java.awt.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 

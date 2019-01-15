@@ -36,7 +36,7 @@ public class FillTool extends BasicTool {
     /** {@inheritDoc} */
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
-        ToolAttributes attributes = getToolAttributes();
+        ToolAttributes attributes = getAttributes();
 
         // Nothing to do if no fill paint is specified
         if (attributes.getFillPaint().isPresent()) {

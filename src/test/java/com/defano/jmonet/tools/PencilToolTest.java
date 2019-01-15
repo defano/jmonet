@@ -5,7 +5,6 @@ import com.defano.jmonet.tools.base.MockitoToolTest;
 import com.defano.jmonet.tools.cursors.CursorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 
 import java.awt.*;

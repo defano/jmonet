@@ -25,7 +25,7 @@ public class ShapeTool extends BoundsTool {
     /** {@inheritDoc} */
     @Override
     public void strokeBounds(Scratch scratch, Stroke stroke, Paint paint, Rectangle bounds, boolean isShiftDown) {
-        Polygon poly = Geometry.polygon(getInitialPoint(), getToolAttributes().getShapeSides(), getRadius(), getRotationAngle(isShiftDown));
+        Polygon poly = Geometry.polygon(getInitialPoint(), getAttributes().getShapeSides(), getRadius(), getRotationAngle(isShiftDown));
 
         GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, poly);
         g.setStroke(stroke);
@@ -38,7 +38,7 @@ public class ShapeTool extends BoundsTool {
     public void fillBounds(Scratch scratch, Paint fill, Rectangle bounds, boolean isShiftDown) {
         GraphicsContext g = scratch.getAddScratchGraphics(this, null);
         g.setPaint(fill);
-        g.fill(Geometry.polygon(getInitialPoint(), getToolAttributes().getShapeSides(), getRadius(), getRotationAngle(isShiftDown)));
+        g.fill(Geometry.polygon(getInitialPoint(), getAttributes().getShapeSides(), getRadius(), getRotationAngle(isShiftDown)));
     }
 
     private double getRadius() {
@@ -49,7 +49,7 @@ public class ShapeTool extends BoundsTool {
         double degrees = Geometry.angle(getInitialPoint().x, getInitialPoint().y, getCurrentPoint().x, getCurrentPoint().y);
 
         if (isShiftDown) {
-            degrees = Geometry.round(degrees, getToolAttributes().getConstrainedAngle());
+            degrees = Geometry.round(degrees, getAttributes().getConstrainedAngle());
         }
 
         return Math.toRadians(degrees);

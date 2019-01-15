@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 /**
  * A listener of clipboard-related actions (cut, copy and paste).
  */
+@SuppressWarnings("unused")
 public class CanvasClipboardActionListener implements ActionListener {
 
     private final CanvasFocusDelegate delegate;

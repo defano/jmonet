@@ -62,7 +62,7 @@ public abstract class PathTool extends BasicTool implements SurfaceInteractionOb
     public void mousePressed(MouseEvent e, Point imageLocation) {
         getScratch().clear();
 
-        startPath(getScratch(), getToolAttributes().getStroke(), getToolAttributes().getStrokePaint(), imageLocation);
+        startPath(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), imageLocation);
         lastPoint = imageLocation;
 
         getCanvas().repaint(getScratch().getDirtyRegion());
@@ -71,7 +71,7 @@ public abstract class PathTool extends BasicTool implements SurfaceInteractionOb
     /** {@inheritDoc} */
     @Override
     public void mouseDragged(MouseEvent e, Point imageLocation) {
-        addPoint(getScratch(), getToolAttributes().getStroke(), getToolAttributes().getStrokePaint(), lastPoint, imageLocation);
+        addPoint(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), lastPoint, imageLocation);
         lastPoint = imageLocation;
 
         // While mouse is down, only repaint the modified area of the canvas
@@ -81,7 +81,7 @@ public abstract class PathTool extends BasicTool implements SurfaceInteractionOb
     /** {@inheritDoc} */
     @Override
     public void mouseReleased(MouseEvent e, Point imageLocation) {
-        completePath(getScratch(), getToolAttributes().getStroke(), getToolAttributes().getStrokePaint());
+        completePath(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint());
         getCanvas().commit(getScratch().getLayerSet());
     }
 

@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface ToolAttributes extends ObservableToolAttributes {
 
     int MIN_SHAPE_SIDES = 3;
-    int MAX_SHAPE_SIDES = 20;
+    int MAX_SHAPE_SIDES = 64;
 
     /**
      * Gets the stroke (the pen or brush outline) drawn by the tool.
@@ -163,6 +163,16 @@ public interface ToolAttributes extends ObservableToolAttributes {
      */
     default double getMagnificationStep() {
         return getMagnificationStepObservable().blockingFirst();
+    }
+
+    /**
+     * Indicates whether path interpolation is enabled; when true, certain paths (like those used by the airbrush) are
+     * interpolated, resulting in a smoother (albeit more computationally expensive) rendering.
+     *
+     * @return True when path interpolation is enabled.
+     */
+    default boolean isPathInterpolated() {
+        return getPathInterpolationObservable().blockingFirst();
     }
 
     /**

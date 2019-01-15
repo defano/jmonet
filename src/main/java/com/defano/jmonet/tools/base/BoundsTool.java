@@ -57,13 +57,13 @@ public abstract class BoundsTool extends BasicTool implements SurfaceInteraction
     public void mouseDragged(MouseEvent e, Point imageLocation) {
         currentPoint = imageLocation;
 
-        if (!getToolAttributes().isDrawMultiple()) {
+        if (!getAttributes().isDrawMultiple()) {
             getScratch().clear();
         }
 
         Point originPoint = new Point(initialPoint);
 
-        if (getToolAttributes().isDrawCentered()) {
+        if (getAttributes().isDrawCentered()) {
             int height = currentPoint.y - initialPoint.y;
             int width = currentPoint.x - initialPoint.x;
 
@@ -75,11 +75,11 @@ public abstract class BoundsTool extends BasicTool implements SurfaceInteraction
                 Geometry.square(originPoint, currentPoint) :
                 Geometry.rectangle(originPoint, currentPoint);
 
-        if (getToolAttributes().getFillPaint().isPresent()) {
-            fillBounds(getScratch(), getToolAttributes().getFillPaint().get(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
+        if (getAttributes().getFillPaint().isPresent()) {
+            fillBounds(getScratch(), getAttributes().getFillPaint().get(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
         }
 
-        strokeBounds(getScratch(), getToolAttributes().getStroke(), getToolAttributes().getStrokePaint(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
+        strokeBounds(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
         getCanvas().repaint();
     }
 

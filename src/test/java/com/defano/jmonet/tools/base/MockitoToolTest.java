@@ -6,7 +6,6 @@ import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.Interpolation;
 import com.defano.jmonet.tools.attributes.ToolAttributes;
 import com.defano.jmonet.tools.cursors.CursorManager;
-import com.defano.jmonet.transform.image.FillTransform;
 import com.defano.jmonet.transform.image.FloodFillTransform;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;

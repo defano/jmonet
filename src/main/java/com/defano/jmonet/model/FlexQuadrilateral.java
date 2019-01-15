@@ -27,6 +27,7 @@ public class FlexQuadrilateral implements Quadrilateral {
      * @param bottomLeft The bottom-left corner
      * @param bottomRight The bottom-right corner
      */
+    @SuppressWarnings("WeakerAccess")
     public FlexQuadrilateral(Point topLeft, Point topRight, Point bottomLeft, Point bottomRight) {
         this.topLeft = topLeft;
         this.topRight = topRight;

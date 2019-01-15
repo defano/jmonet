@@ -196,16 +196,15 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
      */
     @Override
     public void deactivate() {
-        super.deactivate();
-
         // Need to remove selection frame when tool is no longer active
         completeSelection();
 
-        if (getCanvas() != null) {
+        if (isActive()) {
             getCanvas().removeCanvasCommitObserver(this);
         }
 
         MarchingAnts.getInstance().removeObserver(this);
+        super.deactivate();
     }
 
     /**
@@ -218,6 +217,7 @@ public abstract class SelectionTool extends BasicTool implements CanvasCommitObs
      *
      * @param to The tool that the current selection should be transferred to.
      */
+    @SuppressWarnings("unused")
     public void morphSelection(SelectionTool to) {
 
         if (hasSelection()) {

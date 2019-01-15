@@ -68,7 +68,7 @@ public class MagnifierTool extends BasicTool implements SurfaceInteractionObserv
         }
 
         SurfaceScrollController scrollController = getCanvas().getSurfaceScrollController();
-        if (getToolAttributes().isRecenterOnMagnify() && scrollController != null) {
+        if (getAttributes().isRecenterOnMagnify() && scrollController != null) {
             recenter(scrollController, clickLoc);
         }
     }
@@ -89,8 +89,8 @@ public class MagnifierTool extends BasicTool implements SurfaceInteractionObserv
      * {@link ToolAttributes#getMagnificationStep()}. Does not change the scroll position of the canvas.
      */
     public void zoomIn() {
-        double maximumScale = getToolAttributes().getMaximumScale();
-        double magnificationStep = getToolAttributes().getMagnificationStep();
+        double maximumScale = getAttributes().getMaximumScale();
+        double magnificationStep = getAttributes().getMagnificationStep();
 
         getCanvas().setScale(Math.min(maximumScale, getCanvas().getScale() * magnificationStep));
     }
@@ -100,8 +100,8 @@ public class MagnifierTool extends BasicTool implements SurfaceInteractionObserv
      * {@link ToolAttributes#getMagnificationStep()}. Does not change the scroll position of the canvas.
      */
     public void zoomOut() {
-        double minimumScale = getToolAttributes().getMinimumScale();
-        double magnificationStep = getToolAttributes().getMagnificationStep();
+        double minimumScale = getAttributes().getMinimumScale();
+        double magnificationStep = getAttributes().getMagnificationStep();
 
         getCanvas().setScale(Math.max(minimumScale, getCanvas().getScale() / magnificationStep));
     }

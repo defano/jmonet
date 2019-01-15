@@ -3,6 +3,7 @@ package com.defano.jmonet.canvas.surface;
 /**
  * A surface that supports a snap-to-grid property.
  */
+@SuppressWarnings("unused")
 public interface GridSurface {
 
     /**

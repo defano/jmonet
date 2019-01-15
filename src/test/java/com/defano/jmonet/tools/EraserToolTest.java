@@ -3,7 +3,6 @@ package com.defano.jmonet.tools;
 import com.defano.jmonet.tools.base.MockitoToolTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.awt.*;

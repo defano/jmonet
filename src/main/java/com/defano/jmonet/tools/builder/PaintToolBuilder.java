@@ -12,7 +12,6 @@ import com.defano.jmonet.tools.TextTool;
 import com.defano.jmonet.tools.cursors.CursorManager;
 import com.defano.jmonet.tools.cursors.SwingCursorManager;
 import com.defano.jmonet.tools.base.Tool;
-import com.defano.jmonet.transform.image.FloodFillTransform;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import io.reactivex.Observable;
@@ -24,16 +23,18 @@ import java.util.Optional;
 /**
  * A utility for building paint tools.
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class PaintToolBuilder {
 
     private final PaintToolType type;
 
+    // Non-observable attributes
     private PaintCanvas canvas;
     private MarkPredicate markPredicate;
     private FillFunction fillFunction;
     private BoundaryFunction boundaryFunction;
 
+    // Observable attributes
     private Observable<Stroke> strokeObservable;
     private Observable<Paint> strokePaintObservable;
     private Observable<Optional<Paint>> fillPaintObservable = BehaviorSubject.createDefault(Optional.empty());
@@ -51,6 +52,7 @@ public class PaintToolBuilder {
     private Observable<Double> maximumScaleObservable;
     private Observable<Double> magnificationStepObservable;
     private Observable<Boolean> recenterOnMagnifyObservable;
+    private Observable<Boolean> pathInterpolationObservable;
 
     /**
      * Constructs a builder for the specified tool type. Use {@link #create(PaintToolType)} to retrieve an instance
@@ -379,6 +381,15 @@ public class PaintToolBuilder {
         return this;
     }
 
+    public PaintToolBuilder withPathInterpolationObservable(Observable<Boolean> observable) {
+        this.pathInterpolationObservable = observable;
+        return this;
+    }
+
+    public PaintToolBuilder withPathInterpolation(boolean enabled) {
+        return withPathInterpolationObservable(BehaviorSubject.createDefault(enabled));
+    }
+
     public PaintToolBuilder withConstrainedAngleObservable(Observable<Integer> observable) {
         this.constrainedAngleObservable = observable;
         return this;
@@ -468,7 +479,7 @@ public class PaintToolBuilder {
     public Tool build() {
 
         Tool selectedTool = Guice.createInjector(new ToolAssembly()).getInstance(type.getToolClass());
-        ToolAttributes toolAttributes = selectedTool.getToolAttributes();
+        ToolAttributes toolAttributes = selectedTool.getAttributes();
 
         if (strokeObservable != null) {
             toolAttributes.setStrokeObservable(strokeObservable);
@@ -536,6 +547,10 @@ public class PaintToolBuilder {
 
         if (recenterOnMagnifyObservable != null) {
             toolAttributes.setRecenterOnMagnifyObservable(recenterOnMagnifyObservable);
+        }
+
+        if (pathInterpolationObservable != null) {
+            toolAttributes.setPathInterpolationObservable(pathInterpolationObservable);
         }
 
         if (markPredicate != null) {

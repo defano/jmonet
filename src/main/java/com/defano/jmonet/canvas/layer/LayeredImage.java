@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * An image that is composed of multiple layers rendered atop one another.
+ * An image that is composed of multiple layers rendered one atop another.
  */
 public interface LayeredImage {
 

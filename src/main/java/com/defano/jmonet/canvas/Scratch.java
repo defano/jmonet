@@ -154,7 +154,7 @@ public class Scratch {
         removeScratchDirtyRgn = updateDirtiedRgn(bounds, removeScratchDirtyRgn);
 
         if (tool != null) {
-            tool.applyRenderingHints(removeScratchGraphics);
+            removeScratchGraphics.setAntialiasingMode(tool.getAttributes().getAntiAliasing());
         }
 
         return removeScratchGraphics;
@@ -197,7 +197,7 @@ public class Scratch {
         addScratchDirtyRgn = updateDirtiedRgn(bounds, addScratchDirtyRgn);
 
         if (tool != null) {
-            tool.applyRenderingHints(addScratchGraphics);
+            addScratchGraphics.setAntialiasingMode(tool.getAttributes().getAntiAliasing());
         }
 
         return addScratchGraphics;
@@ -301,7 +301,7 @@ public class Scratch {
      * @param stroke The stroke of the shape being erased
      */
     public void erase(Tool tool, Shape shape, Stroke stroke) {
-        Paint erasePaint = tool.getToolAttributes().getEraseColor();
+        Paint erasePaint = tool.getAttributes().getEraseColor();
 
         GraphicsContext g = erasePaint == null ?
                 getRemoveScratchGraphics(tool, stroke, shape) :
