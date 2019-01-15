@@ -7,6 +7,7 @@ import com.defano.jmonet.tools.util.Geometry;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.util.Optional;
 
 public abstract class BoundsTool extends BasicTool implements SurfaceInteractionObserver {
 
@@ -75,9 +76,8 @@ public abstract class BoundsTool extends BasicTool implements SurfaceInteraction
                 Geometry.square(originPoint, currentPoint) :
                 Geometry.rectangle(originPoint, currentPoint);
 
-        if (getAttributes().getFillPaint().isPresent()) {
-            fillBounds(getScratch(), getAttributes().getFillPaint().get(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
-        }
+        getAttributes().getFillPaint().ifPresent(paint ->
+                fillBounds(getScratch(), paint, new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown()));
 
         strokeBounds(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
         getCanvas().repaint();

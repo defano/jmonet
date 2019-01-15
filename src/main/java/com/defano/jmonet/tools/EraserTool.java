@@ -22,18 +22,18 @@ public class EraserTool extends StrokedCursorPathTool {
 
     /** {@inheritDoc} */
     @Override
-    public void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
+    public void startPath(Scratch scratch, Stroke stroke, Paint strokePaint, Point initialPoint) {
         scratch.erase(this, new Line2D.Float(initialPoint, initialPoint), stroke);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
+    public void addPoint(Scratch scratch, Stroke stroke, Paint strokePaint, Point lastPoint, Point thisPoint) {
         scratch.erase(this, new Line2D.Float(lastPoint, thisPoint), stroke);
     }
 
     @Override
-    public void completePath(Scratch scratch, Stroke stroke, Paint fillPaint) {
+    public void completePath(Scratch scratch, Stroke stroke, Paint strokePaint, Paint fillPaint) {
         // Nothing to do
     }
 }

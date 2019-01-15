@@ -24,18 +24,18 @@ public class AirbrushTool extends StrokedCursorPathTool {
 
     /** {@inheritDoc} */
     @Override
-    public void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
+    public void startPath(Scratch scratch, Stroke stroke, Paint strokePaint, Point initialPoint) {
         // Nothing to do
     }
 
     /** {@inheritDoc} */
     @Override
-    public void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
+    public void addPoint(Scratch scratch, Stroke stroke, Paint strokePaint, Point lastPoint, Point thisPoint) {
         Line2D line = new Line2D.Float(lastPoint, thisPoint);
 
         GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, line);
         g.setStroke(stroke);
-        g.setPaint(fillPaint);
+        g.setPaint(strokePaint);
 
         if (getAttributes().isPathInterpolated()) {
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) getAttributes().getIntensity() / 10.0f));
@@ -50,7 +50,7 @@ public class AirbrushTool extends StrokedCursorPathTool {
     }
 
     @Override
-    public void completePath(Scratch scratch, Stroke stroke, Paint fillPaint) {
+    public void completePath(Scratch scratch, Stroke stroke, Paint strokePaint, Paint fillPaint) {
         // Nothing to do
     }
 

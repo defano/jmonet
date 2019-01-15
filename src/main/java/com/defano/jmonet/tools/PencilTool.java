@@ -33,7 +33,7 @@ public class PencilTool extends PathTool {
 
     /** {@inheritDoc} */
     @Override
-    public void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
+    public void startPath(Scratch scratch, Stroke stroke, Paint strokePaint, Point initialPoint) {
         ToolAttributes attributes = getAttributes();
 
         Color pixel = new Color(getCanvas().getCanvasImage().getRGB(initialPoint.x, initialPoint.y), true);
@@ -41,17 +41,17 @@ public class PencilTool extends PathTool {
         // Pencil erases when user begins stoke over a "marked" pixel, otherwise pencil marks canvas
         isErasing = attributes.getMarkPredicate().isMarked(pixel, attributes.getEraseColor());
 
-        renderStroke(scratch, fillPaint, new Line2D.Float(initialPoint, initialPoint));
+        renderStroke(scratch, strokePaint, new Line2D.Float(initialPoint, initialPoint));
     }
 
     /** {@inheritDoc} */
     @Override
-    public void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
-        renderStroke(scratch, fillPaint, new Line2D.Float(lastPoint, thisPoint));
+    public void addPoint(Scratch scratch, Stroke stroke, Paint strokePaint, Point lastPoint, Point thisPoint) {
+        renderStroke(scratch, strokePaint, new Line2D.Float(lastPoint, thisPoint));
     }
 
     @Override
-    public void completePath(Scratch scratch, Stroke stroke, Paint fillPaint) {
+    public void completePath(Scratch scratch, Stroke stroke, Paint strokePaint, Paint fillPaint) {
         // Nothing to do
     }
 

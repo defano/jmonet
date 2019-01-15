@@ -10,6 +10,7 @@ import com.google.inject.Inject;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
+import java.util.Optional;
 
 /**
  * Tool that performs a flood-fill of all transparent pixels.
@@ -37,12 +38,13 @@ public class FillTool extends BasicTool {
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
         ToolAttributes attributes = getAttributes();
+        Optional<Paint> fillPaint = attributes.getFillPaint();
 
         // Nothing to do if no fill paint is specified
-        if (attributes.getFillPaint().isPresent()) {
+        if (fillPaint.isPresent()) {
             getScratch().clear();
 
-            floodFill.setFillPaint(attributes.getFillPaint().get());
+            floodFill.setFillPaint(fillPaint.get());
             floodFill.setOrigin(imageLocation);
             floodFill.setFill(attributes.getFillFunction());
             floodFill.setBoundaryFunction(attributes.getBoundaryFunction());

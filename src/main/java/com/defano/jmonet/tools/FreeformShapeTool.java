@@ -27,14 +27,14 @@ public class FreeformShapeTool extends PathTool {
 
     /** {@inheritDoc} */
     @Override
-    public void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
+    public void startPath(Scratch scratch, Stroke stroke, Paint strokePaint, Point initialPoint) {
         path = new Path2D.Double();
         path.moveTo(initialPoint.getX(), initialPoint.getY());
     }
 
     /** {@inheritDoc} */
     @Override
-    public void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
+    public void addPoint(Scratch scratch, Stroke stroke, Paint strokePaint, Point lastPoint, Point thisPoint) {
         path.lineTo(thisPoint.getX(), thisPoint.getY());
 
         GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, path);
@@ -45,18 +45,18 @@ public class FreeformShapeTool extends PathTool {
 
     /** {@inheritDoc} */
     @Override
-    public void completePath(Scratch scratch, Stroke stroke, Paint fillPaint) {
+    public void completePath(Scratch scratch, Stroke stroke, Paint strokePaint, Paint fillPaint) {
         path.closePath();
 
         GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, path);
 
-        if (getAttributes().getFillPaint().isPresent()) {
-            g.setPaint(getAttributes().getFillPaint().get());
+        if (fillPaint != null) {
+            g.setPaint(fillPaint);
             g.fill(path);
         }
 
         g.setStroke(stroke);
-        g.setPaint(getAttributes().getStrokePaint());
+        g.setPaint(strokePaint);
         g.draw(path);
     }
 }

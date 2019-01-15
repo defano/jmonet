@@ -20,30 +20,30 @@ public abstract class PathTool extends BasicTool implements SurfaceInteractionOb
      *
      * @param scratch The scratch buffer on which to draw.
      * @param stroke The stroke with which to draw
-     * @param fillPaint The paint with which to draw
+     * @param strokePaint The paint with which to draw
      * @param initialPoint The first point defined on the path
      */
-    public abstract void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint);
+    public abstract void startPath(Scratch scratch, Stroke stroke, Paint strokePaint, Point initialPoint);
 
     /**
      * Adds a point to the path begun via a call to {@link #startPath(Scratch, Stroke, Paint, Point)}.
      *
      * @param scratch The scratch buffer on which to draw.
      * @param stroke The stroke with which to draw
-     * @param fillPaint The paint with which to draw
+     * @param strokePaint The paint with which to draw
      * @param lastPoint The last point added to the current path
      * @param thisPoint The new point to add to the current path
      */
-    public abstract void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint);
+    public abstract void addPoint(Scratch scratch, Stroke stroke, Paint strokePaint, Point lastPoint, Point thisPoint);
 
     /**
      * Completes the path begun via a call to {@link #startPath(Scratch, Stroke, Paint, Point)}.
-     *
      * @param scratch The scratch buffer on which to draw.
      * @param stroke The stroke with which to draw
-     * @param fillPaint The paint with which to draw
+     * @param strokePaint The paint with which to render the stroke
+     * @param fillPaint The paint with which to fill the shape, null to indicate shape should not be filled
      */
-    public abstract void completePath(Scratch scratch, Stroke stroke, Paint fillPaint);
+    public abstract void completePath(Scratch scratch, Stroke stroke, Paint strokePaint, Paint fillPaint);
 
     /** {@inheritDoc} */
     @Override
@@ -81,7 +81,7 @@ public abstract class PathTool extends BasicTool implements SurfaceInteractionOb
     /** {@inheritDoc} */
     @Override
     public void mouseReleased(MouseEvent e, Point imageLocation) {
-        completePath(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint());
+        completePath(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), getAttributes().getFillPaint().orElse(null));
         getCanvas().commit(getScratch().getLayerSet());
     }
 

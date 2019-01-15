@@ -23,29 +23,29 @@ public class PaintbrushTool extends StrokedCursorPathTool {
 
     /** {@inheritDoc} */
     @Override
-    public void startPath(Scratch scratch, Stroke stroke, Paint fillPaint, Point initialPoint) {
+    public void startPath(Scratch scratch, Stroke stroke, Paint strokePaint, Point initialPoint) {
         Line2D line = new Line2D.Float(initialPoint, initialPoint);
 
         GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, line);
         g.setStroke(stroke);
-        g.setPaint(fillPaint);
+        g.setPaint(strokePaint);
         g.draw(line);
 
     }
 
     /** {@inheritDoc} */
     @Override
-    public void addPoint(Scratch scratch, Stroke stroke, Paint fillPaint, Point lastPoint, Point thisPoint) {
+    public void addPoint(Scratch scratch, Stroke stroke, Paint strokePaint, Point lastPoint, Point thisPoint) {
         Line2D line = new Line2D.Float(lastPoint, thisPoint);
 
         GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, line);
         g.setStroke(stroke);
-        g.setPaint(fillPaint);
+        g.setPaint(strokePaint);
         g.draw(line);
     }
 
     @Override
-    public void completePath(Scratch scratch, Stroke stroke, Paint fillPaint) {
+    public void completePath(Scratch scratch, Stroke stroke, Paint strokePaint, Paint fillPaint) {
         // Nothing to do
     }
 }

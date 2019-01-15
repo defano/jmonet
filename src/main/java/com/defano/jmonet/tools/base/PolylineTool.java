@@ -116,9 +116,8 @@ public abstract class PolylineTool extends BasicTool implements SurfaceInteracti
         points.clear();
         currentPoint = null;
 
-        if (getAttributes().getFillPaint().isPresent()) {
-            fillPolygon(getScratch(), getAttributes().getFillPaint().get(), xs, ys);
-        }
+        getAttributes().getFillPaint().ifPresent(fillPaint ->
+                fillPolygon(getScratch(), fillPaint, xs, ys));
 
         strokePolygon(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), xs, ys);
         getCanvas().commit();
