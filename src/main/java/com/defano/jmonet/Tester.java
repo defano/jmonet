@@ -19,6 +19,23 @@ public class Tester {
 
         javax.swing.SwingUtilities.invokeLater(() -> {
 
+//            BehaviorSubject<Boolean> drawCenteredObservable = BehaviorSubject.createDefault(true);
+//
+//            PaintToolBuilder.create(PaintToolType.RECTANGLE)
+//                    .withDrawCenteredObservable(drawCenteredObservable)
+//                    .makeActiveOnCanvas(myCanvas)
+//                    .build();
+//
+//            JCheckBox drawCenteredCheckbox = new JCheckBox();
+//            JCheckBoxMenuItem drawCenteredMenuItem = new JCheckBoxMenuItem();
+//
+//            drawCenteredObservable.subscribe(drawCentered -> drawCenteredMenuItem.setSelected(drawCentered));
+//            drawCenteredMenuItem.addActionListener(e -> drawCenteredObservable.onNext(drawCenteredMenuItem.isSelected()));
+//
+//            drawCenteredObservable.subscribe(drawCentered -> drawCenteredCheckbox.setSelected(drawCentered));
+//            drawCenteredCheckbox.addActionListener(a -> drawCenteredObservable.onNext(drawCenteredCheckbox.isSelected()));
+
+
             // Create and show Swing frame
             JFrame frame = new JFrame("My Pretty Picture");
             frame.setPreferredSize(new Dimension(600, 600));

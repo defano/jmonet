@@ -7,7 +7,6 @@ import com.defano.jmonet.tools.util.Geometry;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
-import java.util.Optional;
 
 public abstract class BoundsTool extends BasicTool implements SurfaceInteractionObserver {
 

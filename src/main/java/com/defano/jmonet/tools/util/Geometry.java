@@ -11,6 +11,8 @@ import java.util.List;
  */
 public class Geometry {
 
+    private Geometry() {}
+
     /**
      * Rounds a double value to the nearest provided integer multiple. For example rounding 24.3 to the nearest 10
      * yields 20.

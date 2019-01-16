@@ -11,12 +11,12 @@ This project provides the paint capabilities found in [WyldCard](https://github.
 
 ## Features
 
-* Common suite of paint tools with observable attributes for colors and patterns, line sizes, anti-aliasing modes, etc.
-* Includes image transform tools like scale, rotate, flip, shear, perspective and projection, plus the ability to adjust color depth, transparency and brightness.
+* Familiar suite of paint tools with RxJava-observable attributes for colors, patterns, line sizes, anti-aliasing modes, etc.
+* Image transform tools like scale, rotate, flip, shear, perspective and projection, plus the ability to adjust color depth, transparency and brightness.
 * Canvas can be scaled and displayed within a scrollable pane; tools can be snapped to a grid.
 * Supports multi-operation undo and redo, plus cut, copy and paste integration with the system clipboard.
 * Paint and edit 24-bit, true-color images with alpha transparency; images are backed by a standard Java `BufferedImage` object making it easy to import and export graphics.
-* Lightweight toolkit integrates easily into Swing and JavaFX applications and utilizes [ReactiveX](https://github.com/ReactiveX/RxJava) for observables.
+* Lightweight toolkit integrates easily into Swing and JavaFX applications.
 
 ## Paint Tools
 
@@ -172,7 +172,7 @@ Transform Method        | Description
 `rotateLeft`            | Rotates the selection 90 degrees counter-clockwise.
 `rotateRight`           | Rotates the selection 90 degrees clockwise.
 
-Each of these transforms is implemented as a standalone class in the `com.defano.jmonet.algo.transform` package hierarchy, making it easy to apply these programmatically (offline) to a `BufferedImage` object.
+Each of these transforms is implemented as a standalone class in the `com.defano.jmonet.transform` package hierarchy, making it easy to apply these programmatically (offline) to a `BufferedImage` object.
 
 ## Creating complex brush shapes
 
@@ -234,12 +234,13 @@ CanvasClipboardActionListener myActionListener = new CanvasClipboardActionListen
     @Override
     public AbstractPaintCanvas getCanvasInFocus() {
 
-        // Should our canvas handle cut, copy and paste commands right now?
+        // Which canvas should handle cut, copy and paste commands? Perhaps check to see if the focused window
+        // contains a canvas...?
         if (isMyCanvasInFocus()) {
             return myCanvas;
         }
 
-        // If not, return null
+        // No canvas has focus, return null
         return null;
     }
 });
@@ -258,7 +259,7 @@ myEditMenu.add(myCopyMenuItem);
 
 #### 2. Add the transfer handler
 
-Your application needs to tell JMonet what to do when the user has invoked the cut, copy or paste action. Typically, this simply involves getting or setting the selection defined by a selection tool (i.e., any tool which subclasses `AbstractSelectionTool`). Of course, you're free to provide alternate behavior (like copying the entire canvas, instead of just the selection).
+Your application needs to tell JMonet what to do when the user has invoked the cut, copy or paste action. Typically, this simply involves getting or setting the selection defined by a selection tool (i.e., any tool which subclasses `SelectionTool`). Of course, you're free to provide alternate behavior (like copying the entire canvas, instead of just the selection).
 
 The code below provides an implementation that cuts, copies and pastes the active selection.
 
@@ -268,8 +269,8 @@ The code below provides an implementation that cuts, copies and pastes the activ
   myCanvas.setTransferHandler(new CanvasTransferHandler(myCanvas, new CanvasTransferDelegate() {
     @Override
     public BufferedImage copySelection() {
-      if (myActiveTool instanceof AbstractSelectionTool) {
-        return ((AbstractSelectionTool) myActiveTool).getSelectedImage();
+      if (myActiveTool instanceof SelectionTool) {
+        return ((SelectionTool) myActiveTool).getSelectedImage();
       }
 
       // Nothing available to copy if active tool isn't a selection tool
@@ -279,8 +280,8 @@ The code below provides an implementation that cuts, copies and pastes the activ
     @Override
     public void deleteSelection() {
       // Nothing to do if active tool isn't a selection tool
-      if (activeTool instanceof AbstractSelectionTool) {
-        ((AbstractSelectionTool) activeTool).deleteSelection();
+      if (activeTool instanceof SelectionTool) {
+        ((SelectionTool) activeTool).deleteSelection();
       }
     }
 
@@ -298,6 +299,51 @@ The code below provides an implementation that cuts, copies and pastes the activ
 })
 
 ```
+
+## Observable attributes with RxJava
+
+JMonet uses RxJava to provide observable attributes. This makes it easy to keep application menus, tool bars and palettes in sync with the state of your paint tools. As one control modifies an attribute, other controls (and the tool itself) will be notified of the change.
+
+Lets imagine we have a `JCheckBoxMenuItem` in our menu bar and a `JCheckboxButton` on a tool palette, both of which can be used to enable or disable the draw centered paint tool attribute. Here's how to use RxJava to acheive that:
+
+#### 1. Create an observable object
+
+Since a single menu item often control attributes for all tools, you'll probably want to model this as a Singleton that's easily accessible from different areas of your program.
+
+```
+// BehaviorSubject is a simple kind of Observable, see JavaRx documentation for details
+BehaviorSubject<Boolean> drawCenteredObservable = BehaviorSubject.createDefault(true);
+```
+
+#### 2. Wire the `Observable` to the menu item and checkbox button
+
+```
+JCheckBox drawCenteredCheckbox = new JCheckBox();
+JCheckBoxMenuItem drawCenteredMenuItem = new JCheckBoxMenuItem();
+
+// onNext() sets the value seen by other observers
+drawCenteredMenuItem.addActionListener(e -> drawCenteredObservable.onNext(drawCenteredMenuItem.isSelected()));
+drawCenteredCheckbox.addActionListener(a -> drawCenteredObservable.onNext(drawCenteredCheckbox.isSelected());
+
+// The subscribe() lambda fires each time the observed value changes
+drawCenteredObservable.subscribe(drawCentered -> drawCenteredMenuItem.setSelected(drawCentered));
+drawCenteredObservable.subscribe(drawCentered -> drawCenteredCheckbox.setSelected(drawCentered));
+```
+
+Note that the `.subscribe()` method returns a `Disposable` object. You should maintain a reference to this object and invoke `.dispose()` on it when you no longer wish to observe this attribute.
+
+#### 3. Inject the `Observable` into the tool
+
+The paint tool will react to changing values provided by the `Observable`. Clicking the checkbox or toggling the menu item will affect the behavior of this tool in realtime.
+
+```
+PaintToolBuilder.create(PaintToolType.RECTANGLE)
+    .withDrawCenteredObservable(drawCenteredObservable)
+    .makeActiveOnCanvas(myCanvas)
+    .build();
+
+```
+
 
 ## Frequently asked questions
 
@@ -361,17 +407,17 @@ Then, apply [one of their filters](http://www.jhlabs.com/ip/filters/index.html) 
 
 #### Can I create my own tools?
 
-Of course! Tools are typically subclassed from one of the abstract tool classes in the `paint.tools.base` package. These abstract classes handle UI events for the most common tool behaviors:
+Of course! Tools are typically subclassed from one of the abstract tool classes in the `com.defano.jmonet.tools.base` package. These abstract classes handle UI events for the most common tool behaviors:
 
 Tool Base                | Description
 -------------------------|------------
 `PaintTool`              | Base class from which all paint tools are derived. Holds references to attribute providers and implements empty mouse and keyboard event handlers (_template pattern_; allows tools to override only those methods they care about).
-`AbstractBoundsTool`     | Click-and-drag to define a rectangular boundary. Examples: Rectangle, Oval, Round Rectangle, Shape tools.
-`AbstractLineTool`       | Click-and-drag to define a line between two points. Example: Line tool.
-`AbstractPathTool`       | Click-and-drag to define a free-form path on the canvas. Examples: Paintbrush, pencil, eraser tools.
-`AbstractPolylineTool`   | Click, click, click, double-click to define segments in a polygon or curve. Examples: Curve, Polygon tools.
-`AbstractSelectionTool`  | Most complex of the tool bases; click-and-drag to define a shape to be drawn with marching ants allowing the user to move or modify the underlying graphic. Examples: Selection, Lasso, Rotate tools.
-`AbstractTransformTool`  | Click-and-drag to select a rectangular boundary drawn with drag handles at each corner which can moved by the user. Example: Slant, projection, perspective and rubber sheet tools.
+`BoundsTool`             | Click-and-drag to define a rectangular boundary. Examples: Rectangle, Oval, Round Rectangle, Shape tools.
+`LinearTool`             | Click-and-drag to define a line between two points. Example: Line tool.
+`PathTool`               | Click-and-drag to define a free-form path on the canvas. Examples: Paintbrush, pencil, eraser tools.
+`PolylineTool`           | Click, click, click, double-click to define segments in a polygon or curve. Examples: Curve, Polygon tools.
+`SelectionTool`          | Most complex of the tool bases; click-and-drag to define a shape to be drawn with marching ants allowing the user to move or modify the underlying graphic. Examples: Selection, Lasso, Rotate tools.
+`TransformTool`          | Click-and-drag to select a rectangular boundary drawn with drag handles at each corner which can moved by the user. Example: Slant, projection, perspective and rubber sheet tools.
 
 #### My canvas isn't getting garbage collected. This library has a memory leak.
 

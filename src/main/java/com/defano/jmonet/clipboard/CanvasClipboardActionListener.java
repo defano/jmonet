@@ -1,6 +1,6 @@
 package com.defano.jmonet.clipboard;
 
-import com.defano.jmonet.canvas.AbstractPaintCanvas;
+import com.defano.jmonet.canvas.PaintCanvas;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -21,7 +21,7 @@ public class CanvasClipboardActionListener implements ActionListener {
     /** {@inheritDoc} */
     @Override
     public void actionPerformed(ActionEvent e) {
-        AbstractPaintCanvas focusedCanvas = delegate == null ? null : delegate.getCanvasInFocus();
+        PaintCanvas focusedCanvas = delegate == null ? null : delegate.getCanvasInFocus();
 
         if (focusedCanvas != null) {
             Action a = focusedCanvas.getActionMap().get(e.getActionCommand());

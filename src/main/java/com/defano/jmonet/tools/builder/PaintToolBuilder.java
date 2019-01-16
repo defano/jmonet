@@ -5,10 +5,10 @@ import com.defano.jmonet.canvas.JFXPaintCanvasNode;
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.Interpolation;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.AirbrushTool;
 import com.defano.jmonet.tools.FillTool;
 import com.defano.jmonet.tools.PolygonTool;
 import com.defano.jmonet.tools.TextTool;
+import com.defano.jmonet.tools.base.BoundsTool;
 import com.defano.jmonet.tools.cursors.CursorManager;
 import com.defano.jmonet.tools.cursors.SwingCursorManager;
 import com.defano.jmonet.tools.base.Tool;
@@ -166,7 +166,7 @@ public class PaintToolBuilder {
 
     /**
      * Specifies the stroke to be drawn by the tool. The stroke represents the shape of "pen" used to draw paths, lines,
-     * and brush strokes. Use StrokeBuilder to create complex strokes.
+     * and brush strokes. Use {@link StrokeBuilder} to create custom strokes.
      *
      * @param stroke The stroke to be drawn by this tool
      * @return Ths PaintToolBuilder
@@ -236,11 +236,11 @@ public class PaintToolBuilder {
      * Specifies the color that pixels are changed to when they're erased (via the eraser or pencil tools). Specify null
      * for fully-transparent (default behavior).
      * <p>
-     * Note that this color does not affect the color of "void" pixels that are left when selecting a region and moving
-     * or deleting it. Further note that the default boundary behavior associated with
-     * {@link FillTool} looks for fully transparent pixels, thus, when changing the erase color
+     * Note that this value does not affect the color of "void" pixels that are left behind when selecting a region and
+     * moving or deleting it. Further note that the default boundary behavior associated with
+     * {@link FillTool} looks for fully transparent pixels to be filled, thus, when changing the erase color
      * to a non-null value, erased pixels will not be filled by this tool (install a custom
-     * BoundaryFunction if such behavior is desired).
+     * {@link BoundaryFunction} using {@link #withBoundaryFunction(BoundaryFunction)} if such behavior is desired).
      *
      * @param paint The color that erased pixels should become; null means fully transparent.
      * @return The PaintToolBuilder
@@ -253,13 +253,13 @@ public class PaintToolBuilder {
 
     /**
      * Specifies an observable provider of the paint that pixels are changed to when they're erased (via the eraser or
-     * pencil tools). Specify {@link Optional#empty()} for fully-transparent (default behavior).
+     * pencil tools). Specify {@link Optional#empty()} for fully-transparent (the default behavior).
      * <p>
-     * Note that this color does not affect the color of "void" pixels that are left when selecting a region and moving
-     * or deleting it. Further note that the default boundary behavior associated with
-     * {@link FillTool} looks for fully transparent pixels, thus, when changing the erase color
+     * Note that this value does not affect the color of "void" pixels that are left behind when selecting a region and
+     * moving or deleting it. Further note that the default boundary behavior associated with
+     * {@link FillTool} looks for fully transparent pixels to be filled, thus, when changing the erase color
      * to a non-null value, erased pixels will not be filled by this tool (install a custom
-     * BoundaryFunction if such behavior is desired).
+     * {@link BoundaryFunction} using {@link #withBoundaryFunction(BoundaryFunction)} if such behavior is desired).
      *
      * @param erasePaintObservable Observable providing the color that erased pixels should become; null means fully
      *                             transparent.
@@ -271,8 +271,7 @@ public class PaintToolBuilder {
     }
 
     /**
-     * Specifies the intensity with which the tool paints. Used only by the
-     * {@link AirbrushTool}.
+     * Specifies the intensity with which the airbrush paints. Has no effect on other tools.
      *
      * @param intensity A value between 0.0 and 1.0 where 0 is no intensity (tool produces no paint) and 1.0 is full
      *                  intensity.
@@ -283,7 +282,8 @@ public class PaintToolBuilder {
     }
 
     /**
-     * Specifies an observable provider of the intensity with which the tool paints. See {@link #withIntensity(double)}.
+     * Specifies an observable provider of the intensity with which the airbrush paints. See
+     * {@link #withIntensity(double)}.
      *
      * @param intensityObservable A value between 0.0 and 1.0 where 0 is no intensity (tool produces no paint) and 1.0
      *                            is full intensity.
@@ -296,7 +296,7 @@ public class PaintToolBuilder {
 
     /**
      * Specifies an observable provider of a boolean value indicating whether the tool defines bounds by dragging
-     * from the center-out, or from top-left to bottom-right.
+     * from the center-out, or from top-left to bottom-right. Affects tools extending {@link BoundsTool}.
      *
      * @param drawCenteredObservable True to define bounds from the center-out; false for top-left to bottom-right
      * @return The PaintToolBuilder
@@ -308,6 +308,7 @@ public class PaintToolBuilder {
 
     /**
      * Specifies whether the tool defines bounds by dragging from the center-out, or from the top-left to bottom-right.
+     * Affects tools extending {@link BoundsTool}.
      *
      * @param drawCentered True to define bounds from the center-out; false for top-left to bottom-right
      * @return The PaintToolBuilder
@@ -318,7 +319,7 @@ public class PaintToolBuilder {
 
     /**
      * Specifies an observable provider of a boolean value indicating whether the tool will draw multiple shapes or
-     * just one.
+     * just one. Affects tools extending {@link BoundsTool}.
      *
      * @param drawMultipleObservable True to draw multiple shapes; false to draw just one.
      * @return The PaintToolBuilder
@@ -330,7 +331,7 @@ public class PaintToolBuilder {
 
     /**
      * Specifies whether the tool should draw a single shape, or a trace of multiple shapes as the mouse is dragged.
-     * Affects tools extending {@link com.defano.jmonet.tools.base.BoundsTool}.
+     * Affects tools extending {@link BoundsTool}.
      *
      * @param drawMultiple True to draw multiple shapes; false to draw just one.
      * @return The PaintToolBuilder
@@ -340,7 +341,7 @@ public class PaintToolBuilder {
     }
 
     /**
-     * Specifies the height and width of the corner used for round rectangles.
+     * Specifies the height and width of the corner used when drawing round rectangles. Has no effect on other tools.
      *
      * @param cornerRadius The height and width of the corner radius
      * @return The PaintToolBuilder
@@ -350,7 +351,7 @@ public class PaintToolBuilder {
     }
 
     /**
-     * Specifies the height and width of the corner used for round rectangles.
+     * Specifies the height and width of the corner used when drawing round rectangles. Has no effect on other tools.
      *
      * @param observable An observable of the height and width of the corner radius
      * @return The PaintToolBuilder
@@ -381,47 +382,119 @@ public class PaintToolBuilder {
         return this;
     }
 
+    /**
+     * Specifies an observable indicating whether the airbrush's path interpolation is enabled. When enabled, the
+     * airbrush will paint a smooth series of single-pixel "stamps" rather than a line between captured mouse points.
+     * Enabled by default; has no effect on other tools.
+     *
+     * @param observable The path interpolation observable
+     * @return The PaintToolBuilder.
+     */
     public PaintToolBuilder withPathInterpolationObservable(Observable<Boolean> observable) {
         this.pathInterpolationObservable = observable;
         return this;
     }
 
+    /**
+     * Specifies whether the airbrush's path interpolation is enabled. When enabled, the airbrush will paint a smooth
+     * series of single-pixel "stamps" rather than a line between captured mouse points. Enabled by default; has no
+     * effect on other tools.
+     *
+     * @param enabled When true, path interpolation will be used.
+     * @return The PaintToolBuilder.
+     */
     public PaintToolBuilder withPathInterpolation(boolean enabled) {
         return withPathInterpolationObservable(BehaviorSubject.createDefault(enabled));
     }
 
+    /**
+     * Specifies an observable providing the constrained angle (in degrees) to use with this tool. The constrained angle
+     * is used to snap drawn shapes and selections (like lines, polygons and rotations) to the nearest multiple of this
+     * value when the shift key is held down.
+     *
+     * @param observable The constrained angle, in degrees.
+     * @return The PaintToolBuilder
+     */
     public PaintToolBuilder withConstrainedAngleObservable(Observable<Integer> observable) {
         this.constrainedAngleObservable = observable;
         return this;
     }
 
+    /**
+     * Specifies the constrained angle (in degrees) to use with this tool. The constrained angle is used to snap drawn
+     * shapes and selections (like lines, polygons and rotations) to the nearest multiple of this value when the shift
+     * key is held down.
+     *
+     * @param angle The constrained angle, in degrees.
+     * @return The PaintToolBuilder
+     */
     public PaintToolBuilder withConstrainedAngle(int angle) {
         return withConstrainedAngleObservable(BehaviorSubject.createDefault(angle));
     }
 
+    /**
+     * Specifies an observable providing the maximum scale value. See {@link #withMaximumScale(double)} for details.
+     *
+     * @param observable The maximum scale observable.
+     * @return The PaintToolBuilder.
+     */
     public PaintToolBuilder withMaximumScaleObservable(Observable<Double> observable) {
         this.maximumScaleObservable = observable;
         return this;
     }
 
+    /**
+     * Specifies the maximum allowable scale value that the magnifier tool will magnify to. Has no effect on other
+     * tools.
+     *
+     * @param maximumScale The maximum scale value that the magnifier will apply to the canvas.
+     * @return The PaintToolBuilder.
+     */
     public PaintToolBuilder withMaximumScale(double maximumScale) {
         return withMaximumScaleObservable(BehaviorSubject.createDefault(maximumScale));
     }
 
+    /**
+     * Specifies an observable providing the minimum scale value. See {@link #withMinimumScale(double)} for details.
+     *
+     * @param observable The maximum scale observable.
+     * @return The PaintToolBuilder.
+     */
     public PaintToolBuilder withMinimumScaleObservable(Observable<Double> observable) {
         this.minimumScaleObservable = observable;
         return this;
     }
 
+    /**
+     * Specifies the minimum allowable scale value that the magnifier tool will magnify to. Has no effect on other
+     * tools.
+     *
+     * @param minimumScale The minimum scale value that the magnifier will apply to the canvas.
+     * @return The PaintToolBuilder.
+     */
     public PaintToolBuilder withMinimumScale(double minimumScale) {
         return withMinimumScaleObservable(BehaviorSubject.createDefault(minimumScale));
     }
 
+    /**
+     * Specifies an observable providing the magnification step multiple. See {@link #withMagnificationStep(double)}
+     * for details.
+     *
+     * @param observable The magnification step observable.
+     * @return The PaintToolBuilder.
+     */
     public PaintToolBuilder withMagnificationStepObservable(Observable<Double> observable) {
         this.magnificationStepObservable = observable;
         return this;
     }
 
+    /**
+     * Specifies a value by which the canvas's current scale will multiplied or divided each time the magnifier tool is
+     * invoked to zoom in or zoom out.
+     *
+     * @param magnificationStep The magnification step multiple.
+     * @return The PaintToolBuilder.
+     */
     public PaintToolBuilder withMagnificationStep(double magnificationStep) {
         return withMagnificationStepObservable(BehaviorSubject.createDefault(magnificationStep));
     }
@@ -472,7 +545,7 @@ public class PaintToolBuilder {
     }
 
     /**
-     * Creates a paint tool as previously configured.
+     * Creates a paint tool as configured by this builder.
      *
      * @return The built paint tool.
      */
