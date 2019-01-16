@@ -1,6 +1,6 @@
 # JMonet
 
-[Getting Started](#getting-started) | [Tools](#paint-tools) | [Transforms](#image-transforms) | [Brushes](#creating-complex-brush-shapes) | [Cut, Copy and Paste](#cut-copy-and-paste) | [FAQs](#frequently-asked-questions)
+[Getting Started](#getting-started) | [Tools](#paint-tools) | [Transforms](#image-transforms) | [Brushes](#creating-complex-brush-shapes) | [Cut, Copy and Paste](#cut-copy-and-paste) | [Observables](#observable-attributes-with-rxjava) | [FAQs](#frequently-asked-questions)
 
 An easy-to-use toolkit for incorporating paint tools like those found in [MacPaint](https://en.wikipedia.org/wiki/MacPaint) or [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint) into a Java Swing or JavaFX application (does not support Android).
 
@@ -308,7 +308,7 @@ Lets imagine we have a `JCheckBoxMenuItem` in our menu bar and a `JCheckboxButto
 
 #### 1. Create an observable object
 
-Since a single menu item often control attributes for all tools, you'll probably want to model this as a Singleton that's easily accessible from different areas of your program.
+Since a single menu item often controls an attribute for all tools, you'll probably want to model this as a Singleton that's easily accessible from different areas of your program.
 
 ```
 // BehaviorSubject is a simple kind of Observable, see JavaRx documentation for details
@@ -318,16 +318,16 @@ BehaviorSubject<Boolean> drawCenteredObservable = BehaviorSubject.createDefault(
 #### 2. Wire the `Observable` to the menu item and checkbox button
 
 ```
-JCheckBox drawCenteredCheckbox = new JCheckBox();
-JCheckBoxMenuItem drawCenteredMenuItem = new JCheckBoxMenuItem();
+JCheckBox checkbox = new JCheckBox();
+JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem();
 
 // onNext() sets the value seen by other observers
-drawCenteredMenuItem.addActionListener(e -> drawCenteredObservable.onNext(drawCenteredMenuItem.isSelected()));
-drawCenteredCheckbox.addActionListener(a -> drawCenteredObservable.onNext(drawCenteredCheckbox.isSelected());
+menuItem.addActionListener(e -> drawCenteredObservable.onNext(menuItem.isSelected()));
+checkbox.addActionListener(a -> drawCenteredObservable.onNext(checkbox.isSelected());
 
 // The subscribe() lambda fires each time the observed value changes
-drawCenteredObservable.subscribe(drawCentered -> drawCenteredMenuItem.setSelected(drawCentered));
-drawCenteredObservable.subscribe(drawCentered -> drawCenteredCheckbox.setSelected(drawCentered));
+drawCenteredObservable.subscribe(drawCentered -> menuItem.setSelected(drawCentered));
+drawCenteredObservable.subscribe(drawCentered -> checkbox.setSelected(drawCentered));
 ```
 
 Note that the `.subscribe()` method returns a `Disposable` object. You should maintain a reference to this object and invoke `.dispose()` on it when you no longer wish to observe this attribute.
@@ -411,7 +411,7 @@ Of course! Tools are typically subclassed from one of the abstract tool classes 
 
 Tool Base                | Description
 -------------------------|------------
-`PaintTool`              | Base class from which all paint tools are derived. Holds references to attribute providers and implements empty mouse and keyboard event handlers (_template pattern_; allows tools to override only those methods they care about).
+`BasicTool`              | Base class from which all paint tools are derived. Holds references to attribute providers and implements empty mouse and keyboard event handlers (_template pattern_; allows tools to override only those methods they care about).
 `BoundsTool`             | Click-and-drag to define a rectangular boundary. Examples: Rectangle, Oval, Round Rectangle, Shape tools.
 `LinearTool`             | Click-and-drag to define a line between two points. Example: Line tool.
 `PathTool`               | Click-and-drag to define a free-form path on the canvas. Examples: Paintbrush, pencil, eraser tools.
