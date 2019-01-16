@@ -2,7 +2,7 @@
 
 [Getting Started](#getting-started) | [Tools](#paint-tools) | [Transforms](#image-transforms) | [Brushes](#creating-complex-brush-shapes) | [Cut, Copy and Paste](#cut-copy-and-paste) | [Observables](#observable-attributes-with-rxjava) | [FAQs](#frequently-asked-questions)
 
-An easy-to-use toolkit for incorporating paint tools like those found in [MacPaint](https://en.wikipedia.org/wiki/MacPaint) or [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint) into a Java Swing or JavaFX application (does not support Android).
+An easy-to-use toolkit for incorporating paint tools like those found in [MacPaint](https://en.wikipedia.org/wiki/MacPaint) or [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint) into a Java Swing or JavaFX application. JMonet is not compatible with Android.
 
 This project provides the paint capabilities found in [WyldCard](https://github.com/defano/wyldcard) (an open-sourced clone of Apple's HyperCard).
 
@@ -80,11 +80,11 @@ JMonet is published to Maven Central; include the library in your Maven project'
 
 ```
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-  compile 'com.defano.jmonet:jmonet:0.3.3'
+    compile 'com.defano.jmonet:jmonet:0.3.3'
 }
 ```
 
@@ -227,15 +227,15 @@ A bit of integration is required to connect these functions to the UI elements i
 
 The JMonet canvas will not receive cut, copy or paste actions until we register an `ActionListener` that routes those actions to it. Typically, only the user interface element that has focus receives such events, but because a canvas has no clear concept of focus, it's up to you to decide when the canvas should respond to cut, copy and paste actions.
 
-Create an `ActionListener` to send actions to the canvas:
+Create a `CanvasFocusDelegate` and an `ActionListener` to send actions to the canvas:
 
 ```
-CanvasClipboardActionListener myActionListener = new CanvasClipboardActionListener(new CanvasFocusDelegate() {
+CanvasFocusDelegate myFocusDelegate = new CanvasFocusDelegate() {
     @Override
-    public AbstractPaintCanvas getCanvasInFocus() {
+    public PaintCanvas getCanvasInFocus() {
 
-        // Which canvas should handle cut, copy and paste commands? Perhaps check to see if the focused window
-        // contains a canvas...?
+        // Which canvas should handle cut, copy and paste commands? Perhaps check to see if
+        // the focused window contains a canvas...?
         if (isMyCanvasInFocus()) {
             return myCanvas;
         }
@@ -243,7 +243,9 @@ CanvasClipboardActionListener myActionListener = new CanvasClipboardActionListen
         // No canvas has focus, return null
         return null;
     }
-});
+};
+
+CanvasClipboardActionListener myActionListener = new CanvasClipboardActionListener(myFocusDelegate);
 ```
 
 Then, add this `ActionListener` to whichever user interface elements will generate cut, copy and paste events. Most commonly this would be added to menu items but could also be used with buttons on a toolbar, for example:
@@ -304,7 +306,7 @@ The code below provides an implementation that cuts, copies and pastes the activ
 
 JMonet uses RxJava to provide observable attributes. This makes it easy to keep application menus, tool bars and palettes in sync with the state of your paint tools. As one control modifies an attribute, other controls (and the tool itself) will be notified of the change.
 
-Lets imagine we have a `JCheckBoxMenuItem` in our menu bar and a `JCheckboxButton` on a tool palette, both of which can be used to enable or disable the draw centered paint tool attribute. Here's how to use RxJava to acheive that:
+Lets imagine we have a `JCheckBoxMenuItem` in our menu bar and a `JCheckBox` button on a tool palette, both of which can be used to enable or disable the draw centered paint tool attribute. Here's how to use RxJava to achieve that:
 
 #### 1. Create an observable object
 
@@ -318,8 +320,8 @@ BehaviorSubject<Boolean> drawCenteredObservable = BehaviorSubject.createDefault(
 #### 2. Wire the `Observable` to the menu item and checkbox button
 
 ```
-JCheckBox checkbox = new JCheckBox();
 JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem();
+JCheckBox checkbox = new JCheckBox();
 
 // onNext() sets the value seen by other observers
 menuItem.addActionListener(e -> drawCenteredObservable.onNext(menuItem.isSelected()));
