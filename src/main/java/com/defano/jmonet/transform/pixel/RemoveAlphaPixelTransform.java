@@ -26,7 +26,7 @@ public class RemoveAlphaPixelTransform implements PixelTransform {
      * {@inheritDoc}
      */
     @Override
-    public int apply(int x, int y, int rgb) {
+    public int apply(int rgb) {
         Color color = new Color(rgb, true);
 
         int alpha = color.getAlpha();

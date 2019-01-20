@@ -11,7 +11,7 @@ public class InvertPixelTransform implements PixelTransform {
      * {@inheritDoc}
      */
     @Override
-    public int apply(int x, int y, int argb) {
+    public int apply(int argb) {
         int alpha = 0xff000000 & argb;
         int rgb = 0x00ffffff & argb;
 

@@ -45,7 +45,7 @@ public class ApplyPixelTransform implements StaticImageTransform {
         for (int x = 0; x < transformed.getWidth(); x++) {
             for (int y = 0; y < transformed.getHeight(); y++) {
                 if (mask == null || mask.contains(x, y)) {
-                    transformed.setRGB(x, y, transform.apply(x, y, transformed.getRGB(x, y)));
+                    transformed.setRGB(x, y, transform.apply(transformed.getRGB(x, y)));
                 }
             }
         }

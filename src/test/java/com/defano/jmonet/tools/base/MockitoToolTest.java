@@ -49,12 +49,16 @@ public class MockitoToolTest<T extends BasicTool> {
         Mockito.when(mockToolAttributes.getAntiAliasing()).thenReturn(Interpolation.NONE);
     }
 
-    public static <T extends Shape> ShapeMatcher<T> matchesShape(T t) {
+    protected static <T extends Shape> ShapeMatcher<T> matchesShape(T t) {
         return new ShapeMatcher<>(t);
     }
 
-    public static CursorMatcher matchesCursor(Cursor c) {
+    protected static CursorMatcher matchesCursor(Cursor c) {
         return new CursorMatcher(c);
+    }
+
+    protected static ColorMatcher matchesColor(Color c) {
+        return new ColorMatcher(c);
     }
 
     private class MockToolAssembly extends AbstractModule {
