@@ -1,5 +1,8 @@
 package com.defano.jmonet.canvas.layer;
 
+import com.defano.jmonet.context.AwtGraphicsContext;
+import com.defano.jmonet.context.GraphicsContext;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -24,7 +27,7 @@ public interface LayeredImage {
         Dimension size = getSize();
         BufferedImage rendering = new BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB);
 
-        Graphics2D g = rendering.createGraphics();
+        GraphicsContext g = new AwtGraphicsContext(rendering.createGraphics());
         paint(g, 1.0, null);
         g.dispose();
 
@@ -38,7 +41,7 @@ public interface LayeredImage {
      * @param scale The scale at which to draw the image
      * @param clip  The clipping rectangle describing the bounds of the graphics context that should be painted
      */
-    default void paint(Graphics2D g, Double scale, Rectangle clip) {
+    default void paint(GraphicsContext g, Double scale, Rectangle clip) {
         for (ImageLayer thisLayer : getImageLayers()) {
             if (thisLayer != null) {
                 thisLayer.paint(g, scale, clip);

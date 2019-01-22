@@ -1,5 +1,7 @@
 package com.defano.jmonet.canvas;
 
+import com.defano.jmonet.context.AwtGraphicsContext;
+import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.transform.image.ApplyPixelTransform;
 import com.defano.jmonet.transform.image.PixelTransform;
 import com.defano.jmonet.transform.image.StaticImageTransform;
@@ -335,9 +337,9 @@ public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserve
      * @param destination  The image on which to draw them
      */
     private void overlayImage(LayeredImage layeredImage, BufferedImage destination) {
-        Graphics2D g2d = (Graphics2D) destination.getGraphics();
-        layeredImage.paint(g2d, 1.0, null);
-        g2d.dispose();
+        GraphicsContext g = new AwtGraphicsContext((Graphics2D) destination.getGraphics());
+        layeredImage.paint(g, 1.0, null);
+        g.dispose();
     }
 
     /**

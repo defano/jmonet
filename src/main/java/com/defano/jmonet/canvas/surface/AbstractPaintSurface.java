@@ -2,6 +2,8 @@ package com.defano.jmonet.canvas.surface;
 
 import com.defano.jmonet.canvas.layer.ScaledLayeredImage;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
+import com.defano.jmonet.context.AwtGraphicsContext;
+import com.defano.jmonet.context.GraphicsContext;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -235,7 +237,7 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
 
             // Draw visible portion of this surface's image into a buffer (does not modify this graphics context)
             BufferedImage buffer = new BufferedImage(clip.width, clip.height, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2d = buffer.createGraphics();
+            GraphicsContext g2d = new AwtGraphicsContext(buffer.createGraphics());
             g2d.setBackground(CLEAR_COLOR);
             g2d.clearRect(clip.x, clip.y, clip.width, clip.height);
             paint(g2d, getScale(), clip);

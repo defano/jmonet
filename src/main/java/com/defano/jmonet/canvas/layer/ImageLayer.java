@@ -1,5 +1,7 @@
 package com.defano.jmonet.canvas.layer;
 
+import com.defano.jmonet.context.GraphicsContext;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -10,7 +12,7 @@ public class ImageLayer {
 
     private final Point location;
     private final BufferedImage image;
-    private final AlphaComposite composite;
+    private final Composite composite;
 
     /**
      * Creates a layer in which the given image is drawn atop a destination image using {@link AlphaComposite#SRC_OVER}
@@ -30,7 +32,7 @@ public class ImageLayer {
      * @param composite The composite mode this layer is drawn with
      */
     @SuppressWarnings("unused")
-    public ImageLayer(BufferedImage image, AlphaComposite composite) {
+    public ImageLayer(BufferedImage image, Composite composite) {
         this(new Point(0, 0), image, composite);
     }
 
@@ -42,7 +44,7 @@ public class ImageLayer {
      * @param image     The image to be drawn
      * @param composite The composite mode to draw with
      */
-    public ImageLayer(Point location, BufferedImage image, AlphaComposite composite) {
+    public ImageLayer(Point location, BufferedImage image, Composite composite) {
         this.location = location;
         this.image = image;
         this.composite = composite;
@@ -61,7 +63,7 @@ public class ImageLayer {
      * @param clip  The clipping rectangle, represented in scaled coordinates. Only the portion of this image bounded by
      *              this rectangle will be drawn. When null, the entire image will be drawn.
      */
-    public void paint(Graphics2D g, double scale, Rectangle clip) {
+    public void paint(GraphicsContext g, double scale, Rectangle clip) {
         g.setComposite(composite);
 
         // When a clipping region is not specified, draw the entire image layer
@@ -114,7 +116,7 @@ public class ImageLayer {
      *
      * @return The overlay alpha mode.
      */
-    public AlphaComposite getComposite() {
+    public Composite getComposite() {
         return composite;
     }
 

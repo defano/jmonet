@@ -1,5 +1,7 @@
 package com.defano.jmonet.canvas.surface;
 
+import com.defano.jmonet.context.GraphicsContext;
+
 import java.awt.*;
 
 /**
@@ -71,7 +73,7 @@ public interface ScanlineSurface extends ScalableSurface {
      * @param g    The graphics context
      * @param size The size of region onto which scanlines should extend
      */
-    default void paintScanlines(Graphics2D g, Dimension size) {
+    default void paintScanlines(GraphicsContext g, Dimension size) {
         if (isScanlinesVisible()) {
             double scale = getScale();
 
