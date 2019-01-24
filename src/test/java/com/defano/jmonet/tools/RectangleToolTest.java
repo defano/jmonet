@@ -23,7 +23,7 @@ public class RectangleToolTest extends MockitoToolTest<RectangleTool> {
     }
 
     @Test
-    public void testStrokeBounds() {
+    public void testThatRectangleIsStroked() {
         Rectangle bounds = new Rectangle(1, 2, 3, 4);
         Paint fill = Color.black;
         Stroke stroke = new BasicStroke(1);
@@ -37,7 +37,7 @@ public class RectangleToolTest extends MockitoToolTest<RectangleTool> {
     }
 
     @Test
-    public void testFillBounds() {
+    public void testThatRectangleIsFilled() {
         Rectangle bounds = new Rectangle(1, 2, 3, 4);
         Paint fill = Color.black;
 

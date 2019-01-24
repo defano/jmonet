@@ -23,10 +23,10 @@ public class LineToolTest extends MockitoToolTest<LineTool> {
     }
 
     @Test
-    public void testDrawLine() {
-        Line2D l = new Line2D.Float(10, 20, 30, 40);
+    public void testThatLineIsDrawn() {
+        Line2D.Float l = new Line2D.Float(10, 20, 30, 40);
 
-        uut.drawLine(mockScratch, mockStroke, mockPaint, (int)((Line2D.Float) l).x1, (int)((Line2D.Float) l).y1, (int)((Line2D.Float) l).x2, (int)((Line2D.Float) l).y2);
+        uut.drawLine(mockScratch, mockStroke, mockPaint, (int) l.x1, (int) l.y1, (int) l.x2, (int) l.y2);
 
         Mockito.verify(mockScratch).getAddScratchGraphics(eq(uut), eq(mockStroke), argThat(matchesShape(l)));
         Mockito.verify(mockAddScratchGraphics).setPaint(mockPaint);

@@ -133,12 +133,4 @@ public class ImageLayer {
         return new Dimension(image.getWidth(), image.getHeight());
     }
 
-    @Override
-    public String toString() {
-        return "ImageLayer{" +
-                "location=" + location +
-                ", displayedSize=" + getDisplayedSize() +
-                ", storedSize=" + getStoredSize() +
-                '}';
-    }
 }

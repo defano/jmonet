@@ -26,7 +26,7 @@ public class PencilToolTest extends MockitoToolTest<PencilTool> {
     }
 
     @Test
-    public void testAddPointInDrawMode() {
+    public void testThatInitialPointIsDrawn() {
         // Setup
         final Stroke stroke = new BasicStroke(1);
         final Paint fillPaint = Color.blue;
@@ -48,7 +48,7 @@ public class PencilToolTest extends MockitoToolTest<PencilTool> {
 
 
     @Test
-    public void testStartPathInDrawMode() {
+    public void testThatSubsequentPointsAreDrawn() {
         // Setup
         final Stroke stroke = new BasicStroke(1);
         final Paint fillPaint = Color.blue;
@@ -73,7 +73,7 @@ public class PencilToolTest extends MockitoToolTest<PencilTool> {
     }
 
     @Test
-    public void testStartPathInEraseMode() {
+    public void testThatInitialPointIsErased() {
         // Setup
         final Stroke stroke = new BasicStroke(1);
         final Paint fillPaint = Color.blue;

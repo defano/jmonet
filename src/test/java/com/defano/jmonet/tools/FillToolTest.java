@@ -29,12 +29,12 @@ public class FillToolTest extends MockitoToolTest<FillTool> {
     }
 
     @Test
-    public void testGetDefaultCursor() {
+    public void testThatDefaultCursorIsSet() {
         Mockito.verify(mockCursorManager).setToolCursor(argThat(matchesCursor(CursorFactory.makeBucketCursor())), eq(mockCanvas));
     }
 
     @Test
-    public void testMousePressed() {
+    public void testThatMouseDownFloodFills() {
         Point floodOrigin = new Point();
         Dimension canvasSize = new Dimension();
 

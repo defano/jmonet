@@ -15,7 +15,7 @@ class BrightnessPixelTransformTest {
     }
 
     @Test
-    void testUnsaturatedTransform() {
+    void testThatUnsaturatedColorIsTransformed() {
         final int delta = 10;
 
         assertEquals(new Color(
@@ -26,12 +26,12 @@ class BrightnessPixelTransformTest {
     }
 
     @Test
-    void testFullySaturatedTransform() {
+    void testThatFullyWhiteColorRemainUnchangedWhenBrightnessAdded() {
         assertEquals(Color.white.getRGB(), new BrightnessPixelTransform(10).apply(Color.white.getRGB()));
     }
 
     @Test
-    void testPartiallySaturatedTransform() {
+    void testThatSaturatedColorComponentsAreNotModified() {
         Color c = new Color(255, 100, 255, 20);
         final int delta = 20;
 

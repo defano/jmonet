@@ -19,12 +19,12 @@ public class AirbrushToolTest extends MockitoToolTest<AirbrushTool> {
     }
 
     @Test
-    public void testDefaultCursor() {
+    public void testThatDefaultCursorIsSet() {
         Mockito.verify(mockCursorManager).setToolCursor(argThat(matchesCursor(new Cursor(Cursor.CROSSHAIR_CURSOR))), eq(mockCanvas));
     }
 
     @Test
-    public void testAddPoint() {
+    public void testThatPointInPathIsAdded() {
         // Setup
         final Stroke stroke = new BasicStroke(10);
         final Paint fillPaint = Color.BLUE;

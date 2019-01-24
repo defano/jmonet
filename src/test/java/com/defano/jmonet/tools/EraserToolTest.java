@@ -19,7 +19,7 @@ public class EraserToolTest extends MockitoToolTest<EraserTool> {
     }
 
     @Test
-    public void testStartPath() {
+    public void testThatInitialPathIsErased() {
         Stroke stroke = new BasicStroke(1);
         Point initialPoint = new Point(10, 10);
 
@@ -28,7 +28,7 @@ public class EraserToolTest extends MockitoToolTest<EraserTool> {
     }
 
     @Test
-    public void testAddPoint() {
+    public void testThatSubsequentPointsOnPathAreErased() {
         Stroke stroke = new BasicStroke(1);
         Point initialPoint = new Point(10, 10);
         Point thisPoint = new Point(20, 20);
@@ -39,7 +39,8 @@ public class EraserToolTest extends MockitoToolTest<EraserTool> {
     }
 
     @Test
-    public void testCompletePath() {
+    public void testThatCompletePathDoesNothing() {
+        uut.completePath(mockScratch, null, null, null);
         Mockito.verifyZeroInteractions(mockScratch);
     }
 }

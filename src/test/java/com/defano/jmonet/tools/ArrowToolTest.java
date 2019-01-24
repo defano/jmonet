@@ -18,7 +18,7 @@ public class ArrowToolTest extends MockitoToolTest<ArrowTool> {
     }
 
     @Test
-    public void testDefaultCursor() {
+    public void testThatDefaultCursorIsSet() {
         Mockito.verify(mockCursorManager).setToolCursor(argThat(matchesCursor(Cursor.getDefaultCursor())), eq(mockCanvas));
     }
 }
