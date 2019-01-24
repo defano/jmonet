@@ -9,64 +9,22 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
-public abstract class TransformTool extends SelectionTool implements SurfaceInteractionObserver {
+public class TransformTool extends SelectionTool implements SurfaceInteractionObserver, SelectionToolDelegate {
 
     private final static int HANDLE_SIZE = 8;
 
     private BufferedImage originalImage;
     private Rectangle selectionBounds;
     private FlexQuadrilateral transformBounds;
+    private TransformToolDelegate transformToolDelegate;
 
     private Rectangle topLeftHandle, topRightHandle, bottomRightHandle, bottomLeftHandle;
     private boolean dragTopLeft, dragTopRight, dragBottomRight, dragBottomLeft;
 
     public TransformTool(PaintToolType type) {
         super(type);
+        setDelegate(this);
     }
-
-    /**
-     * Invoked to indicate that the user has dragged/moved the top-left handle of the transform quadrilateral to a
-     * new position.
-     *
-     * @param quadrilateral The quadrilateral representing the transform bounds.
-     * @param newPosition The new location of the affected drag handle.
-     * @param isShiftDown True to indicate user is holding shift down; implementers may optionally use this flag
-     *                    to constrain drag movement or apply some other feature of the transform.
-     */
-    public abstract void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown);
-
-    /**
-     * Invoked to indicate that the user has dragged/moved the top-right handle of the transform quadrilateral to a
-     * new position.
-     *
-     * @param quadrilateral The quadrilateral representing the transform bounds.
-     * @param newPosition The new location of the affected drag handle.
-     * @param isShiftDown True to indicate user is holding shift down; implementers may optionally use this flag
-     *                    to constrain drag movement or apply some other feature of the transform.
-     */
-    public abstract void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown);
-
-    /**
-     * Invoked to indicate that the user has dragged/moved the bottom-left handle of the transform quadrilateral to a
-     * new position.
-     *
-     * @param quadrilateral The quadrilateral representing the transform bounds.
-     * @param newPosition The new location of the affected drag handle.
-     * @param isShiftDown True to indicate user is holding shift down; implementers may optionally use this flag
-     *                    to constrain drag movement or apply some other feature of the transform.
-     */
-    public abstract void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown);
-
-    /**
-     * Invoked to indicate that the user has dragged/moved the bottom-right handle of the transform quadrilateral to a
-     * new position.
-     *
-     * @param quadrilateral The quadrilateral representing the transform bounds.
-     * @param newPosition The new location of the affected drag handle.
-     * @param isShiftDown True to indicate user is holding shift down; implementers may optionally use this flag
-     *                    to constrain drag movement or apply some other feature of the transform.
-     */
-    public abstract void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown);
 
     /** {@inheritDoc} */
     @Override
@@ -109,16 +67,16 @@ public abstract class TransformTool extends SelectionTool implements SurfaceInte
             }
 
             if (dragTopLeft) {
-                moveTopLeft(transformBounds, imageLocation, e.isShiftDown());
+                getTransformToolDelegate().moveTopLeft(transformBounds, imageLocation, e.isShiftDown());
                 redrawSelection(true);
             } else if (dragTopRight) {
-                moveTopRight(transformBounds, imageLocation, e.isShiftDown());
+                getTransformToolDelegate().moveTopRight(transformBounds, imageLocation, e.isShiftDown());
                 redrawSelection(true);
             } else if (dragBottomLeft) {
-                moveBottomLeft(transformBounds, imageLocation, e.isShiftDown());
+                getTransformToolDelegate().moveBottomLeft(transformBounds, imageLocation, e.isShiftDown());
                 redrawSelection(true);
             } else if (dragBottomRight) {
-                moveBottomRight(transformBounds, imageLocation, e.isShiftDown());
+                getTransformToolDelegate().moveBottomRight(transformBounds, imageLocation, e.isShiftDown());
                 redrawSelection(true);
             } else {
                 super.mouseDragged(e, imageLocation);
@@ -171,16 +129,17 @@ public abstract class TransformTool extends SelectionTool implements SurfaceInte
 
     /** {@inheritDoc} */
     @Override
-    public void resetSelection() {
+    public void clearSelectionFrame() {
         selectionBounds = null;
         transformBounds = null;
 
         topLeftHandle = topRightHandle = bottomLeftHandle = bottomRightHandle = null;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @param bounds*/
     @Override
-    public void setSelectionOutline(Rectangle bounds) {
+    public void setSelectionFrame(Shape bounds) {
         transformBounds = new FlexQuadrilateral(bounds);
     }
 
@@ -192,7 +151,7 @@ public abstract class TransformTool extends SelectionTool implements SurfaceInte
 
     /** {@inheritDoc} */
     @Override
-    public void translateSelection(int xDelta, int yDelta) {
+    public void translateSelectionFrame(int xDelta, int yDelta) {
         selectionBounds.setLocation(selectionBounds.x + xDelta, selectionBounds.y + yDelta);
         transformBounds.getBottomLeft().x += xDelta;
         transformBounds.getBottomLeft().y += yDelta;
@@ -229,5 +188,19 @@ public abstract class TransformTool extends SelectionTool implements SurfaceInte
             g.fill(bottomRightHandle);
             g.fill(bottomLeftHandle);
         }
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public TransformToolDelegate getTransformToolDelegate() {
+        if (transformToolDelegate == null) {
+            throw new IllegalStateException("Bug! Must invoke setTransformToolDelegate() before activating the tool.");
+        }
+
+        return transformToolDelegate;
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public void setTransformToolDelegate(TransformToolDelegate transformToolDelegate) {
+        this.transformToolDelegate = transformToolDelegate;
     }
 }

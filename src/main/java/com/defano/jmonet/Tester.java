@@ -65,7 +65,7 @@ public class Tester {
 
             myCanvas.commit(new ImageLayerSet(new ImageLayer(new Point(5, 5), img, AlphaComposite.SrcOver)));
 
-            Tool activeTool = PaintToolBuilder.create(PaintToolType.AIRBRUSH)
+            Tool activeTool = PaintToolBuilder.create(PaintToolType.PROJECTION)
                     .withShapeSides(3)
                     .withPathInterpolation(true)
                     .withCornerRadius(20)

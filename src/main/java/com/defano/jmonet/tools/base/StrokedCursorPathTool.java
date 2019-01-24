@@ -9,7 +9,7 @@ import io.reactivex.disposables.Disposable;
 import java.awt.*;
 
 @SuppressWarnings("unused")
-public abstract class StrokedCursorPathTool extends PathTool {
+public class StrokedCursorPathTool extends PathTool {
 
     private Disposable subscription;
     private boolean strokeTrackingCursorEnabled = true;

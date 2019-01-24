@@ -3,6 +3,7 @@ package com.defano.jmonet.tools;
 import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.tools.base.PathToolDelegate;
 import com.defano.jmonet.tools.base.StrokedCursorPathTool;
 import com.defano.jmonet.tools.util.Geometry;
 
@@ -12,7 +13,7 @@ import java.awt.geom.Line2D;
 /**
  * A tool that paints translucent textured paint on the canvas.
  */
-public class AirbrushTool extends StrokedCursorPathTool {
+public class AirbrushTool extends StrokedCursorPathTool implements PathToolDelegate {
 
     /**
      * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
@@ -20,6 +21,7 @@ public class AirbrushTool extends StrokedCursorPathTool {
      */
     AirbrushTool() {
         super(PaintToolType.AIRBRUSH);
+        setDelegate(this);
     }
 
     /** {@inheritDoc} */

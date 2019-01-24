@@ -2,6 +2,7 @@ package com.defano.jmonet.tools;
 
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.SelectionTool;
+import com.defano.jmonet.tools.base.SelectionToolDelegate;
 import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
 import com.defano.jmonet.tools.selection.TransformableSelection;
 import com.defano.jmonet.tools.util.Geometry;
@@ -11,7 +12,7 @@ import java.awt.*;
 /**
  * A tool for drawing a rectangular selection on the canvas.
  */
-public class MarqueeTool extends SelectionTool implements TransformableSelection, TransformableCanvasSelection {
+public class MarqueeTool extends SelectionTool implements TransformableSelection, TransformableCanvasSelection, SelectionToolDelegate {
 
     private Rectangle selectionBounds;
 
@@ -21,6 +22,7 @@ public class MarqueeTool extends SelectionTool implements TransformableSelection
      */
     MarqueeTool() {
         super(PaintToolType.SELECTION);
+        setDelegate(this);
     }
 
     /** {@inheritDoc} */
@@ -52,19 +54,20 @@ public class MarqueeTool extends SelectionTool implements TransformableSelection
 
     /** {@inheritDoc} */
     @Override
-    public void resetSelection() {
+    public void clearSelectionFrame() {
         selectionBounds = null;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @param bounds*/
     @Override
-    public void setSelectionOutline(Rectangle bounds) {
-        selectionBounds = bounds;
+    public void setSelectionFrame(Shape bounds) {
+        selectionBounds = bounds.getBounds();
     }
 
     /** {@inheritDoc} */
     @Override
-    public void translateSelection(int xDelta, int yDelta) {
+    public void translateSelectionFrame(int xDelta, int yDelta) {
         selectionBounds.setLocation(selectionBounds.x + xDelta, selectionBounds.y + yDelta);
     }
 

@@ -1,5 +1,6 @@
 package com.defano.jmonet.tools;
 
+import com.defano.jmonet.tools.base.TransformToolDelegate;
 import com.defano.jmonet.transform.image.ScaleTransform;
 import com.defano.jmonet.model.FlexQuadrilateral;
 import com.defano.jmonet.model.PaintToolType;
@@ -12,7 +13,7 @@ import java.awt.geom.Rectangle2D;
 /**
  * A tool for scaling and resizing the rectangular bounds of an image.
  */
-public class ScaleTool extends TransformTool {
+public class ScaleTool extends TransformTool implements TransformToolDelegate {
 
     /**
      * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
@@ -20,6 +21,7 @@ public class ScaleTool extends TransformTool {
      */
     ScaleTool() {
         super(PaintToolType.SCALE);
+        setTransformToolDelegate(this);
     }
 
     /** {@inheritDoc} */

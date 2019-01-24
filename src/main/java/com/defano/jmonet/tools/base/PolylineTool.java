@@ -1,6 +1,5 @@
 package com.defano.jmonet.tools.base;
 
-import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.util.Geometry;
@@ -11,7 +10,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class PolylineTool extends BasicTool implements SurfaceInteractionObserver {
+public class PolylineTool extends BasicTool<PolylineToolDelegate> implements SurfaceInteractionObserver {
 
     private final List<Point> points = new ArrayList<>();
     private Point currentPoint = null;
@@ -19,38 +18,6 @@ public abstract class PolylineTool extends BasicTool implements SurfaceInteracti
     public PolylineTool(PaintToolType toolType) {
         super(toolType);
     }
-
-    /**
-     * Draws one or more sides (edges) of a polygon which is not filled and may not be closed.
-     *
-     * @param scratch The scratch buffer on which to draw.
-     * @param stroke The current stroke context.
-     * @param strokePaint The current paint context.
-     * @param xPoints An array of x points, see {@link Graphics2D#drawPolyline(int[], int[], int)}
-     * @param yPoints An array of y points, see {@link Graphics2D#drawPolyline(int[], int[], int)}
-     */
-    public abstract void strokePolyline(Scratch scratch, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints);
-
-    /**
-     * Draws one or more sides (edges) of a polygon, closing the shape as needed.
-     *
-     * @param scratch The scratch buffer on which to draw.
-     * @param stroke The current stroke context.
-     * @param strokePaint The current paint context.
-     * @param xPoints An array of x points, see {@link Graphics2D#drawPolygon(int[], int[], int)} (int[], int[], int)}
-     * @param yPoints An array of y points, see {@link Graphics2D#drawPolygon(int[], int[], int)} (int[], int[], int)}
-     */
-    public abstract void strokePolygon(Scratch scratch, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints);
-
-    /**
-     * Draws a filled polygon.
-     *
-     * @param scratch The scratch buffer on which to draw.
-     * @param fillPaint The paint with which to fill the polyfon
-     * @param xPoints An array of x points, see {@link Graphics2D#fillPolygon(int[], int[], int)} (int[], int[], int)}
-     * @param yPoints An array of y points, see {@link Graphics2D#fillPolygon(int[], int[], int)} (int[], int[], int)}
-     */
-    public abstract void fillPolygon(Scratch scratch, Paint fillPaint, int[] xPoints, int[] yPoints);
 
     /** {@inheritDoc} */
     @Override
@@ -81,7 +48,7 @@ public abstract class PolylineTool extends BasicTool implements SurfaceInteracti
         int[] ys = points.stream().mapToInt(i -> i.y).toArray();
 
         getScratch().clear();
-        strokePolyline(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), xs, ys);
+        getDelegate().strokePolyline(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), xs, ys);
         getCanvas().repaint();
 
         points.remove(points.size() - 1);
@@ -117,9 +84,9 @@ public abstract class PolylineTool extends BasicTool implements SurfaceInteracti
         currentPoint = null;
 
         getAttributes().getFillPaint().ifPresent(fillPaint ->
-                fillPolygon(getScratch(), fillPaint, xs, ys));
+                getDelegate().fillPolygon(getScratch(), fillPaint, xs, ys));
 
-        strokePolygon(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), xs, ys);
+        getDelegate().strokePolygon(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), xs, ys);
         getCanvas().commit();
     }
 
@@ -132,7 +99,7 @@ public abstract class PolylineTool extends BasicTool implements SurfaceInteracti
         points.clear();
         currentPoint = null;
 
-        strokePolyline(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), xs, ys);
+        getDelegate().strokePolyline(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), xs, ys);
         getCanvas().commit();
     }
 

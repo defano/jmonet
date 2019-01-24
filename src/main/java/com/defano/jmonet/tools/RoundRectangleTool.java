@@ -4,6 +4,7 @@ import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.BoundsTool;
+import com.defano.jmonet.tools.base.BoundsToolDelegate;
 
 import java.awt.*;
 import java.awt.geom.RoundRectangle2D;
@@ -11,7 +12,7 @@ import java.awt.geom.RoundRectangle2D;
 /**
  * Tool for drawing outlined or filled rounded-rectangles on the canvas.
  */
-public class RoundRectangleTool extends BoundsTool {
+public class RoundRectangleTool extends BoundsTool implements BoundsToolDelegate {
 
     /**
      * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
@@ -19,6 +20,7 @@ public class RoundRectangleTool extends BoundsTool {
      */
     RoundRectangleTool() {
         super(PaintToolType.ROUND_RECTANGLE);
+        setDelegate(this);
     }
 
     /** {@inheritDoc} */

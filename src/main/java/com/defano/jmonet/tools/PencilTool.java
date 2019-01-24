@@ -5,6 +5,7 @@ import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PathTool;
 import com.defano.jmonet.tools.attributes.ToolAttributes;
+import com.defano.jmonet.tools.base.PathToolDelegate;
 import com.defano.jmonet.tools.cursors.CursorFactory;
 
 import java.awt.*;
@@ -13,7 +14,7 @@ import java.awt.geom.Line2D;
 /**
  * Tool for drawing or erasing a single-pixel, free-form path on the canvas.
  */
-public class PencilTool extends PathTool {
+public class PencilTool extends PathTool implements PathToolDelegate {
 
     // Flag indicating whether pencil is operating in eraser mode
     private boolean isErasing = false;
@@ -24,6 +25,7 @@ public class PencilTool extends PathTool {
      */
     PencilTool() {
         super(PaintToolType.PENCIL);
+        setDelegate(this);
     }
 
     @Override

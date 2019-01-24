@@ -11,10 +11,11 @@ import com.google.inject.Inject;
 
 import java.awt.*;
 
-public abstract class BasicTool implements Tool, SurfaceInteractionObserver {
+public class BasicTool<DelegateType> implements Tool, SurfaceInteractionObserver {
 
     private final PaintToolType toolType;
     private PaintCanvas canvas;
+    private DelegateType delegate;
 
     @Inject private ToolAttributes toolAttributes;
     @Inject private CursorManager cursorManager;
@@ -22,12 +23,6 @@ public abstract class BasicTool implements Tool, SurfaceInteractionObserver {
     public BasicTool(PaintToolType toolType) {
         this.toolType = toolType;
     }
-
-    /**
-     * Gets the cursor that should be initially displayed when activating this tool.
-     * @return The default cursor.
-     */
-    public abstract Cursor getDefaultCursor();
 
     /** {@inheritDoc} */
     @Override
@@ -99,5 +94,18 @@ public abstract class BasicTool implements Tool, SurfaceInteractionObserver {
     @Override
     public ToolAttributes getAttributes() {
         return toolAttributes;
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    public DelegateType getDelegate() {
+        if (delegate == null) {
+            throw new IllegalStateException("Bug! Must invoke setDelegate() before activating the tool.");
+        }
+
+        return delegate;
+    }
+
+    public void setDelegate(DelegateType delegate) {
+        this.delegate = delegate;
     }
 }

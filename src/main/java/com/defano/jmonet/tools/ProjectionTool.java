@@ -1,5 +1,6 @@
 package com.defano.jmonet.tools;
 
+import com.defano.jmonet.tools.base.TransformToolDelegate;
 import com.defano.jmonet.transform.image.ProjectionTransform;
 import com.defano.jmonet.model.FlexQuadrilateral;
 import com.defano.jmonet.model.PaintToolType;
@@ -10,7 +11,7 @@ import java.awt.*;
 /**
  * Tool for performing a projection of a selected image onto an arbitrary quadrilateral.
  */
-public class ProjectionTool extends TransformTool {
+public class ProjectionTool extends TransformTool implements TransformToolDelegate {
 
     /**
      * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
@@ -18,6 +19,7 @@ public class ProjectionTool extends TransformTool {
      */
     ProjectionTool() {
         super(PaintToolType.PROJECTION);
+        setTransformToolDelegate(this);
     }
 
     /** {@inheritDoc} */

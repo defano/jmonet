@@ -1,6 +1,5 @@
 package com.defano.jmonet.tools.base;
 
-import com.defano.jmonet.canvas.Scratch;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.util.Geometry;
@@ -8,7 +7,7 @@ import com.defano.jmonet.tools.util.Geometry;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
-public abstract class BoundsTool extends BasicTool implements SurfaceInteractionObserver {
+public class BoundsTool extends BasicTool<BoundsToolDelegate> implements SurfaceInteractionObserver {
 
     private Point initialPoint;
     private Point currentPoint;
@@ -16,29 +15,6 @@ public abstract class BoundsTool extends BasicTool implements SurfaceInteraction
     public BoundsTool(PaintToolType type) {
         super(type);
     }
-
-    /**
-     * Draws the stroke (outline) of a shape described by a rectangular boundary.
-     *
-     * @param scratch The scratch buffer on which to draw
-     * @param stroke The stroke with which to draw
-     * @param paint The paint with which to draw
-     * @param bounds The bounds of the shape to draw
-     * @param isShiftDown True to indicate that the user is holding the shift key; implementers may use this flag to
-     *                    constrain the bounds or otherwise modify the tool behavior.
-     */
-    public abstract void strokeBounds(Scratch scratch, Stroke stroke, Paint paint, Rectangle bounds, boolean isShiftDown);
-
-    /**
-     * Fills a shape described by a rectangular boundary.
-     *
-     * @param scratch The scratch buffer on which to draw
-     * @param fill The paint with which to fill the shape
-     * @param bounds The bounds of the shape to draw
-     * @param isShiftDown True to indicate that the user is holding the shift key; implementers may use this flag to
-     *                    constrain the bounds or otherwise modify the tool behavior.
-     */
-    public abstract void fillBounds(Scratch scratch, Paint fill, Rectangle bounds, boolean isShiftDown);
 
     /** {@inheritDoc} */
     @Override
@@ -76,9 +52,9 @@ public abstract class BoundsTool extends BasicTool implements SurfaceInteraction
                 Geometry.rectangle(originPoint, currentPoint);
 
         getAttributes().getFillPaint().ifPresent(paint ->
-                fillBounds(getScratch(), paint, new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown()));
+                getDelegate().fillBounds(getScratch(), paint, new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown()));
 
-        strokeBounds(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
+        getDelegate().strokeBounds(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown());
         getCanvas().repaint();
     }
 

@@ -3,6 +3,7 @@ package com.defano.jmonet.tools;
 import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.SelectionTool;
+import com.defano.jmonet.tools.base.SelectionToolDelegate;
 import com.defano.jmonet.tools.util.Geometry;
 import com.defano.jmonet.transform.image.ApplyAffineTransform;
 
@@ -14,7 +15,7 @@ import java.awt.image.BufferedImage;
 /**
  * Tool for selecting a bounding box and free-rotating the selected image about its center-point.
  */
-public class RotateTool extends SelectionTool {
+public class RotateTool extends SelectionTool implements SelectionToolDelegate {
 
     private Point centerpoint;                  // Point around which image rotates
     private Point dragLocation;                 // Location of the drag handle
@@ -34,6 +35,7 @@ public class RotateTool extends SelectionTool {
      */
     RotateTool() {
         super(PaintToolType.ROTATE);
+        setDelegate(this);
     }
 
     /**
@@ -108,7 +110,7 @@ public class RotateTool extends SelectionTool {
      * {@inheritDoc}
      */
     @Override
-    public void resetSelection() {
+    public void clearSelectionFrame() {
         selectionBounds = null;
         originalSelectionBounds = null;
         centerpoint = null;
@@ -119,10 +121,11 @@ public class RotateTool extends SelectionTool {
 
     /**
      * {@inheritDoc}
+     * @param bounds
      */
     @Override
-    public void setSelectionOutline(Rectangle bounds) {
-        selectionBounds = bounds;
+    public void setSelectionFrame(Shape bounds) {
+        selectionBounds = bounds.getBounds();
     }
 
     /**
@@ -162,7 +165,7 @@ public class RotateTool extends SelectionTool {
      * {@inheritDoc}
      */
     @Override
-    public void translateSelection(int xDelta, int yDelta) {
+    public void translateSelectionFrame(int xDelta, int yDelta) {
         // Nothing to do; user can't move selection
         selectionBounds = AffineTransform.getTranslateInstance(xDelta, yDelta).createTransformedShape(selectionBounds);
         originalSelectionBounds = AffineTransform.getTranslateInstance(xDelta, yDelta).createTransformedShape(originalSelectionBounds);

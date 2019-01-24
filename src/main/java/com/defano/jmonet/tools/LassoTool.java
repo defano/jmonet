@@ -2,6 +2,7 @@ package com.defano.jmonet.tools;
 
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.SelectionTool;
+import com.defano.jmonet.tools.base.SelectionToolDelegate;
 import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
 import com.defano.jmonet.tools.selection.TransformableSelection;
 import com.defano.jmonet.tools.cursors.CursorFactory;
@@ -13,7 +14,7 @@ import java.awt.geom.Path2D;
 /**
  * Selection tool allowing the user to draw a free-form selection path on the canvas.
  */
-public class LassoTool extends SelectionTool implements TransformableSelection, TransformableCanvasSelection {
+public class LassoTool extends SelectionTool implements TransformableSelection, TransformableCanvasSelection, SelectionToolDelegate {
 
     private Path2D selectionBounds;
 
@@ -23,18 +24,21 @@ public class LassoTool extends SelectionTool implements TransformableSelection, 
      */
     LassoTool() {
         super(PaintToolType.LASSO);
-        super.setBoundaryCursor(CursorFactory.makeLassoCursor());
+
+        setDelegate(this);
+        setBoundaryCursor(CursorFactory.makeLassoCursor());
     }
 
     /** {@inheritDoc} */
     @Override
-    public void resetSelection() {
+    public void clearSelectionFrame() {
         selectionBounds = null;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @param bounds*/
     @Override
-    public void setSelectionOutline(Rectangle bounds) {
+    public void setSelectionFrame(Shape bounds) {
         selectionBounds = new Path2D.Double(bounds);
     }
 
@@ -63,7 +67,7 @@ public class LassoTool extends SelectionTool implements TransformableSelection, 
 
     /** {@inheritDoc} */
     @Override
-    public void translateSelection(int xDelta, int yDelta) {
+    public void translateSelectionFrame(int xDelta, int yDelta) {
         selectionBounds.transform(AffineTransform.getTranslateInstance(xDelta, yDelta));
     }
 }
