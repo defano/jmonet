@@ -6,7 +6,7 @@ import org.mockito.MockitoAnnotations;
 public class MockitoTest {
 
     @BeforeEach
-    void setup() {
+    protected void setup() {
         MockitoAnnotations.initMocks(this);
     }
 }
