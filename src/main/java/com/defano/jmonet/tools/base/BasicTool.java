@@ -40,6 +40,8 @@ public class BasicTool<DelegateType> implements Tool, SurfaceInteractionObserver
         if (canvas != null) {
             canvas.removeSurfaceInteractionObserver(this);
         }
+
+        canvas = null;
     }
 
     /** {@inheritDoc} */

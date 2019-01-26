@@ -35,8 +35,7 @@ public class LassoTool extends SelectionTool implements TransformableSelection, 
         selectionBounds = null;
     }
 
-    /** {@inheritDoc}
-     * @param bounds*/
+    /** {@inheritDoc} */
     @Override
     public void setSelectionFrame(Shape bounds) {
         selectionBounds = new Path2D.Double(bounds);
