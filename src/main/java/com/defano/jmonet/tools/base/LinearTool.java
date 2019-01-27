@@ -22,7 +22,7 @@ public class LinearTool extends BasicTool<LinearToolDelegate> implements Surface
 
     /** {@inheritDoc} */
     @Override
-    public void mouseMoved(MouseEvent e, Point imageLocation) {
+    public void mouseMoved(MouseEvent e, Point canvasLoc) {
         setToolCursor(getToolCursor());
     }
 
@@ -34,10 +34,10 @@ public class LinearTool extends BasicTool<LinearToolDelegate> implements Surface
 
     /** {@inheritDoc} */
     @Override
-    public void mouseDragged(MouseEvent e, Point imageLocation) {
+    public void mouseDragged(MouseEvent e, Point canvasLoc) {
         getScratch().clear();
 
-        Point currentLoc = imageLocation;
+        Point currentLoc = canvasLoc;
 
         if (e.isShiftDown()) {
             currentLoc = Geometry.line(initialPoint, currentLoc, getAttributes().getConstrainedAngle());
@@ -49,7 +49,7 @@ public class LinearTool extends BasicTool<LinearToolDelegate> implements Surface
 
     /** {@inheritDoc} */
     @Override
-    public void mouseReleased(MouseEvent e, Point imageLocation) {
+    public void mouseReleased(MouseEvent e, Point canvasLoc) {
         getCanvas().commit();
     }
 

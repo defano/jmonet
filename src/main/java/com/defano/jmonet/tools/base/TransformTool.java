@@ -58,7 +58,7 @@ public class TransformTool extends SelectionTool implements SurfaceInteractionOb
 
     /** {@inheritDoc} */
     @Override
-    public void mouseDragged(MouseEvent e, Point imageLocation) {
+    public void mouseDragged(MouseEvent e, Point canvasLoc) {
         // Selection exists, see if we're dragging a handle
         if (hasSelection()) {
 
@@ -67,41 +67,41 @@ public class TransformTool extends SelectionTool implements SurfaceInteractionOb
             }
 
             if (dragTopLeft) {
-                getTransformToolDelegate().moveTopLeft(transformBounds, imageLocation, e.isShiftDown());
+                getTransformToolDelegate().moveTopLeft(transformBounds, canvasLoc, e.isShiftDown());
                 redrawSelection(true);
             } else if (dragTopRight) {
-                getTransformToolDelegate().moveTopRight(transformBounds, imageLocation, e.isShiftDown());
+                getTransformToolDelegate().moveTopRight(transformBounds, canvasLoc, e.isShiftDown());
                 redrawSelection(true);
             } else if (dragBottomLeft) {
-                getTransformToolDelegate().moveBottomLeft(transformBounds, imageLocation, e.isShiftDown());
+                getTransformToolDelegate().moveBottomLeft(transformBounds, canvasLoc, e.isShiftDown());
                 redrawSelection(true);
             } else if (dragBottomRight) {
-                getTransformToolDelegate().moveBottomRight(transformBounds, imageLocation, e.isShiftDown());
+                getTransformToolDelegate().moveBottomRight(transformBounds, canvasLoc, e.isShiftDown());
                 redrawSelection(true);
             } else {
-                super.mouseDragged(e, imageLocation);
+                super.mouseDragged(e, canvasLoc);
             }
 
         }
 
         // No selection, delegate to selection tool to define selection
         else {
-            super.mouseDragged(e, imageLocation);
+            super.mouseDragged(e, canvasLoc);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public void mouseReleased(MouseEvent e, Point imageLocation) {
+    public void mouseReleased(MouseEvent e, Point canvasLoc) {
 
         // User is completing selection
         if (!hasSelection()) {
-            super.mouseReleased(e, imageLocation);
+            super.mouseReleased(e, canvasLoc);
 
             // Grab a copy of the selected image before we begin transforming it
             originalImage = getSelectedImage();
         } else {
-            super.mouseReleased(e, imageLocation);
+            super.mouseReleased(e, canvasLoc);
         }
     }
 

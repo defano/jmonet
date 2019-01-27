@@ -30,8 +30,8 @@ public class BoundsTool extends BasicTool<BoundsToolDelegate> implements Surface
 
     /** {@inheritDoc} */
     @Override
-    public void mouseDragged(MouseEvent e, Point imageLocation) {
-        currentPoint = imageLocation;
+    public void mouseDragged(MouseEvent e, Point canvasLoc) {
+        currentPoint = canvasLoc;
 
         if (!getAttributes().isDrawMultiple()) {
             getScratch().clear();
@@ -60,13 +60,13 @@ public class BoundsTool extends BasicTool<BoundsToolDelegate> implements Surface
 
     /** {@inheritDoc} */
     @Override
-    public void mouseReleased(MouseEvent e, Point imageLocation) {
+    public void mouseReleased(MouseEvent e, Point canvasLoc) {
         getCanvas().commit();
     }
 
     /** {@inheritDoc} */
     @Override
-    public void mouseMoved(MouseEvent e, Point imageLocation) {
+    public void mouseMoved(MouseEvent e, Point canvasLoc) {
         setToolCursor(getToolCursor());
     }
 

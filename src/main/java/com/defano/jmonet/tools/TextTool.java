@@ -107,7 +107,7 @@ public class TextTool extends BasicTool implements Consumer, SurfaceInteractionO
 
     /** {@inheritDoc} */
     @Override
-    public void mouseMoved(MouseEvent e, Point imageLocation) {
+    public void mouseMoved(MouseEvent e, Point canvasLoc) {
         setToolCursor(getToolCursor());
     }
 

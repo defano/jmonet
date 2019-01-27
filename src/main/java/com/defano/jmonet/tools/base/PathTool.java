@@ -22,7 +22,7 @@ public class PathTool extends BasicTool<PathToolDelegate> implements SurfaceInte
 
     /** {@inheritDoc} */
     @Override
-    public void mouseMoved(MouseEvent e, Point imageLocation) {
+    public void mouseMoved(MouseEvent e, Point canvasLoc) {
         setToolCursor(getToolCursor());
     }
 
@@ -39,9 +39,9 @@ public class PathTool extends BasicTool<PathToolDelegate> implements SurfaceInte
 
     /** {@inheritDoc} */
     @Override
-    public void mouseDragged(MouseEvent e, Point imageLocation) {
-        getDelegate().addPoint(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), lastPoint, imageLocation);
-        lastPoint = imageLocation;
+    public void mouseDragged(MouseEvent e, Point canvasLoc) {
+        getDelegate().addPoint(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), lastPoint, canvasLoc);
+        lastPoint = canvasLoc;
 
         // While mouse is down, only repaint the modified area of the canvas
         getCanvas().repaint(getScratch().getDirtyRegion());
@@ -49,7 +49,7 @@ public class PathTool extends BasicTool<PathToolDelegate> implements SurfaceInte
 
     /** {@inheritDoc} */
     @Override
-    public void mouseReleased(MouseEvent e, Point imageLocation) {
+    public void mouseReleased(MouseEvent e, Point canvasLoc) {
         getDelegate().completePath(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), getAttributes().getFillPaint().orElse(null));
         getCanvas().commit(getScratch().getLayerSet());
     }

@@ -92,10 +92,10 @@ public class SelectionTool extends BasicTool<SelectionToolDelegate> implements C
      * {@inheritDoc}
      */
     @Override
-    public void mouseMoved(MouseEvent e, Point imageLocation) {
+    public void mouseMoved(MouseEvent e, Point canvasLoc) {
 
         // Update tool cursor
-        if (hasSelectionFrame() && getSelectionFrame().contains(imageLocation)) {
+        if (hasSelectionFrame() && getSelectionFrame().contains(canvasLoc)) {
             setToolCursor(getMovementCursor());
         } else {
             setToolCursor(getBoundaryCursor());
@@ -130,20 +130,20 @@ public class SelectionTool extends BasicTool<SelectionToolDelegate> implements C
      * {@inheritDoc}
      */
     @Override
-    public void mouseDragged(MouseEvent e, Point imageLocation) {
+    public void mouseDragged(MouseEvent e, Point canvasLoc) {
 
         // User is moving an existing selection
         if (hasSelection() && isMovingSelection) {
             setDirty();
-            translateSelection(imageLocation.x - lastPoint.x, imageLocation.y - lastPoint.y);
+            translateSelection(canvasLoc.x - lastPoint.x, canvasLoc.y - lastPoint.y);
             redrawSelection(true);
-            lastPoint = imageLocation;
+            lastPoint = canvasLoc;
         }
 
         // User is defining a new selection rectangle
         else {
             Rectangle canvasBounds = new Rectangle(new Point(), getCanvas().getCanvasSize());
-            getDelegate().addPointToSelectionFrame(initialPoint, Geometry.constrainToBounds(imageLocation, canvasBounds), e.isShiftDown());
+            getDelegate().addPointToSelectionFrame(initialPoint, Geometry.constrainToBounds(canvasLoc, canvasBounds), e.isShiftDown());
 
             getScratch().clear();
             drawSelectionFrame();
@@ -155,11 +155,11 @@ public class SelectionTool extends BasicTool<SelectionToolDelegate> implements C
      * {@inheritDoc}
      */
     @Override
-    public void mouseReleased(MouseEvent e, Point imageLocation) {
+    public void mouseReleased(MouseEvent e, Point canvasLoc) {
         // User released mouse after defining a selection
         if (!hasSelection() && hasSelectionFrame()) {
             getSelectionFromCanvas();
-            getDelegate().closeSelectionFrame(imageLocation);
+            getDelegate().closeSelectionFrame(canvasLoc);
         }
     }
 

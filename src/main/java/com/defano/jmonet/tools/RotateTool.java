@@ -80,13 +80,13 @@ public class RotateTool extends SelectionTool implements SelectionToolDelegate {
      * {@inheritDoc}
      */
     @Override
-    public void mouseDragged(MouseEvent e, Point imageLocation) {
+    public void mouseDragged(MouseEvent e, Point canvasLoc) {
 
         if (hasSelection() && rotating) {
             setDirty();     // Mutating the selected image
 
             // Calculate the rotation angle
-            dragLocation = imageLocation;
+            dragLocation = canvasLoc;
             double degrees = Geometry.angle(centerpoint.x, centerpoint.y, dragLocation.x, dragLocation.y);
 
             if (e.isShiftDown()) {
@@ -102,7 +102,7 @@ public class RotateTool extends SelectionTool implements SelectionToolDelegate {
             // Rotate the selected canvas image
             setSelectedImage(new ApplyAffineTransform(AffineTransform.getRotateInstance(angle, originalImage.getWidth() / 2.0, originalImage.getHeight() / 2.0)).apply(originalImage));
         } else {
-            super.mouseDragged(e, imageLocation);
+            super.mouseDragged(e, canvasLoc);
         }
     }
 

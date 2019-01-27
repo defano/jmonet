@@ -27,7 +27,7 @@ public class PolylineTool extends BasicTool<PolylineToolDelegate> implements Sur
 
     /** {@inheritDoc} */
     @Override
-    public void mouseMoved(MouseEvent e, Point imageLocation) {
+    public void mouseMoved(MouseEvent e, Point canvasLoc) {
         setToolCursor(getToolCursor());
 
         // Nothing to do if initial point is not yet established
@@ -40,7 +40,7 @@ public class PolylineTool extends BasicTool<PolylineToolDelegate> implements Sur
             currentPoint = Geometry.line(lastPoint, e.getPoint(), getAttributes().getConstrainedAngle());
             points.add(currentPoint);
         } else {
-            currentPoint = imageLocation;
+            currentPoint = canvasLoc;
             points.add(currentPoint);
         }
 
