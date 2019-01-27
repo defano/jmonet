@@ -15,6 +15,7 @@ public class LinearTool extends BasicTool<LinearToolDelegate> implements Surface
         super(type);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Cursor getDefaultCursor() {
         return new Cursor(Cursor.CROSSHAIR_CURSOR);
@@ -53,4 +54,7 @@ public class LinearTool extends BasicTool<LinearToolDelegate> implements Surface
         getCanvas().commit();
     }
 
+    public Point getInitialPoint() {
+        return this.initialPoint;
+    }
 }
