@@ -127,8 +127,8 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
         // Modify scroll position to "zoom in" or "zoom out" on the center of the previous scroll view bounds
         if (scrollController != null) {
             scrollController.setScrollPosition(new Point(
-                    Math.max(0, (int) ((prevScrollRect.x + prevScrollRect.width / 2) * scale / prevScale - prevScrollRect.width / 2)),
-                    Math.max(0, (int) ((prevScrollRect.y + prevScrollRect.height / 2) * scale / prevScale - prevScrollRect.height / 2))
+                    Math.max(0, (int) ((prevScrollRect.x + prevScrollRect.width / 2.0) * scale / prevScale - prevScrollRect.width / 2.0)),
+                    Math.max(0, (int) ((prevScrollRect.y + prevScrollRect.height / 2.0) * scale / prevScale - prevScrollRect.height / 2.0))
             ));
         }
 

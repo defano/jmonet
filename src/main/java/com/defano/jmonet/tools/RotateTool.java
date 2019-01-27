@@ -208,7 +208,7 @@ public class RotateTool extends SelectionTool implements SelectionToolDelegate {
             throw new IllegalArgumentException("Image to square cannot be null.");
         }
 
-        int diagonal = (int) Math.ceil(Math.sqrt(image.getHeight() * image.getHeight() + image.getWidth() * image.getWidth()));
+        int diagonal = (int) Math.ceil(Math.sqrt((double)(image.getHeight() * image.getHeight()) + (double)(image.getWidth() * image.getWidth())));
 
         int deltaX = diagonal - image.getWidth();
         int deltaY = diagonal - image.getHeight();
@@ -216,7 +216,7 @@ public class RotateTool extends SelectionTool implements SelectionToolDelegate {
         BufferedImage enlarged = new BufferedImage(diagonal, diagonal, image.getType());
 
         Graphics2D g = enlarged.createGraphics();
-        g.drawImage(image, AffineTransform.getTranslateInstance(deltaX / 2, deltaY / 2), null);
+        g.drawImage(image, AffineTransform.getTranslateInstance(deltaX / 2.0, deltaY / 2.0), null);
         g.dispose();
 
         return enlarged;

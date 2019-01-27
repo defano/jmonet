@@ -39,7 +39,7 @@ public class Geometry {
             toNearest = 1;
         }
 
-        return toNearest * Math.round(value / toNearest);
+        return toNearest * Math.round((float) value / (float) toNearest);
     }
 
 
@@ -151,8 +151,8 @@ public class Geometry {
      */
     public static double theta(Point origin, Point p1, Point p2) {
 
-        double angle1 = Math.atan2(p1.y - origin.y, p1.x - origin.x);
-        double angle2 = Math.atan2(p2.y - origin.y, p2.x - origin.x);
+        double angle1 = Math.atan2(p1.getY() - origin.getY(), p1.getX() - origin.getX());
+        double angle2 = Math.atan2(p2.getY() - origin.getY(), p2.getX() - origin.getX());
 
         return angle1 - angle2;
     }

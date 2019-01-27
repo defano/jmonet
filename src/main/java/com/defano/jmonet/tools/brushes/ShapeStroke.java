@@ -36,7 +36,7 @@ public class ShapeStroke extends StampStroke {
     public void stampPoint(GeneralPath path, Point point) {
         for (Shape shape : shapes) {
             Shape stamp = AffineTransform
-                    .getTranslateInstance(point.x - (shape.getBounds().width / 2) - shape.getBounds().x, point.y - (shape.getBounds().height / 2) - shape.getBounds().y)
+                    .getTranslateInstance(point.x - (shape.getBounds().width / 2.0) - shape.getBounds().x, point.y - (shape.getBounds().height / 2.0) - shape.getBounds().y)
                     .createTransformedShape(shape);
 
             path.append(stamp, false);
