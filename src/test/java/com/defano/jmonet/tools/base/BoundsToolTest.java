@@ -1,5 +1,6 @@
 package com.defano.jmonet.tools.base;
 
+import com.defano.jmonet.tools.util.Geometry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -81,6 +82,52 @@ class BoundsToolTest extends BaseToolTest<BoundsTool> {
     }
 
     @Test
+    void thatMouseDraggedDrawsSquareWhenShiftIsDown() {
+        Point startPoint = new Point(10, 10);
+        Point endPoint = new Point(100, 200);
+
+        Mockito.when(mockToolAttributes.getFillPaint()).thenReturn(Optional.empty());
+        Mockito.when(mockToolAttributes.getStrokePaint()).thenReturn(mockStrokePaint);
+        Mockito.when(mockToolAttributes.getStroke()).thenReturn(mockStroke);
+        Mockito.when(mockEvent.isShiftDown()).thenReturn(true);
+
+        uut.setDelegate(mockDelegate);
+        uut.activate(mockCanvas);
+        uut.mousePressed(mockEvent, startPoint);
+        uut.mouseDragged(mockEvent, endPoint);
+
+        Mockito.verify(mockDelegate).strokeBounds(
+                mockScratch,
+                mockStroke,
+                mockStrokePaint,
+                Geometry.square(startPoint, endPoint),
+                true);
+    }
+
+    @Test
+    void thatMouseDraggedDrawsFromCenter() {
+        Point startPoint = new Point(10, 10);
+        Point endPoint = new Point(20, 20);
+
+        Mockito.when(mockToolAttributes.getFillPaint()).thenReturn(Optional.empty());
+        Mockito.when(mockToolAttributes.getStrokePaint()).thenReturn(mockStrokePaint);
+        Mockito.when(mockToolAttributes.getStroke()).thenReturn(mockStroke);
+        Mockito.when(mockToolAttributes.isDrawCentered()).thenReturn(true);
+
+        uut.setDelegate(mockDelegate);
+        uut.activate(mockCanvas);
+        uut.mousePressed(mockEvent, startPoint);
+        uut.mouseDragged(mockEvent, endPoint);
+
+        Mockito.verify(mockDelegate).strokeBounds(
+                mockScratch,
+                mockStroke,
+                mockStrokePaint,
+                new Rectangle(5, 5, 15, 15),
+                false);
+    }
+
+    @Test
     void thatMouseDraggedDrawsFilledBounds() {
         Point startPoint = new Point(10, 10);
         Point endPoint = new Point(100, 100);
@@ -108,6 +155,17 @@ class BoundsToolTest extends BaseToolTest<BoundsTool> {
                 new Rectangle(startPoint, new Dimension(endPoint.x - startPoint.x, endPoint.y - startPoint.y)),
                 false
         );
+
+        assertEquals(startPoint, uut.getInitialPoint());
+        assertEquals(endPoint, uut.getCurrentPoint());
+    }
+
+    @Test
+    void testThatMouseMovedUpdatesCursor() {
+        Mockito.when(mockCursorManager.getToolCursor()).thenReturn(mockCursor);
+        uut.activate(mockCanvas);
+        uut.mouseMoved(mockEvent, mockPoint);
+        Mockito.verify(mockCursorManager).setToolCursor(mockCursor, mockCanvas);
     }
 
 }
