@@ -4,10 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-
     <name>JMonet</name>
-    <description>A rudimentary toolkit for incorporating MacPaint-like tools into a Java Swing or JavaFX application.
-    </description>
+    <description>A toolkit for incorporating MacPaint-like tools into a Java Swing or JavaFX application.</description>
     <url>https://github.com/defano/jmonet</url>
 
     <licenses>
@@ -82,7 +80,6 @@
             <artifactId>guice</artifactId>
             <version>4.1.0</version>
         </dependency>
-
     </dependencies>
 
     <distributionManagement>
