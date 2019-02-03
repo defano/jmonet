@@ -10,6 +10,12 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A tool that draws a series of interconnected lines where the next start-point is the end-point of the previous line.
+ * Double-clicking completes the sequence, allowing for the shape to be closed and filled.
+ *
+ * See {@link com.defano.jmonet.tools.CurveTool} and {@link com.defano.jmonet.tools.PolygonTool} as examples.
+ */
 public class PolylineTool extends BasicTool<PolylineToolDelegate> implements SurfaceInteractionObserver {
 
     private final List<Point> points = new ArrayList<>();
@@ -37,7 +43,7 @@ public class PolylineTool extends BasicTool<PolylineToolDelegate> implements Sur
 
         if (e.isShiftDown()) {
             Point lastPoint = points.get(points.size() - 1);
-            currentPoint = Geometry.line(lastPoint, e.getPoint(), getAttributes().getConstrainedAngle());
+            currentPoint = Geometry.line(lastPoint, canvasLoc, getAttributes().getConstrainedAngle());
             points.add(currentPoint);
         } else {
             currentPoint = canvasLoc;

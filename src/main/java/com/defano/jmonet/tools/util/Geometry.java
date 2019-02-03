@@ -11,6 +11,9 @@ import java.util.List;
  */
 public class Geometry {
 
+    /**
+     * Library of static methods; cannot be instantiated.
+     */
     private Geometry() {}
 
     /**
@@ -21,27 +24,25 @@ public class Geometry {
      * @param toNearest The nearest integer multiple.
      * @return The nearest integer multiple
      */
-    public static int round(Double value, int toNearest) {
+    public static int nearestRound(double value, int toNearest) {
         return (int) (toNearest * Math.round(value / toNearest));
     }
 
     /**
-     * Rounds an integer value to the nearest provided integer multiple. For example rounding 24 to the nearest 10
-     * yields 20.
+     * Rounds a value down to the nearest integer multiple. For example the floor of 24 to the nearest 10
+     * yields 20; similarly flooring 29 to the nearest 10 also returns 20.
      *
      * @param value The value to round
      * @param toNearest The nearest integer multiple; if 0, no rounding occurs
      * @return The nearest integer multiple
      */
-    @SuppressWarnings("IntegerDivisionInFloatingPointContext")
-    public static int round(int value, int toNearest) {
+    public static int nearestFloor(int value, int toNearest) {
         if (toNearest == 0) {
             toNearest = 1;
         }
 
-        return toNearest * Math.round((float) value / (float) toNearest);
+        return toNearest * (value / toNearest);
     }
-
 
     /**
      * Calculates the length of the line represented by two points.
@@ -126,7 +127,7 @@ public class Geometry {
      */
     public static Point line(Point p1, Point p2, int toNearestAngle) {
         double length = distance(p1, p2);
-        double nearestAngle = round(Geometry.angle(p1.x, p1.y, p2.x, p2.y), toNearestAngle);
+        double nearestAngle = nearestRound(Geometry.angle(p1.x, p1.y, p2.x, p2.y), toNearestAngle);
         return asPoint(line(p1, length, nearestAngle));
     }
 

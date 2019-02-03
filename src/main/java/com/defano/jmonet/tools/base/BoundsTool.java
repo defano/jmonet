@@ -70,10 +70,18 @@ public class BoundsTool extends BasicTool<BoundsToolDelegate> implements Surface
         setToolCursor(getToolCursor());
     }
 
+    /**
+     * Gets the initial point defined by this tool, or null if no point has yet been defined.
+     * @return The initial point
+     */
     public Point getInitialPoint() {
         return initialPoint;
     }
 
+    /**
+     * Gets the last point defined by this tool, or null if no point has yet been defined.
+     * @return The current point.
+     */
     public Point getCurrentPoint() {
         return currentPoint;
     }

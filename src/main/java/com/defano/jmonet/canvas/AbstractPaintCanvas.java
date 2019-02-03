@@ -111,11 +111,11 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
         double scale = getScaleObservable().blockingFirst();
 
         int x = p.x - error.x;
-        x = Geometry.round(x, (int) (gridSpacing * scale));
+        x = Geometry.nearestFloor(x, (int) (gridSpacing * scale));
         x = (int) (x / scale);
 
         int y = p.y - error.y;
-        y = Geometry.round(y, (int) (gridSpacing * scale));
+        y = Geometry.nearestFloor(y, (int) (gridSpacing * scale));
         y = (int) (y / scale);
 
         return new Point(x, y);

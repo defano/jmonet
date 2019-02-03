@@ -11,6 +11,12 @@ import com.google.inject.Inject;
 
 import java.awt.*;
 
+/**
+ * A base tool class providing configuration-specific attributes (like stroke and fill), activation state management
+ * (which canvas is the tool active on, if any) and a reference to the tool's delegate.
+ *
+ * @param <DelegateType> The object type of the delegate class in use by this tool.
+ */
 public class BasicTool<DelegateType> implements Tool, SurfaceInteractionObserver {
 
     private final PaintToolType toolType;

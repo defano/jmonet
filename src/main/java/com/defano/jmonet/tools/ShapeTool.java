@@ -51,7 +51,7 @@ public class ShapeTool extends BoundsTool implements BoundsToolDelegate {
         double degrees = Geometry.angle(getInitialPoint().x, getInitialPoint().y, getCurrentPoint().x, getCurrentPoint().y);
 
         if (isShiftDown) {
-            degrees = Geometry.round(degrees, getAttributes().getConstrainedAngle());
+            degrees = Geometry.nearestRound(degrees, getAttributes().getConstrainedAngle());
         }
 
         return Math.toRadians(degrees);
