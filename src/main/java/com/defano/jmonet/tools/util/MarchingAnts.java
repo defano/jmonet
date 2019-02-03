@@ -14,16 +14,20 @@ import java.util.concurrent.TimeUnit;
  */
 public class MarchingAnts {
 
-    private static final int ANIMATION_PERIOD_MS = 50;
     private static final MarchingAnts instance = new MarchingAnts();
     private static final ScheduledExecutorService antsAnimator = Executors.newSingleThreadScheduledExecutor();
     private static final Set<MarchingAntsObserver> observers = new HashSet<>();
 
+    private int animationPeriodMs = 50;
+    private int antLength = 5;
+    private int antWidth = 1;
+    private Color antColor = Color.DARK_GRAY;
+    private Color pathColor = Color.WHITE;
+
     private int antsPhase;
     private Future antsAnimation;
 
-    private MarchingAnts() {
-    }
+    private MarchingAnts() {}
 
     public static MarchingAnts getInstance() {
         return instance;
@@ -35,7 +39,14 @@ public class MarchingAnts {
      * @return The marching ants paint stroke.
      */
     public Stroke getMarchingAnts() {
-        return new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 5.0f, new float[]{5.0f}, antsPhase);
+        return new BasicStroke(
+                antWidth,
+                BasicStroke.CAP_BUTT,
+                BasicStroke.JOIN_MITER,
+                antLength,
+                new float[]{antLength},
+                antsPhase
+        );
     }
 
     /**
@@ -59,13 +70,114 @@ public class MarchingAnts {
         }
     }
 
+    /**
+     * Gets the period of the ants animation, in milliseconds. That is, the number of milliseconds delayed before
+     * redrawing the position of the ants. Lower values means faster moving ants.
+     *
+     * @return The period of the ants animation, in milliseconds.
+     */
+    @SuppressWarnings("unused")
+    public int getAnimationPeriodMs() {
+        return animationPeriodMs;
+    }
+
+    /**
+     * Sets the period of the ants animation, in milliseconds. That is, the number of milliseconds delayed before
+     * redrawing the position of the ants. Lower values means faster moving ants.
+     *
+     * @param animationPeriodMs The period of the ants animation, in milliseconds.
+     */
+    @SuppressWarnings("unused")
+    public void setAnimationPeriodMs(int animationPeriodMs) {
+        this.animationPeriodMs = animationPeriodMs;
+    }
+
+    /**
+     * Gets the length of each ant, in pixels. Note that the length of the ant always is the same as the space between
+     * ants.
+     *
+     * @return The length of each ant, in pixels.
+     */
+    @SuppressWarnings("unused")
+    public int getAntLength() {
+        return antLength;
+    }
+
+    /**
+     * Sets the length of each ant, in pixels. Note that the length of the ant always is the same as the space between
+     * ants.
+     * @param antLength The length of each ant, in pixels.
+     */
+    @SuppressWarnings("unused")
+    public void setAntLength(int antLength) {
+        this.antLength = antLength;
+    }
+
+    /**
+     * Gets the width of each ant, in pixels. Note that when stroking a selection outline with marching ants, the
+     * ants are centered on the selected shape. Therefore, wide ants will partially obscure the selection being made.
+     *
+     * @return The width of each ant, in pixels.
+     */
+    @SuppressWarnings("unused")
+    public int getAntWidth() {
+        return antWidth;
+    }
+
+    /**
+     * Sets the width of each ant, in pixels. Note that when stroking a selection outline with marching ants, the
+     * ants are centered on the selected shape. Therefore, wide ants will partially obscure the selection being made.
+     *
+     * @param antWidth The width of each ant, in pixels.
+     */
+    @SuppressWarnings("unused")
+    public void setAntWidth(int antWidth) {
+        this.antWidth = antWidth;
+    }
+
+    /**
+     * Returns the color of each ant.
+     * @return The ant color
+     */
+    @SuppressWarnings("unused")
+    public Color getAntColor() {
+        return antColor;
+    }
+
+    /**
+     * Sets the color of each ant.
+     * @param antColor The ant color
+     */
+    @SuppressWarnings("unused")
+    public void setAntColor(Color antColor) {
+        this.antColor = antColor;
+    }
+
+    /**
+     * Gets the color of space between ants (the ant path).
+     * @return The ant path color.
+     */
+    @SuppressWarnings("unused")
+    public Color getPathColor() {
+        return pathColor;
+    }
+
+    /**
+     * Sets the color of the space between ants.
+     * @param pathColor The ant path color
+     */
+    @SuppressWarnings("unused")
+    public void setPathColor(Color pathColor) {
+        this.pathColor = pathColor;
+    }
+
     private void startMarching() {
         stopMarching();
 
         antsAnimation = antsAnimator.scheduleAtFixedRate(() -> SwingUtilities.invokeLater(() -> {
-            antsPhase = antsPhase + 1 % 5;
+            antsPhase = antsPhase + 1 % antLength;
             fireMarchingAntsObservers();
-        }), 0, ANIMATION_PERIOD_MS, TimeUnit.MILLISECONDS);
+        }), 0, animationPeriodMs, TimeUnit.MILLISECONDS);
     }
 
     private void stopMarching() {

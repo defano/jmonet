@@ -1,11 +1,11 @@
 package com.defano.jmonet.tools.selection;
 
-import com.defano.jmonet.algo.fill.FillFunction;
-import com.defano.jmonet.algo.transform.image.PixelTransform;
-import com.defano.jmonet.algo.transform.image.StaticImageTransform;
-import com.defano.jmonet.algo.transform.image.Transformable;
-import com.defano.jmonet.algo.transform.image.ApplyPixelTransform;
-import com.defano.jmonet.algo.transform.image.FillTransform;
+import com.defano.jmonet.tools.attributes.FillFunction;
+import com.defano.jmonet.transform.image.PixelTransform;
+import com.defano.jmonet.transform.image.StaticImageTransform;
+import com.defano.jmonet.transform.image.Transformable;
+import com.defano.jmonet.transform.image.ApplyPixelTransform;
+import com.defano.jmonet.transform.image.FillTransform;
 
 import java.awt.*;
 

@@ -10,7 +10,7 @@ public interface MarchingAntsObserver {
      * Called to indicate that ants have "marched" (the dotted line stroke phase has changed) and that observers should
      * re-paint using the stroke provided.
      *
-     * @param newAntsStroke The new paint stroke to re-draw.
+     * @param ants The new paint stroke to re-draw.
      */
-    void onAntsMoved(Stroke newAntsStroke);
+    void onAntsMoved(Stroke ants);
 }

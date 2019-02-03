@@ -22,7 +22,7 @@ public interface MutableSelection extends Selection {
      *
      * @param bounds The new selection bounds.
      */
-    void setSelectionOutline(Rectangle bounds);
+    void setSelectionOutline(Shape bounds);
 
     /**
      * Marks the selection as having been mutated (either by transformation or movement).

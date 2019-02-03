@@ -1,7 +1,7 @@
 package com.defano.jmonet.model;
 
 import com.defano.jmonet.tools.*;
-import com.defano.jmonet.tools.builder.PaintTool;
+import com.defano.jmonet.tools.base.Tool;
 
 /**
  * An enumeration of paint tools provided by this library.
@@ -18,7 +18,7 @@ public enum PaintToolType {
     POLYGON(PolygonTool.class),
     SHAPE(ShapeTool.class),
     FREEFORM(FreeformShapeTool.class),
-    SELECTION(SelectionTool.class),
+    SELECTION(MarqueeTool.class),
     LASSO(LassoTool.class),
     TEXT(TextTool.class),
     FILL(FillTool.class),
@@ -32,22 +32,14 @@ public enum PaintToolType {
     PERSPECTIVE(PerspectiveTool.class),
     RUBBERSHEET(RubberSheetTool.class);
 
-    private final Class<? extends PaintTool> toolClass;
+    private final Class<? extends Tool> toolClass;
 
-    PaintToolType(Class<? extends PaintTool> clazz) {
+    PaintToolType(Class<? extends Tool> clazz) {
         this.toolClass = clazz;
     }
 
-    /**
-     * Creates a new instance of this type of {@link PaintTool}.
-     * @return A new {@link PaintTool}.
-     */
-    public PaintTool getToolInstance() {
-        try {
-            return toolClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new IllegalStateException("Failed to instantiate PaintTool.", e);
-        }
+    public Class<? extends Tool> getToolClass() {
+        return toolClass;
     }
 
     /**

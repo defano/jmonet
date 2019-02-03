@@ -2,13 +2,14 @@ package com.defano.jmonet.tools.base;
 
 import com.defano.jmonet.canvas.PaintCanvas;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.util.CursorFactory;
+import com.defano.jmonet.tools.cursors.CursorFactory;
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
 
 import java.awt.*;
 
-public abstract class StrokedCursorPathTool extends AbstractPathTool {
+@SuppressWarnings("unused")
+public class StrokedCursorPathTool extends PathTool {
 
     private Disposable subscription;
     private boolean strokeTrackingCursorEnabled = true;
@@ -29,12 +30,12 @@ public abstract class StrokedCursorPathTool extends AbstractPathTool {
     @Override
     public void activate(PaintCanvas canvas) {
         super.activate(canvas);
-        subscription = Observable.merge(getStrokeObservable(), getStrokePaintObservable(), canvas.getScaleObservable()).subscribe(o ->
+        subscription = Observable.merge(getAttributes().getStrokeObservable(), getAttributes().getStrokePaintObservable(), canvas.getScaleObservable()).subscribe(o ->
         {
             if (strokeTrackingCursorEnabled) {
                 setToolCursor(CursorFactory.makeBrushCursor(
-                        getStroke(),
-                        getStrokePaint(),
+                        getAttributes().getStroke(),
+                        getAttributes().getStrokePaint(),
                         strokeTrackingCursorScaled ? canvas.getScale() : 1.0)
                 );
             }

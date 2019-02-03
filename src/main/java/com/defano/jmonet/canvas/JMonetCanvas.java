@@ -1,9 +1,11 @@
 package com.defano.jmonet.canvas;
 
-import com.defano.jmonet.algo.transform.image.ApplyPixelTransform;
-import com.defano.jmonet.algo.transform.image.PixelTransform;
-import com.defano.jmonet.algo.transform.image.StaticImageTransform;
-import com.defano.jmonet.algo.transform.image.Transformable;
+import com.defano.jmonet.context.AwtGraphicsContext;
+import com.defano.jmonet.context.GraphicsContext;
+import com.defano.jmonet.transform.image.ApplyPixelTransform;
+import com.defano.jmonet.transform.image.PixelTransform;
+import com.defano.jmonet.transform.image.StaticImageTransform;
+import com.defano.jmonet.transform.image.Transformable;
 import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.layer.LayeredImage;
@@ -20,6 +22,7 @@ import java.util.Objects;
 /**
  * A paint canvas with a built-in undo and redo buffer.
  */
+@SuppressWarnings("unused")
 public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserver, Transformable {
 
     // Maximum number of allowable undo operations
@@ -334,9 +337,9 @@ public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserve
      * @param destination  The image on which to draw them
      */
     private void overlayImage(LayeredImage layeredImage, BufferedImage destination) {
-        Graphics2D g2d = (Graphics2D) destination.getGraphics();
-        layeredImage.paint(g2d, null, null);
-        g2d.dispose();
+        GraphicsContext g = new AwtGraphicsContext((Graphics2D) destination.getGraphics());
+        layeredImage.paint(g, 1.0, null);
+        g.dispose();
     }
 
     /**

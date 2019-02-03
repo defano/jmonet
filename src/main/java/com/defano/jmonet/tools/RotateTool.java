@@ -1,9 +1,11 @@
 package com.defano.jmonet.tools;
 
-import com.defano.jmonet.algo.transform.image.ApplyAffineTransform;
+import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.AbstractSelectionTool;
+import com.defano.jmonet.tools.base.SelectionTool;
+import com.defano.jmonet.tools.base.SelectionToolDelegate;
 import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.transform.image.ApplyAffineTransform;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -13,7 +15,7 @@ import java.awt.image.BufferedImage;
 /**
  * Tool for selecting a bounding box and free-rotating the selected image about its center-point.
  */
-public class RotateTool extends AbstractSelectionTool {
+public class RotateTool extends SelectionTool implements SelectionToolDelegate {
 
     private Point centerpoint;                  // Point around which image rotates
     private Point dragLocation;                 // Location of the drag handle
@@ -27,8 +29,13 @@ public class RotateTool extends AbstractSelectionTool {
 
     private boolean rotating = false;           // Drag-rotate in progress
 
-    public RotateTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    RotateTool() {
         super(PaintToolType.ROTATE);
+        setDelegate(this);
     }
 
     /**
@@ -73,17 +80,17 @@ public class RotateTool extends AbstractSelectionTool {
      * {@inheritDoc}
      */
     @Override
-    public void mouseDragged(MouseEvent e, Point imageLocation) {
+    public void mouseDragged(MouseEvent e, Point canvasLoc) {
 
         if (hasSelection() && rotating) {
             setDirty();     // Mutating the selected image
 
             // Calculate the rotation angle
-            dragLocation = imageLocation;
+            dragLocation = canvasLoc;
             double degrees = Geometry.angle(centerpoint.x, centerpoint.y, dragLocation.x, dragLocation.y);
 
             if (e.isShiftDown()) {
-                degrees = Geometry.round(degrees, getConstrainedAngle());
+                degrees = Geometry.nearestRound(degrees, getAttributes().getConstrainedAngle());
             }
 
             double angle = Math.toRadians(degrees);
@@ -95,7 +102,7 @@ public class RotateTool extends AbstractSelectionTool {
             // Rotate the selected canvas image
             setSelectedImage(new ApplyAffineTransform(AffineTransform.getRotateInstance(angle, originalImage.getWidth() / 2.0, originalImage.getHeight() / 2.0)).apply(originalImage));
         } else {
-            super.mouseDragged(e, imageLocation);
+            super.mouseDragged(e, canvasLoc);
         }
     }
 
@@ -103,7 +110,7 @@ public class RotateTool extends AbstractSelectionTool {
      * {@inheritDoc}
      */
     @Override
-    public void resetSelection() {
+    public void clearSelectionFrame() {
         selectionBounds = null;
         originalSelectionBounds = null;
         centerpoint = null;
@@ -114,17 +121,18 @@ public class RotateTool extends AbstractSelectionTool {
 
     /**
      * {@inheritDoc}
+     * @param bounds
      */
     @Override
-    public void setSelectionOutline(Rectangle bounds) {
-        selectionBounds = bounds;
+    public void setSelectionFrame(Shape bounds) {
+        selectionBounds = bounds.getBounds();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
+    public void addPointToSelectionFrame(Point initialPoint, Point newPoint, boolean isShiftKeyDown) {
         int handleSize = 8;
 
         Rectangle selectionRectangle = new Rectangle(initialPoint);
@@ -157,7 +165,7 @@ public class RotateTool extends AbstractSelectionTool {
      * {@inheritDoc}
      */
     @Override
-    public void translateSelection(int xDelta, int yDelta) {
+    public void translateSelectionFrame(int xDelta, int yDelta) {
         // Nothing to do; user can't move selection
         selectionBounds = AffineTransform.getTranslateInstance(xDelta, yDelta).createTransformedShape(selectionBounds);
         originalSelectionBounds = AffineTransform.getTranslateInstance(xDelta, yDelta).createTransformedShape(originalSelectionBounds);
@@ -200,7 +208,7 @@ public class RotateTool extends AbstractSelectionTool {
             throw new IllegalArgumentException("Image to square cannot be null.");
         }
 
-        int diagonal = (int) Math.ceil(Math.sqrt(image.getHeight() * image.getHeight() + image.getWidth() * image.getWidth()));
+        int diagonal = (int) Math.ceil(Math.sqrt((double)(image.getHeight() * image.getHeight()) + (double)(image.getWidth() * image.getWidth())));
 
         int deltaX = diagonal - image.getWidth();
         int deltaY = diagonal - image.getHeight();
@@ -208,7 +216,7 @@ public class RotateTool extends AbstractSelectionTool {
         BufferedImage enlarged = new BufferedImage(diagonal, diagonal, image.getType());
 
         Graphics2D g = enlarged.createGraphics();
-        g.drawImage(image, AffineTransform.getTranslateInstance(deltaX / 2, deltaY / 2), null);
+        g.drawImage(image, AffineTransform.getTranslateInstance(deltaX / 2.0, deltaY / 2.0), null);
         g.dispose();
 
         return enlarged;
@@ -222,7 +230,7 @@ public class RotateTool extends AbstractSelectionTool {
         super.redrawSelection(includeFrame);
 
         // Draw the drag handle on the selection
-        Graphics2D g = getCanvas().getScratch().getAddScratchGraphics(this, null);
+        GraphicsContext g = getCanvas().getScratch().getAddScratchGraphics(this, null);
         g.setColor(Color.black);
         g.fill(dragHandle);
         g.dispose();

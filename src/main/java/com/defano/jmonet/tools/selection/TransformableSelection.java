@@ -1,10 +1,10 @@
 package com.defano.jmonet.tools.selection;
 
-import com.defano.jmonet.algo.transform.affine.FlipHorizontalTransform;
-import com.defano.jmonet.algo.transform.affine.FlipVerticalTransform;
-import com.defano.jmonet.algo.transform.affine.RotateLeftTransform;
-import com.defano.jmonet.algo.transform.affine.RotateRightTransform;
-import com.defano.jmonet.algo.transform.image.ApplyAffineTransform;
+import com.defano.jmonet.transform.affine.FlipHorizontalTransform;
+import com.defano.jmonet.transform.affine.FlipVerticalTransform;
+import com.defano.jmonet.transform.affine.RotateLeftTransform;
+import com.defano.jmonet.transform.affine.RotateRightTransform;
+import com.defano.jmonet.transform.image.ApplyAffineTransform;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

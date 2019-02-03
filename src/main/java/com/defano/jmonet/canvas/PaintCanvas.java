@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
 /**
  * A canvas that can be drawn upon by the paint tools.
  */
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public interface PaintCanvas extends PaintSurface, ScaledLayeredImage {
 
     /**
