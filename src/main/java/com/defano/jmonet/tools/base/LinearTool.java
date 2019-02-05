@@ -2,11 +2,16 @@ package com.defano.jmonet.tools.base;
 
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.MathUtils;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
+/**
+ * A tool for drawing shapes defined by two points on the canvas, like lines.
+ *
+ * Click the mouse to define the first point, then drag to define the second point.
+ */
 public class LinearTool extends BasicTool<LinearToolDelegate> implements SurfaceInteractionObserver {
 
     private Point initialPoint;
@@ -41,7 +46,7 @@ public class LinearTool extends BasicTool<LinearToolDelegate> implements Surface
         Point currentLoc = canvasLoc;
 
         if (e.isShiftDown()) {
-            currentLoc = Geometry.line(initialPoint, currentLoc, getAttributes().getConstrainedAngle());
+            currentLoc = MathUtils.line(initialPoint, currentLoc, getAttributes().getConstrainedAngle());
         }
 
         getDelegate().drawLine(getScratch(), getAttributes().getStroke(), getAttributes().getStrokePaint(), initialPoint.x, initialPoint.y, currentLoc.x, currentLoc.y);

@@ -7,7 +7,7 @@ import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 
 /**
- * A utility for creating custom tool cursors.
+ * A utility for creating custom JMonet tool cursors.
  */
 public class CursorFactory {
 

@@ -5,7 +5,7 @@ import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.surface.AbstractPaintSurface;
 import com.defano.jmonet.context.GraphicsContext;
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.MathUtils;
 import io.reactivex.subjects.BehaviorSubject;
 
 import java.awt.*;
@@ -48,6 +48,14 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
     @Override
     public Dimension getCanvasSize() {
         return getSurfaceDimension();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Component getComponent() {
+        return this;
     }
 
     /**
@@ -111,11 +119,11 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
         double scale = getScaleObservable().blockingFirst();
 
         int x = p.x - error.x;
-        x = Geometry.nearestFloor(x, (int) (gridSpacing * scale));
+        x = MathUtils.nearestFloor(x, (int) (gridSpacing * scale));
         x = (int) (x / scale);
 
         int y = p.y - error.y;
-        y = Geometry.nearestFloor(y, (int) (gridSpacing * scale));
+        y = MathUtils.nearestFloor(y, (int) (gridSpacing * scale));
         y = (int) (y / scale);
 
         return new Point(x, y);

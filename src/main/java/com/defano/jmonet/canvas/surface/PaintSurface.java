@@ -9,9 +9,9 @@ import java.awt.*;
  * observables, and embedding Swing components.
  */
 @SuppressWarnings("unused")
-public interface PaintSurface extends ScanlineSurface, GridSurface, SwingSurface, ObservableSurface, ScrollableSurface,
-        Disposable {
-
+public interface PaintSurface
+        extends ScanlineSurface, GridSurface, SwingSurface, ObservableSurface, ScrollableSurface, Disposable
+{
     /**
      * Specifies the un-scaled size of this painting surface. This determines the size of the image (document) that can
      * be painted by a user. This does not specify the size of the Swing component or otherwise adjust layout or

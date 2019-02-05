@@ -1,6 +1,6 @@
 package com.defano.jmonet.tools.brushes;
 
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.MathUtils;
 
 import java.awt.*;
 import java.awt.geom.FlatteningPathIterator;
@@ -62,7 +62,7 @@ public abstract class StampStroke implements Stroke {
      */
     private void stampLine(GeneralPath path, Point start, Point end) {
         if (start != null && interval > 0) {
-            for (Point interpolated : Geometry.linearInterpolation(start, end, interval)) {
+            for (Point interpolated : MathUtils.linearInterpolation(start, end, interval)) {
                 stampPoint(path, interpolated);
             }
         }
@@ -76,6 +76,7 @@ public abstract class StampStroke implements Stroke {
      *
      * @return The interpolation interval.
      */
+    @SuppressWarnings("unused")
     public int getInterpolationInterval() {
         return interval;
     }
@@ -104,6 +105,7 @@ public abstract class StampStroke implements Stroke {
      *
      * @return The current flatness; default is 1
      */
+    @SuppressWarnings("unused")
     public double getFlatness() {
         return flatness;
     }
@@ -121,6 +123,7 @@ public abstract class StampStroke implements Stroke {
      *
      * @param flatness The flatness, in pixels. Value must be greater than or equal to 0.
      */
+    @SuppressWarnings("unused")
     public void setFlatness(double flatness) {
         this.flatness = flatness;
     }

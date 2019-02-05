@@ -5,7 +5,7 @@ import com.defano.jmonet.tools.base.SelectionTool;
 import com.defano.jmonet.tools.base.SelectionToolDelegate;
 import com.defano.jmonet.tools.selection.TransformableCanvasSelection;
 import com.defano.jmonet.tools.selection.TransformableSelection;
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.MathUtils;
 
 import java.awt.*;
 
@@ -39,10 +39,10 @@ public class MarqueeTool extends SelectionTool implements TransformableSelection
 
         // #24: Disallow constraint if it results in selection outside canvas bounds
         Rectangle canvasBounds = new Rectangle(0, 0, getCanvas().getCanvasSize().width, getCanvas().getCanvasSize().height);
-        if (isShiftKeyDown && canvasBounds.contains(Geometry.square(initialPoint, newPoint))) {
-            selectionBounds = Geometry.square(initialPoint, newPoint);
+        if (isShiftKeyDown && canvasBounds.contains(MathUtils.square(initialPoint, newPoint))) {
+            selectionBounds = MathUtils.square(initialPoint, newPoint);
         } else {
-            selectionBounds = Geometry.rectangle(initialPoint, newPoint);
+            selectionBounds = MathUtils.rectangle(initialPoint, newPoint);
         }
     }
 

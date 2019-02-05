@@ -3,7 +3,8 @@ package com.defano.jmonet.clipboard;
 import com.defano.jmonet.canvas.PaintCanvas;
 
 /**
- * A determiner of which JMonet canvas presently has focus.
+ * A determiner of which JMonet canvas presently has focus; used by the {@link CanvasClipboardActionListener} to
+ * indicate which canvas (if any) should receive actions.
  */
 public interface CanvasFocusDelegate {
 

@@ -4,6 +4,9 @@ import com.defano.jmonet.canvas.Scratch;
 
 import java.awt.*;
 
+/**
+ * A delegate class responsible for rendering the shape drawn by a {@link BoundsTool}.
+ */
 public interface BoundsToolDelegate {
 
     /**

@@ -4,7 +4,7 @@ import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.SelectionTool;
 import com.defano.jmonet.tools.base.SelectionToolDelegate;
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.MathUtils;
 import com.defano.jmonet.transform.image.ApplyAffineTransform;
 
 import java.awt.*;
@@ -87,10 +87,10 @@ public class RotateTool extends SelectionTool implements SelectionToolDelegate {
 
             // Calculate the rotation angle
             dragLocation = canvasLoc;
-            double degrees = Geometry.angle(centerpoint.x, centerpoint.y, dragLocation.x, dragLocation.y);
+            double degrees = MathUtils.angle(centerpoint.x, centerpoint.y, dragLocation.x, dragLocation.y);
 
             if (e.isShiftDown()) {
-                degrees = Geometry.nearestRound(degrees, getAttributes().getConstrainedAngle());
+                degrees = MathUtils.nearestRound(degrees, getAttributes().getConstrainedAngle());
             }
 
             double angle = Math.toRadians(degrees);
@@ -186,7 +186,7 @@ public class RotateTool extends SelectionTool implements SelectionToolDelegate {
             return getSelectionFrame().getBounds().getLocation();
         } else {
             Rectangle enlargedBounds = originalImage.getRaster().getBounds();
-            Geometry.center(enlargedBounds, originalSelectionBounds.getBounds());
+            MathUtils.center(enlargedBounds, originalSelectionBounds.getBounds());
             return enlargedBounds.getLocation();
         }
     }

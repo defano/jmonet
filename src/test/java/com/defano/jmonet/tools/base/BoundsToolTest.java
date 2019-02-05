@@ -1,6 +1,6 @@
 package com.defano.jmonet.tools.base;
 
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.MathUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -100,7 +100,7 @@ class BoundsToolTest extends BaseToolTest<BoundsTool> {
                 mockScratch,
                 mockStroke,
                 mockStrokePaint,
-                Geometry.square(startPoint, endPoint),
+                MathUtils.square(startPoint, endPoint),
                 true);
     }
 

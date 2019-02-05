@@ -2,10 +2,13 @@ package com.defano.jmonet.tools.base;
 
 import java.awt.*;
 
+/**
+ * A delegate class responsible for rendering selections drawn by the {@link SelectionTool}.
+ */
 public interface SelectionToolDelegate {
 
     /**
-     * Gets the current selection frame shape, or null, if there is no active selection.
+     * Gets the current selection frame, or null, if there is no active selection.
      *
      * @return The shape of the active selection frame, or null if there is no selection.
      */

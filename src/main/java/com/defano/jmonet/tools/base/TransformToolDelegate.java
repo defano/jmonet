@@ -4,11 +4,14 @@ import com.defano.jmonet.model.FlexQuadrilateral;
 
 import java.awt.*;
 
+/**
+ * A delegate responsible for handling changes made to the transformed selection frame.
+ */
 public interface TransformToolDelegate {
 
     /**
      * Invoked to indicate that the user has dragged/moved the top-left handle of the transform quadrilateral to a
-     * new position.
+     * new position. Transforms the selection frame and bounded pixels accordingly.
      *
      * @param quadrilateral The quadrilateral representing the transform bounds.
      * @param newPosition The new location of the affected drag handle.
@@ -19,7 +22,7 @@ public interface TransformToolDelegate {
 
     /**
      * Invoked to indicate that the user has dragged/moved the top-right handle of the transform quadrilateral to a
-     * new position.
+     * new position. Transforms the selection frame and bounded pixels accordingly.
      *
      * @param quadrilateral The quadrilateral representing the transform bounds.
      * @param newPosition The new location of the affected drag handle.
@@ -30,7 +33,7 @@ public interface TransformToolDelegate {
 
     /**
      * Invoked to indicate that the user has dragged/moved the bottom-left handle of the transform quadrilateral to a
-     * new position.
+     * new position. Transforms the selection frame and bounded pixels accordingly.
      *
      * @param quadrilateral The quadrilateral representing the transform bounds.
      * @param newPosition The new location of the affected drag handle.
@@ -41,7 +44,7 @@ public interface TransformToolDelegate {
 
     /**
      * Invoked to indicate that the user has dragged/moved the bottom-right handle of the transform quadrilateral to a
-     * new position.
+     * new position. Transforms the selection frame and bounded pixels accordingly.
      *
      * @param quadrilateral The quadrilateral representing the transform bounds.
      * @param newPosition The new location of the affected drag handle.

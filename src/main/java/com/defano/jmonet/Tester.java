@@ -3,14 +3,20 @@ package com.defano.jmonet;
 import com.defano.jmonet.canvas.JMonetCanvas;
 import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
+import com.defano.jmonet.clipboard.CanvasTransferDelegate;
+import com.defano.jmonet.clipboard.CanvasTransferHandler;
 import com.defano.jmonet.model.Interpolation;
 import com.defano.jmonet.model.PaintToolType;
+import com.defano.jmonet.tools.MarqueeTool;
+import com.defano.jmonet.tools.base.SelectionTool;
 import com.defano.jmonet.tools.base.Tool;
 import com.defano.jmonet.tools.builder.PaintToolBuilder;
 import com.defano.jmonet.tools.builder.StrokeBuilder;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.image.BufferedImage;
 
 public class Tester {
@@ -35,7 +41,7 @@ public class Tester {
             scroll.setViewportView(myCanvas);
 
             myCanvas.setBorder(BorderFactory.createEtchedBorder());
-//            myCanvas.setScale(7.333333333);
+            myCanvas.setScale(7.333333333);
 //            myCanvas.setScanlineScaleThreadhold(100);
 
             frame.getContentPane().add(scroll);
@@ -48,7 +54,7 @@ public class Tester {
 
             myCanvas.commit(new ImageLayerSet(new ImageLayer(new Point(20, 20), img, AlphaComposite.SrcOver)));
 
-            Tool activeTool = PaintToolBuilder.create(PaintToolType.PROJECTION)
+            Tool activeTool = PaintToolBuilder.create(PaintToolType.TEXT)
                     .withShapeSides(3)
                     .withPathInterpolation(true)
                     .withCornerRadius(20)

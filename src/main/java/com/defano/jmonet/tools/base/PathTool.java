@@ -6,6 +6,12 @@ import com.defano.jmonet.model.PaintToolType;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
+/**
+ * A tool for drawing shapes defined by an arbitrary path (series of points) drawn on the canvas, like a paintbrush,
+ * eraser, or pencil.
+ *
+ * Click and drag the mouse around the canvas to define the path of the shape to be rendered.
+ */
 public class PathTool extends BasicTool<PathToolDelegate> implements SurfaceInteractionObserver {
 
     private Point lastPoint;

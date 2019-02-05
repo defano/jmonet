@@ -18,6 +18,10 @@ public class CanvasClipboardActionListener implements ActionListener {
         this.delegate = delegate;
     }
 
+    public CanvasClipboardActionListener() {
+        this(new DefaultCanvasFocusDelegate());
+    }
+
     /** {@inheritDoc} */
     @Override
     public void actionPerformed(ActionEvent e) {

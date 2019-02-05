@@ -1,6 +1,6 @@
 package com.defano.jmonet.tools.base;
 
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.MathUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -87,7 +87,7 @@ class LinearToolTest extends BaseToolTest<LinearTool> {
         uut.mousePressed(mockEvent, start);
         uut.mouseDragged(mockEvent, end);
 
-        Point expectedEnd = Geometry.line(start, end, mockToolAttributes.getConstrainedAngle());
+        Point expectedEnd = MathUtils.line(start, end, mockToolAttributes.getConstrainedAngle());
 
         Mockito.inOrder(mockScratch, mockDelegate, mockCanvas);
 

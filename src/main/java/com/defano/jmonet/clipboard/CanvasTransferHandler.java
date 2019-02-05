@@ -59,6 +59,11 @@ public class CanvasTransferHandler extends TransferHandler {
         return false;
     }
 
+    /**
+     * Converts an image to a BufferedImage of type ARGB.
+     * @param source The image to convert
+     * @return The resulting BufferedImage
+     */
     private BufferedImage toBufferedImage(Image source) {
         if (source instanceof BufferedImage) {
             return (BufferedImage) source;

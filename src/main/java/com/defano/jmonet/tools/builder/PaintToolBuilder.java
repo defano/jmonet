@@ -82,6 +82,10 @@ public class PaintToolBuilder {
      * @return The PaintToolBuilder
      */
     public PaintToolBuilder makeActiveOnCanvas(JFXPaintCanvasNode jfxPaintCanvasNode) {
+        if (this.canvas != null) {
+            throw new IllegalStateException("Paint tool may only be active on one canvas at a time.");
+        }
+
         this.canvas = jfxPaintCanvasNode.getCanvas();
         return this;
     }
@@ -94,6 +98,10 @@ public class PaintToolBuilder {
      * @return The PaintToolBuilder
      */
     public PaintToolBuilder makeActiveOnCanvas(PaintCanvas canvas) {
+        if (this.canvas != null) {
+            throw new IllegalStateException("Paint tool may only be active on one canvas at a time.");
+        }
+
         this.canvas = canvas;
         return this;
     }

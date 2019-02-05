@@ -5,7 +5,7 @@ import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.PathToolDelegate;
 import com.defano.jmonet.tools.base.StrokedCursorPathTool;
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.MathUtils;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
@@ -41,7 +41,7 @@ public class AirbrushTool extends StrokedCursorPathTool implements PathToolDeleg
 
         if (getAttributes().isPathInterpolated()) {
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) getAttributes().getIntensity() / 10.0f));
-            for (Point p : Geometry.linearInterpolation(lastPoint, thisPoint, 1)) {
+            for (Point p : MathUtils.linearInterpolation(lastPoint, thisPoint, 1)) {
                 g.draw(new Line2D.Float(p, p));
             }
         } else {

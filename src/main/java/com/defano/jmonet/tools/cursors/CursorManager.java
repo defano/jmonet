@@ -4,6 +4,10 @@ import com.defano.jmonet.canvas.PaintCanvas;
 
 import java.awt.*;
 
+/**
+ * A class which has the ability to get and set the system's mouse cursor when the mouse is hovering over a specified
+ * {@link PaintCanvas}.
+ */
 public interface CursorManager {
 
     /**

@@ -21,10 +21,11 @@ import java.awt.image.BufferedImage;
 /**
  * Tool for drawing rasterized text on the canvas.
  */
-public class TextTool extends BasicTool implements Consumer, SurfaceInteractionObserver {
+public class TextTool extends BasicTool implements SurfaceInteractionObserver {
 
-    private JTextArea textArea;
-    private Point textModelLocation;
+    private final JTextArea textArea = new JTextArea();
+    private final TextAreaMouseListener textAreaMouseListener = new TextAreaMouseListener();
+
     private Disposable fontSubscription;
     private Disposable fontColorSubscription;
 
@@ -37,75 +38,69 @@ public class TextTool extends BasicTool implements Consumer, SurfaceInteractionO
         return new Cursor(Cursor.TEXT_CURSOR);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void deactivate() {
 
+        // Stop listening to tool font changes
         if (fontSubscription != null) {
             fontSubscription.dispose();
         }
 
+        // Stop listening to tool font color changes
         if (fontColorSubscription != null) {
             fontColorSubscription.dispose();
         }
 
+        // Stop listening for mouse-clicks in edit area
+        textArea.removeMouseListener(textAreaMouseListener);
+
         if (isEditing()) {
-            commitTextImage();
-            removeTextArea();
+            finishEditing();
         }
 
         super.deactivate();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void activate(PaintCanvas canvas) {
         super.activate(canvas);
 
-        textArea = new JTextArea();
-        textArea.setVisible(true);
-        textArea.setOpaque(false);
-        textArea.setBackground(new Color(0, 0, 0, 0));
-        textArea.setForeground(getAttributes().getFontColor());
-        textArea.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                SwingUtilities.invokeLater(TextTool.this::completeEditing);
-            }
-        });
+        // Monitor for clicks inside text edit area
+        textArea.addMouseListener(textAreaMouseListener);
 
+        // Monitor for changes to tool font selection
         fontSubscription = getAttributes().getFontObservable()
                 .subscribeOn(Schedulers.computation())
-                .subscribe(font -> textArea.setFont(font));
+                .subscribe(textArea::setFont);
 
+        // Monitor for changes to tool font color selection
         fontColorSubscription = getAttributes().getFontColorObservable()
                 .subscribeOn(Schedulers.computation())
-                .subscribe(color -> textArea.setForeground(color));
+                .subscribe(textArea::setForeground);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void mousePressed(MouseEvent e, Point imageLocation) {
-        if (!isEditing()) {
-            getScratch().clear();
 
-            textModelLocation = new Point(imageLocation.x,imageLocation.y - getFontAscent());
-            Point textViewLocation = getCanvas().convertModelPointToView(textModelLocation);
-            Dimension scaledSize = new Dimension(
-                    (int)(getCanvas().getCanvasSize().width * getCanvas().getScale()) - textViewLocation.x,
-                    (int)(getCanvas().getCanvasSize().height * getCanvas().getScale()) - textViewLocation.y);
-
-            Rectangle textBounds = new Rectangle(textViewLocation, scaledSize);
-
-            addTextArea(textBounds);
-            getCanvas().repaint();
-
-        } else {
-            completeEditing();
+        if (isEditing()) {
+            finishEditing();
         }
+
+        addTextArea(imageLocation);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void mouseMoved(MouseEvent e, Point canvasLoc) {
         setToolCursor(getToolCursor());
@@ -113,23 +108,41 @@ public class TextTool extends BasicTool implements Consumer, SurfaceInteractionO
 
     /**
      * Determines if the text tool is currently editing an active selection of text.
+     *
      * @return True when an active, mutable selection of text is being edited by the user, false otherwise.
      */
     public boolean isEditing() {
-        return textArea != null && textArea.getParent() != null;
+        return textArea.getParent() != null;
     }
 
+    /**
+     * Removes the text area component from the canvas.
+     */
     private void removeTextArea() {
         getCanvas().removeComponent(textArea);
     }
 
-    private void addTextArea(Rectangle bounds) {
-        textArea.setVisible(true);
+    /**
+     * Configures and adds the JTextArea component to the canvas at the specified bounds. The top-left point of these
+     * bounds are typically equal to the location where the mouse was pressed, and the bottom-right point is equal to
+     * the bottom-right point of the paint canvas.
+     *
+     * @param modelLocation Canvas image location where the text area should be added.
+     */
+    private void addTextArea(Point modelLocation) {
+        Rectangle bounds = calculateTextAreaBounds(modelLocation);
+
+        // Configure text area properties
+        textArea.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
         textArea.setBorder(new EmptyBorder(0, 0, 0, 0));
         textArea.setText("");
-        textArea.setBounds(bounds.x, bounds.y, bounds.width, bounds.height);
         textArea.setFont(getScaledFont());
+        textArea.setOpaque(false);
+        textArea.setBackground(new Color(0, 0, 0, 0));      // completely transparent
+        textArea.setForeground(getAttributes().getFontColor());
+        textArea.setVisible(true);
 
+        // Add it to the canvas and give it focus
         getCanvas().addComponent(textArea);
         textArea.requestFocus();
     }
@@ -154,11 +167,12 @@ public class TextTool extends BasicTool implements Consumer, SurfaceInteractionO
         return image;
     }
 
-    private void commitTextImage() {
+    private void commit() {
 
         // Don't commit if user hasn't entered any text
-        if (textArea.getText().trim().length() > 0) {
+        if (!textArea.getText().trim().isEmpty()) {
             BufferedImage text = rasterizeText();
+            Point textModelLocation = getCanvas().convertViewPointToModel(textArea.getLocation());
 
             GraphicsContext g = getScratch().getAddScratchGraphics(this, new Rectangle(textModelLocation.x, textModelLocation.y, textArea.getWidth(), textArea.getHeight()));
             g.drawImage(text, textModelLocation.x, textModelLocation.y, null);
@@ -167,7 +181,11 @@ public class TextTool extends BasicTool implements Consumer, SurfaceInteractionO
     }
 
     private Font getScaledFont() {
-        return new Font(getAttributes().getFont().getFamily(), getAttributes().getFont().getStyle(), (int) (getAttributes().getFont().getSize() * getCanvas().getScaleObservable().blockingFirst()));
+        return new Font(
+                getAttributes().getFont().getFamily(),
+                getAttributes().getFont().getStyle(),
+                (int) (getAttributes().getFont().getSize() * getCanvas().getScaleObservable().blockingFirst())
+        );
     }
 
     private int getFontAscent() {
@@ -177,19 +195,31 @@ public class TextTool extends BasicTool implements Consumer, SurfaceInteractionO
         return metrics.getAscent();
     }
 
-    private void completeEditing() {
-        commitTextImage();
+    private void finishEditing() {
+        commit();
         removeTextArea();
     }
 
-    @Override
-    public void accept(Object o) {
-        if (o instanceof Font) {
-            textArea.setFont((Font) o);
-        }
+    private Rectangle calculateTextAreaBounds(Point imageLocation) {
 
-        if (o instanceof Color) {
-            textArea.setForeground((Color) o);
+        // Account for font ascent (characters will be drawn up from this location)
+        Point textModelLocation = new Point(imageLocation.x, imageLocation.y - getFontAscent());
+        Point textViewLocation = getCanvas().convertModelPointToView(textModelLocation);
+
+        Dimension scaledSize = new Dimension(
+                (int) (getCanvas().getCanvasSize().width * getCanvas().getScale()) - textViewLocation.x,
+                (int) (getCanvas().getCanvasSize().height * getCanvas().getScale()) - textViewLocation.y
+        );
+
+        return new Rectangle(textViewLocation, scaledSize);
+    }
+
+    private class TextAreaMouseListener extends MouseAdapter {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            Point location = getCanvas().convertViewPointToModel(SwingUtilities.convertPoint(textArea, e.getPoint(), getCanvas().getComponent()));
+            SwingUtilities.invokeLater(() -> TextTool.this.mousePressed(e, location));
         }
     }
+
 }

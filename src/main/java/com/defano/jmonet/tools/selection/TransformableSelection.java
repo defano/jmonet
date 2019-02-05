@@ -10,8 +10,8 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 /**
- * Represents a selection that can be transformed using operations that affect both the pixels of the selected image
- * (i.e., change of brightness or opacity) and/or the selection's shape and location (i.e., flip, rotate or translate).
+ * A selection that can be transformed using operations that affect both the pixels of the selected image (i.e., change
+ * of brightness or opacity) and/or the selection's shape and location (i.e., flip, rotate or translate).
  */
 public interface TransformableSelection extends TransformableImageSelection {
 

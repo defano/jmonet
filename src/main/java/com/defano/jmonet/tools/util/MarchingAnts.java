@@ -10,7 +10,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * A utility class for animating a dashed border stroke ("marching ants") commonly found in selection tools.
+ * A class for animating a dashed border stroke ("marching ants") commonly found in selection tools.
+ *
+ * This singleton class manages the ant animation by instantiating a single-threaded scheduled executor. Multiple
+ * "ants" paths can be drawn with this singleton by registering multiple listeners.
  */
 public class MarchingAnts {
 
@@ -18,9 +21,9 @@ public class MarchingAnts {
     private static final ScheduledExecutorService antsAnimator = Executors.newSingleThreadScheduledExecutor();
     private static final Set<MarchingAntsObserver> observers = new HashSet<>();
 
-    private int animationPeriodMs = 50;
-    private int antLength = 5;
-    private int antWidth = 1;
+    private int animationPeriodMs = 50;             // animation period
+    private int antLength = 5;                      // ant dash length, in pixels
+    private int antWidth = 1;                       // width of ant dash, in pixels
     private Color antColor = Color.DARK_GRAY;
     private Color pathColor = Color.WHITE;
 

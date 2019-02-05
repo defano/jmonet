@@ -2,21 +2,21 @@
 
 [Getting Started](#getting-started) | [Tools](#paint-tools) | [Transforms](#image-transforms) | [Brushes](#creating-complex-brush-shapes) | [Cut, Copy and Paste](#cut-copy-and-paste) | [Observables](#observable-attributes-with-rxjava) | [FAQs](#frequently-asked-questions)
 
-An easy-to-use toolkit for incorporating paint tools like those found in [MacPaint](https://en.wikipedia.org/wiki/MacPaint) or [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint) into a Java Swing or JavaFX application. JMonet is not compatible with Android.
+An easy-to-use toolkit for incorporating paint tools like those found in [MacPaint](https://en.wikipedia.org/wiki/MacPaint) or [Microsoft Paint](https://en.wikipedia.org/wiki/Microsoft_Paint) into a Java Swing or JavaFX application. Sorry, JMonet is not compatible with Android.
 
 This project provides the paint capabilities found in [WyldCard](https://github.com/defano/wyldcard) (an open-sourced clone of Apple's HyperCard).
 
-[![Build Status](https://travis-ci.org/defano/jmonet.svg?branch=master)](https://travis-ci.org/defano/jmonet) 
+[![Build Status](https://travis-ci.org/defano/jmonet.svg?branch=master)](https://travis-ci.org/defano/jmonet)
 [![Sonar Status](https://sonarcloud.io/api/project_badges/measure?project=com.defano.jmonet%3Ajmonet&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.defano.jmonet%3Ajmonet)
 
 ## Features
 
-* Familiar suite of paint tools with RxJava-observable attributes for colors, patterns, line sizes, anti-aliasing modes, etc.
-* Image transform tools like scale, rotate, flip, shear, perspective and projection, plus the ability to adjust color depth, transparency and brightness.
-* Canvas can be scaled and displayed within a scrollable pane; tools can be snapped to a grid.
-* Supports multi-operation undo and redo, plus cut, copy and paste integration with the system clipboard.
+* Familiar suite of paint tools with powerful, RxJava-observable attributes for brush strokes, colors, patterns, line sizes, etc.
+* Built-in image transform tools like scale, rotate, flip, shear, perspective and projection. Easy to incorporate third-party image filters (like emboss or trace edges) implemented as a `Kernel` or `BufferedImageOp`.
+* Paint canvas can be scaled and displayed within a scrollable pane; tools can be snapped to a grid.
+* Multi-operation undo and redo, with easy-to-implement cut, copy and paste integration.
 * Paint and edit 24-bit, true-color images with alpha transparency; images are backed by a standard Java `BufferedImage` object making it easy to import and export graphics.
-* Lightweight toolkit integrates easily into Swing and JavaFX applications.
+* Lightweight toolkit published to Maven Central integrates easily into Swing and JavaFX applications.
 
 ## Paint Tools
 
@@ -66,13 +66,13 @@ Icon                                  | Tool         | Description
 
 #### 1. Install the library
 
-JMonet is published to Maven Central; include the library in your Maven project's POM, like:
+JMonet is published to Maven Central. Simply include the library in your Maven project's POM, like:
 
 ```
 <dependency>
     <groupId>com.defano.jmonet</groupId>
     <artifactId>jmonet</artifactId>
-    <version>0.3.3</version>
+    <version>0.4.0</version>
 </dependency>
 ```
 
@@ -84,13 +84,13 @@ repositories {
 }
 
 dependencies {
-    compile 'com.defano.jmonet:jmonet:0.3.3'
+    compile 'com.defano.jmonet:jmonet:0.4.0'
 }
 ```
 
 #### 2. Create a canvas
 
-JMonet integrates easily into Java Swing and JavaFX applications. Simply create a canvas node or panel and add it to a window in your application:
+JMonet integrates easily into Java Swing and JavaFX applications. Create a canvas node or panel and add it to a window in your application:
 
 In Swing applications:
 
@@ -176,11 +176,9 @@ Each of these transforms is implemented as a standalone class in the `com.defano
 
 ## Creating complex brush shapes
 
-A stroke represents the size and shape of the "pen" used to mark the outline of a shape or path.
+A `Stroke` represents the size and shape of the "pen" used to draw the outline of a shape or path.
 
-JMonet's `ShapeStroke` class can produce a stroke of any arbitrary shape (even the shape of text). A builder class (`StrokeBuilder`) provides a convenient mechanism for creating both `BasicStroke` or `ShapeStroke` objects. Note that `StrokeBuilder` replaces the `BasicBrush` enumeration present in older versions of the library.
-
-To produce a stroke in the shape of a vertical line, 20 pixels tall:
+JMonet's `StrokeBuilder` class can generate complex brush strokes of any arbitrary shape (even the shape of text). For example, to produce a stroke in the shape of a vertical line, 20 pixels tall:
 
 ```
 StrokeBuilder.withShape()
@@ -204,7 +202,7 @@ StrokeBuilder.withShape()
     .ofCircle(48)         // draw circle
     .outlined(6)          // ... outlined with 6px border, not filled
     .ofRectangle(6, 60)   // draw slash (6px wide, 60px long)
-    .rotated(-45)         // ... rotate it 45 degrees
+    .rotated(-45)         // ... rotate it -45 degrees
     .build();
 ```
 
@@ -219,49 +217,28 @@ StrokeBuilder.withBasicStroke()
 
 ## Cut, Copy and Paste
 
-JMonet makes it easy to integrate cut, copy and paste functions into your app that utilize the operating system's clipboard so that you can copy and paste graphics from within your own application or between other applications on your system.
+JMonet makes it easy to integrate cut, copy and paste functions into an application that utilizes the operating system's clipboard. With this, you can copy and paste graphics from within your own application or between it and other applications.
 
 A bit of integration is required to connect these functions to the UI elements in your app (like menu items or toolbar buttons) that a user will interact with.
 
-#### 1. Route actions to the canvas
+#### 1. Create an `ActionListener` to route cut-copy-paste actions to the canvas
 
-The JMonet canvas will not receive cut, copy or paste actions until we register an `ActionListener` that routes those actions to it. Typically, only the user interface element that has focus receives such events, but because a canvas has no clear concept of focus, it's up to you to decide when the canvas should respond to cut, copy and paste actions.
+Consistent with Swing's `ActionListener` pattern, the JMonet canvas will not receive cut, copy or paste actions until we register a listener class that routes clipboard actions to it. The `CanvasClipboardActionListener` class will attempt to route actions to whichever canvas currently in focus. If you dislike this behavior you may pass an implementation of `CanvasFocusDelegate` into its constructor, or simply write your own `ActionListener` instead.
 
-Create a `CanvasFocusDelegate` and an `ActionListener` to send actions to the canvas:
-
-```
-CanvasFocusDelegate myFocusDelegate = new CanvasFocusDelegate() {
-    @Override
-    public PaintCanvas getCanvasInFocus() {
-
-        // Which canvas should handle cut, copy and paste commands? Perhaps check to see if
-        // the focused window contains a canvas...?
-        if (isMyCanvasInFocus()) {
-            return myCanvas;
-        }
-
-        // No canvas has focus, return null
-        return null;
-    }
-};
-
-CanvasClipboardActionListener myActionListener = new CanvasClipboardActionListener(myFocusDelegate);
-```
-
-Then, add this `ActionListener` to whichever user interface elements will generate cut, copy and paste events. Most commonly this would be added to menu items but could also be used with buttons on a toolbar, for example:
+Add your `CanvasClipboardActionListener` to whichever user interface elements will generate cut, copy and paste events. Most commonly, this would include menu items in the menu bar, but could also be used with buttons on a toolbar. For example:
 
 ```
 JMenuItem myCopyMenuItem = new JMenuItem(new DefaultEditorKit.CopyAction());
 copyMenuItem.setName("Copy");
 copyMenuItem.setActionCommand((String) TransferHandler.getCopyAction().getValue(Action.NAME))
-copyMenuItem.addActionListener(myActionListener);
+copyMenuItem.addActionListener(new CanvasClipboardActionListener());
 
 myEditMenu.add(myCopyMenuItem);
 ```
 
 #### 2. Add the transfer handler
 
-Your application needs to tell JMonet what to do when the user has invoked the cut, copy or paste action. Typically, this simply involves getting or setting the selection defined by a selection tool (i.e., any tool which subclasses `SelectionTool`). Of course, you're free to provide alternate behavior (like copying the entire canvas, instead of just the selection).
+Next, your application needs to tell JMonet what it should do when it receives a cut, copy or paste action. This is accomplished by setting a `TransferHandler` on the `JMonetCanvas`. The JMonet library comes with a utility class, `CanvasTransferHandler`, that eliminates much of the boilerplate typically associated with integrating cut, copy and paste.
 
 The code below provides an implementation that cuts, copies and pastes the active selection.
 
@@ -346,14 +323,7 @@ PaintToolBuilder.create(PaintToolType.RECTANGLE)
 
 ```
 
-
 ## Frequently asked questions
-
-#### I don't get it. Doesn't Java's `Graphics` already let me draw stuff?
-
-If you're not building an app that lets users paint lines and shapes with the mouse, this probably isn't for you.
-
-Java's `Graphics` context does indeed provide routines for stroking and filling primitive shapes, but there's a quite a bit of work involved to map mouse and keyboard events into these calls the way a "paint" app expects. Getting selections, scale, grids, and transforms to work correctly is a bit more complex than merely delegating to `AffineTransform`, too.
 
 #### How do I save my artwork?
 
@@ -382,7 +352,7 @@ LassoTool currentTool;
 ProjectionTool newTool = PaintToolBuilder.create(...);
 
 currentTool.morphSelection(newTool);  // newTool now has currentTool's selection  
-currentTool.deactivate();             // ... but currentTool is still active.
+currentTool.deactivate();             // currentTool is still active, fix that
 ```
 
 When morphing a Lasso selection to a transform tool, the selection bounds will become rectangular, but only the pixels originally encircled by the Lasso will be affected by the transform.
@@ -407,19 +377,43 @@ Then, apply [one of their filters](http://www.jhlabs.com/ip/filters/index.html) 
   myCanvas.operate(new SolarizeFilter());
 ```
 
+#### I have multiple canvases open at the same time. How can I make a tool active on different canvases simultaneously.
+
+Strictly speaking, a JMonet paint tool can only be active on one canvas at a time. But that needn't stand in your way. As focus changes from one canvas to the next, simply re-activate the tool on the newly focused canvas to achieve your desired behavior.
+
+On each canvas that you want to share a tool, you might do something like:
+
+```
+thisCanvas.addFocusListener(new FocusListener() {
+  @Override
+  public void focusGained(FocusEvent e) {
+    theActiveTool.activate(thisCanvas);  // implicitly deactivates from last canvas
+  }
+
+  @Override
+  public void focusLost(FocusEvent e) {
+    // Nothing to do
+  }
+});
+```
+
+#### I created a custom stroke using a line shape but it doesn't work. What gives?
+
+The area defined by the stroke's shape is where the "pen" will produce ink. A line (or a curve) has no area and therefore produces no paint on the canvas. Use a thin `Rectangle2D` as your stroke shape instead.
+
 #### Can I create my own tools?
 
-Of course! Tools are typically subclassed from one of the abstract tool classes in the `com.defano.jmonet.tools.base` package. These abstract classes handle UI events for the most common tool behaviors:
+Of course! Tools are typically subclassed from one of the base tool classes in the `com.defano.jmonet.tools.base` package. These classes handle UI events for the most common tool behaviors, delegating to tool-specific subclasses for rendering:
 
-Tool Base                | Description
--------------------------|------------
-`BasicTool`              | Base class from which all paint tools are derived. Holds references to attribute providers and implements empty mouse and keyboard event handlers (_template pattern_; allows tools to override only those methods they care about).
-`BoundsTool`             | Click-and-drag to define a rectangular boundary. Examples: Rectangle, Oval, Round Rectangle, Shape tools.
-`LinearTool`             | Click-and-drag to define a line between two points. Example: Line tool.
-`PathTool`               | Click-and-drag to define a free-form path on the canvas. Examples: Paintbrush, pencil, eraser tools.
-`PolylineTool`           | Click, click, click, double-click to define segments in a polygon or curve. Examples: Curve, Polygon tools.
-`SelectionTool`          | Most complex of the tool bases; click-and-drag to define a shape to be drawn with marching ants allowing the user to move or modify the underlying graphic. Examples: Selection, Lasso, Rotate tools.
-`TransformTool`          | Click-and-drag to select a rectangular boundary drawn with drag handles at each corner which can moved by the user. Example: Slant, projection, perspective and rubber sheet tools.
+Tool Base         | Delegate Class          | Description
+------------------|-------------------------|---------------------
+`BasicTool`       |                         | Base class from which all paint tools are derived. Holds references to attribute providers and implements empty mouse and keyboard event handlers (_template pattern_; allows tools to override only those methods they care about).
+`BoundsTool`      | `BoundsToolDelegate`    | Click-and-drag to define a rectangular boundary. Examples: Rectangle, Oval, Round Rectangle, Shape tools.
+`LinearTool`      | `LinearToolDelegate`    | Click-and-drag to define a line between two points. Example: Line tool.
+`PathTool`        | `PathToolDelegate`      | Click-and-drag to define a free-form path on the canvas. Examples: Paintbrush, pencil, eraser tools.
+`PolylineTool`    | `PolylineToolDelegate`  | Click, click, click, double-click to define segments in a polygon or curve. Examples: Curve, Polygon tools.
+`SelectionTool`   | `SelectionToolDelegate` | Most complex of the tool bases; click-and-drag to define a shape to be drawn with marching ants allowing the user to move or modify the underlying graphic. Examples: Selection, Lasso, Rotate tools.
+`TransformTool`   | `TransformToolDelegate` | Click-and-drag to select a rectangular boundary drawn with drag handles at each corner which can moved by the user. Example: Slant, projection, perspective and rubber sheet tools.
 
 #### My canvas isn't getting garbage collected. This library has a memory leak.
 
@@ -430,7 +424,3 @@ When you're done with a canvas, call `.dispose()` on the canvas object to allow 
 #### What about vector graphic tools (i.e., "draw" apps)?
 
 Sorry, that's not the intent of this library. That said, many pieces of this library could be leveraged for such a tool...
-
-#### I created a custom stroke using a line shape but it doesn't work. What gives?
-
-The area defined by the stroke's shape is where the "pen" will produce ink. A line (or a curve) has no area and therefore produces no paint on the canvas. Use a thin `Rectangle2D` instead.

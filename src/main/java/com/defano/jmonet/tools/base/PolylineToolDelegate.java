@@ -4,6 +4,9 @@ import com.defano.jmonet.canvas.Scratch;
 
 import java.awt.*;
 
+/**
+ * A delegate class responsible for rendering shapes drawn by the {@link PolylineTool}.
+ */
 public interface PolylineToolDelegate {
 
     /**

@@ -13,9 +13,9 @@ import java.awt.*;
 
 /**
  * A base tool class providing configuration-specific attributes (like stroke and fill), activation state management
- * (which canvas is the tool active on, if any) and a reference to the tool's delegate.
+ * (which canvas the tool is active on, if any) and a reference to the tool's delegate.
  *
- * @param <DelegateType> The object type of the delegate class in use by this tool.
+ * @param <DelegateType> The object type of the delegate class used by this tool.
  */
 public class BasicTool<DelegateType> implements Tool, SurfaceInteractionObserver {
 
@@ -104,6 +104,10 @@ public class BasicTool<DelegateType> implements Tool, SurfaceInteractionObserver
         return toolAttributes;
     }
 
+    /**
+     * Gets a reference to the tool delegate.
+     * @return The tool delegate
+     */
     @SuppressWarnings("WeakerAccess")
     public DelegateType getDelegate() {
         if (delegate == null) {
@@ -113,6 +117,10 @@ public class BasicTool<DelegateType> implements Tool, SurfaceInteractionObserver
         return delegate;
     }
 
+    /**
+     * Sets a reference to the tool delegate.
+     * @param delegate The tool delegate
+     */
     public void setDelegate(DelegateType delegate) {
         this.delegate = delegate;
     }

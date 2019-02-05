@@ -31,4 +31,6 @@ public interface SwingSurface {
      * @return the <code>ActionMap</code> containing the key/action bindings
      */
     ActionMap getActionMap();
+
+    Component getComponent();
 }

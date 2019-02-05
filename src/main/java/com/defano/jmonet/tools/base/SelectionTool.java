@@ -9,7 +9,7 @@ import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.PerspectiveTool;
 import com.defano.jmonet.tools.RotateTool;
 import com.defano.jmonet.tools.selection.MutableSelection;
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.MathUtils;
 import com.defano.jmonet.tools.util.ImageUtils;
 import com.defano.jmonet.tools.util.MarchingAnts;
 import com.defano.jmonet.tools.util.MarchingAntsObserver;
@@ -22,6 +22,10 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.Optional;
 
+/**
+ * A complex tool that draws a bounding shape (typically a rectangle, but may be any closed shape) and provides the
+ * ability to pick up and move or transform the pixels bound by the selection shape.
+ */
 public class SelectionTool extends BasicTool<SelectionToolDelegate> implements CanvasCommitObserver, MarchingAntsObserver, MutableSelection, SurfaceInteractionObserver {
 
     private final BehaviorSubject<Optional<BufferedImage>> selectedImage = BehaviorSubject.createDefault(Optional.empty());
@@ -143,7 +147,7 @@ public class SelectionTool extends BasicTool<SelectionToolDelegate> implements C
         // User is defining a new selection rectangle
         else {
             Rectangle canvasBounds = new Rectangle(new Point(), getCanvas().getCanvasSize());
-            getDelegate().addPointToSelectionFrame(initialPoint, Geometry.constrainToBounds(canvasLoc, canvasBounds), e.isShiftDown());
+            getDelegate().addPointToSelectionFrame(initialPoint, MathUtils.constrainToBounds(canvasLoc, canvasBounds), e.isShiftDown());
 
             getScratch().clear();
             drawSelectionFrame();
@@ -267,7 +271,7 @@ public class SelectionTool extends BasicTool<SelectionToolDelegate> implements C
     }
 
     /**
-     * Drops the selected image onto the canvas (committing the change) and clears the selection outline. This has the
+     * Drops the selected image onto the canvas (committing the change) and clears the selection frame. This has the
      * effect of completing a select-and-move operation.
      */
     private void completeSelection() {
@@ -321,7 +325,7 @@ public class SelectionTool extends BasicTool<SelectionToolDelegate> implements C
      */
     protected void getSelectionFromCanvas() {
         Shape selectionBounds = getSelectionFrame();
-        BufferedImage maskedSelection = crop(getCanvas().getCanvasImage());
+        BufferedImage maskedSelection = getSelectionCroppedCopy(getCanvas().getCanvasImage());
         BufferedImage trimmedSelection = maskedSelection.getSubimage(selectionBounds.getBounds().x, selectionBounds.getBounds().y, selectionBounds.getBounds().width, selectionBounds.getBounds().height);
 
         selectedImage.onNext(Optional.of(trimmedSelection));
@@ -391,7 +395,7 @@ public class SelectionTool extends BasicTool<SelectionToolDelegate> implements C
     }
 
     /**
-     * Renders the selection outline (marching ants) on the canvas.
+     * Renders the selection frame (marching ants) on the canvas.
      */
     protected void drawSelectionFrame() {
         Shape selectionFrame = getSelectionFrame();

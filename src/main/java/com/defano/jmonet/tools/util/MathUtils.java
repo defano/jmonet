@@ -7,14 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A utility class with geometric and trigonometric routines used by various tools.
+ * A utility class of geometric and trigonometric routines used by various tools.
  */
-public class Geometry {
+public class MathUtils {
 
     /**
      * Library of static methods; cannot be instantiated.
      */
-    private Geometry() {}
+    private MathUtils() {}
 
     /**
      * Rounds a double value to the nearest provided integer multiple. For example rounding 24.3 to the nearest 10
@@ -66,7 +66,7 @@ public class Geometry {
 
         ArrayList<Point> interpolatedPoints = new ArrayList<>();
 
-        double length = Geometry.length(p1, p2);
+        double length = MathUtils.length(p1, p2);
         double xStep = (p2.x - p1.x) / length;
         double yStep = (p2.y - p1.y) / length;
 
@@ -127,7 +127,7 @@ public class Geometry {
      */
     public static Point line(Point p1, Point p2, int toNearestAngle) {
         double length = distance(p1, p2);
-        double nearestAngle = nearestRound(Geometry.angle(p1.x, p1.y, p2.x, p2.y), toNearestAngle);
+        double nearestAngle = nearestRound(MathUtils.angle(p1.x, p1.y, p2.x, p2.y), toNearestAngle);
         return asPoint(line(p1, length, nearestAngle));
     }
 
@@ -302,8 +302,8 @@ public class Geometry {
      * @return A point that appears on a line parallel to angle and which is the same distance from anchor as reference.
      */
     public static Point extrapolate(Line2D angle, Point anchor, Point reference) {
-        double degrees = Geometry.angle(angle);
-        return Geometry.asPoint(Geometry.line(anchor, Geometry.distance(anchor, reference), degrees));
+        double degrees = MathUtils.angle(angle);
+        return MathUtils.asPoint(MathUtils.line(anchor, MathUtils.distance(anchor, reference), degrees));
     }
 
     /**

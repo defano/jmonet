@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * Represents a selection that can be transformed in a way that modifies the committed canvas image.
+ * A selection that can be transformed in a way that modifies the underlying committed canvas image.
  */
 public interface TransformableCanvasSelection extends MutableSelection {
 
@@ -34,7 +34,7 @@ public interface TransformableCanvasSelection extends MutableSelection {
             redrawSelection(false);
 
             // Grab pixels from scratch and canvas that are bounded by the selection
-            BufferedImage maskedSelection = crop(getCanvas().render());
+            BufferedImage maskedSelection = getSelectionCroppedCopy(getCanvas().render());
 
             // Resize to smallest bounds for performance
             Shape selectionBounds = getSelectionFrame();

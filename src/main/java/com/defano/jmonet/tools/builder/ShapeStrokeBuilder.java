@@ -2,7 +2,7 @@ package com.defano.jmonet.tools.builder;
 
 import com.defano.jmonet.model.Quadrilateral;
 import com.defano.jmonet.tools.brushes.ShapeStroke;
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.MathUtils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 public class ShapeStrokeBuilder {
 
     private final ArrayList<Shape> shapes = new ArrayList<>();
-    private int interpolation = 1;
+    private int interpolatedInterval = 1;
 
     /**
      * Use {@link StrokeBuilder#withShape()} to get an instance of this class
@@ -59,7 +59,7 @@ public class ShapeStrokeBuilder {
      * @return The builder
      */
     public ShapeStrokeBuilder ofRegularPolygon(int sides, int sideLength, double rotationDegrees) {
-        shapes.add(Geometry.polygon(new Point(0, 0), sides, sideLength, Math.toRadians(rotationDegrees)));
+        shapes.add(MathUtils.polygon(new Point(0, 0), sides, sideLength, Math.toRadians(rotationDegrees)));
         return this;
     }
 
@@ -256,17 +256,25 @@ public class ShapeStrokeBuilder {
     }
 
     /**
-     * When invoked, the stroke shape will be "stamped" only at each point where two paths join.
+     * When invoked, the stroke shape will be "stamped" only at each point where two paths join. Equivalent to invoking
+     * {@link #interpolatedInterval(int)} with a resolution of 0.
      *
      * @return The builder
      */
     public ShapeStrokeBuilder withoutInterpolation() {
-        this.interpolation = 0;
+        this.interpolatedInterval = 0;
         return this;
     }
 
-    public ShapeStrokeBuilder interpolated(int resolution) {
-        this.interpolation = resolution;
+    /**
+     * Specifies the interval at which each stroke will be stamped. A value of 1 indicates the shape will be stamped
+     * at each pixel along the drawn path.
+     *
+     * @param interval The number of pixels between each "stamp" interpolated between defined points in the drawn path.
+     * @return The builder
+     */
+    public ShapeStrokeBuilder interpolatedInterval(int interval) {
+        this.interpolatedInterval = interval;
         return this;
     }
 
@@ -277,7 +285,7 @@ public class ShapeStrokeBuilder {
      */
     public Stroke build() {
         ShapeStroke brush = new ShapeStroke(shapes);
-        brush.setInterpolationInterval(interpolation);
+        brush.setInterpolationInterval(interpolatedInterval);
         return brush;
     }
 }

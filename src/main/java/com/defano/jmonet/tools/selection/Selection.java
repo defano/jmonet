@@ -7,7 +7,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 /**
- * Represents the state or context of an image selection made by the selection or lasso tools.
+ * A class that manages the state or context of an image selection made by the selection or lasso tools.
  */
 public interface Selection {
 
@@ -79,13 +79,13 @@ public interface Selection {
     void redrawSelection(boolean includeFrame);
 
     /**
-     * Creates a new image in which every pixel not within the selection frame (i.e., bounded by marching ants) has been
-     * changed to fully transparent; the image produced is the same dimensions as the source image.
+     * Creates a new image in which every pixel of the input that is not within the selection frame (i.e., bounded by
+     * marching ants) has been changed to fully transparent; the image produced is the same dimensions as the source image.
      *
      * @param image The image to crop
      * @return A BufferedImage in which every pixel not within the selection has been made transparent
      */
-    default BufferedImage crop(BufferedImage image) {
+    default BufferedImage getSelectionCroppedCopy(BufferedImage image) {
         Shape mask = getSelectionFrame();
         BufferedImage maskedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 

@@ -5,7 +5,7 @@ import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.BoundsTool;
 import com.defano.jmonet.tools.base.BoundsToolDelegate;
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.MathUtils;
 
 import java.awt.*;
 
@@ -27,7 +27,7 @@ public class ShapeTool extends BoundsTool implements BoundsToolDelegate {
     /** {@inheritDoc} */
     @Override
     public void strokeBounds(Scratch scratch, Stroke stroke, Paint paint, Rectangle bounds, boolean isShiftDown) {
-        Polygon poly = Geometry.polygon(getInitialPoint(), getAttributes().getShapeSides(), getRadius(), getRotationAngle(isShiftDown));
+        Polygon poly = MathUtils.polygon(getInitialPoint(), getAttributes().getShapeSides(), getRadius(), getRotationAngle(isShiftDown));
 
         GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, poly);
         g.setStroke(stroke);
@@ -40,18 +40,18 @@ public class ShapeTool extends BoundsTool implements BoundsToolDelegate {
     public void fillBounds(Scratch scratch, Paint fill, Rectangle bounds, boolean isShiftDown) {
         GraphicsContext g = scratch.getAddScratchGraphics(this, null);
         g.setPaint(fill);
-        g.fill(Geometry.polygon(getInitialPoint(), getAttributes().getShapeSides(), getRadius(), getRotationAngle(isShiftDown)));
+        g.fill(MathUtils.polygon(getInitialPoint(), getAttributes().getShapeSides(), getRadius(), getRotationAngle(isShiftDown)));
     }
 
     private double getRadius() {
-        return Geometry.distance(getInitialPoint(), getCurrentPoint());
+        return MathUtils.distance(getInitialPoint(), getCurrentPoint());
     }
 
     private double getRotationAngle(boolean isShiftDown) {
-        double degrees = Geometry.angle(getInitialPoint().x, getInitialPoint().y, getCurrentPoint().x, getCurrentPoint().y);
+        double degrees = MathUtils.angle(getInitialPoint().x, getInitialPoint().y, getCurrentPoint().x, getCurrentPoint().y);
 
         if (isShiftDown) {
-            degrees = Geometry.nearestRound(degrees, getAttributes().getConstrainedAngle());
+            degrees = MathUtils.nearestRound(degrees, getAttributes().getConstrainedAngle());
         }
 
         return Math.toRadians(degrees);

@@ -28,6 +28,12 @@ public interface Tool {
      */
     void deactivate();
 
+    /**
+     * Determines if this tool is presently active on a canvas. A tool is considered active after a call to
+     * {@link #activate(PaintCanvas)} has been made, but before a call to {@link #deactivate()}.
+     *
+     * @return True if the tool is active, false otherwise.
+     */
     boolean isActive();
 
     /**

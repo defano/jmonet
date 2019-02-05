@@ -1,6 +1,6 @@
 package com.defano.jmonet.tools.base;
 
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.MathUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -86,7 +86,7 @@ class PolylineToolTest extends BaseToolTest<PolylineTool> {
         uut.mousePressed(mockEvent, pressPoint);
         uut.mouseMoved(mockEvent, movePoint);
 
-        Point constrainedPoint = Geometry.line(pressPoint, movePoint, mockToolAttributes.getConstrainedAngle());
+        Point constrainedPoint = MathUtils.line(pressPoint, movePoint, mockToolAttributes.getConstrainedAngle());
 
         Mockito.verify(mockScratch).clear();
         Mockito.verify(mockDelegate).strokePolyline(

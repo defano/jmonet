@@ -5,7 +5,7 @@ import com.defano.jmonet.transform.image.SlantTransform;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.model.FlexQuadrilateral;
 import com.defano.jmonet.tools.base.TransformTool;
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.MathUtils;
 
 import java.awt.*;
 
@@ -65,6 +65,6 @@ public class SlantTool extends TransformTool implements TransformToolDelegate {
 
     private double getTheta(FlexQuadrilateral quadrilateral) {
         Point p = new Point(quadrilateral.getBottomLeft().x, quadrilateral.getTopLeft().y);
-        return Geometry.theta(quadrilateral.getBottomLeft(), p, quadrilateral.getTopLeft());
+        return MathUtils.theta(quadrilateral.getBottomLeft(), p, quadrilateral.getTopLeft());
     }
 }

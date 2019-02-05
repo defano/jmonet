@@ -2,11 +2,17 @@ package com.defano.jmonet.tools.base;
 
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.MathUtils;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 
+/**
+ * A tool that draws shapes by defined by a bounding box, like rectangles, round-rectangles, and ovals.
+ *
+ * Click to define the first point in the bounding box, then drag to define the second. There are no restrictions
+ * on the relative location of the two points.
+ */
 public class BoundsTool extends BasicTool<BoundsToolDelegate> implements SurfaceInteractionObserver {
 
     private Point initialPoint;
@@ -48,8 +54,8 @@ public class BoundsTool extends BasicTool<BoundsToolDelegate> implements Surface
         }
 
         Rectangle bounds = e.isShiftDown() ?
-                Geometry.square(originPoint, currentPoint) :
-                Geometry.rectangle(originPoint, currentPoint);
+                MathUtils.square(originPoint, currentPoint) :
+                MathUtils.rectangle(originPoint, currentPoint);
 
         getAttributes().getFillPaint().ifPresent(paint ->
                 getDelegate().fillBounds(getScratch(), paint, new Rectangle(bounds.x, bounds.y, bounds.width, bounds.height), e.isShiftDown()));

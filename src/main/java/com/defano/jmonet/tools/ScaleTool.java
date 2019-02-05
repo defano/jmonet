@@ -5,7 +5,7 @@ import com.defano.jmonet.transform.image.ScaleTransform;
 import com.defano.jmonet.model.FlexQuadrilateral;
 import com.defano.jmonet.model.PaintToolType;
 import com.defano.jmonet.tools.base.TransformTool;
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.MathUtils;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -28,7 +28,7 @@ public class ScaleTool extends TransformTool implements TransformToolDelegate {
     @Override
     public void moveTopLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         if (isShiftDown) {
-            newPosition = Geometry.extrapolate(originalQuad().getBottomRightTopLeftDiagonal(), quadrilateral.getBottomRight(), newPosition);
+            newPosition = MathUtils.extrapolate(originalQuad().getBottomRightTopLeftDiagonal(), quadrilateral.getBottomRight(), newPosition);
         }
 
         quadrilateral.getTopLeft().setLocation(newPosition);
@@ -51,7 +51,7 @@ public class ScaleTool extends TransformTool implements TransformToolDelegate {
     @Override
     public void moveTopRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         if (isShiftDown) {
-            newPosition = Geometry.extrapolate(originalQuad().getBottomLeftTopRightDiagonal(), quadrilateral.getBottomLeft(), newPosition);
+            newPosition = MathUtils.extrapolate(originalQuad().getBottomLeftTopRightDiagonal(), quadrilateral.getBottomLeft(), newPosition);
         }
 
         quadrilateral.getTopRight().setLocation(newPosition);
@@ -74,7 +74,7 @@ public class ScaleTool extends TransformTool implements TransformToolDelegate {
     @Override
     public void moveBottomLeft(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         if (isShiftDown) {
-            newPosition = Geometry.extrapolate(originalQuad().getTopRightBottomLeftDiagonal(), quadrilateral.getTopRight(), newPosition);
+            newPosition = MathUtils.extrapolate(originalQuad().getTopRightBottomLeftDiagonal(), quadrilateral.getTopRight(), newPosition);
         }
 
         quadrilateral.getBottomLeft().setLocation(newPosition);
@@ -97,7 +97,7 @@ public class ScaleTool extends TransformTool implements TransformToolDelegate {
     @Override
     public void moveBottomRight(FlexQuadrilateral quadrilateral, Point newPosition, boolean isShiftDown) {
         if (isShiftDown) {
-            newPosition = Geometry.extrapolate(originalQuad().getTopLeftBottomRightDiagonal(), quadrilateral.getTopLeft(), newPosition);
+            newPosition = MathUtils.extrapolate(originalQuad().getTopLeftBottomRightDiagonal(), quadrilateral.getTopLeft(), newPosition);
         }
 
         quadrilateral.getBottomRight().setLocation(newPosition);

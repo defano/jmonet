@@ -2,7 +2,7 @@ package com.defano.jmonet.tools.base;
 
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.MathUtils;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -11,8 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A tool that draws a series of interconnected lines where the next start-point is the end-point of the previous line.
- * Double-clicking completes the sequence, allowing for the shape to be closed and filled.
+ * A tool that draws shapes defined by a series of interconnected lines, where the end of the current line denotes the
+ * starting point of the next line. Double-clicking completes the sequence, allowing for the shape to be closed and
+ * filled.
  *
  * See {@link com.defano.jmonet.tools.CurveTool} and {@link com.defano.jmonet.tools.PolygonTool} as examples.
  */
@@ -43,7 +44,7 @@ public class PolylineTool extends BasicTool<PolylineToolDelegate> implements Sur
 
         if (e.isShiftDown()) {
             Point lastPoint = points.get(points.size() - 1);
-            currentPoint = Geometry.line(lastPoint, canvasLoc, getAttributes().getConstrainedAngle());
+            currentPoint = MathUtils.line(lastPoint, canvasLoc, getAttributes().getConstrainedAngle());
             points.add(currentPoint);
         } else {
             currentPoint = canvasLoc;

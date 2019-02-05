@@ -6,6 +6,9 @@ import com.defano.jmonet.model.Interpolation;
 import java.awt.*;
 import java.util.Optional;
 
+/**
+ * A set of attributes provided to all JMonet tools (although not every tool will use every attribute).
+ */
 public interface ToolAttributes extends ObservableToolAttributes {
 
     int MIN_SHAPE_SIDES = 3;

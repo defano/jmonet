@@ -9,6 +9,10 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 
+/**
+ * A {@link SelectionTool} whose rectanglular selection frame can be modified by dragging handles that are rendered by
+ * the tool at each corner of the frame's bounds.
+ */
 public class TransformTool extends SelectionTool implements SurfaceInteractionObserver, SelectionToolDelegate {
 
     private final static int HANDLE_SIZE = 8;
