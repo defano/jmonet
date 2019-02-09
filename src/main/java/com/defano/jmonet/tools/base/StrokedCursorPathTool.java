@@ -9,7 +9,7 @@ import io.reactivex.disposables.Disposable;
 import java.awt.*;
 
 /**
- * A {@link PathTool} whose mouse cursor tracks the tools stroke and paint, like the paintbrush tool.
+ * A {@link PathTool} whose mouse cursor tracks the tool's stroke and paint, like the paintbrush tool.
  */
 @SuppressWarnings("unused")
 public class StrokedCursorPathTool extends PathTool {

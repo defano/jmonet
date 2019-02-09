@@ -15,7 +15,7 @@ public class TransparencyPixelTransform implements PixelTransform {
      * Creates a transparency-adjusting transform.
      *
      * @param delta The amount by which to adjust each affected pixel's alpha value. A value of +255 assures every pixel
-     *              if fully opaque; a value of -255 assures every pixel is fully transparent.
+     *              is fully opaque; a value of -255 assures every pixel is fully transparent.
      */
     public TransparencyPixelTransform(int delta) {
         this.delta = delta;

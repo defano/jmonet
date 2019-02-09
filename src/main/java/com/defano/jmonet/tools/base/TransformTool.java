@@ -140,8 +140,7 @@ public class TransformTool extends SelectionTool implements SurfaceInteractionOb
         topLeftHandle = topRightHandle = bottomLeftHandle = bottomRightHandle = null;
     }
 
-    /** {@inheritDoc}
-     * @param bounds*/
+    /** {@inheritDoc} */
     @Override
     public void setSelectionFrame(Shape bounds) {
         transformBounds = new FlexQuadrilateral(bounds);

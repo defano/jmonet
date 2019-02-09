@@ -121,7 +121,6 @@ public class RotateTool extends SelectionTool implements SelectionToolDelegate {
 
     /**
      * {@inheritDoc}
-     * @param bounds
      */
     @Override
     public void setSelectionFrame(Shape bounds) {

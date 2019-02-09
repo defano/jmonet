@@ -23,8 +23,9 @@ public interface Tool {
     void activate(PaintCanvas canvas);
 
     /**
-     * Deactivates the tool on the canvas. A deactivated tool no longer affects the canvas and all listeners / observers
-     * are un-subscribed making the tool available for garbage collection.
+     * Deactivates the tool on the canvas. Invoking this method on a tool this is not presently activated has no effect.
+     * A deactivated tool no longer affects the canvas and all listeners / observers are un-subscribed making the tool
+     * available for garbage collection.
      */
     void deactivate();
 
@@ -61,7 +62,7 @@ public interface Tool {
 
     /**
      * Gets the scratch buffer of the canvas that this tool is presently activated on, applying this tool's anti-
-     * aliasing mode to scratch buffer's graphics context.
+     * aliasing mode to the scratch buffer's graphics context.
      *
      * @return The active scratch buffer.
      */

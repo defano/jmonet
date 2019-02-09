@@ -58,8 +58,7 @@ public class MarqueeTool extends SelectionTool implements TransformableSelection
         selectionBounds = null;
     }
 
-    /** {@inheritDoc}
-     * @param bounds*/
+    /** {@inheritDoc} */
     @Override
     public void setSelectionFrame(Shape bounds) {
         selectionBounds = bounds.getBounds();
