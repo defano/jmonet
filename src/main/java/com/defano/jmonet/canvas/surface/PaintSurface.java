@@ -8,9 +8,10 @@ import java.awt.*;
  * A component that can be painted and that provides methods for drawing at scale, snap-to-grid behavior, scrolling,
  * observables, and embedding Swing components.
  */
-public interface PaintSurface extends ScanlineSurface, GridSurface, SwingSurface, ObservableSurface, ScrollableSurface,
-        Disposable {
-
+@SuppressWarnings("unused")
+public interface PaintSurface
+        extends ScanlineSurface, GridSurface, SwingSurface, ObservableSurface, ScrollableSurface, Disposable
+{
     /**
      * Specifies the un-scaled size of this painting surface. This determines the size of the image (document) that can
      * be painted by a user. This does not specify the size of the Swing component or otherwise adjust layout or
@@ -28,9 +29,19 @@ public interface PaintSurface extends ScanlineSurface, GridSurface, SwingSurface
     Dimension getSurfaceDimension();
 
     /**
-     * Causes the surface to be repainted by Swing.
+     * Causes the entire surface to be repainted by Swing. Note that repainting large regions is computationally
+     * expensive, whenever possible tools should repaint the smallest sub-region possible using the
+     * {@link #repaint(Rectangle)} method.
      */
     void repaint();
+
+    /**
+     * Causes a section of the surface to be repainted by Swing. This is the minimum rectangle that will be repainted;
+     * there is no
+     *
+     * @param r The region of this surface to be repainted.
+     */
+    void repaint(Rectangle r);
 
     /**
      * Determines if the canvas is visible.

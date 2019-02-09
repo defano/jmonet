@@ -1,4 +1,9 @@
 language: java
+
+before_install:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+
 jdk:
 - oraclejdk8
 
@@ -13,4 +18,4 @@ script: mvn test javadoc:javadoc
 after_success:
 - chmod +x .travis/push-javadocs.sh
 - .travis/push-javadocs.sh
-- mvn sonar:sonar -Dsonar.organization=defano-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_KEY
+- mvn sonar:sonar -Dsonar.organization=defano-github -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=$SONAR_KEY -Dsonar.branch.name=$TRAVIS_BRANCH

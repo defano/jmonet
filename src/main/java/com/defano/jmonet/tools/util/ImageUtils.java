@@ -9,6 +9,11 @@ import java.awt.image.BufferedImage;
 public class ImageUtils {
 
     /**
+     * Library of static methods; cannot be instantiated.
+     */
+    private ImageUtils() {}
+
+    /**
      * Makes a "deep" copy of the given image, returning a copy whose type is TYPE_INT_ARGB.
      *
      * @param src The image to copy.

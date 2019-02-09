@@ -1,10 +1,12 @@
 package com.defano.jmonet.tools;
 
 
+import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
 import com.defano.jmonet.canvas.surface.SurfaceScrollController;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.builder.PaintTool;
-import com.defano.jmonet.tools.util.CursorFactory;
+import com.defano.jmonet.tools.attributes.ToolAttributes;
+import com.defano.jmonet.tools.base.BasicTool;
+import com.defano.jmonet.tools.cursors.CursorFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,27 +17,29 @@ import java.awt.event.MouseEvent;
  * Tool that changes the scale factor of the canvas and adjusts the scroll position to re-center the scaled image
  * in the scrollable viewport.
  */
-public class MagnifierTool extends PaintTool {
+public class MagnifierTool extends BasicTool implements SurfaceInteractionObserver {
 
     private Cursor zoomCursor = CursorFactory.makeZoomCursor();
     private Cursor zoomInCursor = CursorFactory.makeZoomInCursor();
     private Cursor zoomOutCursor = CursorFactory.makeZoomOutCursor();
 
-    private double minimumScale = 1.0;
-    private double maximumScale = 32.0;
-    private double magnificationStep = 2;
-    private boolean recenter = true;
-
-    public MagnifierTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    MagnifierTool() {
         super(PaintToolType.MAGNIFIER);
         SwingUtilities.invokeLater(() -> setToolCursor(zoomInCursor));
+    }
+
+    @Override
+    public Cursor getDefaultCursor() {
+        return zoomInCursor;
     }
 
     /** {@inheritDoc} */
     @Override
     public void keyPressed(KeyEvent e) {
-        super.keyPressed(e);
-
         if (e.isMetaDown() || e.isControlDown() || e.isAltDown()) {
             setToolCursor(zoomCursor);
         } else if (e.isShiftDown()) {
@@ -48,7 +52,6 @@ public class MagnifierTool extends PaintTool {
     /** {@inheritDoc} */
     @Override
     public void keyReleased(KeyEvent e) {
-        super.keyReleased(e);
         setToolCursor(e.isShiftDown() ? zoomOutCursor : zoomInCursor);
     }
 
@@ -65,7 +68,7 @@ public class MagnifierTool extends PaintTool {
         }
 
         SurfaceScrollController scrollController = getCanvas().getSurfaceScrollController();
-        if (recenter && scrollController != null) {
+        if (getAttributes().isRecenterOnMagnify() && scrollController != null) {
             recenter(scrollController, clickLoc);
         }
     }
@@ -83,17 +86,23 @@ public class MagnifierTool extends PaintTool {
 
     /**
      * Multiplies the scale of the canvas this tool is currently active on by the value returned from
-     * {@link #getMagnificationStep()}. Does not change the scroll position of the canvas.
+     * {@link ToolAttributes#getMagnificationStep()}. Does not change the scroll position of the canvas.
      */
     public void zoomIn() {
+        double maximumScale = getAttributes().getMaximumScale();
+        double magnificationStep = getAttributes().getMagnificationStep();
+
         getCanvas().setScale(Math.min(maximumScale, getCanvas().getScale() * magnificationStep));
     }
 
     /**
      * Divides the scale of the canvas this tool is currently active on by the value returned from
-     * {@link #getMagnificationStep()}. Does not change the scroll position of the canvas.
+     * {@link ToolAttributes#getMagnificationStep()}. Does not change the scroll position of the canvas.
      */
     public void zoomOut() {
+        double minimumScale = getAttributes().getMinimumScale();
+        double magnificationStep = getAttributes().getMagnificationStep();
+
         getCanvas().setScale(Math.max(minimumScale, getCanvas().getScale() / magnificationStep));
     }
 
@@ -103,6 +112,7 @@ public class MagnifierTool extends PaintTool {
      *
      * @return The reset-zoom cursor.
      */
+    @SuppressWarnings("unused")
     public Cursor getZoomCursor() {
         return zoomCursor;
     }
@@ -113,6 +123,7 @@ public class MagnifierTool extends PaintTool {
      *
      * @param zoomCursor The reset-zoom cursor.
      */
+    @SuppressWarnings("unused")
     public void setZoomCursor(Cursor zoomCursor) {
         this.zoomCursor = zoomCursor;
     }
@@ -123,6 +134,7 @@ public class MagnifierTool extends PaintTool {
      *
      * @return The zoom-in cursor.
      */
+    @SuppressWarnings("unused")
     public Cursor getZoomInCursor() {
         return zoomInCursor;
     }
@@ -133,6 +145,7 @@ public class MagnifierTool extends PaintTool {
      *
      * @param zoomInCursor The zoom-in cursor.
      */
+    @SuppressWarnings("unused")
     public void setZoomInCursor(Cursor zoomInCursor) {
         this.zoomInCursor = zoomInCursor;
     }
@@ -143,6 +156,7 @@ public class MagnifierTool extends PaintTool {
      *
      * @return The zoom-out cursor.
      */
+    @SuppressWarnings("unused")
     public Cursor getZoomOutCursor() {
         return zoomOutCursor;
     }
@@ -153,91 +167,9 @@ public class MagnifierTool extends PaintTool {
      *
      * @param zoomOutCursor The zoom-out cursor.
      */
+    @SuppressWarnings("unused")
     public void setZoomOutCursor(Cursor zoomOutCursor) {
         this.zoomOutCursor = zoomOutCursor;
     }
 
-    /**
-     * Gets the value by which the canvas scale factor is multiplied or divided when zooming in or zooming out. For
-     * example, when this value is 2.0, zooming in causes the scale factor to be multiplied by 2 thus scaling the
-     * canvas from its original size to 2x, then 4x, then 8x and so forth.
-     *
-     * @return The zoom in/out scale multiple
-     */
-    public double getMagnificationStep() {
-        return magnificationStep;
-    }
-
-    /**
-     * Sets the value by which the canvas scale factor is multiplied or divided when zooming in or zooming out. For
-     * example, when this value is 2.0, zooming in causes the scale factor to be multiplied by 2 thus scaling the
-     * canvas from its original size to 2x, then 4x, then 8x and so forth.
-     *
-     * @param magnificationStep The zoom in/out scale multiple
-     */
-    public void setMagnificationStep(double magnificationStep) {
-        this.magnificationStep = magnificationStep;
-    }
-
-    /**
-     * Gets whether the canvas scroll position should be updated when zooming in or out to recenter the pixel that was
-     * clicked with the magnifier tool. Has no effect when the active canvas is not embedded in a scroll pane and
-     * managed via a {@link SurfaceScrollController}.
-     *
-     * @return True if the clicked pixel will be centered in the scroll pane when zooming in or out; false otherwise.
-     */
-    public boolean isRecenter() {
-        return recenter;
-    }
-
-    /**
-     * Sets whether the canvas scroll position should be updated when zooming in or out to recenter the pixel that was
-     * clicked with the magnifier tool. Has no effect when the active canvas is not embedded in a scroll pane and
-     * managed via a {@link SurfaceScrollController}.
-     *
-     * @param recenter True to cause the clicked pixel to be centered in the scroll pane when zooming in or out.
-     */
-    public void setRecenter(boolean recenter) {
-        this.recenter = recenter;
-    }
-
-    /**
-     * Gets the minimum allowable scale factor that this tool can adjust the active canvas to. For example, when set
-     * to 1.0 the magnifier tool will not be able to zoom out (shrink the image) past its normal size.
-     *
-     * @return The minimum allowable scale factor this tool will adjust to.
-     */
-    public double getMinimumScale() {
-        return minimumScale;
-    }
-
-    /**
-     * Sets the minimum allowable scale factor that this tool can adjust the active canvas to. For example, when set
-     * to 1.0 the magnifier tool will not be able to zoom out (shrink the image) past its normal size.
-
-     * @param minimumScale The minimum allowable scale factor this tool will adjust to.
-     */
-    public void setMinimumScale(double minimumScale) {
-        this.minimumScale = minimumScale;
-    }
-
-    /**
-     * Gets the maximum allowable scale factor that this tool can adjust the active canvas to. For example, when set
-     * to 32.0 the magnifier tool will not be able to magnify the canvas greater than 32x.
-     *
-     * @return The maximum allowable scale factor this tool will adjust to.
-     */
-    public double getMaximumScale() {
-        return maximumScale;
-    }
-
-    /**
-     * Gets the maximum allowable scale factor that this tool can adjust the active canvas to. For example, when set
-     * to 32.0 the magnifier tool will not be able to magnify the canvas greater than 32x.
-     *
-     * @param maximumScale The maximum allowable scale factor this tool will adjust to.
-     */
-    public void setMaximumScale(double maximumScale) {
-        this.maximumScale = maximumScale;
-    }
 }

@@ -1,5 +1,7 @@
 package com.defano.jmonet.canvas.surface;
 
+import com.defano.jmonet.tools.MagnifierTool;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -7,7 +9,9 @@ import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 
 /**
- * Provides basic scroll behavior when an AbstractPaintSurface is the viewport of a {@link JScrollPane}.
+ * Provides basic scroll behavior when an AbstractPaintSurface is the viewport of a {@link JScrollPane}. This is
+ * required so that tools (like {@link MagnifierTool} can query and change the scroll position
+ * of the JScrollPane containing the canvas the tool is painting on.
  * <p>
  * This default implementation is sufficient for cases when the surface is added to a {@link JScrollPane} as the view
  * port. If the surface (canvas) is embedded is some container with additional components or decorations a custom

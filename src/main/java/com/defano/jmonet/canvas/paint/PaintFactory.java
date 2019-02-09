@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 /**
  * A utility for producing {@link Paint} in commonly-needed colors and textures.
  */
+@SuppressWarnings("unused")
 public class PaintFactory {
 
     /**

@@ -1,8 +1,10 @@
 package com.defano.jmonet.tools;
 
 import com.defano.jmonet.canvas.Scratch;
+import com.defano.jmonet.context.GraphicsContext;
 import com.defano.jmonet.model.PaintToolType;
-import com.defano.jmonet.tools.base.AbstractPolylineTool;
+import com.defano.jmonet.tools.base.PolylineTool;
+import com.defano.jmonet.tools.base.PolylineToolDelegate;
 
 import java.awt.*;
 import java.awt.geom.Path2D;
@@ -10,18 +12,23 @@ import java.awt.geom.Path2D;
 /**
  * Tool to draw outlined or filled irregular polygons on the canvas.
  */
-public class PolygonTool extends AbstractPolylineTool {
+public class PolygonTool extends PolylineTool implements PolylineToolDelegate {
 
-    public PolygonTool() {
+    /**
+     * Tool must be constructed via {@link com.defano.jmonet.tools.builder.PaintToolBuilder} to handle dependency
+     * injection.
+     */
+    PolygonTool() {
         super(PaintToolType.POLYGON);
+        setDelegate(this);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void strokePolyline(Scratch scratch, Stroke stroke, Paint paint, int[] xPoints, int[] yPoints) {
+    public void strokePolyline(Scratch scratch, Stroke stroke, Paint paint, int[] xPoints, int[] yPoints) {
         Path2D poly = getPolylineShape(xPoints, yPoints, xPoints.length);
 
-        Graphics2D g = scratch.getAddScratchGraphics(this, stroke, poly);
+        GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, poly);
         g.setPaint(paint);
         g.setStroke(stroke);
         g.draw(poly);
@@ -29,10 +36,10 @@ public class PolygonTool extends AbstractPolylineTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void strokePolygon(Scratch scratch, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints) {
+    public void strokePolygon(Scratch scratch, Stroke stroke, Paint strokePaint, int[] xPoints, int[] yPoints) {
         Path2D polygon = getPolygonShape(xPoints, yPoints, xPoints.length);
 
-        Graphics2D g = scratch.getAddScratchGraphics(this, stroke, polygon);
+        GraphicsContext g = scratch.getAddScratchGraphics(this, stroke, polygon);
         g.setStroke(stroke);
         g.setPaint(strokePaint);
         g.draw(polygon);
@@ -40,19 +47,19 @@ public class PolygonTool extends AbstractPolylineTool {
 
     /** {@inheritDoc} */
     @Override
-    protected void fillPolygon(Scratch scratch, Paint fillPaint, int[] xPoints, int[] yPoints) {
-        Graphics2D g = scratch.getAddScratchGraphics(this, null);
+    public void fillPolygon(Scratch scratch, Paint fillPaint, int[] xPoints, int[] yPoints) {
+        GraphicsContext g = scratch.getAddScratchGraphics(this, null);
         g.setPaint(fillPaint);
         g.fillPolygon(xPoints, yPoints, xPoints.length);
     }
 
-    private Path2D getPolygonShape(int xPoints[], int yPoints[], int points) {
+    private Path2D getPolygonShape(int[] xPoints, int[] yPoints, int points) {
         Path2D poly = getPolylineShape(xPoints, yPoints, points);
         poly.closePath();
         return poly;
     }
 
-    private Path2D getPolylineShape(int xPoints[], int yPoints[], int points) {
+    private Path2D getPolylineShape(int[] xPoints, int[] yPoints, int points) {
         Path2D poly = new Path2D.Double();
 
         if (points > 0) {

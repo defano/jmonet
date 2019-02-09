@@ -1,6 +1,6 @@
 package com.defano.jmonet.model;
 
-import com.defano.jmonet.tools.util.Geometry;
+import com.defano.jmonet.tools.util.MathUtils;
 
 import java.awt.*;
 
@@ -27,6 +27,7 @@ public class FlexQuadrilateral implements Quadrilateral {
      * @param bottomLeft The bottom-left corner
      * @param bottomRight The bottom-right corner
      */
+    @SuppressWarnings("WeakerAccess")
     public FlexQuadrilateral(Point topLeft, Point topRight, Point bottomLeft, Point bottomRight) {
         this.topLeft = topLeft;
         this.topRight = topRight;
@@ -64,9 +65,9 @@ public class FlexQuadrilateral implements Quadrilateral {
      */
     public void setTopLeft(Point topLeft) {
         if (topLeft.x < getRight() &&
-                Geometry.isAbove(getBottomLeftTopRightDiagonal(), topLeft) &&
-                Geometry.isAbove(getBottomLine(), topLeft) &&
-                Geometry.isBelow(getRightLine(), topLeft)) {
+                MathUtils.isAbove(getBottomLeftTopRightDiagonal(), topLeft) &&
+                MathUtils.isAbove(getBottomLine(), topLeft) &&
+                MathUtils.isBelow(getRightLine(), topLeft)) {
             this.topLeft = topLeft;
         }
     }
@@ -88,9 +89,9 @@ public class FlexQuadrilateral implements Quadrilateral {
      */
     public void setTopRight(Point topRight) {
         if (topRight.x > getLeft() && topRight.y < getBottom() &&
-                Geometry.isAbove(getTopLeftBottomRightDiagonal(), topRight) &&
-                Geometry.isAbove(getLeftLine(), topRight) &&
-                Geometry.isAbove(getBottomLine(), topRight)) {
+                MathUtils.isAbove(getTopLeftBottomRightDiagonal(), topRight) &&
+                MathUtils.isAbove(getLeftLine(), topRight) &&
+                MathUtils.isAbove(getBottomLine(), topRight)) {
             this.topRight = topRight;
         }
     }
@@ -112,9 +113,9 @@ public class FlexQuadrilateral implements Quadrilateral {
      */
     public void setBottomLeft(Point bottomLeft) {
         if (bottomLeft.x < getRight() && bottomLeft.y > getTop() &&
-                Geometry.isBelow(getTopLeftBottomRightDiagonal(), bottomLeft) &&
-                Geometry.isBelow(getRightLine(), bottomLeft) &&
-                Geometry.isBelow(getTopLine(), bottomLeft)) {
+                MathUtils.isBelow(getTopLeftBottomRightDiagonal(), bottomLeft) &&
+                MathUtils.isBelow(getRightLine(), bottomLeft) &&
+                MathUtils.isBelow(getTopLine(), bottomLeft)) {
             this.bottomLeft = bottomLeft;
         }
     }
@@ -136,9 +137,9 @@ public class FlexQuadrilateral implements Quadrilateral {
      */
     public void setBottomRight(Point bottomRight) {
         if (bottomRight.x > getLeft() && bottomRight.y > getTop() &&
-                Geometry.isBelow(getBottomLeftTopRightDiagonal(), bottomRight) &&
-                Geometry.isAbove(getLeftLine(), bottomRight) &&
-                Geometry.isBelow(getTopLine(), bottomRight)) {
+                MathUtils.isBelow(getBottomLeftTopRightDiagonal(), bottomRight) &&
+                MathUtils.isAbove(getLeftLine(), bottomRight) &&
+                MathUtils.isBelow(getTopLine(), bottomRight)) {
             this.bottomRight = bottomRight;
         }
     }

@@ -4,8 +4,8 @@ import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.observable.CanvasCommitObserver;
 import com.defano.jmonet.canvas.surface.AbstractPaintSurface;
-import com.defano.jmonet.tools.util.Geometry;
-import io.reactivex.Observable;
+import com.defano.jmonet.context.GraphicsContext;
+import com.defano.jmonet.tools.util.MathUtils;
 import io.reactivex.subjects.BehaviorSubject;
 
 import java.awt.*;
@@ -51,6 +51,14 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Component getComponent() {
+        return this;
+    }
+
+    /**
      * Marks this component safe for garbage collection; removes registered listeners and components.
      */
     public void dispose() {
@@ -78,7 +86,7 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
     @Override
     public void clearCanvas() {
         Rectangle clear = new Rectangle(new Point(), getCanvasSize());
-        Graphics2D g2 = scratch.getRemoveScratchGraphics(null, clear);
+        GraphicsContext g2 = scratch.getRemoveScratchGraphics(null, clear);
         g2.setColor(Color.WHITE);
         g2.fill(clear);
 
@@ -107,15 +115,15 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
     @Override
     public Point convertViewPointToModel(Point p) {
         Point error = getScrollError();
-        int gridSpacing = getGridSpacingObservable().blockingFirst();
+        int gridSpacing = getGridSpacing();
         double scale = getScaleObservable().blockingFirst();
 
         int x = p.x - error.x;
-        x = Geometry.round(x, (int) (gridSpacing * scale));
+        x = MathUtils.nearestFloor(x, (int) (gridSpacing * scale));
         x = (int) (x / scale);
 
         int y = p.y - error.y;
-        y = Geometry.round(y, (int) (gridSpacing * scale));
+        y = MathUtils.nearestFloor(y, (int) (gridSpacing * scale));
         y = (int) (y / scale);
 
         return new Point(x, y);
@@ -164,8 +172,8 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
      * {@inheritDoc}
      */
     @Override
-    public Observable<Integer> getGridSpacingObservable() {
-        return gridSpacingSubject;
+    public int getGridSpacing() {
+        return gridSpacingSubject.blockingFirst();
     }
 
     /**
@@ -203,8 +211,6 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
 
         return new Point((int) (viewRect.x % scale), (int) (viewRect.y % scale));
     }
-
-
 
     protected void fireCanvasCommitObservers(PaintCanvas canvas, ImageLayerSet imageLayerSet, BufferedImage canvasImage) {
         for (CanvasCommitObserver thisObserver : observers) {

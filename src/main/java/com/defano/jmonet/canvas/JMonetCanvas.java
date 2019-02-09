@@ -1,9 +1,11 @@
 package com.defano.jmonet.canvas;
 
-import com.defano.jmonet.algo.transform.image.ApplyPixelTransform;
-import com.defano.jmonet.algo.transform.image.PixelTransform;
-import com.defano.jmonet.algo.transform.image.StaticImageTransform;
-import com.defano.jmonet.algo.transform.image.Transformable;
+import com.defano.jmonet.context.AwtGraphicsContext;
+import com.defano.jmonet.context.GraphicsContext;
+import com.defano.jmonet.transform.image.ApplyPixelTransform;
+import com.defano.jmonet.transform.image.PixelTransform;
+import com.defano.jmonet.transform.image.StaticImageTransform;
+import com.defano.jmonet.transform.image.Transformable;
 import com.defano.jmonet.canvas.layer.ImageLayer;
 import com.defano.jmonet.canvas.layer.ImageLayerSet;
 import com.defano.jmonet.canvas.layer.LayeredImage;
@@ -20,7 +22,8 @@ import java.util.Objects;
 /**
  * A paint canvas with a built-in undo and redo buffer.
  */
-public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserver, Transformable {
+@SuppressWarnings("unused")
+public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserver, Transformable, Undoable {
 
     // Maximum number of allowable undo operations
     private final int maxUndoBufferDepth;
@@ -46,6 +49,7 @@ public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserve
      * @param initialImage    The image to be displayed in the canvas.
      * @param undoBufferDepth The depth of the undo buffer (number of undo operations)
      */
+    @SuppressWarnings("WeakerAccess")
     public JMonetCanvas(BufferedImage initialImage, int undoBufferDepth) {
         super(new Dimension(initialImage.getWidth(), initialImage.getHeight()));
         this.maxUndoBufferDepth = Math.max(1, undoBufferDepth);
@@ -59,6 +63,7 @@ public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserve
      * @param dimension       The size of the canvas.
      * @param undoBufferDepth The depth of the undo buffer (number of undo operations)
      */
+    @SuppressWarnings("WeakerAccess")
     public JMonetCanvas(Dimension dimension, int undoBufferDepth) {
         this(new BufferedImage(dimension.width, dimension.height, BufferedImage.TYPE_INT_ARGB), undoBufferDepth);
     }
@@ -82,12 +87,8 @@ public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserve
         this(dimension, 12);
     }
 
-    /**
-     * Undoes the previous committed change. May be called successively to revert committed changes one-by-one until
-     * the undo buffer is exhausted.
-     *
-     * @return The ChangeSet that was undone by this operation, or null if there were no undoable changes.
-     */
+    /** {@inheritDoc} */
+    @Override
     public ImageLayerSet undo() {
 
         if (hasUndoableChanges()) {
@@ -103,11 +104,8 @@ public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserve
         return null;
     }
 
-    /**
-     * Reverts the previous undo; has no effect if a commit was made following the previous undo.
-     *
-     * @return True if the redo was successful, false if there is no undo available to revert.
-     */
+    /** {@inheritDoc} */
+    @Override
     public boolean redo() {
 
         if (hasRedoableChanges()) {
@@ -138,47 +136,32 @@ public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserve
         return undoBuffer.get(undoBufferPointer.blockingFirst() - index);
     }
 
-    /**
-     * Determines if a commit is available to be undone.
-     *
-     * @return True if {@link #undo()} will succeed; false otherwise.
-     */
+    /** {@inheritDoc} */
+    @Override
     public boolean hasUndoableChanges() {
         return undoBufferPointer.blockingFirst() >= 0;
     }
 
-    /**
-     * Determines if an undo is available to revert.
-     *
-     * @return True if {@link #redo()} will succeed; false otherwise.
-     */
+    /** {@inheritDoc} */
+    @Override
     public boolean hasRedoableChanges() {
         return undoBufferPointer.blockingFirst() < undoBuffer.size() - 1;
     }
 
-    /**
-     * Gets the maximum depth of the undo buffer.
-     *
-     * @return The maximum number of undos that are supported by this PaintCanvas.
-     */
+    /** {@inheritDoc} */
+    @Override
     public int getMaxUndoBufferDepth() {
         return maxUndoBufferDepth;
     }
 
-    /**
-     * Gets the number of changes that can be "undone".
-     *
-     * @return The depth of undo buffer.
-     */
+    /** {@inheritDoc} */
+    @Override
     public int getUndoBufferDepth() {
         return undoBufferPointer.blockingFirst() + 1;
     }
 
-    /**
-     * Gets the number of changes that can be "redone".
-     *
-     * @return The depth of the redo buffer.
-     */
+    /** {@inheritDoc} */
+    @Override
     public int getRedoBufferDepth() {
         return undoBuffer.size() - undoBufferPointer.blockingFirst() - 1;
     }
@@ -334,9 +317,9 @@ public class JMonetCanvas extends AbstractPaintCanvas implements LayerSetObserve
      * @param destination  The image on which to draw them
      */
     private void overlayImage(LayeredImage layeredImage, BufferedImage destination) {
-        Graphics2D g2d = (Graphics2D) destination.getGraphics();
-        layeredImage.paint(g2d, null, null);
-        g2d.dispose();
+        GraphicsContext g = new AwtGraphicsContext((Graphics2D) destination.getGraphics());
+        layeredImage.paint(g, 1.0, null);
+        g.dispose();
     }
 
     /**

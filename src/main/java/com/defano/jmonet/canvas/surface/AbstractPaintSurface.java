@@ -2,6 +2,8 @@ package com.defano.jmonet.canvas.surface;
 
 import com.defano.jmonet.canvas.layer.ScaledLayeredImage;
 import com.defano.jmonet.canvas.observable.SurfaceInteractionObserver;
+import com.defano.jmonet.context.AwtGraphicsContext;
+import com.defano.jmonet.context.GraphicsContext;
 import io.reactivex.Observable;
 import io.reactivex.subjects.BehaviorSubject;
 
@@ -13,14 +15,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A surface that paints a layered image.
+ * A JComponent that renders a {@code LayeredImage} when painted, and that registers
+ * itself as a listener of mouse and key events delegating interesting events to a set of
+ * {@link SurfaceInteractionObserver} objects.
  */
 public abstract class AbstractPaintSurface extends JComponent implements PaintSurface, KeyListener, MouseListener,
         MouseMotionListener, KeyEventDispatcher, ScaledLayeredImage {
 
     private final static Color CLEAR_COLOR = new Color(0, 0, 0, 0);
+
     private final BehaviorSubject<Double> scaleSubject = BehaviorSubject.createDefault(1.0);
     private final List<SurfaceInteractionObserver> interactionListeners = new ArrayList<>();
+
     private Dimension surfaceDimension = new Dimension();
     private double scanlineThreadhold = 6.0;
     private Color scanlineColor = new Color(0xF5, 0xF5, 0xF5);
@@ -121,13 +127,35 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
         // Modify scroll position to "zoom in" or "zoom out" on the center of the previous scroll view bounds
         if (scrollController != null) {
             scrollController.setScrollPosition(new Point(
-                    Math.max(0, (int) ((prevScrollRect.x + prevScrollRect.width / 2) * scale / prevScale - prevScrollRect.width / 2)),
-                    Math.max(0, (int) ((prevScrollRect.y + prevScrollRect.height / 2) * scale / prevScale - prevScrollRect.height / 2))
+                    Math.max(0, (int) ((prevScrollRect.x + prevScrollRect.width / 2.0) * scale / prevScale - prevScrollRect.width / 2.0)),
+                    Math.max(0, (int) ((prevScrollRect.y + prevScrollRect.height / 2.0) * scale / prevScale - prevScrollRect.height / 2.0))
             ));
         }
 
         revalidate();
         repaint();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void repaint(Rectangle r) {
+
+        // Sub-region repainting not available when scanlines are rendered; must repaint entire surface
+        if (r == null || isScanlinesVisible()) {
+            super.repaint();
+        }
+
+        // When calculating sub-region, need to take scale into account
+        else {
+            double scale = getScale();
+            super.repaint(
+                    (int)(r.x * scale),
+                    (int)(r.y * scale),
+                    (int)(r.width * scale),
+                    (int)(r.height * scale));
+        }
     }
 
     /**
@@ -205,12 +233,11 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
         super.paintComponent(g);
 
         Rectangle clip = g.getClipBounds();
-
         if (clip != null && !clip.isEmpty() && isVisible()) {
 
-            // Draw visible portion of this surface's image into a buffer
+            // Draw visible portion of this surface's image into a buffer (does not modify this graphics context)
             BufferedImage buffer = new BufferedImage(clip.width, clip.height, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2d = buffer.createGraphics();
+            GraphicsContext g2d = new AwtGraphicsContext(buffer.createGraphics());
             g2d.setBackground(CLEAR_COLOR);
             g2d.clearRect(clip.x, clip.y, clip.width, clip.height);
             paint(g2d, getScale(), clip);
@@ -224,7 +251,7 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
             }
 
             // Draw the paint image
-            g.drawImage(buffer, clip.x, clip.y, null);
+            g.drawImage(buffer, clip.x, clip.y, clip.width, clip.height, null);
         }
 
         // DO NOT dispose the graphics context in this method.
@@ -243,7 +270,15 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
      */
     @Override
     public boolean removeSurfaceInteractionObserver(SurfaceInteractionObserver listener) {
-        return interactionListeners.remove(listener);
+        boolean removed = interactionListeners.remove(listener);
+
+        Cursor nextCursor = interactionListeners.isEmpty() ?
+                Cursor.getDefaultCursor() :
+                interactionListeners.get(interactionListeners.size() - 1).getDefaultCursor();
+
+        SwingUtilities.invokeLater(() -> setCursor(nextCursor));
+
+        return removed;
     }
 
     /**

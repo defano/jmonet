@@ -1,19 +1,18 @@
 package com.defano.jmonet.tools.selection;
 
-import com.defano.jmonet.algo.fill.FillFunction;
-import com.defano.jmonet.algo.transform.image.PixelTransform;
-import com.defano.jmonet.algo.transform.image.StaticImageTransform;
-import com.defano.jmonet.algo.transform.image.Transformable;
-import com.defano.jmonet.algo.transform.image.ApplyPixelTransform;
-import com.defano.jmonet.algo.transform.image.FillTransform;
+import com.defano.jmonet.tools.attributes.FillFunction;
+import com.defano.jmonet.transform.image.PixelTransform;
+import com.defano.jmonet.transform.image.StaticImageTransform;
+import com.defano.jmonet.transform.image.Transformable;
+import com.defano.jmonet.transform.image.ApplyPixelTransform;
+import com.defano.jmonet.transform.image.FillTransform;
 
 import java.awt.*;
 
 /**
- * Represents a selection in which the pixels of the selected image can be transformed (i.e., change of brightness,
- * opacity, etc.).
+ * A selection in which the pixels of the selected image can be transformed (i.e., change of brightness, opacity, etc.).
  * <p>
- * Differs from TransformableSelection in that these transforms do no change the selection shape (outline) or
+ * Differs from {@link TransformableSelection} in that these transforms do no change the selection shape (outline) or
  * location on the canvas; only the underlying selected image.
  */
 public interface TransformableImageSelection extends MutableSelection, Transformable {

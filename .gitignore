@@ -10,3 +10,4 @@
 target/*
 *.bin
 .gradle/*
+/src/main/java/com/defano/jmonet/Tester.java

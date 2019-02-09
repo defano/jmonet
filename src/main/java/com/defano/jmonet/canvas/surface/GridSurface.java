@@ -1,11 +1,9 @@
 package com.defano.jmonet.canvas.surface;
 
-import io.reactivex.Observable;
-import io.reactivex.subjects.BehaviorSubject;
-
 /**
  * A surface that supports a snap-to-grid property.
  */
+@SuppressWarnings("unused")
 public interface GridSurface {
 
     /**
@@ -16,10 +14,10 @@ public interface GridSurface {
     void setGridSpacing(int grid);
 
     /**
-     * Gets an observable grid spacing property.
+     * Gets the grid spacing property.
      *
-     * @return The grid spacing {@link BehaviorSubject}
+     * @return The grid spacing
      */
-    Observable<Integer> getGridSpacingObservable();
+    int getGridSpacing();
 
 }

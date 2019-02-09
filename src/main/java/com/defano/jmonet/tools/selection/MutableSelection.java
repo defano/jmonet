@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * Represents the state or context of an image selection that can be modified.
+ * A class which manages the state or context of a modifiable image selection.
  */
 public interface MutableSelection extends Selection {
 
@@ -22,7 +22,7 @@ public interface MutableSelection extends Selection {
      *
      * @param bounds The new selection bounds.
      */
-    void setSelectionOutline(Rectangle bounds);
+    void setSelectionOutline(Shape bounds);
 
     /**
      * Marks the selection as having been mutated (either by transformation or movement).

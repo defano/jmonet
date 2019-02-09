@@ -59,6 +59,11 @@ public class CanvasTransferHandler extends TransferHandler {
         return false;
     }
 
+    /**
+     * Converts an image to a BufferedImage of type ARGB.
+     * @param source The image to convert
+     * @return The resulting BufferedImage
+     */
     private BufferedImage toBufferedImage(Image source) {
         if (source instanceof BufferedImage) {
             return (BufferedImage) source;
@@ -75,40 +80,5 @@ public class CanvasTransferHandler extends TransferHandler {
         return dest;
     }
 
-
-    private static class TransferableImage implements Transferable {
-
-        private final BufferedImage image;
-
-        private TransferableImage(BufferedImage image) {
-            this.image = image;
-        }
-
-        public static TransferableImage from(BufferedImage image) {
-            return image == null ? null : new TransferableImage(image);
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public DataFlavor[] getTransferDataFlavors() {
-            return new DataFlavor[]{DataFlavor.imageFlavor};
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public boolean isDataFlavorSupported(DataFlavor flavor) {
-            return flavor == DataFlavor.imageFlavor;
-        }
-
-        /** {@inheritDoc} */
-        @Override
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-            if (flavor == DataFlavor.imageFlavor) {
-                return image;
-            }
-
-            throw new UnsupportedFlavorException(flavor);
-        }
-    }
 
 }

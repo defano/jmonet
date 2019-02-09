@@ -1,16 +1,18 @@
 package com.defano.jmonet.canvas.layer;
 
+import com.defano.jmonet.context.GraphicsContext;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * A layer in a layered image.
+ * An image layer comprising a portion of a {@link LayeredImage}.
  */
 public class ImageLayer {
 
     private final Point location;
     private final BufferedImage image;
-    private final AlphaComposite composite;
+    private final Composite composite;
 
     /**
      * Creates a layer in which the given image is drawn atop a destination image using {@link AlphaComposite#SRC_OVER}
@@ -29,7 +31,8 @@ public class ImageLayer {
      * @param image     The image comprising this layer
      * @param composite The composite mode this layer is drawn with
      */
-    public ImageLayer(BufferedImage image, AlphaComposite composite) {
+    @SuppressWarnings("unused")
+    public ImageLayer(BufferedImage image, Composite composite) {
         this(new Point(0, 0), image, composite);
     }
 
@@ -41,51 +44,53 @@ public class ImageLayer {
      * @param image     The image to be drawn
      * @param composite The composite mode to draw with
      */
-    public ImageLayer(Point location, BufferedImage image, AlphaComposite composite) {
+    public ImageLayer(Point location, BufferedImage image, Composite composite) {
         this.location = location;
         this.image = image;
         this.composite = composite;
     }
 
     /**
-     * Draws the visible portion of this image layer onto a graphics context at scale.
+     * Draws this image layer onto a graphics context at scale, painting only the pixels bound by a clipping rectangle.
+     *
+     * Note that the coordinates and bounds of the clipping rectangle are specified in scaled coordinates; that is,
+     * the clipping rectangle is specified in terms of the graphics context, not this image layer's buffer. Only pixels
+     * bound by the clipping rectangle should be painted on the graphics context. This may result in some or none of
+     * this layer being rendered depending on its size and location.
      *
      * @param g     The graphics context on which to draw.
-     * @param scale The scale at which to draw the image (1.0 or null means no scaling). When null, no scaling will be
-     *              provided.
-     * @param clip  The clipping rectangle; only the portion of this image bounded by this rectangle will be drawn. When
-     *              null, the entire image will be drawn. Note that this rectangle is represented in scaled coordinate
-     *              space. This, the rect (10,10), (100,100) when scale is 2.0 refers to the this layer's
-     *              sub image (5,5),(50,50).
+     * @param scale The scale at which to draw the image; 1.0 means no scaling.
+     * @param clip  The clipping rectangle, represented in scaled coordinates. Only the portion of this image bounded by
+     *              this rectangle will be drawn. When null, the entire image will be drawn.
      */
-    public void paint(Graphics2D g, Double scale, Rectangle clip) {
+    public void paint(GraphicsContext g, double scale, Rectangle clip) {
         g.setComposite(composite);
 
+        // When a clipping region is not specified, draw the entire image layer
         if (clip == null) {
-            clip = new Rectangle(0, 0, image.getWidth(), image.getHeight());
+            clip = new Rectangle(0, 0, (int) ((location.x  + image.getWidth()) * scale), (int) ((location.y + image.getHeight()) * scale));
         }
 
-        if (scale == null) {
-            scale = 1.0;
-        }
+        Rectangle unscaledClip = new Rectangle (
+                (int) (clip.x / scale),
+                (int) (clip.y / scale),
+                (int) (clip.width / scale),
+                (int) (clip.height / scale)
+        );
 
-        // Clipping rectangle is in scaled coordinate space; descale to model coordinates
-        Rectangle unscaledClipRgn = new Rectangle((int) (clip.x / scale), (int) (clip.y / scale), (int) (clip.width / scale), (int) (clip.height / scale));
+        // Source: Rectangle defining the portion of this ImageLayer that will be painted
+        int x1 = Math.max(0, unscaledClip.x - location.x);
+        int y1 = Math.max(0, unscaledClip.y - location.y);
+        int x2 = x1 + Math.min(image.getWidth(), unscaledClip.width);
+        int y2 = y1 + Math.min(image.getHeight(), unscaledClip.height);
 
-        // Unscaled bounding box of where image will be drawn on graphics context
-        Rectangle imageBounds = new Rectangle(location.x, location.y, image.getWidth(), image.getHeight());
+        // Destination: Bounds of the graphics context that will be painted.
+        int dx1 = (int)(scale * Math.max(0, location.x - unscaledClip.x));
+        int dy1 = (int)(scale * Math.max(0, location.y - unscaledClip.y));
+        int dx2 = dx1 + (int)(Math.min(image.getWidth(), unscaledClip.width) * scale);
+        int dy2 = dy1 + (int)(Math.min(image.getHeight(), unscaledClip.height) * scale);
 
-        // Portion of unscaled draw region that is also within the clipping rectangle
-        Rectangle drawBounds = imageBounds.intersection(unscaledClipRgn);
-
-        // Slightly overdraw the image (to prevent clipping on bottom and right-most row/column)
-        drawBounds.setSize(drawBounds.width + 2, drawBounds.height + 2);
-
-        // Draw source geometry from image into destination geometry of graphics context
-        g.drawImage(image,
-                0, 0, (int) (scale * drawBounds.width), (int) (scale * drawBounds.height),
-                drawBounds.x, drawBounds.y, drawBounds.x + drawBounds.width, drawBounds.y + drawBounds.height,
-                null);
+        g.drawImage(image, dx1, dy1, dx2, dy2, x1, y1, x2, y2, null);
     }
 
     /**
@@ -111,7 +116,7 @@ public class ImageLayer {
      *
      * @return The overlay alpha mode.
      */
-    public AlphaComposite getComposite() {
+    public Composite getComposite() {
         return composite;
     }
 
@@ -120,7 +125,12 @@ public class ImageLayer {
      *
      * @return The image size
      */
-    public Dimension getSize() {
-        return new Dimension(image.getWidth(null), image.getHeight(null));
+    public Dimension getDisplayedSize() {
+        return new Dimension(location.x + image.getWidth(), location.y + image.getHeight());
     }
+
+    public Dimension getStoredSize() {
+        return new Dimension(image.getWidth(), image.getHeight());
+    }
+
 }

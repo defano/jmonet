@@ -19,5 +19,7 @@ public interface ObservableSurface {
      * @param listener The observer to be removed
      * @return True if the listener was previously registered as an observer and was successfully removed
      */
+    @SuppressWarnings("UnusedReturnValue")
     boolean removeSurfaceInteractionObserver(SurfaceInteractionObserver listener);
+
 }

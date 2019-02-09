@@ -1,17 +1,17 @@
 package com.defano.jmonet.tools.selection;
 
-import com.defano.jmonet.algo.transform.affine.FlipHorizontalTransform;
-import com.defano.jmonet.algo.transform.affine.FlipVerticalTransform;
-import com.defano.jmonet.algo.transform.affine.RotateLeftTransform;
-import com.defano.jmonet.algo.transform.affine.RotateRightTransform;
-import com.defano.jmonet.algo.transform.image.ApplyAffineTransform;
+import com.defano.jmonet.transform.affine.FlipHorizontalTransform;
+import com.defano.jmonet.transform.affine.FlipVerticalTransform;
+import com.defano.jmonet.transform.affine.RotateLeftTransform;
+import com.defano.jmonet.transform.affine.RotateRightTransform;
+import com.defano.jmonet.transform.image.ApplyAffineTransform;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 /**
- * Represents a selection that can be transformed using operations that affect both the pixels of the selected image
- * (i.e., change of brightness or opacity) and/or the selection's shape and location (i.e., flip, rotate or translate).
+ * A selection that can be transformed using operations that affect both the pixels of the selected image (i.e., change
+ * of brightness or opacity) and/or the selection's shape and location (i.e., flip, rotate or translate).
  */
 public interface TransformableSelection extends TransformableImageSelection {
 
