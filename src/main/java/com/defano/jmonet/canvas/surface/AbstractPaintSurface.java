@@ -142,8 +142,8 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
     @Override
     public void repaint(Rectangle r) {
 
-        // Sub-region repainting not available when scanlines are rendered; must repaint entire surface
-        if (r == null || isScanlinesVisible()) {
+        // Sub-region repainting not available zoomed in
+        if (r == null || getScale() > 1) {
             super.repaint();
         }
 
@@ -235,6 +235,12 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
         Rectangle clip = g.getClipBounds();
         if (clip != null && !clip.isEmpty() && isVisible()) {
 
+            // Draw the surface background
+            if (getCanvasBackground() != null) {
+                ((Graphics2D) g).setPaint(getCanvasBackground());
+                g.fillRect(clip.x, clip.y, clip.width, clip.height);
+            }
+
             // Draw visible portion of this surface's image into a buffer (does not modify this graphics context)
             BufferedImage buffer = new BufferedImage(clip.width, clip.height, BufferedImage.TYPE_INT_ARGB);
             GraphicsContext g2d = new AwtGraphicsContext(buffer.createGraphics());
@@ -243,12 +249,6 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
             paint(g2d, getScale(), clip);
             paintScanlines(g2d, getScaledSurfaceDimension());
             g2d.dispose();
-
-            // Draw the surface background
-            if (getCanvasBackground() != null) {
-                ((Graphics2D) g).setPaint(getCanvasBackground());
-                g.fillRect(clip.x, clip.y, clip.width, clip.height);
-            }
 
             // Draw the paint image
             g.drawImage(buffer, clip.x, clip.y, clip.width, clip.height, null);
