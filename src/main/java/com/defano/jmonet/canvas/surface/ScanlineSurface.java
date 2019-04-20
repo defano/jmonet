@@ -68,7 +68,7 @@ public interface ScanlineSurface extends ScalableSurface {
     }
 
     /**
-     * Paints scanlines on the given graphics context.
+     * Paints scanlines on the given graphics context when the scale factor exceeds the scanline threshold.
      *
      * @param g    The graphics context
      * @param size The size of region onto which scanlines should extend

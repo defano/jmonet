@@ -14,9 +14,9 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
  * of the JScrollPane containing the canvas the tool is painting on.
  * <p>
  * This default implementation is sufficient for cases when the surface is added to a {@link JScrollPane} as the view
- * port. If the surface (canvas) is embedded is some container with additional components or decorations a custom
- * implementation may be required to properly adjust viewport scroll position taking into account the size and layout
- * of the surface's sibling components.
+ * port. If the surface (paint canvas) is embedded is some container with additional components or decorations then a
+ * custom implementation may be required to properly adjust viewport scroll position taking into account the size and
+ * layout of the surface's sibling components.
  */
 public class DefaultSurfaceScrollController implements SurfaceScrollController {
 

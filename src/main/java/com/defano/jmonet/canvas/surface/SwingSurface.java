@@ -32,5 +32,10 @@ public interface SwingSurface {
      */
     ActionMap getActionMap();
 
+    /**
+     * Gets the Swing component representing the surface itself.
+     *
+     * @return The surface component.
+     */
     Component getComponent();
 }

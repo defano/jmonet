@@ -10,9 +10,9 @@ import java.awt.image.BufferedImage;
  */
 public class ImageLayer {
 
-    private final Point location;
-    private final BufferedImage image;
-    private final Composite composite;
+    private final Point location;           // Location of this layer in the image
+    private final BufferedImage image;      // This layer's raster
+    private final Composite composite;      // The alpha composite mode to use when overlaying this image
 
     /**
      * Creates a layer in which the given image is drawn atop a destination image using {@link AlphaComposite#SRC_OVER}
@@ -68,7 +68,10 @@ public class ImageLayer {
 
         // When a clipping region is not specified, draw the entire image layer
         if (clip == null) {
-            clip = new Rectangle(0, 0, (int) ((location.x  + image.getWidth()) * scale), (int) ((location.y + image.getHeight()) * scale));
+            clip = new Rectangle(
+                    0, 0,
+                    (int) ((location.x + image.getWidth()) * scale),
+                    (int) ((location.y + image.getHeight()) * scale));
         }
 
         Rectangle unscaledClip = new Rectangle (
@@ -85,10 +88,10 @@ public class ImageLayer {
         int y2 = y1 + Math.min(image.getHeight(), unscaledClip.height);
 
         // Destination: Bounds of the graphics context that will be painted.
-        int dx1 = (int)(scale * Math.max(0, location.x - unscaledClip.x));
-        int dy1 = (int)(scale * Math.max(0, location.y - unscaledClip.y));
-        int dx2 = dx1 + (int)(Math.min(image.getWidth(), unscaledClip.width) * scale);
-        int dy2 = dy1 + (int)(Math.min(image.getHeight(), unscaledClip.height) * scale);
+        int dx1 = (int) (scale * Math.max(0, location.x - unscaledClip.x));
+        int dy1 = (int) (scale * Math.max(0, location.y - unscaledClip.y));
+        int dx2 = dx1 + (int) (Math.min(image.getWidth(), unscaledClip.width) * scale);
+        int dy2 = dy1 + (int) (Math.min(image.getHeight(), unscaledClip.height) * scale);
 
         g.drawImage(image, dx1, dy1, dx2, dy2, x1, y1, x2, y2, null);
     }

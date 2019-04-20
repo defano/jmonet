@@ -19,7 +19,7 @@ public class CanvasClipboardActionListener implements ActionListener {
     }
 
     public CanvasClipboardActionListener() {
-        this(new DefaultCanvasFocusDelegate());
+        this(new JMonetCanvasFocusDelegate());
     }
 
     /** {@inheritDoc} */

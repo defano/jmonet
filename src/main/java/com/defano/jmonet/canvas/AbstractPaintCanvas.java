@@ -118,9 +118,9 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
         int gridSpacing = getGridSpacing();
         double scale = getScaleObservable().blockingFirst();
 
-        int x = p.x - error.x;
-        x = MathUtils.nearestFloor(x, (int) (gridSpacing * scale));
-        x = (int) (x / scale);
+        int x = p.x - error.x;                                          // Adjust for ignored scroll offset
+        x = MathUtils.nearestFloor(x, (int) (gridSpacing * scale));     // Snap to grid
+        x = (int) (x / scale);                                          // Adjust for scaling
 
         int y = p.y - error.y;
         y = MathUtils.nearestFloor(y, (int) (gridSpacing * scale));
@@ -208,7 +208,6 @@ public abstract class AbstractPaintCanvas extends AbstractPaintSurface implement
     public Point getScrollError() {
         Rectangle viewRect = getSurfaceScrollController().getScrollRect();
         double scale = getScale();
-
         return new Point((int) (viewRect.x % scale), (int) (viewRect.y % scale));
     }
 

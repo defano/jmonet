@@ -59,35 +59,6 @@ public interface ScalableSurface {
     }
 
     /**
-     * Scales a rectangle by the current scale factor.
-     *
-     * @param r The rectangle to scale
-     * @return A new rectangle whose location and dimension has been multiplied by the current scale factor.
-     */
-    default Rectangle scaleRectangle(Rectangle r) {
-        return new Rectangle(
-                (int) (r.x * getScale()),
-                (int) (r.y * getScale()),
-                (int) (r.width * getScale()),
-                (int) (r.height * getScale())
-        );
-    }
-
-    default Rectangle convertViewRectToModel(Rectangle r) {
-        Point topLeft = convertViewPointToModel(r.getLocation());
-        Point bottomRight = convertViewPointToModel(new Point(r.x + r.width, r.y + r.height));
-
-        return new Rectangle(topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
-    }
-
-    default Rectangle convertModelRectToView(Rectangle r) {
-        Point topLeft = convertModelPointToView(r.getLocation());
-        Point bottomRight = convertModelPointToView(new Point(r.x + r.width, r.y + r.height));
-
-        return new Rectangle(topLeft.x, topLeft.y, bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
-    }
-
-    /**
      * Converts a point on the visible surface (view) to the equivalent point within the surface's image (model),
      * taking into account scale, grid and scroll pane complications as appropriate.
      * <p>

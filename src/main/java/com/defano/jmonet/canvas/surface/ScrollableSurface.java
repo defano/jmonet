@@ -11,6 +11,7 @@ import java.awt.*;
  * to be effective. This layer of indirection allows that to occur without having to embed the
  * {@link javax.swing.JScrollPane} in the canvas itself.
  */
+@SuppressWarnings("unused")
 public interface ScrollableSurface {
 
     /**
