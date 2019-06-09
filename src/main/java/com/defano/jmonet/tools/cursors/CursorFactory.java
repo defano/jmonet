@@ -11,6 +11,8 @@ import java.awt.image.BufferedImage;
  */
 public class CursorFactory {
 
+    private CursorFactory() {}
+
     /**
      * Creates a magnifying glass cursor.
      *

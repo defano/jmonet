@@ -32,7 +32,7 @@ public class CanvasClipboardActionListener implements ActionListener {
             if (a != null) {
                 try {
                     a.actionPerformed(new ActionEvent(focusedCanvas, ActionEvent.ACTION_PERFORMED, null));
-                } catch (Throwable ignored) {
+                } catch (Exception ignored) {
                     // Nothing to do
                 }
             }

@@ -24,6 +24,7 @@ public class TransparencyPixelTransform implements PixelTransform {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("squid:S3358")
     @Override
     public int apply(int rgb) {
         Color color = new Color(rgb, true);

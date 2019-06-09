@@ -15,15 +15,22 @@ import java.awt.image.BufferedImage;
  */
 public class TransformTool extends SelectionTool implements SurfaceInteractionObserver, SelectionToolDelegate {
 
-    private final static int HANDLE_SIZE = 8;
+    private static final int HANDLE_SIZE = 8;
 
     private BufferedImage originalImage;
     private Rectangle selectionBounds;
     private FlexQuadrilateral transformBounds;
     private TransformToolDelegate transformToolDelegate;
 
-    private Rectangle topLeftHandle, topRightHandle, bottomRightHandle, bottomLeftHandle;
-    private boolean dragTopLeft, dragTopRight, dragBottomRight, dragBottomLeft;
+    private Rectangle topLeftHandle;
+    private Rectangle topRightHandle;
+    private Rectangle bottomRightHandle;
+    private Rectangle bottomLeftHandle;
+
+    private boolean dragTopLeft;
+    private boolean dragTopRight;
+    private boolean dragBottomRight;
+    private boolean dragBottomLeft;
 
     public TransformTool(PaintToolType type) {
         super(type);

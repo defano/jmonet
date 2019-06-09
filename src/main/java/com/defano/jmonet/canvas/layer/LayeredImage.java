@@ -55,7 +55,8 @@ public interface LayeredImage {
      * @return The size of this image.
      */
     default Dimension getSize() {
-        int height = 0, width = 0;
+        int height = 0;
+        int width = 0;
 
         for (ImageLayer thisLayer : getImageLayers()) {
             Dimension layerDimension = thisLayer.getDisplayedSize();

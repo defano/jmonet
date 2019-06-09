@@ -63,8 +63,7 @@ public class DefaultSurfaceScrollController implements SurfaceScrollController {
      * @return The scroll pane object the surface is directly embedded in, or null.
      */
     private JScrollPane getScrollPane() {
-        if (surface.getParent() != null &&
-                surface.getParent() instanceof JViewport &&
+        if (surface.getParent() instanceof JViewport &&
                 surface.getParent().getParent() != null &&
                 surface.getParent().getParent() instanceof JScrollPane) {
 

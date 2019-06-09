@@ -9,6 +9,8 @@ import java.awt.*;
  */
 public class StrokeBuilder {
 
+    private StrokeBuilder() {}
+
     /**
      * Builds a stroke in which a shape is "stamped" along each point of the stroked path. Note that the stamped shape
      * (the pen) is not automatically rotated to match the angular perpendicular to the path (as occurs with a

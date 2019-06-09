@@ -29,16 +29,20 @@ import java.awt.image.BufferedImage;
 public class Scratch {
 
     // Region of the addScratch and removeScratch that have been dirtied by tools (null implies no changes)
-    private Rectangle addScratchDirtyRgn, removeScratchDirtyRgn;
+    private Rectangle addScratchDirtyRgn;
+    private Rectangle removeScratchDirtyRgn;
 
     // Dimension of the scratch buffer
-    private int width, height;
+    private int width;
+    private int height;
 
     // Scratch buffer data
-    private BufferedImage addScratch, removeScratch;
+    private BufferedImage addScratch;
+    private BufferedImage removeScratch;
 
     // Graphics context created from the buffers
-    private GraphicsContext addScratchGraphics, removeScratchGraphics;
+    private GraphicsContext addScratchGraphics;
+    private GraphicsContext removeScratchGraphics;
 
     /**
      * Creates a scratch unbound to any tool with a given dimension.

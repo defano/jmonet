@@ -10,6 +10,8 @@ import java.awt.image.BufferedImage;
 @SuppressWarnings("unused")
 public class PaintFactory {
 
+    private PaintFactory() {}
+
     /**
      * Produces {@link Paint} of the same background color of a {@link JPanel} for the current look and feel, or
      * {@link Color#WHITE} if no such color is defined.

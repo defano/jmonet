@@ -45,6 +45,7 @@ public interface TransformableImageSelection extends MutableSelection, Transform
      * @param fillPaint    The paint to fill with.
      * @param fillFunction A method to fill pixels in the selected image
      */
+    @Override
     default void fill(Paint fillPaint, FillFunction fillFunction) {
         transform(new FillTransform(getIdentitySelectionFrame(), fillPaint, fillFunction));
     }

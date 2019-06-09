@@ -16,7 +16,7 @@ import java.awt.image.BufferedImage;
 
 import static org.mockito.Matchers.*;
 
-public class MockitoToolTest<T extends BasicTool> extends MockitoTest {
+public abstract class MockitoToolTest<T extends BasicTool> extends MockitoTest {
 
     protected T uut;
 

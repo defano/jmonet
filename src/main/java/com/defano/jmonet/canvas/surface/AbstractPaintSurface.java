@@ -22,7 +22,7 @@ import java.util.List;
 public abstract class AbstractPaintSurface extends JComponent implements PaintSurface, KeyListener, MouseListener,
         MouseMotionListener, KeyEventDispatcher, ScaledLayeredImage {
 
-    private final static Color CLEAR_COLOR = new Color(0, 0, 0, 0);
+    private static final Color CLEAR_COLOR = new Color(0, 0, 0, 0);
 
     private final BehaviorSubject<Double> scaleSubject = BehaviorSubject.createDefault(1.0);
     private final List<SurfaceInteractionObserver> interactionListeners = new ArrayList<>();
@@ -69,16 +69,16 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
      * {@inheritDoc}
      */
     @Override
-    public void setSurfaceDimension(Dimension surfaceDimensions) {
-        this.surfaceDimension = new Dimension(surfaceDimensions.width, surfaceDimensions.height);
+    public Dimension getSurfaceDimension() {
+        return surfaceDimension;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Dimension getSurfaceDimension() {
-        return surfaceDimension;
+    public void setSurfaceDimension(Dimension surfaceDimensions) {
+        this.surfaceDimension = new Dimension(surfaceDimensions.width, surfaceDimensions.height);
     }
 
     /**
@@ -151,10 +151,10 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
         else {
             double scale = getScale();
             super.repaint(
-                    (int)(r.x * scale),
-                    (int)(r.y * scale),
-                    (int)(r.width * scale),
-                    (int)(r.height * scale));
+                    (int) (r.x * scale),
+                    (int) (r.y * scale),
+                    (int) (r.width * scale),
+                    (int) (r.height * scale));
         }
     }
 
@@ -420,6 +420,9 @@ public abstract class AbstractPaintSurface extends JComponent implements PaintSu
             case KeyEvent.KEY_RELEASED:
                 AbstractPaintSurface.this.keyReleased(e);
                 break;
+
+            default:
+                // Nothing to do
         }
 
         return false;

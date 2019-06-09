@@ -8,7 +8,10 @@ import java.awt.*;
 @SuppressWarnings("unused")
 public class FixedQuadrilateral implements Quadrilateral {
 
-    private final Point topLeft, topRight, bottomLeft, bottomRight;
+    private final Point topLeft;
+    private final Point topRight;
+    private final Point bottomLeft;
+    private final Point bottomRight;
 
     public FixedQuadrilateral(Point topLeft, Point topRight, Point bottomLeft, Point bottomRight) {
         this.topLeft = topLeft;

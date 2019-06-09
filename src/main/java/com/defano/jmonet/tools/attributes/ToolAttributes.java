@@ -61,9 +61,15 @@ public interface ToolAttributes extends ObservableToolAttributes {
     default int getShapeSides() {
         int sides = getShapeSidesObservable().blockingFirst();
 
-        return sides < MIN_SHAPE_SIDES ? MIN_SHAPE_SIDES :
-                sides > MAX_SHAPE_SIDES ? MAX_SHAPE_SIDES :
-                        sides;
+        if (sides < MIN_SHAPE_SIDES) {
+            return MIN_SHAPE_SIDES;
+        }
+
+        if (sides > MAX_SHAPE_SIDES) {
+            return MAX_SHAPE_SIDES;
+        }
+
+        return sides;
     }
 
     /**

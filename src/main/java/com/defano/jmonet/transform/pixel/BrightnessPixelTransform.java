@@ -23,6 +23,7 @@ public class BrightnessPixelTransform implements PixelTransform {
     /**
      * {@inheritDoc}
      */
+    @SuppressWarnings("squid:S3358")
     @Override
     public int apply(int rgb) {
         int alpha = 0xff000000 & rgb;

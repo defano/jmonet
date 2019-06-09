@@ -62,8 +62,8 @@ public class RotateTool extends SelectionTool implements SelectionToolDelegate {
                 originalImage = square(getSelectedImage());
                 originalSelectionBounds = getSelectionFrame();
 
-                Rectangle selectionBounds = getSelectionFrame().getBounds();
-                centerpoint = new Point(selectionBounds.x + selectionBounds.width / 2, selectionBounds.y + selectionBounds.height / 2);
+                Rectangle theSelectionBounds = getSelectionFrame().getBounds();
+                centerpoint = new Point(theSelectionBounds.x + theSelectionBounds.width / 2, theSelectionBounds.y + theSelectionBounds.height / 2);
             }
 
             rotating = true;
@@ -171,8 +171,8 @@ public class RotateTool extends SelectionTool implements SelectionToolDelegate {
         dragHandle = AffineTransform.getTranslateInstance(xDelta, yDelta).createTransformedShape(dragHandle);
         originalDragHandle = AffineTransform.getTranslateInstance(xDelta, yDelta).createTransformedShape(originalDragHandle);
 
-        Rectangle selectionBounds = getSelectionFrame().getBounds();
-        centerpoint = new Point(selectionBounds.x + selectionBounds.width / 2, selectionBounds.y + selectionBounds.height / 2);
+        Rectangle frameBounds = getSelectionFrame().getBounds();
+        centerpoint = new Point(frameBounds.x + frameBounds.width / 2, frameBounds.y + frameBounds.height / 2);
     }
 
     /**

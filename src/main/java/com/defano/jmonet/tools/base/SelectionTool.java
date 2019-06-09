@@ -30,7 +30,8 @@ public class SelectionTool extends BasicTool<SelectionToolDelegate> implements C
 
     private final BehaviorSubject<Optional<BufferedImage>> selectedImage = BehaviorSubject.createDefault(Optional.empty());
 
-    private Point initialPoint, lastPoint;
+    private Point initialPoint;
+    private Point lastPoint;
     private Cursor movementCursor = Cursor.getDefaultCursor();
     private Cursor boundaryCursor = new Cursor(Cursor.CROSSHAIR_CURSOR);
 
@@ -232,6 +233,7 @@ public class SelectionTool extends BasicTool<SelectionToolDelegate> implements C
      *
      * @return The provider.
      */
+    @SuppressWarnings("unused")
     public Observable<Optional<BufferedImage>> getSelectedImageObservable() {
         return selectedImage;
     }
@@ -363,15 +365,16 @@ public class SelectionTool extends BasicTool<SelectionToolDelegate> implements C
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     @Override
     public void redrawSelection(boolean includeFrame) {
         getScratch().clearAddScratch();
 
         // Don't draw the selected image when clean, doing so double-paints the selection and adjusts translucency
-        if (hasSelection() && isDirty()) {
+        Optional<BufferedImage> theSelectedImage = selectedImage.getValue();
+
+        if (hasSelection() && isDirty() && theSelectedImage.isPresent()) {
             GraphicsContext g = getCanvas().getScratch().getAddScratchGraphics(this, getSelectionFrame());
-            g.drawImage(selectedImage.getValue().get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
+            g.drawImage(theSelectedImage.get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
         }
 
         if (includeFrame) {
@@ -422,15 +425,16 @@ public class SelectionTool extends BasicTool<SelectionToolDelegate> implements C
         dirty = true;
     }
 
-    @SuppressWarnings("OptionalGetWithoutIsPresent")
     private void commitSelection() {
         if (hasSelection()) {
 
             // Re-render the scratch buffer without the selection frame (don't want to commit marching ants to canvas)
             getScratch().clearAddScratch();
-            if (hasSelection()) {
+            Optional<BufferedImage> theSelectedImage = selectedImage.getValue();
+
+            if (hasSelection() && theSelectedImage.isPresent()) {
                 GraphicsContext g = getCanvas().getScratch().getAddScratchGraphics(this, getSelectionFrame());
-                g.drawImage(selectedImage.getValue().get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
+                g.drawImage(theSelectedImage.get(), getSelectedImageLocation().x, getSelectedImageLocation().y, null);
             }
 
             getCanvas().commit();
@@ -499,6 +503,9 @@ public class SelectionTool extends BasicTool<SelectionToolDelegate> implements C
                     translateSelection(0, 1);
                     redrawSelection(true);
                     break;
+
+                default:
+                    // Nothing to do
             }
         }
     }

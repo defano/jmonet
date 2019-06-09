@@ -74,6 +74,7 @@ public abstract class AbstractDitherer implements Ditherer {
      * @param image The image whose colors should be counted.
      * @return The number of unique colors in the given image.
      */
+    @SuppressWarnings("unused")
     public int getColorCount(BufferedImage image) {
         HashSet<Integer> colors = new HashSet<>();
 
@@ -105,21 +106,21 @@ public abstract class AbstractDitherer implements Ditherer {
         // Source needs to be ARGB type; make a copy to assure constraint is met
         image = ImageUtils.argbCopy(image);
 
-        double[][][] matrix = new double[image.getHeight()][image.getWidth()][4];
+        double[][][] m = new double[image.getHeight()][image.getWidth()][4];
         WritableRaster raster = image.getRaster();
 
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 double[] pixel = raster.getPixel(x, y, (double[]) null);
 
-                matrix[y][x][0] = pixel[0] / 255.0;
-                matrix[y][x][1] = pixel[1] / 255.0;
-                matrix[y][x][2] = pixel[2] / 255.0;
-                matrix[y][x][3] = pixel[3];
+                m[y][x][0] = pixel[0] / 255.0;
+                m[y][x][1] = pixel[1] / 255.0;
+                m[y][x][2] = pixel[2] / 255.0;
+                m[y][x][3] = pixel[3];
             }
         }
 
-        this.matrix = matrix;
+        this.matrix = m;
     }
 
     /**

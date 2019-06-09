@@ -34,7 +34,7 @@ public class MagnifierTool extends BasicTool implements SurfaceInteractionObserv
 
     @Override
     public Cursor getDefaultCursor() {
-        return zoomInCursor;
+        return getZoomInCursor();
     }
 
     /** {@inheritDoc} */

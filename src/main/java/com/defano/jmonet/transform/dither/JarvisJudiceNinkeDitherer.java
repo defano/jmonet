@@ -3,7 +3,7 @@ package com.defano.jmonet.transform.dither;
 /**
  * An implementation of the Jarvis-Judice-Ninke dithering algorithm.
  */
-@SuppressWarnings("PointlessArithmeticExpression")
+@SuppressWarnings({"PointlessArithmeticExpression", "unused"})
 public class JarvisJudiceNinkeDitherer extends AbstractDitherer {
 
     /**

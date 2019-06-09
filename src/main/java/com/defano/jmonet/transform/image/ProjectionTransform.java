@@ -34,7 +34,7 @@ public class ProjectionTransform implements ImageTransform {
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("DuplicateExpressions")
+    @SuppressWarnings({"DuplicateExpressions", "squid:S1659"})
     @Override
     public BufferedImage apply(BufferedImage input) {
 

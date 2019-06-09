@@ -14,7 +14,7 @@ import org.mockito.Mockito;
 
 import java.awt.*;
 
-public class BaseToolTest<ToolType extends Tool> extends MockitoTest {
+abstract public class BaseToolTest<ToolType extends Tool> extends MockitoTest {
 
     protected ToolType uut;
 

@@ -3,7 +3,7 @@ package com.defano.jmonet.transform.dither;
 /**
  * An implementation of the Stucki dithering algorithm.
  */
-@SuppressWarnings("PointlessArithmeticExpression")
+@SuppressWarnings({"PointlessArithmeticExpression", "unused"})
 public class StuckiDitherer extends AbstractDitherer {
 
     /**

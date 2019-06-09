@@ -34,7 +34,9 @@ public abstract class StampStroke implements Stroke {
     public Shape createStrokedShape(Shape shape) {
 
         float[] coordinates = new float[6];
-        Point thisPoint, lastPoint = null;
+        Point thisPoint;
+        Point lastPoint = null;
+
         GeneralPath strokedShape = new GeneralPath(new BasicStroke(0f).createStrokedShape(shape));
 
         // FlatteningPathIterator removes curved segments from the path
@@ -46,6 +48,8 @@ public abstract class StampStroke implements Stroke {
                     stampLine(strokedShape, lastPoint, thisPoint);
                     lastPoint = thisPoint;
                     break;
+                default:
+                    // Nothing to do
             }
         }
 

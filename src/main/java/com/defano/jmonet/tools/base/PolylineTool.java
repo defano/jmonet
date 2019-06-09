@@ -38,7 +38,7 @@ public class PolylineTool extends BasicTool<PolylineToolDelegate> implements Sur
         setToolCursor(getToolCursor());
 
         // Nothing to do if initial point is not yet established
-        if (points.size() == 0) {
+        if (points.isEmpty()) {
             return;
         }
 
@@ -114,7 +114,7 @@ public class PolylineTool extends BasicTool<PolylineToolDelegate> implements Sur
     @Override
     public void keyPressed(KeyEvent e) {
         // Ignore escape unless at least one point has been defined
-        if (e.getKeyCode() == KeyEvent.VK_ESCAPE && points.size() > 0) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE && !points.isEmpty()) {
             points.add(currentPoint);
             commitPolyline();
         }
