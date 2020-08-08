@@ -1,12 +1,13 @@
 package com.defano.jmonet.canvas;
 
+import com.defano.jmonet.canvas.surface.Disposable;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingNode;
 
 /**
  * A trivial wrapper making a PaintCanvas available to JavaFX applications.
  */
-public class JFXPaintCanvasNode extends SwingNode {
+public class JFXPaintCanvasNode extends SwingNode implements Disposable {
 
     private final AbstractPaintCanvas canvas;
 
@@ -19,4 +20,8 @@ public class JFXPaintCanvasNode extends SwingNode {
         return canvas;
     }
 
+    @Override
+    public void dispose() {
+        canvas.dispose();
+    }
 }
