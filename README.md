@@ -417,14 +417,15 @@ Tool Base         | Delegate Class          | Description
 
 #### My canvas isn't getting garbage collected. This library has a memory leak.
 
-The `JMonetCanvas` registers itself as a listener to global mouse and keyboard event dispatchers so that you don't have to. Unfortunately, that means it'll never get cleaned up on its own.
+The `JMonetCanvas` registers itself as a listener to global mouse and keyboard events so that you don't have to. Unfortunately, that means it'll never get cleaned up on its own. 
 
-When you're done with a canvas, call `.dispose()` on the canvas object (or the `JFXPaintCanvasNode` when using JFX) to allow the JVM to garbage collect it. Be aware that `.dispose()` will only eliminate _internal_ references that might keep the canvas from being disposed. This will not "erase" the canvas or otherwise explicitly deallocate the memory associated with the canvas' image or scratch buffer. To free that memory, the garbage collector must run and reap the canvas. 
+When you're done with a canvas, call `.dispose()` on the canvas object (or the `JFXPaintCanvasNode` when using JFX) to allow the JVM to garbage collect it. Be aware that `.dispose()` will only eliminate _internal_ references that might keep the canvas from being disposed, it will not "erase" the canvas or otherwise explicitly deallocate the memory associated with the canvas' image or scratch buffer. 
 
-If your canvas appears to not be getting garbage collected, verify that other objects are not holding a reference to it. This is rarely obvious or easy to debug. Some common errors to look for:
+If your canvas is not being garbage collected, verify that other objects are not holding a reference to it. This is rarely obvious or easy to debug. Some common errors to look for:
 
+* You have a tool active on the canvas. Be sure to call `.deactivate()` on any tools that were previously active on the canvas. 
 * You have subscribed to an RxJava stream that's provided by the canvas (i.e., `getScaleObservable()`) and have not properly disposed of the subscription. See the RxJava documentation for details.
-* You have embedded the canvas in a parent Swing component or JavaFX Node and that object is retaining a reference to the canvas. JavaFX seems to be especially bad about this. Adding a canvas as a child of a JFX `Pane` and then removing it (via `pane.getChildren().remove(...)` or `.clear()`) will keep a reference to the canvas. It appears that you need to free the `Pane` itself (by setting it to null) before child nodes that were added to it can be freed.
+* You have embedded the canvas in a parent Swing component or JavaFX Node and the parent component is retaining a reference to the canvas. JavaFX seems to be especially bad about this. Adding a canvas to a JFX `Pane` and then removing it (via `pane.getChildren().remove(...)` or `.clear()`) seems to keep a reference to the canvas. It appears that you need to free the `Pane` itself (by setting it to null) before child nodes that were added to it can be fully freed.
 
 #### What about vector graphic tools (i.e., "draw" apps)?
 
