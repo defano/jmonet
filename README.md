@@ -136,7 +136,7 @@ public void start(Stage stage) {
 Start painting by making a tool active on the canvas with the `PaintToolBuilder`:
 
 ```
-PaintTool paintbrush = PaintToolBuilder.create(PaintToolType.PAINTBRUSH)
+Tool paintbrush = PaintToolBuilder.create(PaintToolType.PAINTBRUSH)
     .withStroke(StrokeBuilder.withShape().ofCircle(8).build())
     .withStrokePaint(Color.RED)
     .makeActiveOnCanvas(myCanvas)
