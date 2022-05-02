@@ -136,7 +136,7 @@ public void start(Stage stage) {
 Start painting by making a tool active on the canvas with the `PaintToolBuilder`:
 
 ```
-PaintTool paintbrush = PaintToolBuilder.create(PaintToolType.PAINTBRUSH)
+Tool paintbrush = PaintToolBuilder.create(PaintToolType.PAINTBRUSH)
     .withStroke(StrokeBuilder.withShape().ofCircle(8).build())
     .withStrokePaint(Color.RED)
     .makeActiveOnCanvas(myCanvas)
@@ -430,3 +430,9 @@ If your canvas is not being garbage collected, verify that other objects are not
 #### What about vector graphic tools (i.e., "draw" apps)?
 
 Sorry, that's not the intent of this library. That said, many pieces of this library could be leveraged for such a tool...
+
+### How to deal with exceptions arising from newer jdk versions?
+
+The InaccessibleObjectException, which can be thrown when using newer jdk versions e.g., JDK 17.0.2, is solved when following the instructions 
+posted [here](https://stackoverflow.com/questions/41265266/how-to-solve-inaccessibleobjectexception-unable-to-make-member-accessible-m). 
+When using the Intellij IDE, this [post](https://stackoverflow.com/questions/50938383/how-to-set-jvm-arguments-in-intellij-idea) shows how to add the required VM Options to your Project.
